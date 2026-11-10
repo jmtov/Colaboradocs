@@ -9,12 +9,12 @@
   "scripts": {
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "build": "npm run build -w @juntanza/web",
-    "dev": "npm run dev:api & npm run dev:web & wait",
-    "dev:api": "npm run dev -w @juntanza/review-worker",
-    "dev:web": "npm run dev -w @juntanza/web"
+    "typecheck": "npm --workspaces --if-present run typecheck",
+    "test": "npm --workspaces --if-present run test",
+    "build": "npm --workspace=@juntanza/web run build",
+    "dev": "npm --workspace=@juntanza/review-worker run dev & npm --workspace=@juntanza/web run dev & wait",
+    "dev:api": "npm --workspace=@juntanza/review-worker run dev",
+    "dev:web": "npm --workspace=@juntanza/web run dev"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
