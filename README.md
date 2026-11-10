@@ -82,6 +82,20 @@ npm run documents -w @juntanza/review-worker -- space --name "Mi equipo" --role-
 
 `--role-format` solo cambia cómo se **muestra** el rol en la lista de accesos; el valor guardado es «La Ceja». Sin configurar: el campo se llama «Rol» y se muestra tal cual.
 
+## Qué va a git y qué no
+
+Un solo repo y un solo código para todos los despliegues. **Lo único que no va a git es la data** de cada uno:
+
+| Va a git | No va a git (está en `.gitignore`) |
+|---|---|
+| El código, las migraciones, las pruebas | `documents/*` (tus documentos en JSON; `documents/example.json` sí va) |
+| `documents/example.json` y la plantilla `wrangler.example.jsonc` | `apps/web/public/documentos/` (los archivos que tus documentos enlazan como fuentes) |
+| | `docs/` (planes y notas de tu despliegue) |
+| | `packages/review-worker/wrangler.jsonc`, `.dev.vars`, `.prod.vars` (tu configuración y secretos) |
+| | `packages/review-worker/backups/` y `pins.private*` (respaldos de la base y PIN en claro) |
+
+Los documentos viven en la base de datos (D1); los JSON de `documents/` solo sirven para importarlos por CLI, y se pueden volver a exportar de la base. Lo que **no** se puede reconstruir desde el repo es la base: respáldala (`wrangler d1 export <base> --remote --output packages/review-worker/backups/…`) y guarda esa carpeta fuera del repo.
+
 ## Correr y probar
 
 ```

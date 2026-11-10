@@ -13,9 +13,20 @@ pins.private.txt
 
 # Config propia de cada despliegue (la plantilla es wrangler.example.jsonc)
 packages/review-worker/wrangler.jsonc
-# Documentos propios para importar con `npm run documents` (el de ejemplo sí se versiona)
+# ──────────────────────────────────────────────────────────────────────────
+# DATA: lo único que no va a git. Todo lo demás (código, esquema, pruebas, el
+# documento de ejemplo) es el mismo código para todos los despliegues.
+# ──────────────────────────────────────────────────────────────────────────
+
+# Los documentos propios (JSON para importar con `npm run documents`). El de ejemplo sí se versiona.
 documents/*
 !documents/example.json
+
+# Archivos que los documentos enlazan como fuentes (PDF, HTML…): se sirven junto con la página.
+apps/web/public/documentos/
+
+# Planes, notas y estado del proyecto de cada despliegue.
+docs/
 
 # Respaldos de la base (contienen comentarios y hashes de PIN): nunca al repo
 packages/review-worker/backups/
