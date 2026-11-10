@@ -1,0 +1,104 @@
+.content {
+  display: grid;
+  gap: 1rem;
+}
+
+.problem,
+.warn {
+  padding: 0.75rem 0.875rem;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.problem {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+}
+
+.problem ul,
+.warn ul {
+  padding-left: 1.125rem;
+  margin: 0.375rem 0 0;
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.label {
+  display: grid;
+  gap: 0.375rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.field {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.field:disabled {
+  color: var(--muted);
+  background: var(--tint);
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.summary {
+  font-size: var(--font-size-sm);
+}
+
+.summary ol {
+  max-height: 11rem;
+  padding-left: 1.25rem;
+  margin: 0.375rem 0 0;
+  overflow: auto;
+}
+
+.meta {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

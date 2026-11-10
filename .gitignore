@@ -13,6 +13,9 @@ pins.private.txt
 
 # Config propia de cada despliegue (la plantilla es wrangler.example.jsonc)
 packages/review-worker/wrangler.jsonc
-# Documentos propios (el de ejemplo sí se versiona)
-apps/web/documents/*
-!apps/web/documents/example.json
+# Documentos propios para importar con `npm run documents` (el de ejemplo sí se versiona)
+documents/*
+!documents/example.json
+
+# Respaldos de la base (contienen comentarios y hashes de PIN): nunca al repo
+packages/review-worker/backups/

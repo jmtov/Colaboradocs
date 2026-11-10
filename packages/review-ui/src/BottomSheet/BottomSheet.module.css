@@ -8,14 +8,36 @@
   background: var(--bg);
   border: 1px solid var(--line-strong);
   border-bottom: 0;
-  border-radius: 16px 16px 0 0;
   box-shadow: 0 -10px 40px rgb(0 0 0 / 25%);
   overscroll-behavior: contain;
+  /* Fuera de pantalla: de aquí entra y a aquí vuelve al cerrarse. */
+  transform: translateY(calc(100% + var(--sheet-shift, 0px)));
+  transition: transform var(--sheet-duration, 500ms)
+    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+/* Estado abierto (lo marca BottomSheet.tsx): la hoja en su lugar. */
+.sheet[data-state="open"] {
   transform: translateY(var(--sheet-shift, 0px));
 }
 
 .sheet::backdrop {
   background: rgb(0 0 0 / 45%);
+  opacity: 0;
+  transition: opacity var(--sheet-duration, 500ms)
+    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1));
+}
+
+.sheet[data-state="open"]::backdrop {
+  opacity: 1;
+}
+
+/* Con «reducir movimiento» entra y sale sin deslizarse. */
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .sheet::backdrop {
+    transition-duration: 0s;
+  }
 }
 
 :global(:root:has(dialog[open])) {
@@ -53,7 +75,6 @@
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
   cursor: pointer;
 }
 

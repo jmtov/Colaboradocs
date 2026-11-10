@@ -5,10 +5,7 @@
     "jsxImportSource": "solid-js",
     "types": ["vite/client"],
     "resolveJsonModule": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@document": ["./documents/example.json"]
-    }
+    "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src", "scripts", "vite.config.ts", "documents/example.json"]
+  "include": ["src", "scripts", "vite.config.ts"]
 }

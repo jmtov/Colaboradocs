@@ -1,0 +1,217 @@
+.bar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: var(--z-sticky);
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.barInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  max-width: 1200px;
+  padding: 0.5rem 0;
+  margin: 0 auto;
+}
+
+.barName {
+  min-width: 0;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.page {
+  max-width: 1200px;
+  padding-bottom: 4.5rem;
+  margin: 0 auto;
+}
+
+.intro {
+  padding: 3.5rem 0 2.5rem;
+}
+
+.eyebrow {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0.875rem 0 1rem;
+  font-size: var(--font-size-display);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.lead {
+  max-width: 56ch;
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--muted);
+}
+
+/* Bordes colapsados: cada celda tiene su borde completo y se monta 1px sobre la
+   vecina (margen negativo), así donde se juntan queda una sola línea de 1px.
+   El padding compensa el margen negativo de la última columna y fila. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0 1px 1px 0;
+  margin: 0;
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+}
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 11.5rem;
+  padding: 1.25rem;
+  color: var(--fg);
+  text-decoration: none;
+  border: 1px solid var(--line);
+}
+
+.card:hover {
+  background: var(--tint);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.meta {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.cardTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.875rem;
+  align-items: center;
+  padding-top: 0.75rem;
+  margin-top: auto;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.open {
+  font-weight: 600;
+  color: var(--warn);
+}
+
+.last {
+  margin-left: auto;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  padding: 2rem 1.25rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  margin: 0 -1px -1px 0;
+}
+
+@media (width <= 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width <= 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .intro {
+    padding: 2.25rem 0 1.75rem;
+  }
+}
+
+/* Menú de cada documento (admins): en la esquina, fuera del enlace de la tarjeta. */
+.menu {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.withMenu .cardTitle {
+  padding-right: 2.5rem;
+}
+
+/* Bloque «Subir documento»: una celda más de la grilla. */
+.add {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  background: none;
+}
+
+.addIcon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--muted);
+}
+
+.add:hover .addIcon {
+  color: var(--fg);
+}
+
+.addLabel {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.addHint {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+/* La celda bajo el cursor queda por encima de las vecinas: así se ve su sombra. */
+.item:hover {
+  z-index: 1;
+}

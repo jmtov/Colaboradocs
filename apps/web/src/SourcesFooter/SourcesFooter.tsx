@@ -1,7 +1,6 @@
 import { For, type JSX } from 'solid-js';
 import type { DocumentSource } from '@/content/content.types';
 import { isSourceLink } from '@/content/source.utils';
-import ThemeSwitch from '@/ThemeSwitch/ThemeSwitch';
 import styles from './SourcesFooter.module.css';
 
 type Props = {
@@ -51,10 +50,6 @@ export default function SourcesFooter(props: Props): JSX.Element {
         <p class={styles.note}>
           Los números entre corchetes del texto remiten a esta lista.
         </p>
-      </div>
-      <div>
-        <span class={styles.eyebrow}>Tema</span>
-        <ThemeSwitch />
       </div>
     </footer>
   );

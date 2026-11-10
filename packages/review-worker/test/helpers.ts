@@ -79,3 +79,20 @@ export function postComment(
     body: JSON.stringify({ blockExcerpt: 'extracto', parentId: null, ...body }),
   });
 }
+
+/** Los nombres son únicos y la base se comparte: vacía todo para empezar de cero. */
+export async function resetDatabase() {
+  for (const table of [
+    'approvals',
+    'comments',
+    'devices',
+    'login_failures',
+    'document_versions',
+    'documents',
+    'settings',
+  ]) {
+    await env.DB.prepare(`DELETE FROM ${table}`).run();
+  }
+  await env.DB.prepare('UPDATE reviewers SET promoted_by = NULL').run();
+  await env.DB.prepare('DELETE FROM reviewers').run();
+}

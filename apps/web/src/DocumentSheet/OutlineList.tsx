@@ -18,6 +18,7 @@ export default function OutlineList(props: { onPick: (id: string) => void }) {
           <button
             type="button"
             class={`${styles.item} ${LEVEL_CLASS[item.level] ?? ''}`}
+            data-flat
             onClick={() => props.onPick(item.id)}
           >
             <span>{item.text}</span>

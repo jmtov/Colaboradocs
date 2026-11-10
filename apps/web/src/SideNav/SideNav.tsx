@@ -19,6 +19,7 @@ export default function SideNav(props: Props) {
             <button
               type="button"
               class={styles.link}
+              data-flat
               classList={{ [styles.current]: props.currentId === section.id }}
               onClick={() => props.onGo(section.id)}
             >

@@ -70,6 +70,8 @@ export type ApiErrorCode =
 
 export type ApiError = {
   error: ApiErrorCode;
+  /** Qué estaba mal, para mostrárselo a quien subió el documento. */
+  details?: string[];
 };
 
 /** Una persona en la pantalla de accesos (solo para admins). */
@@ -107,4 +109,16 @@ export type IssuedPin = {
   reviewer: ManagedReviewer;
   /** Con formato XXXX-XXXX. */
   pin: string;
+};
+
+/** Actividad de un documento, para la home. */
+export type DocumentSummary = {
+  /** Hilos sin resolver (comentarios raíz con texto). */
+  openThreads: number;
+  /** Comentarios con texto, respuestas incluidas. */
+  comments: number;
+  /** OK dados, sumando todas las personas. */
+  approvals: number;
+  /** Último comentario u OK; null si aún no hay actividad. */
+  lastActivityAt: string | null;
 };

@@ -1,8 +1,14 @@
 import { AccessSheet, useReview } from '@juntanza/review-ui';
 import { createSignal, Show } from 'solid-js';
+import { setDocumentsOpen } from '@/DocumentsSheet/documentsSheet.state';
+import { howToAvailable, setHowToOpen } from '@/HowToReview/howto.state';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
+import FileTextIcon from '@/icons/FileTextIcon';
+import ListChecksIcon from '@/icons/ListChecksIcon';
 import LogOutIcon from '@/icons/LogOutIcon';
 import UsersIcon from '@/icons/UsersIcon';
+import ThemeSwitch from '@/ThemeSwitch/ThemeSwitch';
+import { openAfterMenuCloses } from './menu.utils';
 import styles from './UserMenu.module.css';
 
 /** Separación entre el botón y el menú, en px. */
@@ -29,8 +35,15 @@ export default function UserMenu() {
   }
 
   function openAccess() {
-    menu.hidePopover();
-    setAccessOpen(true);
+    openAfterMenuCloses(menu, () => setAccessOpen(true));
+  }
+
+  function openHowTo() {
+    openAfterMenuCloses(menu, () => setHowToOpen(true));
+  }
+
+  function openDocuments() {
+    openAfterMenuCloses(menu, () => setDocumentsOpen(true));
   }
 
   function logout() {
@@ -73,13 +86,42 @@ export default function UserMenu() {
             </div>
           )}
         </Show>
+        <div class={styles.theme}>
+          <span class={styles.kicker}>Tema</span>
+          <ThemeSwitch fill />
+        </div>
+        <Show when={howToAvailable()}>
+          <button
+            type="button"
+            class={styles.item}
+            data-flat
+            onClick={openHowTo}
+          >
+            <ListChecksIcon class={styles.icon} />
+            Cómo revisar
+          </button>
+        </Show>
         <Show when={me()?.isAdmin}>
-          <button type="button" class={styles.item} onClick={openAccess}>
+          <button
+            type="button"
+            class={styles.item}
+            data-flat
+            onClick={openDocuments}
+          >
+            <FileTextIcon class={styles.icon} />
+            Documentos
+          </button>
+          <button
+            type="button"
+            class={styles.item}
+            data-flat
+            onClick={openAccess}
+          >
             <UsersIcon class={styles.icon} />
             Accesos
           </button>
         </Show>
-        <button type="button" class={styles.item} onClick={logout}>
+        <button type="button" class={styles.item} data-flat onClick={logout}>
           <LogOutIcon class={styles.icon} />
           Salir
         </button>

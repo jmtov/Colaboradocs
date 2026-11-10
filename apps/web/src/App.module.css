@@ -1,0 +1,40 @@
+/*
+ * Transición de página: al cambiar de ruta, la que sale se desvanece y se
+ * transforma; la nueva entra desde el lado contrario. Duración, curva, dirección
+ * y tamaño del desplazamiento: variables y fases de más abajo. BottomSheet y los
+ * menús van en la capa superior, fuera de este contenedor.
+ *
+ * En reposo (`idle`) el contenedor no lleva transform ni opacity: así no crea un
+ * contexto de apilamiento ni un bloque contenedor para lo fijo o pegajoso.
+ */
+.page {
+  --page-duration: 300ms;
+  --page-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --page-shift: -2rem;
+
+  transition:
+    opacity var(--page-duration) var(--page-ease),
+    transform var(--page-duration) var(--page-ease);
+}
+
+/* Sale: se desvanece y se transforma. */
+.page[data-phase="leaving"] {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(calc(var(--page-shift) * -1)) scale(0.9);
+}
+
+/* Recién cambiado el contenido: oculta y desplazada, sin transición (es el punto de partida). */
+.page[data-phase="entering"] {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(var(--page-shift));
+  transition: none;
+}
+
+/* Con «reducir movimiento» no hay transición. */
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    transition-duration: 0s;
+  }
+}

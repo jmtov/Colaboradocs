@@ -1,4 +1,5 @@
 export { default as AccessSheet } from './AccessSheet/AccessSheet';
+export { ApiRequestError, fetchSpace } from './api/review.api';
 export { default as BlockLayer } from './BlockLayer/BlockLayer';
 export { default as BottomSheet } from './BottomSheet/BottomSheet';
 export { default as PinGate } from './PinGate/PinGate';

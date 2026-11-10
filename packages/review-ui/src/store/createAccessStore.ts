@@ -3,7 +3,7 @@ import type {
   ManagedReviewer,
   NewReviewer,
 } from '@juntanza/review-core';
-import { createSignal } from 'solid-js';
+import { createSignal, untrack } from 'solid-js';
 import type { ReviewApi } from '../api/review.api';
 import { describeAccessError } from './review.messages';
 
@@ -18,8 +18,12 @@ export function createAccessStore(api: ReviewApi) {
   /** El último PIN entregado: se muestra una sola vez y se descarta al cerrar. */
   const [issued, setIssued] = createSignal<IssuedPin | null>(null);
 
+  /**
+   * Pide la lista. No lee `people()` de forma reactiva: quien llame a `load`
+   * desde un efecto no debe quedar suscrito a su propio resultado (sería un bucle).
+   */
   async function load() {
-    if (people() === null) setStatus('loading');
+    if (untrack(() => people() === null)) setStatus('loading');
     try {
       setPeople(await api.listPeople());
       setStatus('ready');

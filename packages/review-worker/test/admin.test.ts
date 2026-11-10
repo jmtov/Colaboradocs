@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:test';
 import type { IssuedPin, ManagedReviewer } from '@juntanza/review-core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -10,18 +9,12 @@ import {
   DOCUMENT,
   login,
   postComment,
+  resetDatabase,
   type TestReviewer,
   tokenFor,
 } from './helpers';
 
-// Los nombres son únicos y la base se comparte: cada prueba empieza de cero.
-beforeEach(async () => {
-  for (const table of ['approvals', 'comments', 'devices', 'login_failures']) {
-    await env.DB.prepare(`DELETE FROM ${table}`).run();
-  }
-  await env.DB.prepare('UPDATE reviewers SET promoted_by = NULL').run();
-  await env.DB.prepare('DELETE FROM reviewers').run();
-});
+beforeEach(resetDatabase);
 
 async function list(token: string) {
   const response = await authed(token, '/admin/reviewers');

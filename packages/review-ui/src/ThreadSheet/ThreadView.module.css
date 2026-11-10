@@ -3,7 +3,6 @@
   gap: 1rem;
   padding: 1rem;
   border: 1px solid var(--line);
-  border-radius: 8px;
 }
 
 .resolved {
@@ -50,7 +49,6 @@
   text-transform: uppercase;
   color: var(--ok);
   background: var(--ok-bg);
-  border-radius: 999px;
 }
 
 .text {

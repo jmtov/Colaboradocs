@@ -20,6 +20,31 @@ export function describeLoginError(error: unknown): string {
   }
 }
 
+/** Mensaje para mostrar cuando falla subir o archivar un documento. */
+export function describePublishError(error: unknown): {
+  message: string;
+  details: string[];
+} {
+  if (!(error instanceof ApiRequestError)) {
+    return { message: 'No se pudo completar la acción.', details: [] };
+  }
+  switch (error.code) {
+    case 'invalid_request':
+      return { message: 'El documento no es válido.', details: error.details };
+    case 'forbidden':
+      return { message: 'Solo los admins pueden hacer eso.', details: [] };
+    case 'not_found':
+      return { message: 'Ese documento ya no existe.', details: [] };
+    case 'network':
+      return {
+        message: 'Sin conexión con el servidor. Intenta de nuevo.',
+        details: [],
+      };
+    default:
+      return { message: 'No se pudo completar la acción.', details: [] };
+  }
+}
+
 /** Mensaje para mostrar cuando falla una acción de la pantalla de accesos. */
 export function describeAccessError(error: unknown): string {
   if (!(error instanceof ApiRequestError)) {

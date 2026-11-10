@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { ApiRequestError } from '../api/review.api';
-import { describeAccessError, describeLoginError } from './review.messages';
+import {
+  describeAccessError,
+  describeLoginError,
+  describePublishError,
+} from './review.messages';
 
 describe('describeLoginError', () => {
   it('traduce los errores conocidos del servidor', () => {
@@ -40,6 +44,30 @@ describe('describeAccessError', () => {
 
   it('con un error desconocido da un mensaje genérico', () => {
     expect(describeAccessError(new Error('x'))).toBe(
+      'No se pudo completar la acción.',
+    );
+  });
+});
+
+describe('describePublishError', () => {
+  it('lleva el detalle de un documento inválido', () => {
+    const error = new ApiRequestError('invalid_request', 400, [
+      'Falta «title».',
+    ]);
+    expect(describePublishError(error)).toEqual({
+      message: 'El documento no es válido.',
+      details: ['Falta «title».'],
+    });
+  });
+
+  it('traduce permisos y conexión', () => {
+    expect(
+      describePublishError(new ApiRequestError('forbidden', 403)).message,
+    ).toContain('admins');
+    expect(
+      describePublishError(new ApiRequestError('network', 0)).message,
+    ).toContain('Sin conexión');
+    expect(describePublishError(new Error('x')).message).toBe(
       'No se pudo completar la acción.',
     );
   });

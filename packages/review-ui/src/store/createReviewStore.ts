@@ -1,5 +1,11 @@
-import type { NewComment, ReviewSnapshot } from '@juntanza/review-core';
-import { createEffect, createSignal, onCleanup } from 'solid-js';
+import type {
+  DocumentContent,
+  DocumentListItem,
+  NewComment,
+  ReviewSnapshot,
+  SpaceInfo,
+} from '@juntanza/review-core';
+import { createEffect, createSignal, onCleanup, untrack } from 'solid-js';
 import {
   ApiRequestError,
   createReviewApi,
@@ -10,7 +16,7 @@ import {
   type StoredSession,
 } from '../session/session.utils';
 import { createAccessStore } from './createAccessStore';
-import { describeLoginError } from './review.messages';
+import { describeLoginError, describePublishError } from './review.messages';
 import { DEFAULT_ROLE_FIELD, formatRole, type RoleField } from './role.utils';
 
 /** Cada cuánto se vuelve a pedir el estado de la revisión mientras la pestaña está visible. */
@@ -23,16 +29,27 @@ export type LoginOutcome = { ok: true } | { ok: false; message: string };
 
 export type ReviewStatus = 'idle' | 'loading' | 'ready' | 'error';
 
-export function createReviewStore(
-  documentId: string,
-  storage: Storage | null,
-  roleField: RoleField = DEFAULT_ROLE_FIELD,
-) {
-  const sessions = createSessionStorage(storage, `review:${documentId}`);
+export type ReviewStoreOptions = {
+  /** Documento abierto ahora (reactivo); null en la home, donde no hay uno. */
+  documentId: () => string | null;
+  storage: Storage | null;
+  /** Rol de las personas (lo define el espacio); reactivo porque llega después de cargar. */
+  roleField?: () => RoleField | undefined;
+  /** Prefijos de sesiones guardadas por documento, a adoptar (ver `createSessionStorage`). */
+  legacyPrefixes?: string[];
+};
+
+export function createReviewStore(options: ReviewStoreOptions) {
+  const { documentId, storage, legacyPrefixes } = options;
+  const roleField = () => options.roleField?.() ?? DEFAULT_ROLE_FIELD;
+  const sessions = createSessionStorage(storage, 'review', legacyPrefixes);
   const [session, setSession] = createSignal<StoredSession | null>(
     sessions.loadSession(),
   );
   const [snapshot, setSnapshot] = createSignal<ReviewSnapshot | null>(null);
+  const [documents, setDocuments] = createSignal<DocumentListItem[] | null>(
+    null,
+  );
   const [status, setStatus] = createSignal<ReviewStatus>('idle');
   const [notice, setNotice] = createSignal<string | null>(null);
   let noticeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -62,13 +79,32 @@ export function createReviewStore(
 
   async function refresh() {
     if (!session()) return;
+    const requested = documentId();
     try {
-      setSnapshot(await api.fetchReview());
+      if (requested === null) {
+        const fetched = await api.fetchDocuments();
+        if (documentId() !== requested) return;
+        setDocuments(fetched);
+      } else {
+        const fetched = await api.fetchReview();
+        // Si mientras tanto se abrió otro documento, esta respuesta ya no sirve.
+        if (documentId() !== requested) return;
+        setSnapshot(fetched);
+      }
       setStatus('ready');
     } catch (error) {
       const unauthorized =
         error instanceof ApiRequestError && error.status === 401;
       if (!unauthorized && status() !== 'ready') setStatus('error');
+    }
+  }
+
+  /** Carga la lista de documentos sin tocar el estado de la pantalla. */
+  async function loadDocuments() {
+    try {
+      setDocuments(await api.fetchDocuments());
+    } catch {
+      // Si falla, la home la vuelve a pedir; aquí no es crítico.
     }
   }
 
@@ -156,12 +192,58 @@ export function createReviewStore(
     );
   }
 
+  type PublishOutcome =
+    | { ok: true; created?: boolean }
+    | { ok: false; message: string; details: string[] };
+
+  /** Sube o reemplaza un documento (admins). Al terminar, recarga la lista. */
+  async function publishDocument(
+    document: DocumentContent,
+  ): Promise<PublishOutcome> {
+    try {
+      const saved = await api.putDocument(document);
+      setDocuments(await api.fetchDocuments());
+      return { ok: true, created: saved.created };
+    } catch (error) {
+      return { ok: false, ...describePublishError(error) };
+    }
+  }
+
+  /** Oculta un documento (admins); sus comentarios se conservan. */
+  async function archiveDocument(id: string): Promise<PublishOutcome> {
+    try {
+      await api.archiveDocument(id);
+      setDocuments(await api.fetchDocuments());
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, ...describePublishError(error) };
+    }
+  }
+
+  async function saveSpace(space: SpaceInfo): Promise<PublishOutcome> {
+    try {
+      await api.putSpace(space);
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, ...describePublishError(error) };
+    }
+  }
+
   /** Carga al abrir sesión y sondea mientras la pestaña esté visible. Llamar dentro de un componente. */
   function start() {
     createEffect(() => {
       if (!session()) return;
+      // Cambiar de documento (o volver a la home) descarta lo del anterior.
+      documentId();
+      setSnapshot(null);
       setStatus('loading');
       void refresh();
+      // Dentro de un documento también hace falta la lista (p. ej. el enlace de regreso).
+      // `untrack`: solo se mira si falta la lista; si este efecto la siguiera, cada vez
+      // que la lista cambia reiniciaría la revisión (y la lista se volvería a pedir).
+      if (documentId() !== null && untrack(() => documents() === null)) {
+        void loadDocuments();
+      }
       const timer = setInterval(() => {
         if (document.visibilityState === 'visible') void refresh();
       }, POLL_INTERVAL_MS);
@@ -180,6 +262,7 @@ export function createReviewStore(
   return {
     session,
     snapshot,
+    documents,
     status,
     notice,
     start,
@@ -193,9 +276,17 @@ export function createReviewStore(
     flash,
     access,
     role: {
-      label: roleField.label,
-      format: (value: string) => formatRole(roleField, value),
+      get label() {
+        return roleField().label;
+      },
+      format: (value: string) => formatRole(roleField(), value),
     },
+    /** El contenido de un documento (lanza si no existe o no hay sesión). */
+    fetchContent: (id: string) => api.fetchContent(id),
+    loadDocuments,
+    publishDocument,
+    archiveDocument,
+    saveSpace,
   };
 }
 

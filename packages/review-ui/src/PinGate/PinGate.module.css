@@ -12,7 +12,6 @@
   padding: 1.5rem;
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
 }
 
 .kicker {
@@ -46,7 +45,6 @@
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
 }
 
 .input:focus-visible {
@@ -65,7 +63,6 @@
   color: var(--bg);
   background: var(--fg);
   border: 0;
-  border-radius: 8px;
   cursor: pointer;
 }
 

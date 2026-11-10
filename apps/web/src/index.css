@@ -52,8 +52,87 @@
   }
 }
 
-* {
+/* Sin bordes redondeados en ningún elemento: esquinas rectas en toda la interfaz.
+   Se reinicia aquí (y no en cada componente) para que también valga para los
+   estilos nativos del navegador (campos, botones, diálogos) y lo que se añada después. */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  border-radius: 0;
+}
+
+/* Elementos accionables: al pasar el cursor se despegan del papel (--lift) y dejan
+   una sombra larga y sólida, sin difuminado, que rellena el hueco entre donde
+   estaban y donde quedan, como un bloque extruido. Valen todos los <button>
+   salvo los marcados con data-flat (ítems de menús y listas, texto) y los
+   enlaces marcados con data-lift (tarjetas). `:where` mantiene la especificidad
+   en cero para que un componente pueda sobrescribirlo. Solo con cursor real:
+   en pantallas táctiles el hover se queda pegado.
+
+   Todo sale de una sola variable animada, --t (0 en reposo, --lift con el
+   cursor encima): el desplazamiento y el largo de la sombra crecen juntos, y
+   también se encogen juntos al soltar. Hay que registrarla con @property para
+   que el navegador pueda animarla; sin soporte (Safari < 16.4) el efecto
+   funciona igual, pero salta sin transición.
+
+   La sombra es un pseudo-elemento y no un box-shadow: así forma parte del
+   elemento y el hueco que deja al subir sigue siendo clicable (con box-shadow
+   el cursor quedaría fuera del botón y el hover parpadearía).
+   Geometría de ::after: la caja que abarca el elemento levantado y su posición
+   original; el polígono es esa caja menos el elemento (con --t en 0 no tiene
+   área). El `-1px` supone un borde de 1px (la caja absoluta parte del borde
+   interno). */
+@property --t {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+:where(button:not(:disabled):not([data-flat]), a[data-lift]) {
+  --lift: 3px;
+  /* Se fija en cada elemento para no heredar el valor de un ancestro levantado. */
+  --t: 0px;
+  position: relative;
+  transform: translate(var(--t), calc(var(--t) * -1));
+}
+
+:where(button:not(:disabled):not([data-flat]), a[data-lift])::after {
+  content: "";
+  position: absolute;
+  inset: -1px -1px calc(-1px - var(--t)) calc(-1px - var(--t));
+  pointer-events: none;
+  background: var(--lift-color, currentColor);
+  clip-path: polygon(
+    0 var(--t),
+    var(--t) 0,
+    var(--t) calc(100% - var(--t)),
+    100% calc(100% - var(--t)),
+    calc(100% - var(--t)) 100%,
+    0 100%
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(button:not(:disabled):not([data-flat]), a[data-lift]) {
+    transition: --t 120ms ease-out;
+  }
+}
+
+@media (hover: hover) {
+  :where(button:not(:disabled):not([data-flat]), a[data-lift]):hover {
+    --t: var(--lift);
+  }
+
+  /* Con el cursor encima, la sombra es parte del elemento (clicable). */
+  :where(button:not(:disabled):not([data-flat]), a[data-lift]):hover::after {
+    pointer-events: auto;
+  }
+
+  /* Al presionar vuelve al papel. */
+  :where(button:not(:disabled):not([data-flat]), a[data-lift]):active {
+    --t: 0px;
+  }
 }
 
 html {

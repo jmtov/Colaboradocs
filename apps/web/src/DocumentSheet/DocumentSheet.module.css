@@ -10,7 +10,6 @@
   color: var(--bg);
   background: var(--fg);
   border: 1px solid var(--fg);
-  border-radius: 6px;
 }
 
 .text {

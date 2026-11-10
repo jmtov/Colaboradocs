@@ -1,6 +1,8 @@
 import type {
   ApiError,
   ApiErrorCode,
+  DocumentContent,
+  DocumentListItem,
   IssuedPin,
   LoginResponse,
   ManagedReviewer,
@@ -9,21 +11,30 @@ import type {
   ReviewComment,
   ReviewerPatch,
   ReviewSnapshot,
+  SpaceInfo,
 } from '@juntanza/review-core';
 
 export class ApiRequestError extends Error {
   readonly code: ApiErrorCode | 'network';
   readonly status: number;
+  /** Qué estaba mal, cuando el servidor lo explica (p. ej. un documento inválido). */
+  readonly details: string[];
 
-  constructor(code: ApiErrorCode | 'network', status: number) {
+  constructor(
+    code: ApiErrorCode | 'network',
+    status: number,
+    details: string[] = [],
+  ) {
     super(code);
     this.code = code;
     this.status = status;
+    this.details = details;
   }
 }
 
 export type ApiOptions = {
-  documentId: string;
+  /** Documento abierto ahora; null en la home (no hay documento). */
+  documentId: () => string | null;
   getToken: () => string | null;
   /** Se llama cuando el servidor responde 401 a una petición con token. */
   onUnauthorized: () => void;
@@ -37,6 +48,7 @@ async function readError(response: Response): Promise<ApiRequestError> {
     return new ApiRequestError(
       body.error ?? 'invalid_request',
       response.status,
+      body.details ?? [],
     );
   } catch {
     return new ApiRequestError('invalid_request', response.status);
@@ -49,6 +61,13 @@ async function send(path: string, init: RequestInit): Promise<Response> {
   } catch {
     throw new ApiRequestError('network', 0);
   }
+}
+
+/** Nombre y rol del espacio. Público: se pide antes de ingresar. */
+export async function fetchSpace(): Promise<SpaceInfo> {
+  const response = await send('/space', {});
+  if (!response.ok) throw await readError(response);
+  return (await response.json()) as SpaceInfo;
 }
 
 export async function loginRequest(
@@ -65,15 +84,15 @@ export async function loginRequest(
 }
 
 export function createReviewApi(options: ApiOptions) {
-  const documentPath = `/documents/${options.documentId}`;
+  function documentPath() {
+    const id = options.documentId();
+    if (!id) throw new ApiRequestError('invalid_request', 0);
+    return `/documents/${id}`;
+  }
 
-  async function request(
-    path: string,
-    init: RequestInit = {},
-    base = documentPath,
-  ) {
+  async function request(path: string, init: RequestInit = {}, base?: string) {
     const token = options.getToken();
-    const response = await send(`${base}${path}`, {
+    const response = await send(`${base ?? documentPath()}${path}`, {
       ...init,
       headers: {
         'Content-Type': 'application/json',
@@ -89,6 +108,35 @@ export function createReviewApi(options: ApiOptions) {
     async fetchReview(): Promise<ReviewSnapshot> {
       const response = await request('/review');
       return (await response.json()) as ReviewSnapshot;
+    },
+    async fetchDocuments(): Promise<DocumentListItem[]> {
+      const response = await request('', {}, '/documents');
+      return (await response.json()) as DocumentListItem[];
+    },
+    async fetchContent(id: string): Promise<DocumentContent> {
+      const response = await request(`/${id}/content`, {}, '/documents');
+      return (await response.json()) as DocumentContent;
+    },
+    async putDocument(
+      document: DocumentContent,
+    ): Promise<{ created: boolean }> {
+      const response = await request(
+        `/documents/${document.id}`,
+        { method: 'PUT', body: JSON.stringify(document) },
+        '/admin',
+      );
+      return (await response.json()) as { created: boolean };
+    },
+    async archiveDocument(id: string): Promise<void> {
+      await request(`/documents/${id}`, { method: 'DELETE' }, '/admin');
+    },
+    async putSpace(space: SpaceInfo): Promise<SpaceInfo> {
+      const response = await request(
+        '/space',
+        { method: 'PUT', body: JSON.stringify(space) },
+        '/admin',
+      );
+      return (await response.json()) as SpaceInfo;
     },
     async postComment(comment: NewComment): Promise<ReviewComment> {
       const response = await request('/comments', {

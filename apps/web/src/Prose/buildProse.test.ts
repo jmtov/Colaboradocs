@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import type { DocumentContent } from '@/content/content.types';
-import example from '../../documents/example.json';
+import example from '../../../../documents/example.json';
 import { buildProse } from './buildProse';
 
 const content = example as DocumentContent;

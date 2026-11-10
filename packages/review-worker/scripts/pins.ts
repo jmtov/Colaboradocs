@@ -1,22 +1,3 @@
-/**
- * Administra los PIN de los revisores (D1). Por defecto actúa sobre la base
- * LOCAL; con --remote, sobre la de producción.
- *
- *   npm run pins -w @juntanza/review-worker -- add "Ana" "Luis" [--admin] [--max-devices=3] [--remote]
- *   npm run pins -w @juntanza/review-worker -- import personas.csv [--remote]
- *       (columnas: name,municipality[,email]; crea el PIN de quien no existe, y a quien ya existe solo le
- *       actualiza el municipio; deja pins.private.csv con name,email,municipality,pin para el envío)
- *   npm run pins -w @juntanza/review-worker -- list [--remote]
- *   npm run pins -w @juntanza/review-worker -- reissue "Ana" [--remote]
- *   npm run pins -w @juntanza/review-worker -- reset-devices "Ana" [--remote]
- *   npm run pins -w @juntanza/review-worker -- set-devices "Ana" --max-devices=20 [--remote]
- *   npm run pins -w @juntanza/review-worker -- revoke "Ana" [--remote]
- *
- * El secreto (TOKEN_SECRET) sale de la variable de entorno o de .dev.vars (local) / .prod.vars
- * (--remote), y tiene que ser el mismo que usa el Worker desplegado
- * (`wrangler secret put TOKEN_SECRET`).
- */
-import { execFileSync } from 'node:child_process';
 import {
   appendFileSync,
   existsSync,
@@ -29,14 +10,8 @@ import {
   generatePin,
   hashPin,
 } from '@juntanza/review-core';
+import { quote, runSql, selectRows } from './d1.utils';
 
-/** Nombre de la base D1: el de wrangler.jsonc. */
-const DATABASE = (() => {
-  const config = readFileSync('wrangler.jsonc', 'utf8');
-  const found = /"database_name"\s*:\s*"([^"]+)"/.exec(config)?.[1];
-  if (!found) throw new Error('No encuentro database_name en wrangler.jsonc.');
-  return found;
-})();
 const PRIVATE_FILE = 'pins.private.txt';
 const MAIL_FILE = 'pins.private.csv';
 
@@ -52,28 +27,6 @@ function readSecret(remote: boolean): string {
     if (line) return line.slice('TOKEN_SECRET='.length).trim();
   }
   throw new Error(`Falta TOKEN_SECRET (variable de entorno o ${file}).`);
-}
-
-function quote(value: string): string {
-  return `'${value.replace(/'/g, "''")}'`;
-}
-
-function runSql(sql: string, remote: boolean): unknown {
-  const output = execFileSync(
-    'npx',
-    [
-      'wrangler',
-      'd1',
-      'execute',
-      DATABASE,
-      remote ? '--remote' : '--local',
-      '--json',
-      '--command',
-      sql,
-    ],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] },
-  );
-  return JSON.parse(output);
 }
 
 /** CSV simple con comillas dobles; suficiente para nombre, municipio y correo. */
@@ -109,11 +62,6 @@ function parseCsv(text: string): string[][] {
 
 function csvCell(value: string): string {
   return /[",\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
-}
-
-function selectRows(output: unknown): Record<string, unknown>[] {
-  const first = (output as { results?: Record<string, unknown>[] }[])[0];
-  return first?.results ?? [];
 }
 
 async function importPeople(

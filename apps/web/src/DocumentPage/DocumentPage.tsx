@@ -10,6 +10,7 @@ import {
 import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import type { SheetState } from '@/DocumentSheet/sheet.types';
 import Hero from '@/Hero/Hero';
+import HowToReview from '@/HowToReview/HowToReview';
 import ReviewSummary from '@/ReviewSummary/ReviewSummary';
 import SectionCards from '@/SectionCards/SectionCards';
 import SectionView from '@/SectionView/SectionView';
@@ -34,7 +35,11 @@ function readCurrentHeading(section: HTMLElement | null): string {
   return heading;
 }
 
-export default function DocumentPage(props: { content: DocumentContent }) {
+export default function DocumentPage(props: {
+  content: DocumentContent;
+  /** Hay más documentos: se muestra el enlace de regreso a la home. */
+  multiple?: boolean;
+}) {
   const review = useReview();
   const sections = props.content.sections;
   const glossary = readGlossary(props.content);
@@ -142,6 +147,7 @@ export default function DocumentPage(props: { content: DocumentContent }) {
     <>
       <TopBar
         documentName={props.content.shortName ?? props.content.title}
+        showBack={props.multiple}
         currentLabel={currentLabel()}
         currentHeading={currentHeading()}
         onOpenContents={() => setSheet({ kind: 'contents' })}
@@ -190,6 +196,7 @@ export default function DocumentPage(props: { content: DocumentContent }) {
           sources={props.content.sources}
         />
       </div>
+      <HowToReview />
       <DocumentSheet
         sheet={sheet()}
         content={props.content}

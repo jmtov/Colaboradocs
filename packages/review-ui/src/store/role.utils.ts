@@ -1,10 +1,6 @@
-/** Cómo se llama y se muestra el rol de cada persona (en la Juntanza, su municipio). */
-export type RoleField = {
-  /** Nombre del campo en formularios: «Municipio», «Área»… Por defecto «Rol». */
-  label: string;
-  /** Plantilla para mostrarlo en la lista de accesos: «Representante {value}». */
-  format?: string;
-};
+import type { RoleField } from '@juntanza/review-core';
+
+export type { RoleField };
 
 export const DEFAULT_ROLE_FIELD: RoleField = { label: 'Rol' };
 

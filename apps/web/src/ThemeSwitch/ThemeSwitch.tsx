@@ -16,7 +16,10 @@ const OPTIONS: {
   { value: 'dark', label: 'Oscuro', icon: MoonIcon },
 ];
 
-export default function ThemeSwitch() {
+export default function ThemeSwitch(props: {
+  /** Ocupa todo el ancho de su contenedor, con las tres opciones repartidas. */
+  fill?: boolean;
+}) {
   const [theme, setTheme] = createSignal<Theme>(readTheme());
 
   function choose(value: Theme) {
@@ -26,12 +29,18 @@ export default function ThemeSwitch() {
 
   return (
     // biome-ignore lint/a11y/useSemanticElements: fieldset arrastra estilos de formulario que no queremos
-    <div class={styles.group} role="group" aria-label="Tema">
+    <div
+      class={styles.group}
+      classList={{ [styles.fill]: props.fill }}
+      role="group"
+      aria-label="Tema"
+    >
       <For each={OPTIONS}>
         {(option) => (
           <button
             type="button"
             class={styles.option}
+            data-flat
             classList={{ [styles.on]: theme() === option.value }}
             aria-pressed={theme() === option.value}
             onClick={() => choose(option.value)}

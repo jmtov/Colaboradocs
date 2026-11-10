@@ -1,6 +1,6 @@
 .footer {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2rem;
   padding: 2.25rem 0 3.5rem;
   font-size: var(--font-size-sm);
@@ -27,7 +27,6 @@
   padding: 0;
   margin: 0;
   list-style: none;
-  border-radius: 8px;
 }
 
 .source {

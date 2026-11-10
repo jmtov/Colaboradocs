@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createSessionStorage, randomDeviceId } from './session.utils';
+import {
+  createSessionStorage,
+  discoverLegacyPrefixes,
+  randomDeviceId,
+} from './session.utils';
 
 function fakeStorage() {
   const data = new Map<string, string>();
@@ -93,5 +97,71 @@ describe('randomDeviceId', () => {
 
   it('cumple el formato que acepta el servidor', () => {
     expect(randomDeviceId()).toMatch(/^[A-Za-z0-9-]{16,64}$/);
+  });
+});
+
+describe('sesiones heredadas (antes eran por documento)', () => {
+  const stored = JSON.stringify({ token: 't', reviewer });
+
+  it('adopta la sesión y el id de dispositivo del prefijo viejo', () => {
+    const storage = fakeStorage();
+    storage.data.set('review:principios:session', stored);
+    storage.data.set('review:principios:device', 'dispositivo-viejo-1234');
+    const sessions = createSessionStorage(storage, 'review', [
+      'review:principios',
+    ]);
+    expect(sessions.loadSession()?.token).toBe('t');
+    expect(sessions.deviceId()).toBe('dispositivo-viejo-1234');
+    // quedó copiada bajo la clave nueva
+    expect(storage.data.get('review:session')).toBe(stored);
+  });
+
+  it('prefiere lo nuevo a lo heredado', () => {
+    const storage = fakeStorage();
+    storage.data.set('review:principios:device', 'viejo');
+    storage.data.set('review:device', 'nuevo');
+    const sessions = createSessionStorage(storage, 'review', [
+      'review:principios',
+    ]);
+    expect(sessions.deviceId()).toBe('nuevo');
+  });
+
+  it('al cerrar sesión no se vuelve a adoptar la heredada', () => {
+    const storage = fakeStorage();
+    storage.data.set('review:principios:session', stored);
+    const sessions = createSessionStorage(storage, 'review', [
+      'review:principios',
+    ]);
+    expect(sessions.loadSession()).not.toBeNull();
+    sessions.clearSession();
+    expect(sessions.loadSession()).toBeNull();
+    const reloaded = createSessionStorage(storage, 'review', [
+      'review:principios',
+    ]);
+    expect(reloaded.loadSession()).toBeNull();
+  });
+});
+
+describe('discoverLegacyPrefixes', () => {
+  function withKeys(keys: string[]) {
+    return { length: keys.length, key: (index: number) => keys[index] ?? null };
+  }
+
+  it('encuentra las sesiones por documento y no la del espacio', () => {
+    const found = discoverLegacyPrefixes(
+      withKeys([
+        'review:principios:session',
+        'review:principios:device',
+        'review:session',
+        'review:otro:session',
+        'theme',
+      ]),
+      'review',
+    );
+    expect(found).toEqual(['review:principios', 'review:otro']);
+  });
+
+  it('sin almacenamiento no hay nada', () => {
+    expect(discoverLegacyPrefixes(null, 'review')).toEqual([]);
   });
 });

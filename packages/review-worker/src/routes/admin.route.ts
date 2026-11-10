@@ -7,6 +7,8 @@ import {
   MAX_NAME_LENGTH,
   MAX_ROLE_LENGTH,
   type ManagedReviewer,
+  validateDocument,
+  validateSpace,
 } from '@juntanza/review-core';
 import { Hono } from 'hono';
 import { requireAdmin, requireReviewer } from '../auth/auth.middleware';
@@ -25,6 +27,11 @@ import {
   updateAdmin,
   updateMunicipality,
 } from '../db/access.queries';
+import {
+  archiveDocument,
+  saveDocument,
+  saveSpace,
+} from '../db/documents.queries';
 import type { AppEnv } from '../env.types';
 import { errorResponse, readJsonObject } from '../http.utils';
 
@@ -158,6 +165,45 @@ export const adminRoute = new Hono<AppEnv>()
       pin: formatPin(pin),
     };
     return c.json(issued);
+  })
+
+  // --- Documentos y espacio ---
+
+  .put('/admin/documents/:id', async (c) => {
+    const id = c.req.param('id');
+    const body = await readJsonObject(c);
+    if (!body)
+      return errorResponse(c, 'invalid_request', ['El cuerpo no es JSON.']);
+    const result = validateDocument(body);
+    if (!result.ok) return errorResponse(c, 'invalid_request', result.errors);
+    if (result.value.id !== id) {
+      return errorResponse(c, 'invalid_request', [
+        'El id del documento no coincide con el de la ruta.',
+      ]);
+    }
+    const saved = await saveDocument(
+      c.env.DB,
+      result.value,
+      c.get('reviewer').id,
+      new Date().toISOString(),
+    );
+    return c.json(saved, saved.created ? 201 : 200);
+  })
+
+  .delete('/admin/documents/:id', async (c) => {
+    const archived = await archiveDocument(
+      c.env.DB,
+      c.req.param('id'),
+      new Date().toISOString(),
+    );
+    return archived ? c.body(null, 204) : errorResponse(c, 'not_found');
+  })
+
+  .put('/admin/space', async (c) => {
+    const result = validateSpace(await readJsonObject(c));
+    if (!result.ok) return errorResponse(c, 'invalid_request', result.errors);
+    await saveSpace(c.env.DB, result.value);
+    return c.json(result.value);
   })
 
   .post('/admin/reviewers/:id/devices/reset', async (c) => {

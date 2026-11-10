@@ -13,8 +13,12 @@ const STATUS_BY_CODE: Record<ApiErrorCode, 400 | 401 | 403 | 404 | 409 | 429> =
     invalid_request: 400,
   };
 
-export function errorResponse(c: Context, code: ApiErrorCode) {
-  const body: ApiError = { error: code };
+export function errorResponse(
+  c: Context,
+  code: ApiErrorCode,
+  details?: string[],
+) {
+  const body: ApiError = details ? { error: code, details } : { error: code };
   return c.json(body, STATUS_BY_CODE[code]);
 }
 

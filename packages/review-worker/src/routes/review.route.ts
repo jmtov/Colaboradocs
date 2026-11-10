@@ -6,6 +6,7 @@ import {
 } from '@juntanza/review-core';
 import { Hono } from 'hono';
 import { requireReviewer } from '../auth/auth.middleware';
+import { findDocument, listDocuments } from '../db/documents.queries';
 import {
   addApproval,
   clearCommentText,
@@ -24,12 +25,21 @@ const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const BLOCK_ID_PATTERN = /^[a-z0-9-]{1,100}$/;
 
 export const reviewRoute = new Hono<AppEnv>()
+  // La home: los documentos y su actividad (no cuelga de uno solo).
+  .get('/documents', requireReviewer, async (c) =>
+    c.json(await listDocuments(c.env.DB)),
+  )
   .use('/documents/:documentId/*', requireReviewer)
   .use('/documents/:documentId/*', async (c, next) => {
     if (!DOCUMENT_ID_PATTERN.test(c.req.param('documentId') ?? '')) {
       return errorResponse(c, 'not_found');
     }
     await next();
+  })
+
+  .get('/documents/:documentId/content', async (c) => {
+    const document = await findDocument(c.env.DB, c.req.param('documentId'));
+    return document ? c.json(document) : errorResponse(c, 'not_found');
   })
 
   .get('/documents/:documentId/review', async (c) => {

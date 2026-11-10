@@ -1,23 +1,9 @@
 import { marked } from 'marked';
-
-type Section = {
-  id: string;
-  num: string;
-  title: string;
-  status: 'borrador';
-  html: string;
-};
-
-export type ConvertOptions = { id: string; title?: string; version?: string };
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+import {
+  buildDocument,
+  type ConvertOptions,
+  type RawSection,
+} from './convert.utils';
 
 /**
  * Convierte Markdown al formato del documento:
@@ -26,28 +12,17 @@ function slugify(text: string): string {
  * Lo que va antes del primer `## ` se descarta (salvo el `# ` del título).
  */
 export function markdownToDocument(markdown: string, options: ConvertOptions) {
-  const sections: Section[] = [];
-  const used = new Set<string>();
-  let title = options.title;
+  const sections: RawSection[] = [];
+  let title: string | undefined;
   let current: { title: string; lines: string[] } | null = null;
   const flush = () => {
     if (!current) return;
-    const base = slugify(current.title) || `seccion-${sections.length + 1}`;
-    let id = base;
-    for (let n = 2; used.has(id); n += 1) id = `${base}-${n}`;
-    used.add(id);
     const html = (
       marked.parse(current.lines.join('\n'), { async: false }) as string
     )
       .replace(/\n/g, '')
       .trim();
-    sections.push({
-      id,
-      num: String(sections.length + 1),
-      title: current.title,
-      status: 'borrador',
-      html,
-    });
+    sections.push({ title: current.title, html });
   };
 
   let inFence = false;
@@ -66,12 +41,11 @@ export function markdownToDocument(markdown: string, options: ConvertOptions) {
   }
   flush();
 
-  return {
-    id: options.id,
-    title: title ?? options.id,
-    version: options.version ?? '0.1',
-    updated: new Date().toISOString().slice(0, 10),
-    sources: [] as { label: string; url: string }[],
-    sections,
-  };
+  const warnings: string[] = [];
+  if (sections.length === 0) {
+    warnings.push(
+      'No encontré ninguna sección: usa «## Título» para cada una.',
+    );
+  }
+  return buildDocument(title, sections, options, warnings);
 }

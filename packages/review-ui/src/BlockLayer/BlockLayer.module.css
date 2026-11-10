@@ -3,10 +3,6 @@
 }
 
 /* Se añade a cada bloque con data-block-id. */
-.block {
-  border-radius: 6px;
-}
-
 .block:hover {
   background: color-mix(in srgb, var(--fg) 4%, var(--bg));
 }
@@ -26,7 +22,6 @@
   white-space: nowrap;
   vertical-align: middle;
   background: var(--ok-bg);
-  border-radius: 999px;
 }
 
 .block[data-mine]::after {
@@ -43,7 +38,6 @@
   font-size: var(--font-size-sm);
   color: var(--bg);
   background: var(--fg);
-  border-radius: 8px;
 }
 
 /* Ancla sin altura justo debajo del bloque seleccionado: la barra flota sobre el contenido sin empujarlo. */

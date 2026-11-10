@@ -9,7 +9,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "pins": "tsx scripts/pins.ts",
-    "setup": "tsx scripts/setup.ts"
+    "setup": "tsx scripts/setup.ts",
+    "documents": "tsx scripts/documents.ts"
   },
   "dependencies": {
     "@juntanza/review-core": "*",

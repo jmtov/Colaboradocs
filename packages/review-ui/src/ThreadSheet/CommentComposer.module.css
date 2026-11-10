@@ -13,7 +13,6 @@
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
   resize: vertical;
 }
 
@@ -45,7 +44,6 @@
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
   cursor: pointer;
 }
 

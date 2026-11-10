@@ -1,0 +1,50 @@
+.content {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.steps {
+  display: grid;
+  gap: 0.875rem;
+  padding: 0;
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.5rem;
+}
+
+.number {
+  padding-top: 0.25rem;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}

@@ -19,7 +19,6 @@
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
 }
 
 .field:focus-visible {
@@ -75,7 +74,6 @@ p.help {
   color: var(--fg);
   background: var(--bg);
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
   cursor: pointer;
 }
 

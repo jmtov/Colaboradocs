@@ -53,6 +53,7 @@ export default function ThreadView(props: Props) {
             <button
               type="button"
               class={`${styles.link} ${styles.danger}`}
+              data-flat
               onClick={() => review.deleteComment(comment.id)}
             >
               <TrashIcon class={styles.icon} />
@@ -93,6 +94,7 @@ export default function ThreadView(props: Props) {
             <button
               type="button"
               class={styles.link}
+              data-flat
               onClick={() => setReplying(true)}
             >
               <ReplyIcon class={styles.icon} />
@@ -102,6 +104,7 @@ export default function ThreadView(props: Props) {
               <button
                 type="button"
                 class={styles.link}
+                data-flat
                 onClick={() => review.setResolved(root().id, !root().resolved)}
               >
                 {root().resolved ? (

@@ -5,7 +5,7 @@
  *
  * Hace: crea la base D1, escribe wrangler.jsonc, aplica las migraciones,
  * genera TOKEN_SECRET (queda en .prod.vars y se sube como secreto del Worker).
- * Después: `npm run build` (raíz) y `npm run deploy -w @juntanza/review-worker`.
+ * Carga además el documento de ejemplo (documents/example.json).
  */
 import { execFileSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
@@ -57,9 +57,26 @@ console.log('Desplegando el Worker para poder guardar el secreto…');
 console.log(wrangler(['deploy']));
 wrangler(['secret', 'put', 'TOKEN_SECRET'], `${secret}\n`);
 
+console.log('Cargando el documento de ejemplo…');
+execFileSync(
+  'npx',
+  [
+    'tsx',
+    'scripts/documents.ts',
+    'import',
+    '../../documents/example.json',
+    '--remote',
+  ],
+  {
+    stdio: 'inherit',
+  },
+);
+
 console.log(`
 Listo. Falta:
   1. Respaldar packages/review-worker/.prod.vars FUERA del repo (sin él no se pueden crear PIN).
   2. Crear PIN:  npm run pins -w @juntanza/review-worker -- add "Tu nombre" --admin --remote
-  3. Compilar y desplegar de nuevo con tu documento:  npm run build && npm run deploy -w @juntanza/review-worker
+  3. Entra con ese PIN y sube tus documentos desde el menú ⋮ → «Documentos» (Word, Markdown o JSON).
+     El de ejemplo se puede archivar desde ahí.
+  4. Ponle nombre al espacio:  npm run documents -w @juntanza/review-worker -- space --name "Mi equipo" --remote
 `);

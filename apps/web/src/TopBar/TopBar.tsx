@@ -1,11 +1,14 @@
 import { useReview } from '@juntanza/review-ui';
 import { Show } from 'solid-js';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
+import Link from '@/router/Link';
 import UserMenu from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
 type Props = {
   documentName: string;
+  /** Enlace de regreso a la home de documentos. */
+  showBack?: boolean;
   /** Sección que se está leyendo, o "Inicio". */
   currentLabel: string;
   /** Título de grupo (h3) que se está leyendo dentro de la sección, si hay. */
@@ -30,9 +33,15 @@ export default function TopBar(props: Props) {
   return (
     <header class={styles.top}>
       <div class={styles.inner}>
+        <Show when={props.showBack}>
+          <Link href="/" class={styles.back} lift>
+            ← Documentos
+          </Link>
+        </Show>
         <button
           type="button"
           class={styles.contents}
+          data-flat
           aria-haspopup="dialog"
           title="Ver el contenido del documento"
           onClick={props.onOpenContents}

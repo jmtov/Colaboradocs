@@ -1,7 +1,6 @@
 .group {
   display: inline-flex;
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
 }
 
 .option {
@@ -15,14 +14,6 @@
   border: 0;
 }
 
-.option:first-child {
-  border-radius: 5px 0 0 5px;
-}
-
-.option:last-child {
-  border-radius: 0 5px 5px 0;
-}
-
 .on {
   color: var(--bg);
   background: var(--fg);
@@ -32,4 +23,16 @@
   flex: none;
   width: 1.125em;
   height: 1.125em;
+}
+
+.fill {
+  display: flex;
+  width: 100%;
+}
+
+.fill .option {
+  flex: 1;
+  justify-content: center;
+  min-height: 2.25rem;
+  padding: 0.4375rem 0.5rem;
 }

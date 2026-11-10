@@ -10,12 +10,13 @@
   letter-spacing: -0.02em;
 }
 
+/* Bordes colapsados: cada tarjeta tiene su borde completo y se monta 1px sobre la
+   vecina (margen negativo); el padding compensa la última columna y fila. */
 .cards {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0 1px 1px 0;
   margin: 0;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
 }
 
 .card {
@@ -27,13 +28,14 @@
   padding: 1.125rem;
   text-align: left;
   background: none;
-  border: 0;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  border: 1px solid var(--line);
+  margin: 0 -1px -1px 0;
 }
 
 .card:hover {
   background: var(--tint);
+  /* Por encima de las vecinas: así se ve su borde completo y su sombra. */
+  z-index: 1;
 }
 
 .number {
