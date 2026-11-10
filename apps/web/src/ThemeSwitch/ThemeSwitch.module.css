@@ -1,0 +1,35 @@
+.group {
+  display: inline-flex;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+}
+
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  font-size: var(--font-size-sm);
+  color: var(--fg);
+  background: none;
+  border: 0;
+}
+
+.option:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.option:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.on {
+  color: var(--bg);
+  background: var(--fg);
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}

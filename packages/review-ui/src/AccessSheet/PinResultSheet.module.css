@@ -1,0 +1,54 @@
+.content {
+  display: grid;
+  gap: 1rem;
+}
+
+.pin {
+  padding: 1rem;
+  font: 600 1.75rem var(--font-mono);
+  letter-spacing: 0.12em;
+  text-align: center;
+  user-select: all;
+  background: var(--tint);
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+}
+
+.warn {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--warn);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.button {
+  display: inline-flex;
+  gap: 0.375rem;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}

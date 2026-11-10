@@ -1,0 +1,77 @@
+.sheet {
+  width: min(760px, 100%);
+  max-width: 100%;
+  max-height: var(--sheet-max-height, 80dvh);
+  margin: auto auto 0;
+  padding: 0;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -10px 40px rgb(0 0 0 / 25%);
+  overscroll-behavior: contain;
+  transform: translateY(var(--sheet-shift, 0px));
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+:global(:root:has(dialog[open])) {
+  overflow: hidden;
+}
+
+.inner {
+  display: grid;
+  gap: 1rem;
+  padding: 0.875rem max(1rem, env(safe-area-inset-left, 0px))
+    calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.kicker {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}
+
+.compact {
+  font-size: var(--font-size-md);
+  letter-spacing: -0.01em;
+}

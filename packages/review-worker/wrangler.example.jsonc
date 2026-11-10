@@ -1,0 +1,20 @@
+{
+  // Plantilla. `npm run setup` la copia a wrangler.jsonc (que no se versiona)
+  // y rellena database_id. El account_id se toma de tu `wrangler login`.
+  "name": "doc-review",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "../../apps/web/dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "doc-review",
+      "database_id": "REEMPLAZAR",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

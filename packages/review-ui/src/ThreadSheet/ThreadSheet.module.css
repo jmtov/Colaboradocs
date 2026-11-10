@@ -1,0 +1,27 @@
+.paragraph {
+  margin: 0;
+  padding: 0.125rem 0 0.125rem 0.875rem;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  border-left: 2px solid var(--line-strong);
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.label {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

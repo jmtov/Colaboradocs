@@ -1,0 +1,20 @@
+type Props = { class?: string };
+
+export default function ArrowDownToLineIcon(props: Props) {
+  return (
+    <svg
+      class={props.class}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 17V3" />
+      <path d="m6 11 6 6 6-6" />
+      <path d="M19 21H5" />
+    </svg>
+  );
+}

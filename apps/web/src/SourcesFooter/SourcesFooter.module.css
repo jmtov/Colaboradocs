@@ -1,0 +1,71 @@
+.footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+  padding: 2.25rem 0 3.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 0.625rem;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.sources {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-radius: 8px;
+}
+
+.source {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sourceNumber {
+  flex: none;
+  padding-top: 0.125rem;
+  font: var(--font-size-xs) var(--font-mono);
+}
+
+.link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.soon {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--faint);
+}
+
+.note {
+  margin: 0.625rem 0 0;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--faint);
+}
+
+.flash {
+  background: var(--tint);
+  outline: 1px dashed var(--line-strong);
+  outline-offset: 8px;
+}
+
+@media (width <= 560px) {
+  .footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

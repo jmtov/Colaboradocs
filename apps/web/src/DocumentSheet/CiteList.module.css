@@ -1,0 +1,38 @@
+.group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.label {
+  margin: 0;
+  font-weight: 600;
+}
+
+.list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.number {
+  font-weight: 600;
+}
+
+.link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.soon {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--faint);
+}
+
+.detail {
+  margin-top: 0.125rem;
+  font: var(--font-size-sm) var(--font-mono);
+  color: var(--muted);
+}

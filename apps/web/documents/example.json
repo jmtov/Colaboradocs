@@ -1,0 +1,47 @@
+{
+  "id": "ejemplo",
+  "title": "Guía de ejemplo",
+  "shortName": "Guía",
+  "eyebrow": "Borrador · versión {version}",
+  "lead": "Un documento de muestra para ver cómo funciona la revisión: toca cualquier párrafo para comentarlo o dar tu OK.",
+  "version": "0.1",
+  "updated": "2026-01-01",
+  "highlightSection": { "id": "glosario", "label": "Ver el glosario" },
+  "glossaryTerms": {
+    "quórum": "Quórum",
+    "consenso": "Consenso"
+  },
+  "sources": [
+    { "label": "Acta de la primera reunión", "url": "" },
+    {
+      "label": "Documento público de referencia",
+      "url": "https://example.org/referencia"
+    }
+  ],
+  "sections": [
+    {
+      "id": "introduccion",
+      "num": "1",
+      "title": "Introducción",
+      "status": "listo",
+      "description": "Para qué existe este documento.",
+      "html": "<p><strong>Para qué sirve.</strong> Esta nota inicial explica la sección y no se comenta: las notas empiezan con «Para qué sirve».</p><h3>Propósito</h3><p>Cada párrafo, viñeta y definición es un bloque que se puede comentar y aprobar por separado. <em>[1]</em></p><ul><li>Una viñeta también es un bloque.</li><li>Si editas el texto de un bloque, sus comentarios dejan de aplicar.</li></ul>"
+    },
+    {
+      "id": "decisiones",
+      "num": "2",
+      "title": "Cómo decidimos",
+      "status": "borrador",
+      "description": "Reglas de votación y quórum.",
+      "html": "<p><strong>Para qué sirve.</strong> Fija las reglas de decisión. Se enlaza con la <strong>sección 1</strong> y con el glosario.</p><h3>Reglas</h3><ol><li>Las decisiones se toman por consenso; si no se logra, por mayoría de dos tercios.</li><li>Hay quórum con la mitad más uno de los miembros.</li></ol><h3>Pendientes de esta sección</h3><ul><li>Definir qué pasa si no hay quórum en dos reuniones seguidas.</li></ul>"
+    },
+    {
+      "id": "glosario",
+      "num": "A",
+      "title": "Glosario",
+      "status": "listo",
+      "description": "Los términos, en palabras sencillas.",
+      "html": "<dl><dt>Consenso</dt><dd>Acuerdo en el que nadie se opone con firmeza.</dd><dt>Quórum</dt><dd>Número mínimo de presentes para poder decidir.</dd></dl>"
+    }
+  ]
+}

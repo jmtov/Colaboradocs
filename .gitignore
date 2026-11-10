@@ -1,0 +1,18 @@
+!.env.example
+*.local
+.DS_Store
+.dev.vars
+.env
+.env.*
+.prod.vars
+.wrangler
+dist
+node_modules
+pins.private*
+pins.private.txt
+
+# Config propia de cada despliegue (la plantilla es wrangler.example.jsonc)
+packages/review-worker/wrangler.jsonc
+# Documentos propios (el de ejemplo sí se versiona)
+apps/web/documents/*
+!apps/web/documents/example.json

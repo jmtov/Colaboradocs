@@ -1,0 +1,23 @@
+{
+  "name": "colaboradocs",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build -w @juntanza/web",
+    "dev": "npm run dev:api & npm run dev:web & wait",
+    "dev:api": "npm run dev -w @juntanza/review-worker",
+    "dev:web": "npm run dev -w @juntanza/web"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "typescript": "^5.6.3"
+  }
+}

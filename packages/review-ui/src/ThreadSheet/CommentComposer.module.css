@@ -1,0 +1,67 @@
+.composer {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0.625rem 0.75rem;
+  font: inherit;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  resize: vertical;
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.count {
+  margin-right: auto;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}
