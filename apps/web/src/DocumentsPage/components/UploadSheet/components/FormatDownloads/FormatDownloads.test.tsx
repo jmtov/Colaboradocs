@@ -4,6 +4,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import FormatDownloads from './FormatDownloads';
 
 const wait = (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Espera a que algo pase (la guía se carga con un import dinámico: con la máquina ocupada tarda más de un plazo fijo). */
+async function until(done: () => boolean, attempts = 60) {
+  for (let i = 0; i < attempts && !done(); i += 1) await wait(50);
+}
 const disposers: (() => void)[] = [];
 
 /** Captura qué se descarga: el nombre del archivo y su contenido. */
@@ -50,7 +55,7 @@ describe('FormatDownloads', () => {
     const downloads = captureDownloads();
     const host = mount();
     button(host, 'Ejemplo').click();
-    await wait();
+    await until(() => downloads.length > 0);
     expect(downloads).toHaveLength(1);
     expect(downloads[0]?.name).toBe('ejemplo.json');
     const parsed = JSON.parse((await downloads[0]?.blob.text()) ?? '');
@@ -62,7 +67,7 @@ describe('FormatDownloads', () => {
     const downloads = captureDownloads();
     const host = mount();
     button(host, 'Guía').click();
-    await wait();
+    await until(() => downloads.length > 0);
     expect(downloads).toHaveLength(1);
     expect(downloads[0]?.name).toBe('formato-colaboradocs.md');
     const text = (await downloads[0]?.blob.text()) ?? '';

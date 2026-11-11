@@ -71,3 +71,24 @@ export function affectedBlocks(
   }
   return [...byBlock.values()];
 }
+
+const SECTION_REFERENCE = /secci[oó]n(?:es)?\s+\d/i;
+
+/**
+ * Secciones que cambian de número respecto de lo publicado («Título: 2 → 3»),
+ * pero solo si algún texto remite a una «sección N»: sin referencias, la
+ * renumeración no rompe nada. Vacío si no hay cambios o no hay a qué remitir.
+ */
+export function renumberedSections(
+  published: DocumentContent,
+  draft: DocumentContent,
+): string[] {
+  const referenced = draft.sections.some((section) =>
+    SECTION_REFERENCE.test(section.html),
+  );
+  if (!referenced) return [];
+  const before = new Map(published.sections.map((s) => [s.id, s.num]));
+  return draft.sections
+    .filter((s) => before.has(s.id) && before.get(s.id) !== s.num)
+    .map((s) => `«${s.title}» (${before.get(s.id)} → ${s.num})`);
+}

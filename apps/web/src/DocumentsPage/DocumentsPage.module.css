@@ -12,6 +12,7 @@
   background: var(--fg);
   border: 1px solid var(--fg);
   cursor: pointer;
+  --lift-color: var(--fg);
 }
 
 .hint {
@@ -85,12 +86,14 @@
 .danger {
   color: var(--danger);
   border-color: var(--danger);
+  --lift-color: var(--danger);
 }
 
 .dangerSolid {
   color: var(--bg);
   background: var(--danger);
   border-color: var(--danger);
+  --lift-color: var(--danger);
 }
 
 .confirm {

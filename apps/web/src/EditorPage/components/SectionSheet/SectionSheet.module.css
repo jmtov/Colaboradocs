@@ -1,0 +1,49 @@
+.content {
+  display: grid;
+  gap: 1rem;
+}
+
+.check {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--fg);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.gap {
+  flex: 1;
+}
+
+.button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  cursor: pointer;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+  --lift-color: var(--fg);
+}
+
+.remove {
+  color: var(--danger);
+  border-color: var(--danger);
+  --lift-color: var(--danger);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

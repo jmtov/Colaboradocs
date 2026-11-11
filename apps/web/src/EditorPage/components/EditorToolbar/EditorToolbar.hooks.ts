@@ -22,6 +22,13 @@ export function useEditorToolbar(editor: () => Editor | undefined) {
     return editor()?.isActive(name, attrs) ?? false;
   }
 
+  /** Lo que activa un botón que no es un nodo ni una marca (p. ej. estar en la nota). */
+  function matches(test: (editor: Editor) => boolean) {
+    tick();
+    const current = editor();
+    return current ? test(current) : false;
+  }
+
   function can(action: 'undo' | 'redo') {
     tick();
     const current = editor();
@@ -42,5 +49,5 @@ export function useEditorToolbar(editor: () => Editor | undefined) {
     else run(item.run);
   }
 
-  return { isActive, can, run, press };
+  return { isActive, matches, can, run, press };
 }

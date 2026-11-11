@@ -1,7 +1,14 @@
 import { For, Match, Show, Switch } from 'solid-js';
+import DocumentEditor from '@/Editor/DocumentEditor/DocumentEditor';
+import SaveIcon from '@/icons/SaveIcon';
+import TrashIcon from '@/icons/TrashIcon';
+import UploadIcon from '@/icons/UploadIcon';
 import PageBar from '@/PageBar/PageBar';
-import Prose from '@/Prose/Prose';
-import EditorSection from './components/EditorSection/EditorSection';
+import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';
+import EditorOutline from './components/EditorOutline/EditorOutline';
+import EditorToolbar from './components/EditorToolbar/EditorToolbar';
+import GlossaryLinks from './components/GlossaryLinks/GlossaryLinks';
+import SourcesEditor from './components/SourcesEditor/SourcesEditor';
 import { useEditorPage } from './EditorPage.hooks';
 import styles from './EditorPage.module.css';
 
@@ -12,7 +19,7 @@ type Props = {
   name: string;
 };
 
-/** Editor de un documento (solo admins): una sección a la vez, con borrador y publicación. */
+/** Editor de un documento (solo admins): todo el documento en un editor, con borrador y publicación. */
 export default function EditorPage(props: Props) {
   const page = useEditorPage(() => props.id);
 
@@ -59,131 +66,133 @@ export default function EditorPage(props: Props) {
                   <>
                     <section class={styles.intro}>
                       <span class={styles.eyebrow}>Editando</span>
-                      <h1 class={styles.title}>{doc().title}</h1>
-                      <div class={styles.actions}>
-                        <span class={styles.status} role="status">
-                          {statusText()}
-                        </span>
-                        <button
-                          type="button"
-                          class={styles.button}
-                          disabled={page.busy()}
-                          onClick={() => page.setPreviewing(!page.previewing())}
-                        >
-                          {page.previewing()
-                            ? 'Seguir editando'
-                            : 'Vista previa'}
-                        </button>
-                        <button
-                          type="button"
-                          class={styles.button}
-                          disabled={
-                            !page.dirty() || page.saving() || page.busy()
-                          }
-                          onClick={() => void page.save()}
-                        >
-                          Guardar borrador
-                        </button>
-                        <button
-                          type="button"
-                          class={`${styles.button} ${styles.primary}`}
-                          disabled={
-                            (!page.dirty() && !page.hasDraft()) ||
-                            page.saving() ||
-                            page.busy()
-                          }
-                          onClick={() => void page.publish()}
-                        >
-                          Publicar…
-                        </button>
-                        <button
-                          type="button"
-                          class={styles.button}
-                          disabled={page.busy()}
-                          onClick={() => void page.discard()}
-                        >
-                          Descartar
-                        </button>
-                      </div>
-                    </section>
-
-                    <div class={styles.content}>
-                      <Show when={page.stale()}>
-                        <p class={styles.warn} role="status">
-                          El documento publicado cambió después de que empezaste
-                          este borrador. Al publicar se te va a preguntar.
-                        </p>
-                      </Show>
-
-                      <Show when={page.problem()}>
-                        {(current) => (
-                          <div class={styles.problem} role="alert">
-                            <strong>{current().message}</strong>
-                            <Show when={current().details.length > 0}>
-                              <ul>
-                                <For each={current().details}>
-                                  {(detail) => <li>{detail}</li>}
-                                </For>
-                              </ul>
-                            </Show>
-                            <Show when={current().code === 'conflict'}>
-                              <button
-                                type="button"
-                                class={styles.button}
-                                onClick={() => void page.reload()}
-                              >
-                                Recargar el borrador
-                              </button>
-                            </Show>
-                          </div>
-                        )}
-                      </Show>
-
-                      <Show
-                        when={!page.previewing()}
-                        fallback={
-                          <div class={styles.preview}>
-                            <For each={doc().sections}>
-                              {(section) => (
-                                <section class={styles.section}>
-                                  <h2 class={styles.previewTitle}>
-                                    {section.num}. {section.title}
-                                  </h2>
-                                  <Prose
-                                    section={section}
-                                    glossaryTerms={doc().glossaryTerms}
-                                    reviewable={false}
-                                  />
-                                </section>
-                              )}
-                            </For>
-                          </div>
-                        }
-                      >
-                        <For each={page.sectionIds()}>
-                          {(sectionId) => (
-                            <EditorSection id={sectionId} page={page} />
-                          )}
-                        </For>
-                        <div class={styles.adds}>
+                      <div class={styles.head}>
+                        <h1 class={styles.title}>{doc().title}</h1>
+                        <div class={styles.actions}>
+                          <span class={styles.status} role="status">
+                            {statusText()}
+                          </span>
                           <button
                             type="button"
                             class={styles.button}
-                            onClick={page.addSection}
+                            disabled={
+                              !page.dirty() || page.saving() || page.busy()
+                            }
+                            onClick={() => void page.save()}
                           >
-                            + Agregar sección
+                            <SaveIcon class={styles.icon} />
+                            Guardar borrador
                           </button>
-                          <Show when={!page.hasGlossary()}>
-                            <button
-                              type="button"
-                              class={styles.button}
-                              onClick={page.addGlossary}
-                            >
-                              + Agregar glosario
-                            </button>
-                          </Show>
+                          <button
+                            type="button"
+                            class={`${styles.button} ${styles.primary}`}
+                            disabled={
+                              (!page.dirty() && !page.hasDraft()) ||
+                              page.saving() ||
+                              page.busy()
+                            }
+                            onClick={() => void page.publish()}
+                          >
+                            <UploadIcon class={styles.icon} />
+                            Publicar…
+                          </button>
+                          <button
+                            type="button"
+                            class={styles.button}
+                            disabled={page.busy()}
+                            onClick={() => void page.discard()}
+                          >
+                            <TrashIcon class={styles.icon} />
+                            Descartar
+                          </button>
                         </div>
-                      </Show>
+                      </div>
+                    </section>
+
+                    <div class={styles.layout}>
+                      <aside class={styles.side}>
+                        <EditorOutline
+                          sections={page.sections()}
+                          currentId={page.currentId()}
+                          onSelect={page.goTo}
+                          sourcesCount={page.sources().length}
+                          onSources={page.goToSources}
+                        />
+                      </aside>
+
+                      <div class={styles.content}>
+                        <Show when={page.stale()}>
+                          <p class={styles.warn} role="status">
+                            El documento publicado cambió después de que
+                            empezaste este borrador. Al publicar se te va a
+                            preguntar.
+                          </p>
+                        </Show>
+
+                        <ChangeWarnings
+                          affected={page.losses()}
+                          renumbered={page.renumbered()}
+                        />
+
+                        <Show when={page.problem()}>
+                          {(current) => (
+                            <div class={styles.problem} role="alert">
+                              <strong>{current().message}</strong>
+                              <Show when={current().details.length > 0}>
+                                <ul>
+                                  <For each={current().details}>
+                                    {(detail) => <li>{detail}</li>}
+                                  </For>
+                                </ul>
+                              </Show>
+                              <Show when={current().code === 'conflict'}>
+                                <button
+                                  type="button"
+                                  class={styles.button}
+                                  onClick={() => void page.reload()}
+                                >
+                                  Recargar el borrador
+                                </button>
+                              </Show>
+                            </div>
+                          )}
+                        </Show>
+
+                        <div class={styles.editing}>
+                          <DocumentEditor
+                            sections={page.sections()}
+                            onChange={page.setSections}
+                            onSettings={(id) => void page.openSettings(id)}
+                            onReady={page.ready}
+                          />
+                          <GlossaryLinks
+                            html={
+                              page
+                                .sections()
+                                .find((item) => item.id === 'glosario')?.html ??
+                              ''
+                            }
+                            links={page.links()}
+                            onForms={page.setGlossaryForms}
+                            onRemove={page.removeGlossaryLink}
+                          />
+                          <SourcesEditor
+                            sources={page.sources()}
+                            onChange={page.setSourceField}
+                            onAdd={page.addSource}
+                            onRemoveLast={() => void page.removeLastSource()}
+                          />
+                          <div class={styles.toolbar}>
+                            <EditorToolbar
+                              variant={
+                                page.inGlossary() ? 'glossary' : 'section'
+                              }
+                              editor={page.editor()}
+                              onCite={() => void page.cite()}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}

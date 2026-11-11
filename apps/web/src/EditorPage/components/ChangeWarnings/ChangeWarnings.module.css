@@ -1,0 +1,7 @@
+.warn {
+  padding: 0.75rem 0.875rem;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--warn);
+  background: var(--warn-bg);
+}

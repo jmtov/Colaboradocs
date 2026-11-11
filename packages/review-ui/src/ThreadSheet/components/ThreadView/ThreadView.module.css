@@ -97,4 +97,5 @@
   margin-left: auto;
   color: var(--danger);
   border-color: var(--danger);
+  --lift-color: var(--danger);
 }

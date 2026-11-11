@@ -16,6 +16,7 @@
   background: var(--fg);
   border: 1px solid var(--fg);
   cursor: pointer;
+  --lift-color: var(--fg);
 }
 
 .icon {

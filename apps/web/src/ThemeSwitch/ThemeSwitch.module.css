@@ -15,8 +15,6 @@
   background: none;
   border: 1px solid var(--line-strong);
   margin: 0 -1px -1px 0;
-  /* La opción elegida va rellena: su sombra no puede salir del color del texto (que es el fondo). */
-  --lift-color: var(--fg);
 }
 
 .option:hover {
@@ -30,6 +28,7 @@
   color: var(--bg);
   background: var(--fg);
   border-color: var(--fg);
+  --lift-color: var(--fg);
 }
 
 .icon {

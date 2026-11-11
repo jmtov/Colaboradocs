@@ -1,0 +1,88 @@
+.eyebrow {
+  display: block;
+  margin-bottom: 0.625rem;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.link {
+  display: flex;
+  gap: 0.625rem;
+  align-items: baseline;
+  padding: 0.4375rem 0.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+  text-align: left;
+  background: none;
+  border: 0;
+}
+
+.link:hover {
+  color: var(--fg);
+  background: var(--tint);
+}
+
+.current {
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--tint);
+}
+
+.number {
+  flex: none;
+  min-width: 1rem;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--faint);
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Listo: lleno; borrador: medio; pendiente: solo el contorno. */
+.status {
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--muted);
+}
+
+.status[data-status="listo"] {
+  background: var(--muted);
+}
+
+.status[data-status="borrador"] {
+  background: color-mix(in srgb, var(--muted) 40%, var(--bg));
+}
+
+.sources {
+  margin-top: 0.5rem;
+  border-top: 1px dashed var(--line-strong);
+}
+
+@media (width <= 1000px) {
+  .list {
+    flex-direction: row;
+    gap: 0.25rem;
+    padding-bottom: 0.25rem;
+    overflow-x: auto;
+  }
+
+  .link {
+    white-space: nowrap;
+  }
+
+  .sources {
+    margin-top: 0;
+    border-top: 0;
+  }
+}

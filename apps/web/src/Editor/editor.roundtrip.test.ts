@@ -2,12 +2,13 @@
 
 import { Editor, type JSONContent } from '@tiptap/core';
 import { describe, expect, it } from 'vitest';
+import { sectionsToHtml } from './document.convert';
 import { editorExtensions } from './editor.extensions';
 import { roundTrip } from './editor.html';
 
 /** Los nodos en línea del primer párrafo, tal como los ve el editor. */
 function firstParagraphContent(editor: Editor): JSONContent[] {
-  const paragraph: JSONContent | undefined = editor.getJSON().content?.[0];
+  const paragraph: JSONContent | undefined = editor.getJSON().content?.[1];
   return paragraph?.content ?? [];
 }
 
@@ -33,7 +34,12 @@ describe('round-trip del editor', () => {
   it('la cita es un nodo propio (no cursiva) y se escribe igual', () => {
     const html = '<p>Dato. <em>[2, 3]</em> Y <em>énfasis</em>.</p>';
     expect(roundTrip(html)).toBe(html);
-    const editor = new Editor({ extensions: editorExtensions, content: html });
+    const editor = new Editor({
+      extensions: editorExtensions,
+      content: sectionsToHtml([
+        { id: 'x', num: '1', title: 'T', status: 'listo', html },
+      ]),
+    });
     const inline = firstParagraphContent(editor);
     const citation = inline.find((node) => node.type === 'citation');
     expect(citation).toBeDefined();

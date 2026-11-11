@@ -1,13 +1,15 @@
 import { PinGate, ReviewProvider } from '@colaboradocs/review-ui';
-import { Match, Show, Switch } from 'solid-js';
+import { lazy, Match, Show, Suspense, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
-import EditorPage from '@/EditorPage/EditorPage';
 import HomePage from '@/HomePage/HomePage';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
 import { useApp, useDocumentRoute, useHomeRoute } from './App.hooks';
 import styles from './App.module.css';
+
+// Tiptap/ProseMirror (~350 kB) solo se descarga al abrir el editor.
+const EditorPage = lazy(() => import('@/EditorPage/EditorPage'));
 
 /** Un documento: pide su contenido a la API al abrirlo. */
 function DocumentRoute(props: { id: string }) {
@@ -91,7 +93,11 @@ export default function App() {
             </Match>
             <Match when={app.editId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}
-              {(id) => <EditorPage id={id} name={app.name()} />}
+              {(id) => (
+                <Suspense fallback={<Loading>Cargando el editor…</Loading>}>
+                  <EditorPage id={id} name={app.name()} />
+                </Suspense>
+              )}
             </Match>
             <Match when={app.viewId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}

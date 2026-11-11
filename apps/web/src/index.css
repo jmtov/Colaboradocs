@@ -63,27 +63,33 @@
   border-radius: 0;
 }
 
-/* Elementos accionables: al pasar el cursor se despegan del papel (--lift) y dejan
-   una sombra larga y sólida, sin difuminado, que rellena el hueco entre donde
-   estaban y donde quedan, como un bloque extruido. Valen todos los <button>
-   salvo los marcados con data-flat (ítems de menús y listas, texto) y los
-   enlaces marcados con data-lift (tarjetas). `:where` mantiene la especificidad
-   en cero para que un componente pueda sobrescribirlo. Solo con cursor real:
-   en pantallas táctiles el hover se queda pegado.
+/* Elementos accionables: cada botón es como un botón físico (el de una grabadora).
+   El cuadro que lo contiene, el marco, no se mueve nunca; lo que se mueve es la cara.
+   - Al pasar el cursor, la cara sobresale --lift hacia arriba y a la derecha y deja una
+     sombra larga y sólida, sin difuminado, que rellena el hueco hasta el marco, como un
+     bloque extruido.
+   - Al presionar (o si es un botón encendido, aria-pressed="true"), la cara se hunde esos
+     mismos --lift hacia abajo y a la izquierda, dentro del marco: lo que sale del marco no
+     se ve (clip-path) y en el lado contrario se ve el marco (::before). El contenido del
+     botón baja con la cara.
+   Valen todos los <button> salvo los marcados con data-flat (ítems de menús y listas,
+   texto) y los enlaces marcados con data-lift (tarjetas). `:where` mantiene la
+   especificidad en cero para que un componente pueda sobrescribirlo. Solo con cursor
+   real: en pantallas táctiles el hover se queda pegado.
 
-   Todo sale de una sola variable animada, --t (0 en reposo, --lift con el
-   cursor encima): el desplazamiento y el largo de la sombra crecen juntos, y
-   también se encogen juntos al soltar. Hay que registrarla con @property para
-   que el navegador pueda animarla; sin soporte (Safari < 16.4) el efecto
-   funciona igual, pero salta sin transición.
+   Todo sale de una sola variable animada, --t (0 en reposo, +--lift con el cursor
+   encima, -–lift hundido): el desplazamiento y la sombra crecen y se encogen juntos.
+   Hay que registrarla con @property para que el navegador pueda animarla; sin soporte
+   (Safari < 16.4) el efecto funciona igual, pero salta sin transición.
 
-   La sombra es un pseudo-elemento y no un box-shadow: así forma parte del
-   elemento y el hueco que deja al subir sigue siendo clicable (con box-shadow
-   el cursor quedaría fuera del botón y el hover parpadearía).
-   Geometría de ::after: la caja que abarca el elemento levantado y su posición
-   original; el polígono es esa caja menos el elemento (con --t en 0 no tiene
-   área). El `-1px` supone un borde de 1px (la caja absoluta parte del borde
-   interno). */
+   La sombra (::after) y el marco visto al hundirse (::before) son pseudo-elementos y no
+   box-shadow: así forman parte del elemento y el hueco que deja al subir sigue siendo
+   clicable (con box-shadow el cursor quedaría fuera del botón y el hover parpadearía).
+   Los dos son la caja que abarca la cara y el marco; el polígono es esa caja menos la
+   cara (con --s o --d en 0 no tiene área). El `-1px` supone un borde de 1px (la caja
+   absoluta parte del borde interno). El clip-path del marco está siempre puesto y recorta
+   también a los hijos y pseudo-elementos: nada de un botón puede sobresalir de él más de
+   8px (por eso los tooltips no van dentro del botón). */
 @property --t {
   syntax: "<length>";
   inherits: true;
@@ -94,23 +100,60 @@
   --lift: 3px;
   /* Se fija en cada elemento para no heredar el valor de un ancestro levantado. */
   --t: 0px;
+  /* Cuánto está levantado (--s) y cuánto hundido (--d); siempre >= 0, uno de los dos es 0. */
+  --s: max(var(--t), 0px);
+  --d: max(calc(var(--t) * -1), 0px);
+  /* La sombra es del color del borde: el habitual (--line-strong) salvo que el botón
+     tenga otro (relleno, peligro…), y entonces lo pone su propio CSS. Se fija en cada
+     elemento, igual que --t. */
+  --lift-color: var(--line-strong);
   position: relative;
   transform: translate(var(--t), calc(var(--t) * -1));
+  /* El marco: siempre recorta lo que quede abajo y a la izquierda de donde está el botón en
+     reposo (en coordenadas de la cara, a --t hacia dentro), así la cara hundida no se sale.
+     Arriba y a la derecha deja 8px de aire (el marco al hundirse, anillos de foco). Si no está
+     hundido (--t > 0) también deja 8px abajo y a la izquierda, más lo que se despega, para la
+     sombra larga y el anillo; el paso de uno a otro es una rampa casi vertical (en lugar de
+     un salto) justo bajo --t = 0, así que nada se corta de golpe. */
+  clip-path: inset(
+    -8px -8px
+      calc(var(--t) * -1 - clamp(0px, calc((var(--t) + 0.5px) * 1000), 8px))
+      calc(var(--t) * -1 - clamp(0px, calc((var(--t) + 0.5px) * 1000), 8px))
+  );
 }
 
+/* Levantado: la sombra larga, entre la cara y el marco. */
 :where(button:not(:disabled):not([data-flat]), a[data-lift])::after {
   content: "";
   position: absolute;
-  inset: -1px -1px calc(-1px - var(--t)) calc(-1px - var(--t));
+  inset: -1px -1px calc(-1px - var(--s)) calc(-1px - var(--s));
   pointer-events: none;
-  background: var(--lift-color, currentColor);
+  background: var(--lift-color, var(--line-strong));
   clip-path: polygon(
-    0 var(--t),
-    var(--t) 0,
-    var(--t) calc(100% - var(--t)),
-    100% calc(100% - var(--t)),
-    calc(100% - var(--t)) 100%,
+    0 var(--s),
+    var(--s) 0,
+    var(--s) calc(100% - var(--s)),
+    100% calc(100% - var(--s)),
+    calc(100% - var(--s)) 100%,
     0 100%
+  );
+}
+
+/* Hundido: lo que la cara deja al descubierto del marco, arriba y a la derecha. */
+:where(button:not(:disabled):not([data-flat]), a[data-lift])::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1px - var(--d)) calc(-1px - var(--d)) calc(var(--d) - 1px)
+    calc(var(--d) - 1px);
+  pointer-events: none;
+  background: var(--lift-color, var(--line-strong));
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    calc(100% - var(--d)) 100%,
+    calc(100% - var(--d)) var(--d),
+    0 var(--d)
   );
 }
 
@@ -130,10 +173,19 @@
     pointer-events: auto;
   }
 
-  /* Al presionar vuelve al papel. */
+  /* Al presionar se hunde lo mismo que se había despegado (y el marco recorta la cara). */
   :where(button:not(:disabled):not([data-flat]), a[data-lift]):active {
-    --t: 0px;
+    --t: calc(var(--lift) * -1);
   }
+}
+
+/* Encendido: la cara baja --lift y solo se ve lo que queda dentro del marco (el recorte de
+   arriba). Va después del hover: al empatar en especificidad, gana. */
+:where(
+  button:not(:disabled):not([data-flat]),
+  a[data-lift]
+)[aria-pressed="true"] {
+  --t: calc(var(--lift) * -1);
 }
 
 html {

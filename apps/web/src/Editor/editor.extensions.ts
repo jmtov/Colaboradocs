@@ -13,6 +13,7 @@ import {
   DefinitionList,
   DefinitionTerm,
 } from './editor.nodes';
+import { NoteStyle, SectionTitle } from './editor.sections';
 
 /**
  * Una viñeta del formato es un solo texto (con listas anidadas debajo, si
@@ -24,12 +25,24 @@ const SingleParagraphListItem = ListItem.extend({
 });
 
 /**
- * El schema del editor: solo lo que el formato del documento admite
- * (`p, ul, ol, li, strong, em, br, h3-h5, dl, dt, dd`). Lo que no está aquí no
- * se puede escribir ni pegar.
+ * El documento entero en un solo editor: una o más secciones, cada una con su
+ * título (`sectionTitle`) y su cuerpo. Siempre empieza con un título.
  */
-export const editorExtensions = [
-  Document,
+const SectionsDocument = Document.extend({
+  content: '(sectionTitle block*)+',
+});
+
+/**
+ * El schema del editor: solo lo que el formato del documento admite
+ * (`p, ul, ol, li, strong, em, br, h3-h5, dl, dt, dd`) más el título de sección.
+ * Lo que no está aquí no se puede escribir ni pegar.
+ */
+export const createExtensions = (
+  options: { onSettings?: (id: string) => void } = {},
+) => [
+  SectionsDocument,
+  SectionTitle.configure({ onSettings: options.onSettings }),
+  NoteStyle,
   Paragraph,
   Text,
   Bold,
@@ -46,17 +59,5 @@ export const editorExtensions = [
   UndoRedo,
 ];
 
-/**
- * El editor de la nota «Para qué sirve»: un solo párrafo, con énfasis y citas
- * (como lleva hoy el texto real), sin listas ni títulos.
- */
-export const noteExtensions = [
-  Document.extend({ content: 'paragraph' }),
-  Paragraph,
-  Text,
-  Bold,
-  Italic,
-  HardBreak,
-  Citation,
-  UndoRedo,
-];
+/** El schema sin botón de ajustes (para convertir y probar sin interfaz). */
+export const editorExtensions = createExtensions();

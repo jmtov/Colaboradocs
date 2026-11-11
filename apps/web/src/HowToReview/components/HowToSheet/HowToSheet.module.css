@@ -47,4 +47,5 @@
   color: var(--bg);
   background: var(--fg);
   border-color: var(--fg);
+  --lift-color: var(--fg);
 }

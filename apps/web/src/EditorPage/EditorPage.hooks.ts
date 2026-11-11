@@ -1,15 +1,34 @@
 import { ConfirmSheet, useOverlay, useReview } from '@colaboradocs/review-ui';
+import type { Editor } from '@tiptap/core';
 import {
+  createEffect,
   createMemo,
   createSignal,
   onCleanup,
   onMount,
   untrack,
 } from 'solid-js';
-import type { DocumentContent, DocumentSection } from '@/content/content.types';
+import type {
+  DocumentContent,
+  DocumentSection,
+  DocumentSource,
+} from '@/content/content.types';
+import {
+  goToSection,
+  insertCitation,
+  removeSection,
+  sectionAt,
+  updateSection,
+} from '@/Editor/section.commands';
 import { documentPath, navigate } from '@/router/router';
-import { affectedBlocks } from './affected.utils';
+import {
+  type AffectedBlock,
+  affectedBlocks,
+  renumberedSections,
+} from './affected.utils';
+import CitationSheet from './components/CitationSheet/CitationSheet';
 import PublishSheet from './components/PublishSheet/PublishSheet';
+import SectionSheet from './components/SectionSheet/SectionSheet';
 import type { EditorProblem } from './EditorPage.types';
 import {
   type GlossaryLinks,
@@ -17,8 +36,12 @@ import {
   withForms,
   withoutLink,
 } from './glossary.utils';
-import { joinNote, splitNote } from './note.utils';
-import { newAnnex, newSection, sameSections } from './section.utils';
+import {
+  sameSections,
+  withGlossary,
+  withoutEmptyGlossary,
+} from './section.utils';
+import { citationsTo, sameSources } from './sources.utils';
 
 type Status = 'loading' | 'ready' | 'error';
 
@@ -40,15 +63,21 @@ export function useEditorPage(id: () => string) {
   const [base, setBase] = createSignal<DocumentContent | null>(null);
   const [published, setPublished] = createSignal<DocumentContent | null>(null);
   // La copia de trabajo: todas las secciones tal como se están editando. `base` es lo último guardado.
+  // Incluye siempre el glosario (aunque el documento no lo tenga); `saved` es lo que se guarda.
   const [sections, setSections] = createSignal<DocumentSection[]>([]);
+  const saved = createMemo(() => withoutEmptyGlossary(sections()));
   // Los enlaces automáticos del glosario (`glossaryTerms`), también como copia de trabajo.
   const [links, setLinks] = createSignal<GlossaryLinks>({});
+  // La bibliografía (`sources`), también como copia de trabajo.
+  const [sources, setSources] = createSignal<DocumentSource[]>([]);
   const [revision, setRevision] = createSignal(0);
   const [stale, setStale] = createSignal(false);
   const [saving, setSaving] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
   const [problem, setProblem] = createSignal<EditorProblem | null>(null);
-  const [previewing, setPreviewing] = createSignal(false);
+  const [editor, setEditor] = createSignal<Editor>();
+  // La sección donde está el cursor (de ahí sale el panel de la sección actual).
+  const [currentId, setCurrentId] = createSignal<string>();
 
   const isAdmin = () =>
     (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
@@ -62,29 +91,22 @@ export function useEditorPage(id: () => string) {
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
     return {
       ...current,
-      sections: sections(),
+      sections: saved(),
+      sources: sources(),
       ...(keep ? { glossaryTerms: written } : {}),
     };
   });
 
-  // Los ids no cambian al escribir: así el editor de cada sección no se vuelve a crear.
-  const sectionIds = createMemo(
-    () => sections().map((section) => section.id),
-    [],
-    { equals: (a, b) => a.join('|') === b.join('|') },
-  );
-
   const dirty = createMemo(() => {
-    const saved = base();
-    if (!saved) return false;
+    const last = base();
+    if (!last) return false;
     return (
-      !sameSections(saved.sections, sections()) ||
-      !sameLinks(saved.glossaryTerms ?? {}, links())
+      !sameSections(last.sections, saved()) ||
+      !sameSources(last.sources, sources()) ||
+      !sameLinks(last.glossaryTerms ?? {}, links())
     );
   });
   const hasDraft = () => revision() > 0;
-  const hasGlossary = () =>
-    sections().some((section) => section.id === 'glosario');
 
   async function load() {
     setStatus('loading');
@@ -109,8 +131,9 @@ export function useEditorPage(id: () => string) {
       setStatus('error');
       return;
     }
-    setSections(base()?.sections ?? []);
+    setSections(withGlossary(base()?.sections ?? []));
     setLinks(base()?.glossaryTerms ?? {});
+    setSources(base()?.sources ?? []);
     setRevision(draft.value ? draft.value.revision : 0);
     setStale(draft.value ? draft.value.stale : false);
     setStatus('ready');
@@ -125,40 +148,135 @@ export function useEditorPage(id: () => string) {
   window.addEventListener('beforeunload', warn);
   onCleanup(() => window.removeEventListener('beforeunload', warn));
 
-  type SectionField = 'title' | 'description' | 'html';
+  /** El editor del documento está listo: sigue al cursor para saber en qué sección está. */
+  function ready(instance: Editor) {
+    setEditor(instance);
+    setCurrentId(sectionAt(instance));
+    instance.on('transaction', () => setCurrentId(sectionAt(instance)));
+  }
 
-  function setSectionField(
-    sectionId: string,
-    field: SectionField,
+  /** Lo que se ve en el aviso: se recalcula cuando se deja de escribir un momento. */
+  const [settled, setSettled] = createSignal<DocumentContent | null>(null);
+  createEffect(() => {
+    const current = content();
+    const timer = setTimeout(() => setSettled(current), 400);
+    onCleanup(() => clearTimeout(timer));
+  });
+
+  /** Lo que se perdería, en bloques con comentarios u OK, frente a lo publicado. */
+  function lossesFor(next: DocumentContent | null): AffectedBlock[] {
+    const before = published();
+    if (!before || !next) return [];
+    const snapshot = review.snapshot();
+    return affectedBlocks(
+      before,
+      next,
+      snapshot?.comments ?? [],
+      snapshot?.approvals ?? [],
+    );
+  }
+  const losses = createMemo(() => lossesFor(settled()));
+  const renumbered = createMemo(() => {
+    const before = published();
+    const next = settled();
+    return before && next ? renumberedSections(before, next) : [];
+  });
+
+  const inGlossary = () => currentId() === 'glosario';
+
+  /** Abre los ajustes de una sección (estado, descripción, anexo) y aplica lo que se decida. */
+  async function openSettings(sectionId: string) {
+    const instance = editor();
+    const section = sections().find((item) => item.id === sectionId);
+    if (!instance || !section) return;
+    const result = await overlay.sheet(SectionSheet, {
+      section,
+      canRemove: saved().length > 1,
+    });
+    if (!result) return;
+    if ('remove' in result) await removeSectionById(sectionId);
+    else updateSection(instance, sectionId, result.attrs);
+  }
+
+  /** Borra una sección, con confirmación que dice qué comentarios y OK deja atrás. */
+  async function removeSectionById(sectionId: string) {
+    const instance = editor();
+    const section = sections().find((item) => item.id === sectionId);
+    const next = content();
+    if (!instance || !section || !next) return;
+    const without = {
+      ...next,
+      sections: next.sections.filter((item) => item.id !== section.id),
+    };
+    const count = (list: AffectedBlock[]) =>
+      list.reduce((sum, b) => sum + b.comments + b.approvals, 0);
+    const lost = count(lossesFor(without)) - count(lossesFor(next));
+    const ok = await confirm(
+      'Eliminar la sección',
+      lost > 0
+        ? `Se borra «${section.title}» con todo su texto. ${lost} comentarios y OK dejan de aplicar. Deshacer (Ctrl+Z) la recupera mientras no cierres el editor.`
+        : `Se borra «${section.title}» con todo su texto. Deshacer (Ctrl+Z) la recupera mientras no cierres el editor.`,
+      'Eliminar',
+      true,
+    );
+    if (ok) removeSection(instance, section.id);
+  }
+
+  function goTo(id: string) {
+    const instance = editor();
+    if (instance) goToSection(instance, id);
+  }
+
+  function setSourceField(
+    index: number,
+    field: keyof DocumentSource,
     value: string,
   ) {
-    // Sin descripción es «no hay», no un texto vacío: así volver a dejarla vacía no cuenta como cambio.
-    const next = field === 'description' && !value.trim() ? undefined : value;
-    setSections((current) =>
-      current.map((section) =>
-        section.id === sectionId ? { ...section, [field]: next } : section,
+    setSources((current) =>
+      current.map((source, at) =>
+        at === index ? { ...source, [field]: value } : source,
       ),
     );
   }
 
-  function updateHtml(sectionId: string, change: (html: string) => string) {
-    setSections((current) =>
-      current.map((section) =>
-        section.id === sectionId
-          ? { ...section, html: change(section.html) }
-          : section,
-      ),
-    );
+  function addSource() {
+    setSources((current) => [...current, { label: '', url: '' }]);
   }
 
-  /** La nota «Para qué sirve» (HTML en línea): es el primer párrafo de la sección. */
-  function setSectionNote(sectionId: string, note: string) {
-    updateHtml(sectionId, (html) => joinNote(note, splitNote(html).body));
+  /** Quita la última fuente; si el texto tiene citas a ella, lo dice antes. */
+  async function removeLastSource() {
+    const count = sources().length;
+    if (count === 0) return;
+    const cited = citationsTo(sections(), count, count);
+    if (
+      cited > 0 &&
+      !(await confirm(
+        'Quitar la fuente',
+        `${cited === 1 ? 'Hay 1 cita' : `Hay ${cited} citas`} en el texto que remite a la fuente [${count}]. Si la quitas, esa cita queda sin fuente.`,
+        'Quitar',
+        true,
+      ))
+    ) {
+      return;
+    }
+    setSources((current) => current.slice(0, -1));
   }
 
-  /** El cuerpo de la sección: todo menos la nota. */
-  function setSectionBody(sectionId: string, body: string) {
-    updateHtml(sectionId, (html) => joinNote(splitNote(html).note, body));
+  /** Elegir fuentes de la bibliografía e insertar la cita donde está el cursor. */
+  async function cite() {
+    const instance = editor();
+    if (!instance) return;
+    const numbers = await overlay.sheet(CitationSheet, {
+      sources: sources(),
+    });
+    if (numbers) insertCitation(instance, numbers);
+  }
+
+  /** Lleva a la bibliografía y enfoca su primer campo (o, si no hay fuentes, el botón de agregar). */
+  function goToSources() {
+    const block = document.getElementById('bibliografia');
+    block?.scrollIntoView?.({ block: 'start' });
+    block?.querySelector<HTMLElement>('input, button')?.focus();
   }
 
   /** Cómo aparece un término del glosario en el texto (separado por comas). */
@@ -168,32 +286,6 @@ export function useEditorPage(id: () => string) {
 
   function removeGlossaryLink(form: string) {
     setLinks((current) => withoutLink(current, form));
-  }
-
-  /** Agrega la sección «Glosario» como anexo, si todavía no hay. */
-  function addGlossary() {
-    const created = newAnnex(sections(), 'glosario', 'Glosario');
-    setSections((current) => [...current, created]);
-    focusSection(created.id);
-  }
-
-  function focusSection(id: string) {
-    requestAnimationFrame(() => {
-      const card = document.getElementById(`edit-${id}`);
-      card?.scrollIntoView?.({ block: 'center' });
-      card?.querySelector('input')?.focus();
-    });
-  }
-
-  /** Agrega una sección después de la última numerada y lleva el cursor a su título. */
-  function addSection() {
-    const { section, index } = newSection(sections());
-    setSections((current) => [
-      ...current.slice(0, index),
-      section,
-      ...current.slice(index),
-    ]);
-    focusSection(section.id);
   }
 
   /** Guarda `next` (por defecto, lo que hay) como borrador. Devuelve si quedó guardado. */
@@ -290,8 +382,8 @@ export function useEditorPage(id: () => string) {
 
     setBusy(true);
     const toPublish = { ...current, version, updated: today() };
-    const saved = await save(toPublish);
-    if (!saved) {
+    const wasSaved = await save(toPublish);
+    if (!wasSaved) {
       setBusy(false);
       return;
     }
@@ -326,25 +418,31 @@ export function useEditorPage(id: () => string) {
     loadError,
     isAdmin,
     content,
-    sectionIds,
     sections,
+    editor,
+    ready,
+    currentId,
+    inGlossary,
+    openSettings,
+    goTo,
+    losses,
+    renumbered,
+    setSections,
     dirty,
     hasDraft,
-    hasGlossary,
     stale,
     saving,
     busy,
     problem,
-    previewing,
-    setPreviewing,
-    setSectionField,
-    setSectionNote,
-    setSectionBody,
     links,
+    sources,
+    setSourceField,
+    addSource,
+    removeLastSource,
+    goToSources,
+    cite,
     setGlossaryForms,
     removeGlossaryLink,
-    addSection,
-    addGlossary,
     save: () => save(),
     discard,
     publish,

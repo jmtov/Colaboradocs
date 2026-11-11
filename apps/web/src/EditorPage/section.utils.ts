@@ -14,68 +14,38 @@ export function sameSections(
   });
 }
 
-/** Un id de sección a partir del título: minúsculas, sin tildes, con guiones y distinto de los que ya hay. */
-export function sectionIdFrom(title: string, taken: string[]): string {
-  const base =
-    title
-      .normalize('NFD')
-      .replace(/\p{M}/gu, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 56) || 'seccion';
-  if (!taken.includes(base)) return base;
-  let n = 2;
-  while (taken.includes(`${base}-${n}`)) n += 1;
-  return `${base}-${n}`;
-}
+/** La sección que lleva el glosario (términos y definiciones). */
+export const GLOSSARY_ID = 'glosario';
 
-const isNumbered = (section: DocumentSection) => /^\d+$/.test(section.num);
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 /**
- * Una sección nueva y dónde va: después de la última numerada (antes de los
- * anexos), con el número siguiente. Se llama «Nueva sección» hasta que se renombre.
+ * El editor siempre ofrece la sección «Glosario» (un anexo, al final de las
+ * secciones y antes de la bibliografía), aunque el documento no la tenga: así
+ * hay dónde escribir términos sin un botón aparte. Vacía no se guarda
+ * (`withoutEmptyGlossary`), así que un documento que no la usa no cambia.
  */
-export function newSection(sections: DocumentSection[]): {
-  section: DocumentSection;
-  index: number;
-} {
-  const numbers = sections.filter(isNumbered).map((s) => Number(s.num));
-  const lastNumbered = sections.map(isNumbered).lastIndexOf(true);
-  const title = 'Nueva sección';
-  return {
-    section: {
-      id: sectionIdFrom(
-        title,
-        sections.map((s) => s.id),
-      ),
-      num: String(numbers.length > 0 ? Math.max(...numbers) + 1 : 1),
-      title,
+export function withGlossary(sections: DocumentSection[]): DocumentSection[] {
+  if (sections.some((section) => section.id === GLOSSARY_ID)) return sections;
+  const used = sections.map((section) => section.num);
+  const letter = [...LETTERS].find((item) => !used.includes(item)) ?? 'Z';
+  return [
+    ...sections,
+    {
+      id: GLOSSARY_ID,
+      num: letter,
+      title: 'Glosario',
       status: 'borrador',
       html: '',
     },
-    index: lastNumbered + 1,
-  };
+  ];
 }
 
-/** Un anexo nuevo (letra libre: A, B…) al final del documento. */
-export function newAnnex(
+/** Lo que se guarda: las secciones sin el glosario si está vacío. */
+export function withoutEmptyGlossary(
   sections: DocumentSection[],
-  id: string,
-  title: string,
-): DocumentSection {
-  const used = sections.map((section) => section.num);
-  const letter =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find((l) => !used.includes(l)) ??
-    'Z';
-  return {
-    id: sectionIdFrom(
-      id,
-      sections.map((section) => section.id),
-    ),
-    num: letter,
-    title,
-    status: 'borrador',
-    html: '',
-  };
+): DocumentSection[] {
+  return sections.filter(
+    (section) => section.id !== GLOSSARY_ID || section.html.trim() !== '',
+  );
 }
