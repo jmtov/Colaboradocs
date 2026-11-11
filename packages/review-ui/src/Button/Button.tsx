@@ -73,6 +73,8 @@ export default function Button(props: Props) {
         <a
           href={href()}
           class={classes()}
+          // data-lift: el despegue y el hundido de index.css, como en los <button>
+          data-lift
           classList={{ [styles.iconOnly]: props.children === undefined }}
           aria-label={props['aria-label']}
           title={props.title}

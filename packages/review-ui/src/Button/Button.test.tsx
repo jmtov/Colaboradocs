@@ -79,6 +79,8 @@ describe('Button', () => {
     ));
     const link = host.querySelector('a') as HTMLAnchorElement;
     expect(link.getAttribute('href')).toBe('/inicio');
+    // sin esto no tiene el despegue de index.css (que vale para `button` y `a[data-lift]`)
+    expect(link.hasAttribute('data-lift')).toBe(true);
     const click = new MouseEvent('click', { bubbles: true, cancelable: true });
     link.dispatchEvent(click);
     expect(click.defaultPrevented).toBe(true);
