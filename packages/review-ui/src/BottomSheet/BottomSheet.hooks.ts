@@ -21,6 +21,11 @@ type BottomSheetOptions = {
 export function useBottomSheet(options: BottomSheetOptions) {
   let dialog!: HTMLDialogElement;
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  // Mientras la hoja está abierta es modal (el resto de la página, inerte). Al empezar a salir
+  // deja de serlo: así la página responde de inmediato y solo se anima la salida.
+  let modal = false;
+  // Quien tenía el foco al abrir: `close()` se lo devuelve, y `show()` se lo quitaría de nuevo.
+  let opener: HTMLElement | null = null;
   // Cada apertura o cierre invalida al anterior (un cuadro pendiente de una apertura vieja no debe pisar un cierre).
   let token = 0;
   const titleId = createUniqueId();
@@ -44,10 +49,20 @@ export function useBottomSheet(options: BottomSheetOptions) {
     return Number.isFinite(seconds) ? seconds * 1000 : 0;
   }
 
+  /** Sigue abierta y saliendo, pero sin bloquear la página: de modal a no modal. */
+  function releaseModal() {
+    modal = false;
+    dialog.close();
+    dialog.show();
+    // `show()` enfoca lo primero de la hoja: el foco vuelve a quien abrió.
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
+  }
+
   function finishClose() {
     clearTimeout(closeTimer);
     if (options.open()) return; // se volvió a abrir mientras salía
     if (dialog.open) dialog.close();
+    modal = false;
     delete dialog.dataset.state;
     setRendered(false);
   }
@@ -57,7 +72,13 @@ export function useBottomSheet(options: BottomSheetOptions) {
     token += 1;
     const mine = token;
     if (options.open()) {
-      if (!dialog.open) dialog.showModal();
+      if (!modal) {
+        // Primera apertura, o se reabre mientras salía (ya sin modal): vuelve a ser modal.
+        if (dialog.open) dialog.close();
+        opener = document.activeElement as HTMLElement | null;
+        dialog.showModal();
+        modal = true;
+      }
       // Se fuerza el cálculo de estilo con la hoja fuera de pantalla; recién después se
       // pide el estado final, para que haya transición y no aparezca de golpe.
       dialog.getBoundingClientRect();
@@ -66,6 +87,7 @@ export function useBottomSheet(options: BottomSheetOptions) {
       });
     } else if (dialog.open) {
       dialog.dataset.state = 'closing';
+      if (modal) releaseModal();
       const ms = transitionMs();
       if (ms <= 0) finishClose();
       else closeTimer = setTimeout(finishClose, ms + CLOSE_GRACE_MS);
@@ -137,7 +159,10 @@ export function useBottomSheet(options: BottomSheetOptions) {
     onTransitionEnd,
     onBackdropClick,
     onCancel,
-    onNativeClose: () => options.onClose(),
+    // El `close` que provoca `releaseModal` no es un cierre pedido por la persona.
+    onNativeClose: () => {
+      if (dialog.dataset.state !== 'closing') options.onClose();
+    },
     onCloseClick: () => options.onClose(),
   };
 }

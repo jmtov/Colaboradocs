@@ -1,7 +1,12 @@
 .sheet {
+  /* Igual en modal y no modal (al salir deja de ser modal): fija abajo, sobre la página. */
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-fixed);
   width: min(760px, 100%);
   max-width: 100%;
   max-height: var(--sheet-max-height, 80dvh);
+  height: fit-content;
   margin: auto auto 0;
   padding: 0;
   color: var(--fg);
@@ -21,6 +26,29 @@
   transform: translateY(var(--sheet-shift, 0px));
 }
 
+/* Saliendo: la hoja ya no es modal, así que la página responde y la hoja no atrapa clics
+   (`pointer-events`). Sin `::backdrop`, el fondo oscuro se desvanece con una sombra
+   enorme alrededor de la hoja, que tampoco recibe clics. */
+.sheet[data-state="closing"] {
+  pointer-events: none;
+  animation: scrim-out var(--sheet-duration, 500ms)
+    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1)) both;
+}
+
+@keyframes scrim-out {
+  from {
+    box-shadow:
+      0 -10px 40px rgb(0 0 0 / 25%),
+      0 0 0 100vmax rgb(0 0 0 / 45%);
+  }
+
+  to {
+    box-shadow:
+      0 -10px 40px rgb(0 0 0 / 25%),
+      0 0 0 100vmax rgb(0 0 0 / 0%);
+  }
+}
+
 .sheet::backdrop {
   background: rgb(0 0 0 / 45%);
   opacity: 0;
@@ -38,9 +66,13 @@
   .sheet::backdrop {
     transition-duration: 0s;
   }
+
+  .sheet[data-state="closing"] {
+    animation-duration: 0s;
+  }
 }
 
-:global(:root:has(dialog[open])) {
+:global(:root:has(dialog[open]:not([data-state="closing"]))) {
   overflow: hidden;
 }
 

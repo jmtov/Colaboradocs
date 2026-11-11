@@ -159,3 +159,67 @@ describe('BottomSheet con transición', () => {
     Reflect.deleteProperty(window, 'visualViewport');
   });
 });
+
+describe('BottomSheet: al salir deja de ser modal (la página responde mientras se anima)', () => {
+  it('al empezar a cerrar pasa de modal a no modal, sin avisar como si la persona la hubiera cerrado', async () => {
+    cssTransition('0.05s');
+    const { dialog, setOpen, onClose } = mount(true);
+    await wait(40);
+    const calls: string[] = [];
+    for (const method of ['showModal', 'show', 'close'] as const) {
+      const original = HTMLDialogElement.prototype[method];
+      vi.spyOn(HTMLDialogElement.prototype, method).mockImplementation(
+        function (this: HTMLDialogElement) {
+          calls.push(method);
+          original.call(this);
+        },
+      );
+    }
+
+    setOpen(false);
+    // Saliendo: se suelta lo modal (close) y sigue abierta sin bloquear (show).
+    expect(calls.slice(0, 2)).toEqual(['close', 'show']);
+    expect(dialog.open).toBe(true);
+    expect(dialog.dataset.state).toBe('closing');
+    await wait(220);
+    expect(dialog.open).toBe(false);
+    // El `close` del cambio no es un cierre pedido: `onClose` no se vuelve a llamar.
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('el foco vuelve a quien abrió la hoja, aunque show() lo lleve adentro', async () => {
+    cssTransition('0.05s');
+    const opener = document.createElement('button');
+    document.body.appendChild(opener);
+    opener.focus();
+    const { dialog, setOpen } = mount();
+    setOpen(true);
+    await wait(40);
+    // Como hace el navegador: show() enfoca lo primero enfocable de la hoja.
+    const original = HTMLDialogElement.prototype.show;
+    vi.spyOn(HTMLDialogElement.prototype, 'show').mockImplementation(function (
+      this: HTMLDialogElement,
+    ) {
+      original.call(this);
+      this.querySelector('button')?.focus();
+    });
+
+    setOpen(false);
+    expect(dialog.open).toBe(true);
+    expect(document.activeElement).toBe(opener);
+  });
+
+  it('si se reabre mientras sale, vuelve a ser modal', async () => {
+    cssTransition('0.05s');
+    const { dialog, setOpen } = mount(true);
+    await wait(40);
+    setOpen(false);
+    await wait(10);
+    const showModal = vi.spyOn(HTMLDialogElement.prototype, 'showModal');
+    setOpen(true);
+    expect(showModal).toHaveBeenCalledTimes(1);
+    await wait(200);
+    expect(dialog.open).toBe(true);
+    expect(dialog.dataset.state).toBe('open');
+  });
+});

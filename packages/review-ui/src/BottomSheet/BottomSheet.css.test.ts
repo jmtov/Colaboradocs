@@ -33,4 +33,26 @@ describe('BottomSheet.module.css', () => {
       /@media \(prefers-reduced-motion: reduce\)\s*\{[^}]*transition-duration:\s*0s/,
     );
   });
+
+  it('saliendo no atrapa clics, el fondo se desvanece con una sombra y la página no queda bloqueada', () => {
+    // la hoja que sale no recibe clics
+    expect(css).toMatch(
+      /\.sheet\[data-state="closing"\]\s*\{[^}]*pointer-events:\s*none/,
+    );
+    // sin ::backdrop (ya no es modal), el fondo oscuro sale con una sombra que se desvanece
+    expect(css).toMatch(
+      /@keyframes scrim-out[\s\S]*100vmax rgb\(0 0 0 \/ 45%\)/,
+    );
+    // el bloqueo del scroll de la página se suelta al empezar a salir
+    expect(css).toMatch(
+      /:root:has\(dialog\[open\]:not\(\[data-state="closing"\]\)\)/,
+    );
+  });
+
+  it('es fija abajo igual en modal y no modal (no depende de los estilos del navegador para modales)', () => {
+    const sheet = /(?:^|\n)\.sheet\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(sheet).toMatch(/position:\s*fixed/);
+    expect(sheet).toMatch(/inset:\s*0/);
+    expect(sheet).toMatch(/z-index:\s*var\(--z-fixed\)/);
+  });
 });
