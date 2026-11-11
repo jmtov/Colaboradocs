@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   MENU_CLOSE_TIMEOUT_MS,
+  menuLeft,
   openAfterMenuCloses,
   type PopoverLike,
 } from './popover.utils';
@@ -73,5 +74,19 @@ describe('openAfterMenuCloses', () => {
     fireToggle();
     vi.advanceTimersByTime(MENU_CLOSE_TIMEOUT_MS * 2);
     expect(open).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('menuLeft', () => {
+  it('alinea el menú con el borde derecho del botón si cabe', () => {
+    expect(menuLeft(400, 200, 500)).toBe(200);
+  });
+
+  it('si se saldría por la izquierda, queda a 8px del borde', () => {
+    expect(menuLeft(245, 288, 350)).toBe(8);
+  });
+
+  it('si se saldría por la derecha, queda a 8px del borde derecho', () => {
+    expect(menuLeft(520, 200, 500)).toBe(292);
   });
 });

@@ -1,7 +1,10 @@
 export { default as AccessPanel } from './AccessPanel/AccessPanel';
 export { default as ActionMenu } from './ActionMenu/ActionMenu';
 export type { ActionMenuItem } from './ActionMenu/ActionMenu.types';
-export { openAfterMenuCloses } from './ActionMenu/popover.utils';
+export {
+  openAfterMenuCloses,
+  toggleMenuBelow,
+} from './ActionMenu/popover.utils';
 export { ApiRequestError, fetchSpace } from './api/review.api';
 export { default as BlockLayer } from './BlockLayer/BlockLayer';
 export { default as BottomSheet } from './BottomSheet/BottomSheet';

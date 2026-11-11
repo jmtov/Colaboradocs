@@ -1,11 +1,11 @@
 import {
   openAfterMenuCloses,
+  toggleMenuBelow,
   useOverlay,
   useReview,
 } from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import UploadSheet from '@/DocumentsPage/components/UploadSheet/UploadSheet';
-import { MENU_GAP_PX } from './DocumentMenu.constants';
 
 /**
  * Estado y acciones del menú de un documento. `id` llega como accessor porque
@@ -20,13 +20,7 @@ export function useDocumentMenu(id: () => string) {
   const [busy, setBusy] = createSignal(false);
 
   function toggle() {
-    if (!refs.menu.matches(':popover-open')) {
-      // El popover vive en la capa superior: se ubica bajo el botón, alineado a la derecha.
-      const rect = refs.trigger.getBoundingClientRect();
-      refs.menu.style.top = `${rect.bottom + MENU_GAP_PX}px`;
-      refs.menu.style.right = `${document.documentElement.clientWidth - rect.right}px`;
-    }
-    refs.menu.togglePopover();
+    toggleMenuBelow(refs.trigger, refs.menu);
   }
 
   function onToggle(event: ToggleEvent) {

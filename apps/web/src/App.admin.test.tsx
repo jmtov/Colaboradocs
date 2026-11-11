@@ -38,7 +38,11 @@ const wait = (ms = 60) => new Promise((resolve) => setTimeout(resolve, ms));
 const disposers: (() => void)[] = [];
 
 // happy-dom no implementa el popover del menú: al pulsar, no pasa nada y se navega al instante.
-Object.assign(HTMLElement.prototype, { togglePopover() {}, hidePopover() {} });
+Object.assign(HTMLElement.prototype, {
+  togglePopover() {},
+  showPopover() {},
+  hidePopover() {},
+});
 
 /** Pulsa «Documentos» en el menú de la sesión, como lo hace el admin. */
 function openDocumentsFromMenu(host: HTMLElement) {

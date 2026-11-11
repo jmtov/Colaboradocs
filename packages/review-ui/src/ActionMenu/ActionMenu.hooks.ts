@@ -1,7 +1,6 @@
 import { createSignal } from 'solid-js';
-import { MENU_GAP_PX } from './ActionMenu.constants';
 import type { ActionMenuItem } from './ActionMenu.types';
-import { openAfterMenuCloses } from './popover.utils';
+import { openAfterMenuCloses, toggleMenuBelow } from './popover.utils';
 
 /** Estado y acciones de un menú de acciones. Las refs las asigna el .tsx. */
 export function useActionMenu() {
@@ -9,13 +8,7 @@ export function useActionMenu() {
   const [open, setOpen] = createSignal(false);
 
   function toggle() {
-    if (!refs.menu.matches(':popover-open')) {
-      // El popover vive en la capa superior: se ubica bajo el botón, alineado a la derecha.
-      const rect = refs.trigger.getBoundingClientRect();
-      refs.menu.style.top = `${rect.bottom + MENU_GAP_PX}px`;
-      refs.menu.style.right = `${document.documentElement.clientWidth - rect.right}px`;
-    }
-    refs.menu.togglePopover();
+    toggleMenuBelow(refs.trigger, refs.menu);
   }
 
   function onToggle(event: ToggleEvent) {
