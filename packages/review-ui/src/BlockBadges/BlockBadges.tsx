@@ -23,7 +23,7 @@ export default function BlockBadges(props: Props) {
         <Button
           icon={CheckIcon}
           variant="ok"
-          size="sm"
+          size="xs"
           class={styles.pill}
           aria-label={`${props.approvals} OK${props.mine ? ' (incluido el tuyo)' : ''}: ver quién`}
           onClick={props.onOpenApprovals}
@@ -35,7 +35,7 @@ export default function BlockBadges(props: Props) {
         <Button
           icon={CommentIcon}
           variant="ok"
-          size="sm"
+          size="xs"
           class={styles.pill}
           aria-label={`${props.openThreads} ${props.openThreads === 1 ? 'hilo abierto' : 'hilos abiertos'}: ver comentarios`}
           onClick={props.onOpenComments}

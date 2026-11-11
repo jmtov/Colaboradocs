@@ -1,9 +1,10 @@
 import { Button, useReview } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
+import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
+import PencilIcon from '@/icons/PencilIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
-import Link from '@/router/Link';
-import { editPath } from '@/router/router';
+import { editPath, navigate } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
@@ -43,9 +44,14 @@ export default function TopBar(props: Props) {
     <header class={styles.top}>
       <div class={styles.inner}>
         <Show when={props.showBack}>
-          <Link href="/" class={styles.back} lift>
-            ← Documentos
-          </Link>
+          <Button
+            icon={ArrowLeftIcon}
+            size="sm"
+            href="/"
+            onClick={() => navigate('/')}
+          >
+            Documentos
+          </Button>
         </Show>
         <button
           type="button"
@@ -70,12 +76,18 @@ export default function TopBar(props: Props) {
             <span role="status">{statusText()}</span>
           </Show>
           <Show when={isAdmin()}>
-            <Link href={editPath(props.documentId)} class={styles.back} lift>
+            <Button
+              icon={PencilIcon}
+              size="sm"
+              href={editPath(props.documentId)}
+              onClick={() => navigate(editPath(props.documentId))}
+            >
               Editar
-            </Link>
+            </Button>
           </Show>
           <Button
             icon={PrinterIcon}
+            size="sm"
             aria-label="Imprimir o guardar como PDF"
             title="Imprimir o guardar como PDF"
             onClick={props.onPrint}

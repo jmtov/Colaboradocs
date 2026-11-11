@@ -63,7 +63,7 @@ Convención: `Componente/Componente.tsx` + `.module.css`; utilidades en `*.utils
 
 ## Botones
 
-Todo lo que se toca para hacer algo es un `Button` (`packages/review-ui/src/Button/`, lo usan las dos apps): un solo aspecto, siempre con ícono (sin texto, es solo de ícono), `variant` (`default`, `primary` —la acción principal de la pantalla—, `danger`, `dangerSolid`, `ok`), `size` (`md`, o `sm` para insignias y acciones dentro de un texto) y `pressed` para los que se encienden. Con `href` es un enlace. `IconButton` es un `Button` solo de ícono más un tooltip. Un `class` en un `Button` es solo para ubicarlo; nunca para su aspecto. No son `Button`: ítems de menú, tarjetas, pestañas y navegación.
+Todo lo que se toca para hacer algo es un `Button` (`packages/review-ui/src/Button/`, lo usan las dos apps): un solo aspecto, siempre con ícono (sin texto, es solo de ícono), `variant` (`default`, `primary` —la acción principal de la pantalla—, `danger`, `dangerSolid`, `ok`), `size` (`md` en formularios y hojas; `sm`, el compacto de las barras y los menús; `xs`, insignias y acciones dentro de un texto) y `pressed` para los que se encienden. Con `href` es un enlace. `IconButton` es un `Button` solo de ícono más un tooltip. Un `class` en un `Button` es solo para ubicarlo; nunca para su aspecto. No son `Button`: ítems de menú, tarjetas, pestañas y navegación.
 
 ## Desarrollo
 

@@ -18,6 +18,7 @@ export default function UserMenu() {
     <>
       <Button
         icon={EllipsisVerticalIcon}
+        size="sm"
         ref={userMenu.refs.trigger}
         aria-label="Menú de la sesión"
         aria-haspopup="true"

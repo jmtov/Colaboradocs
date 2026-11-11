@@ -25,6 +25,7 @@ export default function PageBar(props: Props) {
         <div class={styles.start}>
           <Button
             icon={ArrowLeftIcon}
+            size="sm"
             href={props.backHref}
             onClick={() => {
               const href = props.backHref;

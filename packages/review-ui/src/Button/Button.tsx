@@ -7,8 +7,8 @@ type Props = {
   icon: Component<{ class?: string }>;
   /** `primary` es la acción principal de la pantalla; `danger`, la que quita algo; `ok` es el verde de los OK. */
   variant?: 'default' | 'primary' | 'danger' | 'dangerSolid' | 'ok';
-  /** `sm` es el de las insignias y los enlaces de acción dentro de un texto. */
-  size?: 'md' | 'sm';
+  /** `md` es el de formularios y hojas; `sm`, el compacto de las barras y los menús; `xs`, el de las insignias y las acciones dentro de un texto. */
+  size?: 'md' | 'sm' | 'xs';
   /** Para los que se encienden y se apagan (OK, tres puntos abiertos). */
   pressed?: boolean;
   /** Con dirección es un enlace (`<a>`): se puede abrir en otra pestaña; un clic normal llama a `onClick`, para navegar sin recargar. */

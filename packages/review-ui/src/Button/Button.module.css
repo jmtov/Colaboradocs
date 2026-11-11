@@ -47,6 +47,21 @@
 }
 
 .sm {
+  padding: 0.375rem 0.625rem;
+  font: 500 var(--font-size-xs) var(--font-mono);
+}
+
+.sm.iconOnly {
+  padding: 0.4375rem;
+}
+
+.sm.iconOnly .icon,
+.sm .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.xs {
   gap: 0.25rem;
   padding: 0.0625rem 0.5rem;
   font: 500 var(--font-size-xs) var(--font-mono);
@@ -93,7 +108,7 @@
   height: 1.125em;
 }
 
-.sm .icon {
+.xs .icon {
   width: 1em;
   height: 1em;
 }
