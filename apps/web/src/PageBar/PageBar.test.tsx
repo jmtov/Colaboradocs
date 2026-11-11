@@ -41,7 +41,9 @@ describe('PageBar', () => {
       </PageBar>
     ));
     const link = host.querySelector('a');
-    expect(link?.textContent).toBe('Inicio');
+    // solo ícono: el nombre es para el lector de pantalla y el tooltip
+    expect(link?.textContent).toBe('');
+    expect(link?.getAttribute('aria-label')).toBe('Inicio');
     expect(link?.getAttribute('href')).toBe('/');
     expect(host.textContent).toContain('Mi espacio');
     expect(host.textContent).toContain('Sin conexión');
@@ -54,7 +56,7 @@ describe('PageBar', () => {
     ));
     expect(host.querySelector('a')).toBeNull();
     const button = [...host.querySelectorAll('button')].find(
-      (item) => item.textContent === 'Volver',
+      (item) => item.getAttribute('aria-label') === 'Volver',
     );
     button?.click();
     expect(onBack).toHaveBeenCalledTimes(1);

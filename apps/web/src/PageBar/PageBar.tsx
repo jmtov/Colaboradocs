@@ -26,15 +26,15 @@ export default function PageBar(props: Props) {
           <Button
             icon={ArrowLeftIcon}
             size="sm"
+            aria-label={props.backLabel}
+            title={props.backLabel}
             href={props.backHref}
             onClick={() => {
               const href = props.backHref;
               if (href) navigate(href);
               else props.onBack?.();
             }}
-          >
-            {props.backLabel}
-          </Button>
+          ></Button>
           <span class={styles.name}>{props.name}</span>
         </div>
         <div class={styles.account}>

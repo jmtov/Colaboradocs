@@ -62,10 +62,10 @@ export default function TopBar(props: Props) {
             icon={ArrowLeftIcon}
             size="sm"
             href="/"
+            aria-label="Volver a los documentos"
+            title="Volver a los documentos"
             onClick={() => navigate('/')}
-          >
-            Documentos
-          </Button>
+          />
         </Show>
         <button
           type="button"

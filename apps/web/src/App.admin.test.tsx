@@ -119,9 +119,9 @@ describe('páginas de administración', () => {
     expect(window.location.pathname).toBe('/documentos');
     expect(host.querySelector('h1')?.textContent).toBe('Documentos');
     // «← Inicio» está en la barra superior, no suelto en el contenido.
-    expect(host.querySelector('header a[href="/"]')?.textContent).toContain(
-      'Inicio',
-    );
+    expect(
+      host.querySelector('header a[href="/"]')?.getAttribute('aria-label'),
+    ).toBe('Inicio');
     expect(host.querySelector('main a[href="/"]')).toBeNull();
     expect(host.querySelector('dialog[open]')).toBeNull();
     expect(host.textContent).toContain('Subir documento');
