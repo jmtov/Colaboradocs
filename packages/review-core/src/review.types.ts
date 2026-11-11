@@ -31,6 +31,8 @@ export type ReviewComment = {
 export type BlockApproval = {
   blockId: string;
   reviewerId: string;
+  /** Cuándo dio el OK (ISO). */
+  createdAt: string;
 };
 
 export type ReviewSnapshot = {

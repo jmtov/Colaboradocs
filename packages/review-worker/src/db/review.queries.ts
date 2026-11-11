@@ -116,13 +116,14 @@ export async function listApprovals(
 ): Promise<BlockApproval[]> {
   const { results } = await db
     .prepare(
-      'SELECT block_id, reviewer_id FROM approvals WHERE document_id = ?',
+      'SELECT block_id, reviewer_id, created_at FROM approvals WHERE document_id = ?',
     )
     .bind(documentId)
-    .all<{ block_id: string; reviewer_id: string }>();
+    .all<{ block_id: string; reviewer_id: string; created_at: string }>();
   return results.map((row) => ({
     blockId: row.block_id,
     reviewerId: row.reviewer_id,
+    createdAt: row.created_at,
   }));
 }
 

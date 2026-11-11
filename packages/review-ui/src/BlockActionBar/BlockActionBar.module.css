@@ -44,20 +44,7 @@
   height: 1.125em;
 }
 
+/* Cerrar es un botón más (mismo tamaño y borde); solo se va al extremo. */
 .close {
-  display: inline-flex;
   margin-left: auto;
-  padding: 0.5rem 0.625rem;
-  font-size: var(--font-size-sm);
-  color: var(--muted);
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.who {
-  flex-basis: 100%;
-  margin: 0;
-  font: var(--font-size-xs) var(--font-mono);
-  color: var(--muted);
 }

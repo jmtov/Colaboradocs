@@ -174,7 +174,10 @@ export function createReviewStore(options: ReviewStoreOptions) {
           (approval) =>
             !(approval.blockId === blockId && approval.reviewerId === mine),
         )
-      : [...current.approvals, { blockId, reviewerId: mine }];
+      : [
+          ...current.approvals,
+          { blockId, reviewerId: mine, createdAt: new Date().toISOString() },
+        ];
     setSnapshot({
       ...current,
       approvals,

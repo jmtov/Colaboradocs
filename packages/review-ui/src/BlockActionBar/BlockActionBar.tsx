@@ -5,8 +5,6 @@ import CommentIcon from '../icons/CommentIcon';
 import styles from './BlockActionBar.module.css';
 
 type Props = {
-  /** Nombres de quienes dieron OK a este bloque. */
-  approvedBy: string[];
   /** El revisor actual ya dio OK. */
   mine: boolean;
   /** Hilos sin resolver en este bloque. */
@@ -42,15 +40,12 @@ export default function BlockActionBar(props: Props) {
       </button>
       <button
         type="button"
-        class={styles.close}
-        aria-label="Cerrar acciones"
+        class={`${styles.button} ${styles.close}`}
         onClick={props.onClose}
       >
         <CloseIcon class={styles.icon} />
+        Cerrar
       </button>
-      <Show when={props.approvedBy.length > 0}>
-        <p class={styles.who}>OK: {props.approvedBy.join(', ')}</p>
-      </Show>
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import { type JSX, Show } from 'solid-js';
+import { For, type JSX, Show } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import BlockActionBar from '../BlockActionBar/BlockActionBar';
+import BlockBadges from '../BlockBadges/BlockBadges';
 import { useBlockLayer } from './BlockLayer.hooks';
 import styles from './BlockLayer.module.css';
 
@@ -30,10 +31,9 @@ export default function BlockLayer(props: Props) {
             {(host) => (
               <Portal mount={host()}>
                 <BlockActionBar
-                  approvedBy={layer.approvedNames()}
-                  mine={layer.isMine()}
+                  mine={layer.isMine(id())}
                   openThreads={layer.openThreadsFor(id())}
-                  onComment={layer.openComments}
+                  onComment={() => layer.openComments(id())}
                   onToggleApproval={() => layer.toggleApproval(id())}
                   onClose={layer.clearSelection}
                 />
@@ -42,6 +42,26 @@ export default function BlockLayer(props: Props) {
           </Show>
         )}
       </Show>
+      <For each={layer.badgedIds()}>
+        {(id) => (
+          <Show when={layer.blockElement(id)}>
+            {(element) => (
+              <Portal
+                mount={element()}
+                ref={(container) => container.classList.add(styles.badgeHost)}
+              >
+                <BlockBadges
+                  approvals={layer.approvalCount(id)}
+                  mine={layer.isMine(id)}
+                  openThreads={layer.openThreadsFor(id)}
+                  onOpenApprovals={() => layer.openApprovals(id)}
+                  onOpenComments={() => layer.openComments(id)}
+                />
+              </Portal>
+            )}
+          </Show>
+        )}
+      </For>
       <Show when={layer.notice()}>
         {(message) => (
           <p class={styles.notice} role="alert">

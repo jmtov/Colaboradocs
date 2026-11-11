@@ -184,6 +184,12 @@ describe('OK por bloque', () => {
       name: 'AnaOk',
       municipality: 'La Ceja',
     });
+    // Cada OK trae cuándo se dio (ISO): la hoja de OK lo muestra.
+    for (const approval of forBlock) {
+      expect(new Date(approval.createdAt).toISOString()).toBe(
+        approval.createdAt,
+      );
+    }
 
     expect((await authed(anaToken, path, { method: 'DELETE' })).status).toBe(
       204,

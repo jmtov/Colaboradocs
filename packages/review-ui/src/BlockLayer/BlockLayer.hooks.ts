@@ -1,10 +1,16 @@
 import {
-  formatReviewerLabel,
   groupApprovals,
   groupThreads,
   openThreadCount,
 } from '@juntanza/review-core';
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
+import ApprovalsSheet from '../ApprovalsSheet/ApprovalsSheet';
 import { useOverlay } from '../overlay/useOverlay';
 import { useReview } from '../ReviewProvider/review.context';
 import ThreadSheet from '../ThreadSheet/ThreadSheet';
@@ -16,6 +22,8 @@ export function useBlockLayer() {
   let root!: HTMLDivElement;
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
   const [barHost, setBarHost] = createSignal<HTMLElement | null>(null);
+  // Los bloques del contenido por id: ahí se montan las pastillas de OK e hilos.
+  const [blocks, setBlocks] = createSignal(new Map<string, HTMLElement>());
 
   const approvalsByBlock = createMemo(() =>
     groupApprovals(review.snapshot()?.approvals ?? []),
@@ -34,26 +42,24 @@ export function useBlockLayer() {
     );
   }
 
-  // Pinta insignias y selección directamente en los bloques.
+  onMount(() => {
+    const found = new Map<string, HTMLElement>();
+    for (const element of root.querySelectorAll<HTMLElement>(
+      '[data-block-id]',
+    )) {
+      found.set(element.dataset.blockId ?? '', element);
+    }
+    setBlocks(found);
+  });
+
+  // Pinta la selección directamente en los bloques (las pastillas son componentes, abajo).
   createEffect(() => {
-    const approvals = approvalsByBlock();
-    const threads = threadsByBlock();
-    const me = review.snapshot()?.me.id;
     const selected = selectedId();
     for (const element of root.querySelectorAll<HTMLElement>(
       '[data-block-id]',
     )) {
       const id = element.dataset.blockId ?? '';
-      const approvedBy = approvals.get(id) ?? [];
-      const open = openThreadCount(threads.get(id) ?? []);
-      const parts: string[] = [];
-      if (approvedBy.length > 0) parts.push(`✓ ${approvedBy.length}`);
-      if (open > 0) parts.push(`${open} ${open === 1 ? 'hilo' : 'hilos'}`);
-
       element.classList.add(styles.block);
-      if (parts.length > 0) element.dataset.badge = parts.join(' · ');
-      else delete element.dataset.badge;
-      element.toggleAttribute('data-mine', !!me && approvedBy.includes(me));
       element.toggleAttribute('data-selected', id === selected);
     }
   });
@@ -100,23 +106,18 @@ export function useBlockLayer() {
     setSelectedId((previous) => (previous === id ? null : id));
   }
 
-  const blockText = () => {
-    const id = selectedId();
-    return (id && findBlock(id)?.textContent) || '';
-  };
-  const approvedNames = () => {
-    const id = selectedId();
-    const snapshot = review.snapshot();
-    if (!id || !snapshot) return [];
-    return (approvalsByBlock().get(id) ?? []).map((reviewerId) =>
-      formatReviewerLabel(snapshot.reviewers[reviewerId]),
-    );
-  };
-  const isMine = () => {
-    const id = selectedId();
+  const approvalCount = (id: string) => approvalsByBlock().get(id)?.length ?? 0;
+  const isMine = (id: string) => {
     const me = review.snapshot()?.me.id;
-    return !!id && !!me && (approvalsByBlock().get(id) ?? []).includes(me);
+    return !!me && (approvalsByBlock().get(id) ?? []).includes(me);
   };
+  /** Los bloques que llevan pastillas: con algún OK o algún hilo abierto, en orden. */
+  const badgedIds = createMemo(() =>
+    [...blocks().keys()].filter(
+      (id) => approvalCount(id) > 0 || openThreadsFor(id) > 0,
+    ),
+  );
+  const textOf = (id: string) => findBlock(id)?.textContent ?? '';
   const openThreadsFor = (id: string) =>
     openThreadCount(threadsByBlock().get(id) ?? []);
   const notice = () => review.notice();
@@ -126,19 +127,18 @@ export function useBlockLayer() {
     onClick,
     selectedId,
     barHost,
-    blockText,
-    approvedNames,
+    badgedIds,
+    blockElement: (id: string) => blocks().get(id),
+    approvalCount,
     isMine,
     openThreadsFor,
     notice,
-    openComments: () =>
-      void overlay.sheet(ThreadSheet, {
-        get blockId() {
-          return selectedId() ?? '';
-        },
-        get blockText() {
-          return blockText();
-        },
+    openComments: (id: string) =>
+      void overlay.sheet(ThreadSheet, { blockId: id, blockText: textOf(id) }),
+    openApprovals: (id: string) =>
+      void overlay.sheet(ApprovalsSheet, {
+        blockId: id,
+        blockText: textOf(id),
       }),
     clearSelection: () => setSelectedId(null),
     toggleApproval: (id: string) => review.toggleApproval(id),

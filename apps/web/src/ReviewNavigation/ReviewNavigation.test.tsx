@@ -61,7 +61,13 @@ beforeEach(() => {
               comment('c1', 'b1'),
               comment('c3', 'b3', true),
             ],
-            approvals: [{ blockId: 'b3', reviewerId: 'r1' }],
+            approvals: [
+              {
+                blockId: 'b3',
+                reviewerId: 'r1',
+                createdAt: '2026-11-10T10:00:00.000Z',
+              },
+            ],
             reviewers: { r1: { name: 'Ana', municipality: null } },
           }
         : [];

@@ -19,19 +19,9 @@
   outline-offset: 4px;
 }
 
-.block[data-badge]::after {
-  content: attr(data-badge);
-  margin-left: 0.5rem;
-  padding: 0.125rem 0.5rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
-  color: var(--ok);
-  white-space: nowrap;
-  vertical-align: middle;
-  background: var(--ok-bg);
-}
-
-.block[data-mine]::after {
-  outline: 1px solid var(--ok);
+/* Contenedor de las pastillas de OK e hilos que se monta dentro de cada bloque. */
+.badgeHost {
+  display: inline;
 }
 
 .notice {
@@ -57,7 +47,7 @@
 
 /* En papel no hay revisión: ni insignias, ni selección, ni barra de acciones. */
 @media print {
-  .block[data-badge]::after,
+  .badgeHost,
   .notice,
   .barHost {
     display: none;

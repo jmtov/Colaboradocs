@@ -13,6 +13,17 @@ export function groupApprovals(
   return byBlock;
 }
 
+/** Quién dio OK a un bloque y cuándo, del más antiguo al más reciente. */
+export function approversOf(
+  approvals: BlockApproval[],
+  blockId: string,
+): { reviewerId: string; createdAt: string }[] {
+  return approvals
+    .filter((approval) => approval.blockId === blockId)
+    .map(({ reviewerId, createdAt }) => ({ reviewerId, createdAt }))
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
 /** Bloques con OK de todos los revisores dados (o de ninguno si no hay). */
 export function fullyApprovedBlocks(
   approvals: BlockApproval[],
