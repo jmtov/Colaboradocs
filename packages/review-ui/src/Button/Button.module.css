@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
   color: var(--fg);
+  text-decoration: none;
   cursor: pointer;
   /* El borde y la sombra larga (index.css) son del mismo color. */
   --edge: var(--line-strong);
@@ -26,6 +27,10 @@
 /* Encendido: se hunde como al presionar (index.css, aria-pressed) y además va más oscuro. */
 .button[aria-pressed="true"] {
   background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+}
+
+.button:hover {
+  text-decoration: none;
 }
 
 .button:focus-visible {
@@ -55,8 +60,12 @@
   padding: 0.4375rem;
 }
 
-.sm.iconOnly .icon,
 .sm .icon {
+  width: 1.125em;
+  height: 1.125em;
+}
+
+.sm.iconOnly .icon {
   width: 1.125rem;
   height: 1.125rem;
 }
