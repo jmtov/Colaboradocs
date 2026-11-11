@@ -1,4 +1,4 @@
-import { BottomSheet } from '@juntanza/review-ui';
+import { BottomSheet } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
 import FilePicker from './components/FilePicker/FilePicker';
 import FormatDownloads from './components/FormatDownloads/FormatDownloads';

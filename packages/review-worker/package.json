@@ -1,5 +1,5 @@
 {
-  "name": "@juntanza/review-worker",
+  "name": "@colaboradocs/review-worker",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,7 +13,7 @@
     "documents": "tsx scripts/documents.ts"
   },
   "dependencies": {
-    "@juntanza/review-core": "*",
+    "@colaboradocs/review-core": "*",
     "hono": "^4.6.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-import type { DocumentVersionItem } from '@juntanza/review-core';
-import { formatReviewerLabel } from '@juntanza/review-core';
+import type { DocumentVersionItem } from '@colaboradocs/review-core';
+import { formatReviewerLabel } from '@colaboradocs/review-core';
 
 const formatter = new Intl.DateTimeFormat('es', { dateStyle: 'medium' });
 

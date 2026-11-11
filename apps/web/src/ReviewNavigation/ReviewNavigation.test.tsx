@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { ReviewProvider, useOverlay } from '@juntanza/review-ui';
+import { ReviewProvider, useOverlay } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentSection } from '@/content/content.types';

@@ -2,8 +2,8 @@ import {
   groupApprovals,
   groupThreads,
   openThreadCount,
-} from '@juntanza/review-core';
-import { useOverlay, useReview } from '@juntanza/review-ui';
+} from '@colaboradocs/review-core';
+import { useOverlay, useReview } from '@colaboradocs/review-ui';
 import {
   createEffect,
   createMemo,

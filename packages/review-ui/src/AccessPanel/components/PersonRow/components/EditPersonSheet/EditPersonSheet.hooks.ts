@@ -1,4 +1,4 @@
-import type { ManagedReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer } from '@colaboradocs/review-core';
 import { createSignal } from 'solid-js';
 import { useReview } from '../../../../../ReviewProvider/review.context';
 

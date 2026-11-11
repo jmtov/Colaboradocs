@@ -2,10 +2,10 @@
  * Administra los documentos y el espacio en D1. Por defecto actúa sobre la base
  * LOCAL; con --remote, sobre la de producción.
  *
- *   npm run documents -w @juntanza/review-worker -- import documento.json [--remote]
+ *   npm run documents -w @colaboradocs/review-worker -- import documento.json [--remote]
  *       Valida el JSON y lo guarda; si el id ya existe lo reemplaza (y guarda la versión anterior).
- *   npm run documents -w @juntanza/review-worker -- list [--remote]
- *   npm run documents -w @juntanza/review-worker -- space [--name "…"] [--description "…"] \
+ *   npm run documents -w @colaboradocs/review-worker -- list [--remote]
+ *   npm run documents -w @colaboradocs/review-worker -- space [--name "…"] [--description "…"] \
  *       [--role-label "Municipio"] [--role-format "Representante {value}"] [--remote]
  *       Cambia solo lo que se indica; sin opciones muestra el espacio actual.
  *
@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { validateDocument, validateSpace } from '@juntanza/review-core';
+import { validateDocument, validateSpace } from '@colaboradocs/review-core';
 import { quote, runSql, runSqlFile, selectRows } from './d1.utils';
 
 /** Trozos de contenido por sentencia: D1 limita cada una a ~100 KB. */

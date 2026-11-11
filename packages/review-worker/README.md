@@ -1,4 +1,4 @@
-# @juntanza/review-worker
+# @colaboradocs/review-worker
 
 API de revisión en un Cloudflare Worker (Hono) con D1. Genérica: todo cuelga de un `documentId`. En producción el mismo Worker sirve también la página compilada (`apps/web/dist`) como assets; solo `/api/*` pasa por el código.
 
@@ -84,10 +84,10 @@ El PIN no se puede volver a ver: solo se guarda el HMAC. Para entregar uno hay q
 ## Comandos
 
 ```
-npm test -w @juntanza/review-worker
+npm test -w @colaboradocs/review-worker
 npm run dev:api                                  # wrangler dev en :8800 (desde la raíz)
-npm run pins -w @juntanza/review-worker -- add "Ana" --admin [--remote]   # también reissue, reset-devices, set-devices, revoke, list, import
-npm run deploy -w @juntanza/review-worker        # compila la página antes (npm run build en la raíz)
+npm run pins -w @colaboradocs/review-worker -- add "Ana" --admin [--remote]   # también reissue, reset-devices, set-devices, revoke, list, import
+npm run deploy -w @colaboradocs/review-worker        # compila la página antes (npm run build en la raíz)
 ```
 
 El CLI de PIN lee el nombre de la base desde `wrangler.jsonc` y deja los PIN en claro en `pins.private*` (gitignored); hay que mandarlos y borrarlos.

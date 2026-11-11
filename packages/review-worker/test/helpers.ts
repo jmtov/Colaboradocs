@@ -1,5 +1,5 @@
 import { env, SELF } from 'cloudflare:test';
-import { generatePin, hashPin } from '@juntanza/review-core';
+import { generatePin, hashPin } from '@colaboradocs/review-core';
 
 export const DOCUMENT = 'principios';
 export const DEVICE_A = 'device-aaaaaaaaaaaaaaaa';
@@ -42,7 +42,7 @@ export async function createReviewer(
 }
 
 export function api(path: string, init: RequestInit = {}) {
-  return SELF.fetch(`https://juntanza.test/api${path}`, init);
+  return SELF.fetch(`https://colaboradocs.test/api${path}`, init);
 }
 
 export async function login(pin: string, deviceId = DEVICE_A) {

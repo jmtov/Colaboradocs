@@ -1,4 +1,4 @@
-import { useReview } from '@juntanza/review-ui';
+import { useReview } from '@colaboradocs/review-ui';
 import { createResource } from 'solid-js';
 
 /** Las versiones del documento. La hoja se monta al abrirse, así que se piden al montarse. */

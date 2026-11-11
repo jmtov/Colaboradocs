@@ -1,4 +1,4 @@
-# @juntanza/review-core
+# @colaboradocs/review-core
 
 Tipos y lógica pura compartidos por el Worker y la UI. TypeScript sin dependencias, sin DOM ni Cloudflare: corre en navegador, Worker y Node. Todo se exporta desde `src/index.ts`.
 
@@ -29,5 +29,5 @@ Tipos y lógica pura compartidos por el Worker y la UI. TypeScript sin dependenc
 ## Probar
 
 ```
-npm test -w @juntanza/review-core
+npm test -w @colaboradocs/review-core
 ```

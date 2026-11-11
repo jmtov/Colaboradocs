@@ -1,4 +1,4 @@
-import { useReview } from '@juntanza/review-ui';
+import { useReview } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PrinterIcon from '@/icons/PrinterIcon';

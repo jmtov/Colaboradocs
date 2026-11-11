@@ -4,7 +4,7 @@ import type {
   DocumentListItem,
   DocumentVersionItem,
   SpaceInfo,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   api,
@@ -249,7 +249,7 @@ describe('espacio', () => {
 
   it('un admin lo cambia; los demás no', async () => {
     const space: SpaceInfo = {
-      name: 'Juntanza',
+      name: 'Mi equipo',
       description: 'Documentos en revisión',
       roleField: { label: 'Municipio', format: 'Representante {value}' },
     };

@@ -1,4 +1,4 @@
-import type { RoleField } from '@juntanza/review-core';
+import type { RoleField } from '@colaboradocs/review-core';
 
 export type { RoleField };
 

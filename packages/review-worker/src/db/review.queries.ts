@@ -2,7 +2,7 @@ import type {
   BlockApproval,
   NewComment,
   ReviewComment,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 
 type CommentRow = {
   id: string;

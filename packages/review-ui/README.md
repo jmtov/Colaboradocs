@@ -1,11 +1,11 @@
-# @juntanza/review-ui
+# @colaboradocs/review-ui
 
 Componentes Solid para revisar un documento: puerta de PIN, comentarios por bloque con respuestas, OK por bloque. **No saben nada del documento ni del diseño de la app**: la app aporta el contenido y los tokens CSS. Se consume como código fuente (sin build propio): la app host lo compila.
 
 ## Uso mínimo
 
 ```tsx
-import { BlockLayer, PinGate, ReviewProvider } from '@juntanza/review-ui';
+import { BlockLayer, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 
 <ReviewProvider documentId="mi-doc">
   <PinGate title="Mi documento">
@@ -30,7 +30,7 @@ import { BlockLayer, PinGate, ReviewProvider } from '@juntanza/review-ui';
 
 ## Contrato con el contenido
 
-- Cada bloque revisable lleva **`data-block-id`**. Genera los ids con `assignBlockIds` de `@juntanza/review-core` (no a mano), y deben cumplir `/^[a-z0-9-]{1,100}$/`.
+- Cada bloque revisable lleva **`data-block-id`**. Genera los ids con `assignBlockIds` de `@colaboradocs/review-core` (no a mano), y deben cumplir `/^[a-z0-9-]{1,100}$/`.
 - Lo que no debe seleccionar un bloque al tocarlo (enlaces, citas, términos del glosario) lleva **`data-interactive`**. Enlaces y botones tampoco seleccionan.
 - Un bloque = una unidad (párrafo, viñeta, definición). Al tocar, se toma el `data-block-id` **más cercano** hacia arriba (`closest`), así que no anides bloques.
 
@@ -60,6 +60,6 @@ import { BlockLayer, PinGate, ReviewProvider } from '@juntanza/review-ui';
 ## Probar
 
 ```
-npm test -w @juntanza/review-ui
+npm test -w @colaboradocs/review-ui
 ```
 Las pruebas cubren sesión, mensajes y tiempos (utilidades puras); los componentes no tienen pruebas de DOM.

@@ -2,7 +2,7 @@
 
 Revisión de un documento por un equipo: acceso con PIN, comentarios por bloque con respuestas y OK por bloque. Un solo Worker de Cloudflare (API + D1) sirve la página. Pensado para borradores internos que un grupo revisa desde el celular.
 
-Nació para revisar los «Principios de la Juntanza del Oriente»; cualquier documento con secciones sirve.
+Pensado para cualquier documento con secciones que un equipo tenga que revisar.
 
 > **Para agentes y contribuciones:** cada módulo tiene su README con mapa, contrato y reglas → [`review-core`](packages/review-core/README.md) · [`review-worker`](packages/review-worker/README.md) · [`review-ui`](packages/review-ui/README.md) · [`doc-import`](packages/doc-import/README.md) · [`web`](apps/web/README.md).
 
@@ -31,7 +31,7 @@ Necesitas Node 20+ y una cuenta de Cloudflare (el plan gratuito alcanza).
 ```
 npm install
 npx wrangler login
-npm run setup -w @juntanza/review-worker -- mi-revision
+npm run setup -w @colaboradocs/review-worker -- mi-revision
 ```
 
 `setup` crea la base D1, escribe `packages/review-worker/wrangler.jsonc` (no se versiona), aplica migraciones, compila, despliega, sube un `TOKEN_SECRET` nuevo (queda en `packages/review-worker/.prod.vars`) y carga el documento de ejemplo. **Respalda `.prod.vars` fuera del repo:** sin él no se pueden crear PIN válidos (si se pierde: generar otro, `secret put` y `reissue` de cada persona).
@@ -39,12 +39,12 @@ npm run setup -w @juntanza/review-worker -- mi-revision
 Luego:
 
 1. **Tu primer admin** (por CLI; los demás se crean desde la app):
-   `npm run pins -w @juntanza/review-worker -- add "Tu nombre" --admin --municipality="Tu rol" --remote`
+   `npm run pins -w @colaboradocs/review-worker -- add "Tu nombre" --admin --municipality="Tu rol" --remote`
 2. Entra a la URL `*.workers.dev` que imprimió el deploy y pega el PIN. Un `workers.dev` nuevo tarda unos minutos en tener certificado TLS.
-3. **Sube tus documentos** desde el menú ⋮ → «Documentos». O por CLI: `npm run documents -w @juntanza/review-worker -- import documents/mi-doc.json --remote`.
+3. **Sube tus documentos** desde el menú ⋮ → «Documentos». O por CLI: `npm run documents -w @colaboradocs/review-worker -- import documents/mi-doc.json --remote`.
 4. **Nombre del espacio y rol** (ver «El espacio»).
 
-Para actualizar la app (no los documentos): `npm run build && npm run deploy -w @juntanza/review-worker`. Cambios de esquema: agregar `migrations/000N_*.sql` y `npx wrangler d1 migrations apply <base> --remote` **antes** del deploy.
+Para actualizar la app (no los documentos): `npm run build && npm run deploy -w @colaboradocs/review-worker`. Cambios de esquema: agregar `migrations/000N_*.sql` y `npx wrangler d1 migrations apply <base> --remote` **antes** del deploy.
 
 ## Documentos
 
@@ -56,7 +56,7 @@ Un documento es un JSON (ver `documents/example.json` y los tipos en `packages/r
 
 La pantalla de subida ofrece dos descargas para quien no tiene su documento en un formato que la página lea: `formato-colaboradocs.md` (guía para adjuntar a una conversación con Claude u otro asistente, con las reglas y el ejemplo) y `ejemplo.json`. Se arman desde `documents/example.json` y `buildFormatGuide` (`doc-import`).
 
-Por CLI: `npm run convert -w @juntanza/doc-import -- mi.docx --id mi-doc > documents/mi-doc.json`. Todo lo que se sube se valida y se limpia (solo quedan las etiquetas HTML que entiende la página).
+Por CLI: `npm run convert -w @colaboradocs/doc-import -- mi.docx --id mi-doc > documents/mi-doc.json`. Todo lo que se sube se valida y se limpia (solo quedan las etiquetas HTML que entiende la página).
 
 Campos del JSON:
 
@@ -79,7 +79,7 @@ Campos del JSON:
 Nombre y descripción de la home, y cómo se llama el rol de cada persona (en la base es `municipality`). Se cambian por CLI (la pantalla de edición viene después):
 
 ```
-npm run documents -w @juntanza/review-worker -- space --name "Mi equipo" --role-label "Municipio" --role-format "Representante {value}" [--remote]
+npm run documents -w @colaboradocs/review-worker -- space --name "Mi equipo" --role-label "Municipio" --role-format "Representante {value}" [--remote]
 ```
 
 `--role-format` solo cambia cómo se **muestra** el rol en la lista de accesos; el valor guardado es «La Ceja». Sin configurar: el campo se llama «Rol» y se muestra tal cual.

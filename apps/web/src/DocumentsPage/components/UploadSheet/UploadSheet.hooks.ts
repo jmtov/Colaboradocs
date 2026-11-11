@@ -1,4 +1,4 @@
-import { useReview } from '@juntanza/review-ui';
+import { useReview } from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import type { Problem } from './UploadSheet.types';
@@ -44,7 +44,7 @@ export function useUploadSheet({
     setProblem(null);
     setParsed(null);
     // El convertidor (Word incluido) pesa: se descarga solo al subir algo.
-    const { parseUpload } = await import('@juntanza/doc-import');
+    const { parseUpload } = await import('@colaboradocs/doc-import');
     const result = await parseUpload(file, { id: replaceId() });
     setReading(false);
     if (!result.ok) {

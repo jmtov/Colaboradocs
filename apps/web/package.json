@@ -1,5 +1,5 @@
 {
-  "name": "@juntanza/web",
+  "name": "@colaboradocs/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@juntanza/review-core": "*",
-    "@juntanza/review-ui": "*",
+    "@colaboradocs/review-core": "*",
+    "@colaboradocs/review-ui": "*",
     "solid-js": "^1.9.3",
-    "@juntanza/doc-import": "*"
+    "@colaboradocs/doc-import": "*"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",

@@ -4,7 +4,7 @@ import type {
   NewComment,
   ReviewSnapshot,
   SpaceInfo,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { createEffect, createSignal, onCleanup, untrack } from 'solid-js';
 import {
   ApiRequestError,

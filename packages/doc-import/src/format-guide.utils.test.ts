@@ -5,7 +5,7 @@ import {
   MAX_SECTIONS,
   sanitizeSectionHtml,
   validateDocument,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { describe, expect, it } from 'vitest';
 import { buildFormatGuide } from './format-guide.utils';
 

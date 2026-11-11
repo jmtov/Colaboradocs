@@ -1,4 +1,4 @@
-import { useOverlay, useReview } from '@juntanza/review-ui';
+import { useOverlay, useReview } from '@colaboradocs/review-ui';
 import { createSignal, onMount } from 'solid-js';
 import UploadSheet from './components/UploadSheet/UploadSheet';
 

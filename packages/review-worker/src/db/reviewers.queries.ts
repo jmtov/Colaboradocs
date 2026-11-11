@@ -2,7 +2,7 @@ import {
   DEFAULT_MAX_DEVICES,
   type Reviewer,
   type ReviewerLabel,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 
 type ReviewerRow = {
   id: string;

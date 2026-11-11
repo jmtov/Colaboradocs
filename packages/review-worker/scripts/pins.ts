@@ -9,7 +9,7 @@ import {
   formatPin,
   generatePin,
   hashPin,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { quote, runSql, selectRows } from './d1.utils';
 
 const PRIVATE_FILE = 'pins.private.txt';

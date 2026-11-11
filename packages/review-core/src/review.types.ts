@@ -80,7 +80,7 @@ export type ApiError = {
 export type ManagedReviewer = {
   id: string;
   name: string;
-  /** El rol de la persona (en la Juntanza, su municipio). */
+  /** El rol de la persona (p. ej., su municipio). */
   municipality: string | null;
   isAdmin: boolean;
   /** Dispositivos que ya usaron su PIN, y cuántos permite. */

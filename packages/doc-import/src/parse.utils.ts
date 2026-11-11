@@ -1,4 +1,7 @@
-import { type DocumentContent, validateDocument } from '@juntanza/review-core';
+import {
+  type DocumentContent,
+  validateDocument,
+} from '@colaboradocs/review-core';
 import { slugify } from './convert.utils';
 import { docxToDocument } from './docx.utils';
 import { markdownToDocument } from './markdown.utils';

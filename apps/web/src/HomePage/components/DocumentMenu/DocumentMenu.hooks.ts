@@ -2,7 +2,7 @@ import {
   openAfterMenuCloses,
   useOverlay,
   useReview,
-} from '@juntanza/review-ui';
+} from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import UploadSheet from '@/DocumentsPage/components/UploadSheet/UploadSheet';
 import { MENU_GAP_PX } from './DocumentMenu.constants';

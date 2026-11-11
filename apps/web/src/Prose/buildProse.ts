@@ -1,4 +1,4 @@
-import { assignBlockIds } from '@juntanza/review-core';
+import { assignBlockIds } from '@colaboradocs/review-core';
 import { findLinks } from './linkify.utils';
 import styles from './Prose.module.css';
 

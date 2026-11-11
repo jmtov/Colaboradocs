@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import type { ManagedReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer } from '@colaboradocs/review-core';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ReviewProvider from '../../../ReviewProvider/ReviewProvider';

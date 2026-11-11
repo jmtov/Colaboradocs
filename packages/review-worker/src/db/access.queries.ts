@@ -1,4 +1,4 @@
-import type { AccessNode, ManagedReviewer } from '@juntanza/review-core';
+import type { AccessNode, ManagedReviewer } from '@colaboradocs/review-core';
 
 type Row = {
   id: string;

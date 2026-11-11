@@ -1,7 +1,7 @@
 /**
  * Monta tu propia copia en Cloudflare (una vez). Necesita `wrangler login`.
  *
- *   npm run setup -w @juntanza/review-worker -- [nombre]
+ *   npm run setup -w @colaboradocs/review-worker -- [nombre]
  *
  * Hace: crea la base D1, escribe wrangler.jsonc, aplica las migraciones,
  * genera TOKEN_SECRET (queda en .prod.vars y se sube como secreto del Worker).
@@ -75,8 +75,8 @@ execFileSync(
 console.log(`
 Listo. Falta:
   1. Respaldar packages/review-worker/.prod.vars FUERA del repo (sin él no se pueden crear PIN).
-  2. Crear PIN:  npm run pins -w @juntanza/review-worker -- add "Tu nombre" --admin --remote
+  2. Crear PIN:  npm run pins -w @colaboradocs/review-worker -- add "Tu nombre" --admin --remote
   3. Entra con ese PIN y sube tus documentos desde el menú ⋮ → «Documentos» (Word, Markdown o JSON).
      El de ejemplo se puede archivar desde ahí.
-  4. Ponle nombre al espacio:  npm run documents -w @juntanza/review-worker -- space --name "Mi equipo" --remote
+  4. Ponle nombre al espacio:  npm run documents -w @colaboradocs/review-worker -- space --name "Mi equipo" --remote
 `);

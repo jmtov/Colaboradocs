@@ -1,4 +1,4 @@
-import type { IssuedPin, ManagedReviewer } from '@juntanza/review-core';
+import type { IssuedPin, ManagedReviewer } from '@colaboradocs/review-core';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   authed,

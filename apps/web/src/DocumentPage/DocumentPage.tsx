@@ -1,4 +1,4 @@
-import { BlockLayer } from '@juntanza/review-ui';
+import { BlockLayer } from '@colaboradocs/review-ui';
 import { For } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import Hero from '@/Hero/Hero';

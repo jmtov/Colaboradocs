@@ -1,4 +1,4 @@
-import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@colaboradocs/review-ui';
 import { Match, Switch } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import ArrowDownToLineIcon from '@/icons/ArrowDownToLineIcon';

@@ -1,4 +1,4 @@
-import { MAX_COMMENT_LENGTH } from '@juntanza/review-core';
+import { MAX_COMMENT_LENGTH } from '@colaboradocs/review-core';
 import { createSignal, Show } from 'solid-js';
 import CloseIcon from '../../../icons/CloseIcon';
 import SendIcon from '../../../icons/SendIcon';

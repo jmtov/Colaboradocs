@@ -1,4 +1,4 @@
-# @juntanza/doc-import
+# @colaboradocs/doc-import
 
 Convierte archivos (Word, Markdown, JSON) a un documento válido. Corre en Node (CLI) y **en el navegador** (pantalla de subida de `apps/web`, que lo carga a demanda: `mammoth` pesa ~370 kB). Consumido como código fuente.
 
@@ -23,7 +23,7 @@ Convierte archivos (Word, Markdown, JSON) a un documento válido. Corre en Node 
 ## CLI
 
 ```
-npm run convert -w @juntanza/doc-import -- documento.docx --id mi-doc [--title "…"] [--version 0.1] > documents/mi-doc.json
+npm run convert -w @colaboradocs/doc-import -- documento.docx --id mi-doc [--title "…"] [--version 0.1] > documents/mi-doc.json
 ```
 Los avisos salen por stderr; el JSON, por stdout.
 
@@ -35,5 +35,5 @@ Los avisos salen por stderr; el JSON, por stdout.
 ## Probar
 
 ```
-npm test -w @juntanza/doc-import
+npm test -w @colaboradocs/doc-import
 ```

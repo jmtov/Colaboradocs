@@ -1,4 +1,4 @@
-import { PinGate, ReviewProvider } from '@juntanza/review-ui';
+import { PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 import { Match, Show, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';

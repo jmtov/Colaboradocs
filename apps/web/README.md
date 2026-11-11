@@ -1,6 +1,6 @@
-# @juntanza/web
+# @colaboradocs/web
 
-La página: Vite + Solid. Lee **un documento JSON** y lo monta sobre `@juntanza/review-ui`. Es la «app host»: aporta el contenido, el diseño y los tokens CSS (`src/index.css`).
+La página: Vite + Solid. Lee **un documento JSON** y lo monta sobre `@colaboradocs/review-ui`. Es la «app host»: aporta el contenido, el diseño y los tokens CSS (`src/index.css`).
 
 ## Documentos y home
 
@@ -11,7 +11,7 @@ La página **no trae documentos**: los pide a la API después de ingresar el PIN
 - `/d/<id>` abre un documento. Un id que no existe, o una ruta rara, muestra «No encontramos ese documento».
 - El nombre del espacio (título de la pestaña y de la puerta del PIN) sale de `GET /api/space`, público.
 - La sesión (PIN) es una sola para todo el espacio.
-- Administración (solo admins), en la home: cada tarjeta trae un menú ⋮ (`DocumentMenu`: reemplazar el archivo, archivar con confirmación) y la grilla termina con un bloque «+ Subir documento». Además, desde el menú ⋮ de la sesión, dos páginas propias: **Documentos** (`/documentos`, `DocumentsPage`: subir, reemplazar, archivar) y **Accesos** (`/accesos`, `AccessPanel` de `review-ui`), ambas dentro de `AdminPage`. La subida lee el archivo en el navegador con `@juntanza/doc-import` (que se descarga recién al subir algo), muestra qué entendió y publica con `review.publishDocument`.
+- Administración (solo admins), en la home: cada tarjeta trae un menú ⋮ (`DocumentMenu`: reemplazar el archivo, archivar con confirmación) y la grilla termina con un bloque «+ Subir documento». Además, desde el menú ⋮ de la sesión, dos páginas propias: **Documentos** (`/documentos`, `DocumentsPage`: subir, reemplazar, archivar) y **Accesos** (`/accesos`, `AccessPanel` de `review-ui`), ambas dentro de `AdminPage`. La subida lee el archivo en el navegador con `@colaboradocs/doc-import` (que se descarga recién al subir algo), muestra qué entendió y publica con `review.publishDocument`.
 
 ## Formato del documento
 
@@ -61,7 +61,7 @@ Convención: `Componente/Componente.tsx` + `.module.css`; utilidades en `*.utils
 ```
 npm run dev:api          # raíz: Worker local en :8800
 npm run dev:web          # raíz: Vite en :5180 (host abierto, para el celular), /api con proxy a :8800
-npm test -w @juntanza/web && npm run typecheck -w @juntanza/web
+npm test -w @colaboradocs/web && npm run typecheck -w @colaboradocs/web
 ```
 
 ## Cambiar la interfaz o el formato

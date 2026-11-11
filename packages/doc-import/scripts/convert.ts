@@ -1,7 +1,7 @@
 /**
  * Convierte un documento (Markdown o Word) al JSON que lee la página.
  *
- *   npm run convert -w @juntanza/doc-import -- documento.md|.docx --id mi-doc [--title "Título"] [--version 0.1] > documents/mi-doc.json
+ *   npm run convert -w @colaboradocs/doc-import -- documento.md|.docx --id mi-doc [--title "Título"] [--version 0.1] > documents/mi-doc.json
  *
  * Markdown: `# Título`, `## Sección`, `### Grupo`.
  * Word (.docx): estilos «Título 1» (título), «Título 2» (secciones), «Título 3» (grupos).

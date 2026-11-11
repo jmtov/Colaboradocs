@@ -1,4 +1,4 @@
-import { useReview } from '@juntanza/review-ui';
+import { useReview } from '@colaboradocs/review-ui';
 
 /** Quién mira la página de administración: solo los admins ven su contenido. */
 export function useAdminPage() {

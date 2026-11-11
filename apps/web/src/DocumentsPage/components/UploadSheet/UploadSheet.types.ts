@@ -1,4 +1,4 @@
-import type { SheetLayerProps } from '@juntanza/review-ui';
+import type { SheetLayerProps } from '@colaboradocs/review-ui';
 
 /** `target`: `{}` documento nuevo, `{ replaceId }`: reemplaza ese documento. */
 export type UploadSheetProps = SheetLayerProps & {

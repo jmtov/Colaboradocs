@@ -9,7 +9,7 @@ import {
   type ManagedReviewer,
   validateDocument,
   validateSpace,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { Hono } from 'hono';
 import { requireAdmin, requireReviewer } from '@/auth/auth.middleware';
 import {

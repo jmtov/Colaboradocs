@@ -1,4 +1,4 @@
-import { excerptOf, groupThreads } from '@juntanza/review-core';
+import { excerptOf, groupThreads } from '@colaboradocs/review-core';
 import { createMemo } from 'solid-js';
 import { useReview } from '../ReviewProvider/review.context';
 

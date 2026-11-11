@@ -8,7 +8,7 @@ import { downloadText } from './download.utils';
 export function useFormatDownloads() {
   async function downloadGuide() {
     const [{ buildFormatGuide }, { default: example }] = await Promise.all([
-      import('@juntanza/doc-import'),
+      import('@colaboradocs/doc-import'),
       import('@/content/example.raw'),
     ]);
     downloadText(

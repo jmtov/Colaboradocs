@@ -1,4 +1,4 @@
-import { AccessPanel } from '@juntanza/review-ui';
+import { AccessPanel } from '@colaboradocs/review-ui';
 import { Match, Show, Switch } from 'solid-js';
 import DocumentsPage from '@/DocumentsPage/DocumentsPage';
 import Link from '@/router/Link';

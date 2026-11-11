@@ -3,7 +3,7 @@ import type {
   DocumentListItem,
   DocumentVersionItem,
   SpaceInfo,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 
 type ListRow = {
   id: string;

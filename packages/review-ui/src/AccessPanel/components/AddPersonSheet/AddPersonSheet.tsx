@@ -1,4 +1,4 @@
-import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@juntanza/review-core';
+import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@colaboradocs/review-core';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
 import type { SheetLayerProps } from '../../../overlay/overlay.types';

@@ -2,7 +2,7 @@ import {
   groupApprovals,
   groupThreads,
   openThreadCount,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import {
   createEffect,
   createMemo,

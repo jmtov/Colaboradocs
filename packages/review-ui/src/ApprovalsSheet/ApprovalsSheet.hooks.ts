@@ -1,4 +1,4 @@
-import { approversOf, formatReviewerLabel } from '@juntanza/review-core';
+import { approversOf, formatReviewerLabel } from '@colaboradocs/review-core';
 import { useReview } from '../ReviewProvider/review.context';
 import { formatApprovalTime } from './ApprovalsSheet.utils';
 

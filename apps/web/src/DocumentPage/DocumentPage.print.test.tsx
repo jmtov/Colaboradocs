@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { ReviewProvider } from '@juntanza/review-ui';
+import { ReviewProvider } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentContent } from '@/content/content.types';

@@ -3,7 +3,7 @@ import {
   MAX_COMMENT_LENGTH,
   type NewComment,
   type ReviewSnapshot,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { Hono } from 'hono';
 import { requireReviewer } from '@/auth/auth.middleware';
 import {

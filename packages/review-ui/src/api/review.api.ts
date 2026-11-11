@@ -13,7 +13,7 @@ import type {
   ReviewerPatch,
   ReviewSnapshot,
   SpaceInfo,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 
 export class ApiRequestError extends Error {
   readonly code: ApiErrorCode | 'network';

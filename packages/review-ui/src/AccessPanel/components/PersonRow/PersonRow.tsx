@@ -1,4 +1,4 @@
-import type { ManagedReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer } from '@colaboradocs/review-core';
 import { Show } from 'solid-js';
 import ActionMenu from '../../../ActionMenu/ActionMenu';
 import { usePersonRow } from './PersonRow.hooks';

@@ -1,4 +1,4 @@
-import type { ManagedReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer } from '@colaboradocs/review-core';
 import BottomSheet from '../../../../../BottomSheet/BottomSheet';
 import type { SheetLayerProps } from '../../../../../overlay/overlay.types';
 import { ROLE_EDIT_MAX_LENGTH } from '../../PersonRow.constants';
@@ -7,7 +7,7 @@ import styles from './EditPersonSheet.module.css';
 
 type Props = SheetLayerProps & { person: ManagedReviewer };
 
-/** Edita a una persona: hoy, su rol (en la Juntanza, el municipio). */
+/** Edita a una persona: hoy, su rol (p. ej., el municipio). */
 export default function EditPersonSheet(props: Props) {
   const sheet = useEditPersonSheet({
     person: () => props.person,

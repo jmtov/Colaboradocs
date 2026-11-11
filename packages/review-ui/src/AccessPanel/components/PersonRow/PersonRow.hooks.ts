@@ -1,4 +1,4 @@
-import type { ManagedReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer } from '@colaboradocs/review-core';
 import type { Accessor } from 'solid-js';
 import { createSignal } from 'solid-js';
 import type { ActionMenuItem } from '../../../ActionMenu/ActionMenu.types';

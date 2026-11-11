@@ -11,10 +11,10 @@
     "lint:fix": "biome check --write .",
     "typecheck": "npm --workspaces --if-present run typecheck",
     "test": "npm --workspaces --if-present run test",
-    "build": "npm --workspace=@juntanza/web run build",
-    "dev": "npm --workspace=@juntanza/review-worker run dev & npm --workspace=@juntanza/web run dev & wait",
-    "dev:api": "npm --workspace=@juntanza/review-worker run dev",
-    "dev:web": "npm --workspace=@juntanza/web run dev"
+    "build": "npm --workspace=@colaboradocs/web run build",
+    "dev": "npm --workspace=@colaboradocs/review-worker run dev & npm --workspace=@colaboradocs/web run dev & wait",
+    "dev:api": "npm --workspace=@colaboradocs/review-worker run dev",
+    "dev:web": "npm --workspace=@colaboradocs/web run dev"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",

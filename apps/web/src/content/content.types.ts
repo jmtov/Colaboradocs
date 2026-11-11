@@ -6,4 +6,4 @@ export type {
   RoleField,
   SectionStatus,
   SpaceInfo,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';

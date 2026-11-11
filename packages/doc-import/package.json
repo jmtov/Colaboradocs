@@ -1,5 +1,5 @@
 {
-  "name": "@juntanza/doc-import",
+  "name": "@colaboradocs/doc-import",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,7 +12,7 @@
     "convert": "tsx scripts/convert.ts"
   },
   "dependencies": {
-    "@juntanza/review-core": "*",
+    "@colaboradocs/review-core": "*",
     "mammoth": "^1.12.0",
     "marked": "^18.2.0"
   },

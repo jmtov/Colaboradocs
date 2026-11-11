@@ -1,4 +1,8 @@
-import { ApiRequestError, fetchSpace, useReview } from '@juntanza/review-ui';
+import {
+  ApiRequestError,
+  fetchSpace,
+  useReview,
+} from '@colaboradocs/review-ui';
 import { createEffect, createMemo, createResource } from 'solid-js';
 import type { SpaceInfo } from '@/content/content.types';
 import { createPageTransition } from '@/router/pageTransition';

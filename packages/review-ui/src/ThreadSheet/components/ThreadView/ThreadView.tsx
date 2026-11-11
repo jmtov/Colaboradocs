@@ -1,4 +1,4 @@
-import type { ReviewComment, Thread } from '@juntanza/review-core';
+import type { ReviewComment, Thread } from '@colaboradocs/review-core';
 import { createSignal, For, Show } from 'solid-js';
 import CircleCheckIcon from '../../../icons/CircleCheckIcon';
 import ReplyIcon from '../../../icons/ReplyIcon';

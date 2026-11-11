@@ -1,4 +1,4 @@
-import { sanitizeSectionHtml } from '@juntanza/review-core';
+import { sanitizeSectionHtml } from '@colaboradocs/review-core';
 
 export type ConvertOptions = { id: string; title?: string; version?: string };
 

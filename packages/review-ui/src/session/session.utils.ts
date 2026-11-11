@@ -1,4 +1,4 @@
-import type { Reviewer } from '@juntanza/review-core';
+import type { Reviewer } from '@colaboradocs/review-core';
 
 export type StoredSession = {
   token: string;

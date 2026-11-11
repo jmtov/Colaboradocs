@@ -3,7 +3,7 @@ import {
   MAX_DOCUMENT_BYTES,
   MAX_SECTION_HTML_LENGTH,
   MAX_SECTIONS,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 
 const tags = ALLOWED_HTML_TAGS.map((tag) => `\`${tag}\``).join(', ');
 

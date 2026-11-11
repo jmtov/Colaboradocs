@@ -1,4 +1,4 @@
-import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
 import { useVersionsSheet } from './VersionsSheet.hooks';
 import styles from './VersionsSheet.module.css';

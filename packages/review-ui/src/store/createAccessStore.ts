@@ -1,4 +1,4 @@
-import type { ManagedReviewer, NewReviewer } from '@juntanza/review-core';
+import type { ManagedReviewer, NewReviewer } from '@colaboradocs/review-core';
 import { createSignal, untrack } from 'solid-js';
 import type { ReviewApi } from '../api/review.api';
 import { describeAccessError } from './review.messages';

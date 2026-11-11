@@ -1,4 +1,4 @@
-import { useOverlay } from '@juntanza/review-ui';
+import { useOverlay } from '@colaboradocs/review-ui';
 import { onCleanup, onMount } from 'solid-js';
 import HowToSheet from './components/HowToSheet/HowToSheet';
 import { HOWTO_OPEN_DELAY_MS } from './HowToReview.constants';

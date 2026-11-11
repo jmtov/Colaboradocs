@@ -1,4 +1,4 @@
-import type { ReviewComment, ReviewSnapshot } from '@juntanza/review-core';
+import type { ReviewComment, ReviewSnapshot } from '@colaboradocs/review-core';
 import { describe, expect, it } from 'vitest';
 import {
   authed,

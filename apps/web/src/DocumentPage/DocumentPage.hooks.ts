@@ -1,5 +1,5 @@
-import { groupApprovals } from '@juntanza/review-core';
-import { useOverlay, useReview } from '@juntanza/review-ui';
+import { groupApprovals } from '@colaboradocs/review-core';
+import { useOverlay, useReview } from '@colaboradocs/review-ui';
 import { createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import {

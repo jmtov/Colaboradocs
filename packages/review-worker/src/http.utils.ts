@@ -1,4 +1,4 @@
-import type { ApiError, ApiErrorCode } from '@juntanza/review-core';
+import type { ApiError, ApiErrorCode } from '@colaboradocs/review-core';
 import type { Context } from 'hono';
 
 const STATUS_BY_CODE: Record<ApiErrorCode, 400 | 401 | 403 | 404 | 409 | 429> =

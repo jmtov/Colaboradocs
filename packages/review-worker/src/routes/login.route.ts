@@ -3,7 +3,7 @@ import {
   isValidPin,
   type LoginResponse,
   normalizePin,
-} from '@juntanza/review-core';
+} from '@colaboradocs/review-core';
 import { Hono } from 'hono';
 import {
   DEVICE_ID_PATTERN,

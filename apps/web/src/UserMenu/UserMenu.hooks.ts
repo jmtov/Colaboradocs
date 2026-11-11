@@ -2,7 +2,7 @@ import {
   openAfterMenuCloses,
   useOverlay,
   useReview,
-} from '@juntanza/review-ui';
+} from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import HowToSheet from '@/HowToReview/components/HowToSheet/HowToSheet';
 import { type AdminPageName, adminPath, navigate } from '@/router/router';

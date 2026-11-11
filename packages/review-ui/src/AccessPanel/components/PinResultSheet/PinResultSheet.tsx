@@ -1,4 +1,4 @@
-import type { IssuedPin } from '@juntanza/review-core';
+import type { IssuedPin } from '@colaboradocs/review-core';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
 import CheckIcon from '../../../icons/CheckIcon';
