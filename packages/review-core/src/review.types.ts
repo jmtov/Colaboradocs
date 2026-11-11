@@ -68,6 +68,8 @@ export type ApiErrorCode =
   | 'forbidden'
   | 'not_found'
   | 'name_taken'
+  | 'conflict'
+  | 'draft_stale'
   | 'invalid_request';
 
 export type ApiError = {

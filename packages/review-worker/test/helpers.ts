@@ -88,6 +88,7 @@ export async function resetDatabase() {
     'devices',
     'login_failures',
     'document_versions',
+    'document_drafts',
     'documents',
     'settings',
   ]) {

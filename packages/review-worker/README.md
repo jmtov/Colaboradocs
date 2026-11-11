@@ -46,6 +46,20 @@ Errores: `{ "error": <ApiErrorCode> }` (ver `review-core`), con el HTTP de `src/
 | `DELETE /api/admin/documents/:id` | Archiva (`archived_at`): se oculta, **no se borran sus comentarios**. `204`, o `404` si no está visible. |
 | `PUT /api/admin/space` | `SpaceInfo`. Se valida con `validateSpace`. |
 
+### Borrador y publicación (solo admins)
+
+Un borrador por documento, compartido por los admins; los revisores no lo ven. Guarda el `DocumentContent` completo, validado y limpio como al subirlo. Publicar lo convierte en la versión vigente (la anterior pasa a `document_versions`) y borra el borrador.
+
+| Método y ruta | Cuerpo → respuesta |
+|---|---|
+| `GET /api/admin/documents/:id/draft` | → `DocumentDraft` (`content`, `revision`, `updatedAt`, `updatedBy`, `baseUpdatedAt`, `stale`). `404` si no hay. |
+| `PUT /api/admin/documents/:id/draft` | `{ content, expectedRevision }` → `DraftInfo` (lo mismo sin `content`). Valida con `validateDocument`; el id del contenido tiene que ser el de la ruta. `expectedRevision` = la `revision` que quien guarda tiene delante (`0` = cree que no hay borrador). Si no coincide, `409 conflict` y no se pisa nada. Sirve también para un documento que todavía no existe. |
+| `DELETE /api/admin/documents/:id/draft` | `204`, o `404` si no había. Lo publicado no se toca. |
+| `POST /api/admin/documents/:id/publish` | `{ expectedRevision, force? }` → `{ created }` (`201` si el documento era nuevo, `200` si reemplaza). `404` sin borrador, `409 conflict` si la revisión no coincide, `409 draft_stale` si el documento publicado cambió desde que se creó el borrador (salvo `force: true`). |
+
+- **`stale`:** `baseUpdatedAt` es el `updated_at` del documento publicado cuando se creó el borrador (`null` si no existía). Si hoy es distinto, alguien lo reemplazó por otro camino (p. ej. «Subir documento»). Se detecta desde el primer guardado, no desde que se abrió el editor.
+- **Atomicidad:** guardar es un solo `UPDATE ... WHERE revision = ?`, así que dos guardados a la vez no se pisan. Publicar lee, guarda el documento y borra el borrador **solo si sigue en la revisión publicada**: si alguien guardó en medio, su borrador queda (y aparece como viejo).
+
 ### Accesos (solo admins)
 
 `requireReviewer` + `requireAdmin` (403 si no es admin). Las reglas se validan aquí, no en la UI.
@@ -65,7 +79,7 @@ El PIN no se puede volver a ver: solo se guarda el HMAC. Para entregar uno hay q
 
 ## Datos y auth (lo no obvio)
 
-- Tablas: `reviewers`, `devices`, `login_failures`, `comments`, `approvals`, `documents`, `document_versions`, `settings`. `comments` y `approvals` apuntan a un `document_id` **sin clave foránea**: sobreviven si el documento se archiva o se reemplaza; **los revisores son globales** (un PIN sirve en todos los documentos del despliegue).
+- Tablas: `reviewers`, `devices`, `login_failures`, `comments`, `approvals`, `documents`, `document_versions`, `document_drafts`, `settings`. `comments` y `approvals` apuntan a un `document_id` **sin clave foránea**: sobreviven si el documento se archiva o se reemplaza; **los revisores son globales** (un PIN sirve en todos los documentos del despliegue).
 - El PIN no se guarda: solo `HMAC(TOKEN_SECRET, pin)`. Cambiar `TOKEN_SECRET` invalida todos los PIN.
 - Cada petición vuelve a verificar en D1 que el revisor no esté revocado y que el dispositivo siga registrado: revocar o resetear corta el acceso al instante, aunque el token no haya vencido.
 - `reviewers.promoted_by` (migración 0003): quién hizo admin a cada persona; define la cadena de bloqueo. Los admins creados por CLI quedan en `NULL` y solo se gestionan por CLI.
@@ -73,6 +87,7 @@ El PIN no se puede volver a ver: solo se guarda el HMAC. Para entregar uno hay q
 - No hay tiempo real: la UI sondea cada 30 s.
 
 - `documents.content` es el JSON completo del documento (máx. ~1 MB, límite de fila de D1). `document_versions` conserva el contenido anterior cada vez que se reemplaza; todavía no hay pantalla para restaurarlo (se puede leer con SQL).
+- `document_drafts` (migración 0005): un borrador por documento, sin clave foránea (puede existir antes que el documento). `revision` cuenta los guardados.
 - `settings` es clave/valor; hoy solo existe `space`.
 
 ## Cómo extender

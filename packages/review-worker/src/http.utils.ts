@@ -10,6 +10,8 @@ const STATUS_BY_CODE: Record<ApiErrorCode, 400 | 401 | 403 | 404 | 409 | 429> =
     forbidden: 403,
     not_found: 404,
     name_taken: 409,
+    conflict: 409,
+    draft_stale: 409,
     invalid_request: 400,
   };
 

@@ -13,6 +13,7 @@ Tipos y lógica pura compartidos por el Worker y la UI. TypeScript sin dependenc
 | `approvals.utils.ts` | `groupApprovals`, `fullyApprovedBlocks` | OK por bloque. |
 | `pin.utils.ts` | `generatePin`, `formatPin`, `normalizePin`, `isValidPin`, `hashPin(pin, secret)` | PIN de 8 caracteres sin ambiguos (`K7Q2-M9XP`). `hashPin` es un HMAC-SHA256 con `TOKEN_SECRET`. |
 | `document.types.ts`, `document.utils.ts` | `DocumentContent`, `SpaceInfo`, `DocumentListItem`… y `validateDocument`, `validateSpace`, `sanitizeSectionHtml` | **El formato del documento y su validación.** Los usan el Worker (al guardar) y `doc-import` (vista previa en el navegador): nada entra a la base sin pasar por aquí. Deja solo los campos conocidos, limpia el HTML y revisa ids, tamaños y URLs. |
+| `document.types.ts` (borrador) | `DraftInfo`, `DocumentDraft`, `DraftSave`, `DraftPublish` | Contrato de `/api/admin/documents/:id/draft` y `/publish`. El borrador es un `DocumentContent` más `revision` para detectar guardados cruzados. |
 | `access.utils.ts` | `lockedReviewerIds(people, callerId)` | Ids sobre los que una persona **no puede actuar** en la pantalla de accesos: ella misma, la cadena de quienes la hicieron admin y los admins creados por CLI. Es la regla que valida el Worker. |
 | `reviewers.utils.ts` | `formatReviewerLabel` | «Nombre · grupo» para mostrar quién comentó. |
 

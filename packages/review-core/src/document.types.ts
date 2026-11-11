@@ -81,3 +81,35 @@ export type DocumentVersionItem = {
   by: ReviewerLabel | null;
   current: boolean;
 };
+
+/**
+ * El borrador de un documento (uno por documento, compartido por los admins).
+ * Los revisores no lo ven: publicarlo es lo que crea la versión.
+ */
+export type DraftInfo = {
+  /** Cuenta los guardados; 0 = todavía no hay borrador. Va en cada guardado para detectar conflictos. */
+  revision: number;
+  updatedAt: string;
+  /** Quién lo guardó por última vez; null si esa persona ya no existe. */
+  updatedBy: ReviewerLabel | null;
+  /** `updated_at` del documento publicado cuando se creó el borrador; null si el documento era nuevo. */
+  baseUpdatedAt: string | null;
+  /** El documento publicado cambió (alguien lo reemplazó) después de crearse el borrador. */
+  stale: boolean;
+};
+
+export type DocumentDraft = DraftInfo & { content: DocumentContent };
+
+/** Cuerpo de `PUT /api/admin/documents/:id/draft`. */
+export type DraftSave = {
+  content: DocumentContent;
+  /** La `revision` que quien guarda tiene delante; 0 si cree que no hay borrador. */
+  expectedRevision: number;
+};
+
+/** Cuerpo de `POST /api/admin/documents/:id/publish`. */
+export type DraftPublish = {
+  expectedRevision: number;
+  /** Publicar aunque el documento publicado haya cambiado desde que se creó el borrador. */
+  force?: boolean;
+};
