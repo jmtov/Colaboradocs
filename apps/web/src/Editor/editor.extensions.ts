@@ -45,3 +45,18 @@ export const editorExtensions = [
   Citation,
   UndoRedo,
 ];
+
+/**
+ * El editor de la nota «Para qué sirve»: un solo párrafo, con énfasis y citas
+ * (como lleva hoy el texto real), sin listas ni títulos.
+ */
+export const noteExtensions = [
+  Document.extend({ content: 'paragraph' }),
+  Paragraph,
+  Text,
+  Bold,
+  Italic,
+  HardBreak,
+  Citation,
+  UndoRedo,
+];

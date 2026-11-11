@@ -79,9 +79,20 @@ export function useApp() {
     onSwap: () => window.scrollTo(0, 0),
   });
   const route = createMemo(() => resolveRoute(displayed()));
+  // El documento de la ruta, para leerlo o para editarlo: la revisión es la misma.
   const documentId = () => {
     const current = route();
+    return current.kind === 'document' || current.kind === 'edit'
+      ? current.id
+      : undefined;
+  };
+  const viewId = () => {
+    const current = route();
     return current.kind === 'document' ? current.id : undefined;
+  };
+  const editId = () => {
+    const current = route();
+    return current.kind === 'edit' ? current.id : undefined;
   };
 
   const adminPage = () => {
@@ -89,5 +100,15 @@ export function useApp() {
     return current.kind === 'admin' ? current.page : undefined;
   };
 
-  return { refs, space, name, phase, route, documentId, adminPage };
+  return {
+    refs,
+    space,
+    name,
+    phase,
+    route,
+    documentId,
+    viewId,
+    editId,
+    adminPage,
+  };
 }

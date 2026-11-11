@@ -65,3 +65,58 @@ export function describeAccessError(error: unknown): string {
       return 'No se pudo completar la acción.';
   }
 }
+
+/** Por qué falló una acción del borrador, con el código para que el editor decida qué hacer. */
+export function describeDraftError(error: unknown): {
+  code: ApiRequestError['code'];
+  message: string;
+  details: string[];
+} {
+  if (!(error instanceof ApiRequestError)) {
+    return {
+      code: 'network',
+      message: 'No se pudo completar la acción.',
+      details: [],
+    };
+  }
+  const base = { code: error.code, details: [] as string[] };
+  // Un fallo del servidor no trae cuerpo JSON y se lee como `invalid_request`:
+  // no es que el documento esté mal.
+  if (error.status >= 500) {
+    return {
+      ...base,
+      message: `El servidor falló (${error.status}). Si es una instalación nueva, puede faltar aplicar las migraciones.`,
+    };
+  }
+  switch (error.code) {
+    case 'conflict':
+      return {
+        ...base,
+        message:
+          'Otra persona guardó el borrador mientras lo editabas. Recarga para ver su versión.',
+      };
+    case 'draft_stale':
+      return {
+        ...base,
+        message:
+          'El documento publicado cambió después de que empezaste este borrador. Publicar lo pisaría.',
+      };
+    case 'invalid_request':
+      return {
+        ...base,
+        message: 'El documento no es válido.',
+        details: error.details,
+      };
+    case 'forbidden':
+      return { ...base, message: 'Solo los admins pueden editar.' };
+    case 'not_found':
+      return { ...base, message: 'No hay borrador para ese documento.' };
+    case 'network':
+      return {
+        ...base,
+        message: 'Sin conexión con el servidor. Intenta de nuevo.',
+      };
+    default:
+      return { ...base, message: 'No se pudo completar la acción.' };
+  }
+}

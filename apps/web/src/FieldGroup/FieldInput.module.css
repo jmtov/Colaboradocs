@@ -1,0 +1,15 @@
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0;
+  font: inherit;
+  color: var(--fg);
+  text-align: right;
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--faint);
+}

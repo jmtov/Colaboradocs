@@ -1,0 +1,16 @@
+.target {
+  flex: 1;
+  text-align: right;
+  color: var(--muted);
+}
+
+.remove {
+  flex: none;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  font-size: var(--font-size-sm);
+  color: var(--danger);
+  cursor: pointer;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}

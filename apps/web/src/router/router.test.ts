@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   adminPath,
   documentPath,
+  editPath,
   navigate,
   pathname,
   resolveRoute,
@@ -23,6 +24,19 @@ describe('resolveRoute', () => {
       kind: 'document',
       id: 'principios',
     });
+  });
+
+  it('/d/<id>/editar abre el editor de ese documento', () => {
+    expect(resolveRoute('/d/principios/editar')).toEqual({
+      kind: 'edit',
+      id: 'principios',
+    });
+    expect(resolveRoute('/d/mi%20doc/editar/')).toEqual({
+      kind: 'edit',
+      id: 'mi doc',
+    });
+    expect(editPath('mi doc')).toBe('/d/mi%20doc/editar');
+    expect(resolveRoute('/d/principios/otra')).toEqual({ kind: 'missing' });
   });
 
   it('decodifica el id', () => {

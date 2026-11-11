@@ -11,10 +11,11 @@ const ADMIN_PATHS: Record<AdminPageName, string> = {
 export type Route =
   | { kind: 'home' }
   | { kind: 'document'; id: string }
+  | { kind: 'edit'; id: string }
   | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home, `/d/<id>` un documento y `/documentos` y `/accesos` la administración. Lo demás no existe. */
+/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor y `/documentos` y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };
@@ -22,10 +23,11 @@ export function resolveRoute(pathname: string): Route {
     if (path === adminPath)
       return { kind: 'admin', page: page as AdminPageName };
   }
-  const match = /^\/d\/([^/]+)$/.exec(path);
+  const match = /^\/d\/([^/]+)(\/editar)?$/.exec(path);
   if (!match) return { kind: 'missing' };
   try {
-    return { kind: 'document', id: decodeURIComponent(match[1] ?? '') };
+    const id = decodeURIComponent(match[1] ?? '');
+    return match[2] ? { kind: 'edit', id } : { kind: 'document', id };
   } catch {
     return { kind: 'missing' };
   }
@@ -37,6 +39,11 @@ export function adminPath(page: AdminPageName): string {
 
 export function documentPath(id: string): string {
   return `/d/${encodeURIComponent(id)}`;
+}
+
+/** El editor de un documento (solo admins). */
+export function editPath(id: string): string {
+  return `${documentPath(id)}/editar`;
 }
 
 /** Cómo se llegó a la ruta actual: la transición de página no anima las redirecciones. */

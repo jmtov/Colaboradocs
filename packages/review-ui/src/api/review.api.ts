@@ -2,8 +2,11 @@ import type {
   ApiError,
   ApiErrorCode,
   DocumentContent,
+  DocumentDraft,
   DocumentListItem,
   DocumentVersionItem,
+  DraftInfo,
+  DraftPublish,
   IssuedPin,
   LoginResponse,
   ManagedReviewer,
@@ -128,6 +131,43 @@ export function createReviewApi(options: ApiOptions) {
       const response = await request(
         `/documents/${document.id}`,
         { method: 'PUT', body: JSON.stringify(document) },
+        '/admin',
+      );
+      return (await response.json()) as { created: boolean };
+    },
+    /** El borrador del documento, o null si no hay (admins). */
+    async fetchDraft(id: string): Promise<DocumentDraft | null> {
+      try {
+        const response = await request(`/documents/${id}/draft`, {}, '/admin');
+        return (await response.json()) as DocumentDraft;
+      } catch (error) {
+        if (error instanceof ApiRequestError && error.code === 'not_found') {
+          return null;
+        }
+        throw error;
+      }
+    },
+    async saveDraft(
+      content: DocumentContent,
+      expectedRevision: number,
+    ): Promise<DraftInfo> {
+      const response = await request(
+        `/documents/${content.id}/draft`,
+        { method: 'PUT', body: JSON.stringify({ content, expectedRevision }) },
+        '/admin',
+      );
+      return (await response.json()) as DraftInfo;
+    },
+    async discardDraft(id: string): Promise<void> {
+      await request(`/documents/${id}/draft`, { method: 'DELETE' }, '/admin');
+    },
+    async publishDraft(
+      id: string,
+      options: DraftPublish,
+    ): Promise<{ created: boolean }> {
+      const response = await request(
+        `/documents/${id}/publish`,
+        { method: 'POST', body: JSON.stringify(options) },
         '/admin',
       );
       return (await response.json()) as { created: boolean };

@@ -1,0 +1,17 @@
+/* Como la nota del documento publicado: pequeña y apagada. */
+.editor {
+  min-height: 2rem;
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--muted);
+  background: var(--bg);
+}
+
+.editor :global(.ProseMirror) {
+  outline: none;
+}
+
+.editor :global(.ProseMirror) p {
+  margin: 0;
+}

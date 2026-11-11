@@ -3,10 +3,13 @@ import { Show } from 'solid-js';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
 import Link from '@/router/Link';
+import { editPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
 type Props = {
+  /** Id del documento: el enlace «Editar» (solo admins) va a su editor. */
+  documentId: string;
   documentName: string;
   /** Enlace de regreso a la home de documentos. */
   showBack?: boolean;
@@ -21,6 +24,9 @@ type Props = {
 
 export default function TopBar(props: Props) {
   const review = useReview();
+
+  const isAdmin = () =>
+    (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
 
   const statusText = () => {
     switch (review.status()) {
@@ -62,6 +68,11 @@ export default function TopBar(props: Props) {
         <div class={styles.account}>
           <Show when={statusText()}>
             <span role="status">{statusText()}</span>
+          </Show>
+          <Show when={isAdmin()}>
+            <Link href={editPath(props.documentId)} class={styles.back} lift>
+              Editar
+            </Link>
           </Show>
           <button
             type="button"

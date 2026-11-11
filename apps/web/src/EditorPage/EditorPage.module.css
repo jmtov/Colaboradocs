@@ -1,0 +1,120 @@
+.page {
+  max-width: 1200px;
+  padding-bottom: 4.5rem;
+  margin: 0 auto;
+}
+
+.intro {
+  display: grid;
+  gap: 0.875rem;
+  justify-items: start;
+  padding: 2.5rem 0 1.75rem;
+}
+
+.eyebrow {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* Un editor se lee mejor angosto, como las listas de administración. */
+.content {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 780px;
+}
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.status {
+  margin-right: auto;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  cursor: pointer;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.warn,
+.problem {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+  padding: 0.75rem 0.875rem;
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.warn {
+  color: var(--warn);
+  background: var(--warn-bg);
+}
+
+.problem {
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.problem ul {
+  padding-left: 1.125rem;
+  margin: 0;
+}
+
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.preview {
+  display: grid;
+  gap: 2rem;
+}
+
+.previewTitle {
+  margin: 0 0 0.5rem;
+  font-size: var(--font-size-lg);
+}
+
+.adds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

@@ -1,6 +1,7 @@
 import type {
   DocumentContent,
   DocumentListItem,
+  DraftPublish,
   NewComment,
   ReviewSnapshot,
   SpaceInfo,
@@ -16,7 +17,11 @@ import {
   type StoredSession,
 } from '../session/session.utils';
 import { createAccessStore } from './createAccessStore';
-import { describeLoginError, describePublishError } from './review.messages';
+import {
+  describeDraftError,
+  describeLoginError,
+  describePublishError,
+} from './review.messages';
 import { DEFAULT_ROLE_FIELD, formatRole, type RoleField } from './role.utils';
 
 /** Cada cuánto se vuelve a pedir el estado de la revisión mientras la pestaña está visible. */
@@ -212,6 +217,33 @@ export function createReviewStore(options: ReviewStoreOptions) {
     }
   }
 
+  type DraftOutcome<T> =
+    | { ok: true; value: T }
+    | {
+        ok: false;
+        code: ApiRequestError['code'];
+        message: string;
+        details: string[];
+      };
+
+  async function draftCall<T>(run: () => Promise<T>): Promise<DraftOutcome<T>> {
+    try {
+      return { ok: true, value: await run() };
+    } catch (error) {
+      return { ok: false, ...describeDraftError(error) };
+    }
+  }
+
+  /** Publica el borrador (admins) y recarga la lista de documentos. */
+  async function publishDraft(
+    id: string,
+    options: DraftPublish,
+  ): Promise<DraftOutcome<{ created: boolean }>> {
+    const outcome = await draftCall(() => api.publishDraft(id, options));
+    if (outcome.ok) setDocuments(await api.fetchDocuments());
+    return outcome;
+  }
+
   /** Oculta un documento (admins); sus comentarios se conservan. */
   async function archiveDocument(id: string): Promise<PublishOutcome> {
     try {
@@ -291,6 +323,12 @@ export function createReviewStore(options: ReviewStoreOptions) {
     loadDocuments,
     publishDocument,
     archiveDocument,
+    /** Borrador del documento (admins): null si no hay. */
+    fetchDraft: (id: string) => draftCall(() => api.fetchDraft(id)),
+    saveDraft: (content: DocumentContent, expectedRevision: number) =>
+      draftCall(() => api.saveDraft(content, expectedRevision)),
+    discardDraft: (id: string) => draftCall(() => api.discardDraft(id)),
+    publishDraft,
     saveSpace,
   };
 }

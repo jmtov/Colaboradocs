@@ -23,6 +23,7 @@ export default function DocumentPage(props: {
   return (
     <>
       <TopBar
+        documentId={props.content.id}
         documentName={props.content.shortName ?? props.content.title}
         showBack={props.multiple}
         currentLabel={page.currentLabel()}

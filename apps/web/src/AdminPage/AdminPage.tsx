@@ -1,9 +1,8 @@
 import { AccessPanel } from '@colaboradocs/review-ui';
 import { Match, Show, Switch } from 'solid-js';
 import DocumentsPage from '@/DocumentsPage/DocumentsPage';
-import Link from '@/router/Link';
+import PageBar from '@/PageBar/PageBar';
 import type { AdminPageName } from '@/router/router';
-import UserMenu from '@/UserMenu/UserMenu';
 import { ADMIN_TITLES } from './AdminPage.constants';
 import { useAdminPage } from './AdminPage.hooks';
 import styles from './AdminPage.module.css';
@@ -20,22 +19,11 @@ export default function AdminPage(props: Props) {
 
   return (
     <>
-      <header class={styles.bar}>
-        <div class={styles.barInner}>
-          <div class={styles.start}>
-            <Link href="/" class={styles.back} lift>
-              ← Inicio
-            </Link>
-            <span class={styles.barName}>{props.name}</span>
-          </div>
-          <div class={styles.account}>
-            <Show when={admin.offline()}>
-              <span role="status">Sin conexión</span>
-            </Show>
-            <UserMenu />
-          </div>
-        </div>
-      </header>
+      <PageBar backLabel="← Inicio" backHref="/" name={props.name}>
+        <Show when={admin.offline()}>
+          <span role="status">Sin conexión</span>
+        </Show>
+      </PageBar>
       <main class={styles.page}>
         <Show
           when={admin.isAdmin()}

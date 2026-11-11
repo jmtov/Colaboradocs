@@ -2,6 +2,7 @@ import { PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 import { Match, Show, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
+import EditorPage from '@/EditorPage/EditorPage';
 import HomePage from '@/HomePage/HomePage';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
@@ -88,7 +89,11 @@ export default function App() {
             <Match when={app.adminPage()} keyed>
               {(page) => <AdminPage name={app.name()} page={page} />}
             </Match>
-            <Match when={app.documentId()} keyed>
+            <Match when={app.editId()} keyed>
+              {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}
+              {(id) => <EditorPage id={id} name={app.name()} />}
+            </Match>
+            <Match when={app.viewId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}
               {(id) => <DocumentRoute id={id} />}
             </Match>

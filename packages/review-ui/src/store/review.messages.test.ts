@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ApiRequestError } from '../api/review.api';
 import {
   describeAccessError,
+  describeDraftError,
   describeLoginError,
   describePublishError,
 } from './review.messages';
@@ -70,5 +71,37 @@ describe('describePublishError', () => {
     expect(describePublishError(new Error('x')).message).toBe(
       'No se pudo completar la acción.',
     );
+  });
+});
+
+describe('describeDraftError', () => {
+  it('devuelve el código para que el editor decida, con un mensaje para cada caso', () => {
+    const conflict = describeDraftError(new ApiRequestError('conflict', 409));
+    expect(conflict.code).toBe('conflict');
+    expect(conflict.message).toContain('Otra persona guardó');
+
+    const stale = describeDraftError(new ApiRequestError('draft_stale', 409));
+    expect(stale.code).toBe('draft_stale');
+    expect(stale.message).toContain('cambió');
+  });
+
+  it('un documento inválido trae los detalles del servidor', () => {
+    const result = describeDraftError(
+      new ApiRequestError('invalid_request', 400, ['Falta «title».']),
+    );
+    expect(result.details).toEqual(['Falta «title».']);
+  });
+
+  it('un error del servidor no se hace pasar por un documento inválido', () => {
+    // Sin cuerpo JSON, la API lo lee como `invalid_request`.
+    const result = describeDraftError(
+      new ApiRequestError('invalid_request', 500),
+    );
+    expect(result.message).toContain('El servidor falló (500)');
+    expect(result.message).not.toContain('no es válido');
+  });
+
+  it('lo que no es de la API se trata como falta de conexión', () => {
+    expect(describeDraftError(new TypeError('x')).code).toBe('network');
   });
 });
