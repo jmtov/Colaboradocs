@@ -1,9 +1,8 @@
-import { excerptOf, groupThreads } from '@juntanza/review-core';
-import { createMemo, For, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
 import BottomSheet from '../BottomSheet/BottomSheet';
-import { useReview } from '../ReviewProvider/review.context';
 import CommentComposer from './components/CommentComposer/CommentComposer';
 import ThreadView from './components/ThreadView/ThreadView';
+import { useThreadSheet } from './ThreadSheet.hooks';
 import styles from './ThreadSheet.module.css';
 
 type Props = {
@@ -15,12 +14,10 @@ type Props = {
 };
 
 export default function ThreadSheet(props: Props) {
-  const review = useReview();
-  const threads = createMemo(
-    () =>
-      groupThreads(review.snapshot()?.comments ?? []).get(props.blockId) ?? [],
-  );
-  const excerpt = () => excerptOf(props.blockText);
+  const sheet = useThreadSheet({
+    blockId: () => props.blockId,
+    blockText: () => props.blockText,
+  });
 
   return (
     <BottomSheet
@@ -33,30 +30,23 @@ export default function ThreadSheet(props: Props) {
       <blockquote class={styles.paragraph}>{props.blockText}</blockquote>
       <div class={styles.list}>
         <For
-          each={threads()}
+          each={sheet.threads()}
           fallback={
             <p class={styles.empty}>Todavía no hay comentarios aquí.</p>
           }
         >
-          {(thread) => <ThreadView thread={thread} excerpt={excerpt()} />}
+          {(thread) => <ThreadView thread={thread} excerpt={sheet.excerpt()} />}
         </For>
       </div>
       <span class={styles.label}>
-        <Show when={threads().length > 0} fallback="Primer comentario">
+        <Show when={sheet.threads().length > 0} fallback="Primer comentario">
           Nuevo comentario
         </Show>
       </span>
       <CommentComposer
         placeholder="Escribe un comentario sobre este párrafo"
         submitLabel="Comentar"
-        onSubmit={(text) =>
-          review.addComment({
-            blockId: props.blockId,
-            parentId: null,
-            text,
-            blockExcerpt: excerpt(),
-          })
-        }
+        onSubmit={sheet.submitComment}
       />
     </BottomSheet>
   );

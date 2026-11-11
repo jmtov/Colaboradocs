@@ -1,6 +1,6 @@
-import { createSignal, type JSX, Show } from 'solid-js';
+import { type JSX, Show } from 'solid-js';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
-import { useReview } from '../ReviewProvider/review.context';
+import { usePinGate } from './PinGate.hooks';
 import styles from './PinGate.module.css';
 
 type Props = {
@@ -12,25 +12,12 @@ type Props = {
 
 /** Muestra `children` solo con sesión; si no, pide el PIN. */
 export default function PinGate(props: Props) {
-  const review = useReview();
-  const [pin, setPin] = createSignal('');
-  const [busy, setBusy] = createSignal(false);
-  const [error, setError] = createSignal<string | null>(null);
-
-  async function onSubmit(event: SubmitEvent) {
-    event.preventDefault();
-    if (busy() || !pin().trim()) return;
-    setBusy(true);
-    setError(null);
-    const outcome = await review.login(pin());
-    setBusy(false);
-    if (!outcome.ok) setError(outcome.message);
-  }
+  const gate = usePinGate();
 
   return (
-    <Show when={!review.session()} fallback={props.children}>
+    <Show when={gate.needsPin()} fallback={props.children}>
       <main class={styles.gate}>
-        <form class={styles.card} onSubmit={onSubmit}>
+        <form class={styles.card} onSubmit={gate.onSubmit}>
           <span class={styles.kicker}>Acceso con PIN</span>
           <h1 class={styles.title}>{props.title}</h1>
           <p class={styles.hint}>
@@ -47,10 +34,10 @@ export default function PinGate(props: Props) {
             maxLength={12}
             placeholder="XXXX-XXXX"
             aria-label="PIN de acceso"
-            value={pin()}
-            onInput={(event) => setPin(event.currentTarget.value)}
+            value={gate.pin()}
+            onInput={gate.onPinInput}
           />
-          <Show when={error() ?? review.notice()}>
+          <Show when={gate.message()}>
             {(message) => (
               <p class={styles.error} role="alert">
                 {message()}
@@ -60,9 +47,9 @@ export default function PinGate(props: Props) {
           <button
             type="submit"
             class={styles.submit}
-            disabled={busy() || !pin().trim()}
+            disabled={gate.submitDisabled()}
           >
-            {busy() ? 'Verificando…' : 'Entrar'}
+            {gate.busy() ? 'Verificando…' : 'Entrar'}
             <ArrowRightIcon class={styles.icon} />
           </button>
         </form>

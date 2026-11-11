@@ -1,55 +1,24 @@
-import { BottomSheet, useReview } from '@juntanza/review-ui';
-import { createEffect, createSignal, For, Show, untrack } from 'solid-js';
+import { BottomSheet } from '@juntanza/review-ui';
+import { For, Show } from 'solid-js';
 import UploadSheet from './components/UploadSheet/UploadSheet';
+import { useDocumentsSheet } from './DocumentsSheet.hooks';
 import styles from './DocumentsSheet.module.css';
-import {
-  documentsOpen,
-  setDocumentsOpen,
-  setUploadTarget,
-  uploadTarget,
-} from './documentsSheet.state';
 
 /** Administración de documentos (solo admins): subir, reemplazar y archivar. */
 export default function DocumentsSheet() {
-  const review = useReview();
-  const isAdmin = () =>
-    (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
-  const [confirming, setConfirming] = createSignal<string | null>(null);
-  const [busy, setBusy] = createSignal(false);
-
-  // Solo depende de abrir o cerrar la hoja. Si siguiera a `isAdmin()` (que lee la
-  // revisión), cada recarga de la revisión volvería a pedir la lista, sin fin.
-  createEffect(() => {
-    if (documentsOpen()) {
-      if (untrack(isAdmin)) void review.loadDocuments();
-    } else {
-      setConfirming(null);
-    }
-  });
-
-  async function archive(id: string) {
-    setBusy(true);
-    const result = await review.archiveDocument(id);
-    setBusy(false);
-    setConfirming(null);
-    review.flash(result.ok ? 'Documento archivado.' : result.message);
-  }
+  const sheet = useDocumentsSheet();
 
   return (
-    <Show when={isAdmin()}>
+    <Show when={sheet.isAdmin()}>
       <BottomSheet
-        open={documentsOpen()}
+        open={sheet.open()}
         kicker="Administración"
         title="Documentos"
         compact
-        onClose={() => setDocumentsOpen(false)}
+        onClose={sheet.close}
       >
         <div class={styles.content}>
-          <button
-            type="button"
-            class={styles.add}
-            onClick={() => setUploadTarget({})}
-          >
+          <button type="button" class={styles.add} onClick={sheet.startUpload}>
             Subir documento
           </button>
           <p class={styles.hint}>
@@ -58,7 +27,7 @@ export default function DocumentsSheet() {
           </p>
           <ul class={styles.list}>
             <For
-              each={review.documents() ?? []}
+              each={sheet.documents()}
               fallback={
                 <li class={styles.empty}>Todavía no hay documentos.</li>
               }
@@ -75,19 +44,17 @@ export default function DocumentsSheet() {
                     <button
                       type="button"
                       class={styles.action}
-                      onClick={() =>
-                        setUploadTarget({ replaceId: document.id })
-                      }
+                      onClick={() => sheet.startReplace(document.id)}
                     >
                       Reemplazar
                     </button>
                     <Show
-                      when={confirming() === document.id}
+                      when={sheet.confirming() === document.id}
                       fallback={
                         <button
                           type="button"
                           class={`${styles.action} ${styles.danger}`}
-                          onClick={() => setConfirming(document.id)}
+                          onClick={() => sheet.askArchive(document.id)}
                         >
                           Archivar
                         </button>
@@ -99,15 +66,15 @@ export default function DocumentsSheet() {
                       <button
                         type="button"
                         class={`${styles.action} ${styles.dangerSolid}`}
-                        disabled={busy()}
-                        onClick={() => void archive(document.id)}
+                        disabled={sheet.busy()}
+                        onClick={() => void sheet.archive(document.id)}
                       >
                         Archivar
                       </button>
                       <button
                         type="button"
                         class={styles.action}
-                        onClick={() => setConfirming(null)}
+                        onClick={sheet.cancelArchive}
                       >
                         Cancelar
                       </button>
@@ -119,10 +86,7 @@ export default function DocumentsSheet() {
           </ul>
         </div>
       </BottomSheet>
-      <UploadSheet
-        target={uploadTarget()}
-        onClose={() => setUploadTarget(null)}
-      />
+      <UploadSheet target={sheet.uploadTarget()} onClose={sheet.closeUpload} />
     </Show>
   );
 }

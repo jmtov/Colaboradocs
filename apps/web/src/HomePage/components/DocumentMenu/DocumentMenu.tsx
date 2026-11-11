@@ -1,12 +1,7 @@
-import { useReview } from '@juntanza/review-ui';
-import { createSignal, Show } from 'solid-js';
-import { setUploadTarget } from '@/DocumentsSheet/documentsSheet.state';
+import { Show } from 'solid-js';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
-import { openAfterMenuCloses } from '@/UserMenu/menu.utils';
+import { useDocumentMenu } from './DocumentMenu.hooks';
 import styles from './DocumentMenu.module.css';
-
-/** Separación entre el botón y el menú, en px. */
-const MENU_GAP_PX = 6;
 
 type Props = {
   id: string;
@@ -15,67 +10,37 @@ type Props = {
 
 /** Menú de un documento (solo admins): reemplazar el archivo o archivarlo. */
 export default function DocumentMenu(props: Props) {
-  const review = useReview();
-  let trigger!: HTMLButtonElement;
-  let menu!: HTMLDivElement;
-  const [open, setOpen] = createSignal(false);
-  const [confirming, setConfirming] = createSignal(false);
-  const [busy, setBusy] = createSignal(false);
-
-  function toggle() {
-    if (!menu.matches(':popover-open')) {
-      // El popover vive en la capa superior: se ubica bajo el botón, alineado a la derecha.
-      const rect = trigger.getBoundingClientRect();
-      menu.style.top = `${rect.bottom + MENU_GAP_PX}px`;
-      menu.style.right = `${document.documentElement.clientWidth - rect.right}px`;
-    }
-    menu.togglePopover();
-  }
-
-  function replace() {
-    openAfterMenuCloses(menu, () => setUploadTarget({ replaceId: props.id }));
-  }
-
-  async function archive() {
-    setBusy(true);
-    const result = await review.archiveDocument(props.id);
-    setBusy(false);
-    menu.hidePopover();
-    review.flash(result.ok ? 'Documento archivado.' : result.message);
-  }
+  const documentMenu = useDocumentMenu(() => props.id);
 
   return (
     <>
       <button
-        ref={trigger}
+        ref={documentMenu.refs.trigger}
         type="button"
         class={styles.trigger}
-        classList={{ [styles.open]: open() }}
+        classList={{ [styles.open]: documentMenu.open() }}
         aria-label={`Acciones de «${props.title}»`}
         aria-haspopup="true"
-        aria-expanded={open()}
-        onClick={toggle}
+        aria-expanded={documentMenu.open()}
+        onClick={documentMenu.toggle}
       >
         <EllipsisVerticalIcon class={styles.icon} />
       </button>
       <div
-        ref={menu}
+        ref={documentMenu.refs.menu}
         popover
         class={styles.menu}
-        on:toggle={(event: ToggleEvent) => {
-          setOpen(event.newState === 'open');
-          if (event.newState === 'closed') setConfirming(false);
-        }}
+        on:toggle={documentMenu.onToggle}
       >
         <Show
-          when={confirming()}
+          when={documentMenu.confirming()}
           fallback={
             <>
               <button
                 type="button"
                 class={styles.item}
                 data-flat
-                onClick={replace}
+                onClick={documentMenu.replace}
               >
                 Reemplazar documento
               </button>
@@ -83,7 +48,7 @@ export default function DocumentMenu(props: Props) {
                 type="button"
                 class={`${styles.item} ${styles.danger}`}
                 data-flat
-                onClick={() => setConfirming(true)}
+                onClick={documentMenu.askArchive}
               >
                 Archivar
               </button>
@@ -99,8 +64,8 @@ export default function DocumentMenu(props: Props) {
               type="button"
               class={`${styles.item} ${styles.dangerSolid}`}
               data-flat
-              disabled={busy()}
-              onClick={() => void archive()}
+              disabled={documentMenu.busy()}
+              onClick={() => void documentMenu.archive()}
             >
               Archivar
             </button>
@@ -108,7 +73,7 @@ export default function DocumentMenu(props: Props) {
               type="button"
               class={styles.item}
               data-flat
-              onClick={() => setConfirming(false)}
+              onClick={documentMenu.cancelArchive}
             >
               Cancelar
             </button>

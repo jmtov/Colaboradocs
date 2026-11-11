@@ -1,39 +1,23 @@
-import { createSignal, Show } from 'solid-js';
+import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
 import CheckIcon from '../../../icons/CheckIcon';
 import CopyIcon from '../../../icons/CopyIcon';
-import { useReview } from '../../../ReviewProvider/review.context';
+import { usePinResultSheet } from './PinResultSheet.hooks';
 import styles from './PinResultSheet.module.css';
 
 /** Muestra el PIN recién creado o regenerado. Es la única vez que se ve. */
 export default function PinResultSheet() {
-  const review = useReview();
-  const access = review.access;
-  const [copied, setCopied] = createSignal(false);
-
-  async function copy(pin: string) {
-    try {
-      await navigator.clipboard.writeText(pin);
-      setCopied(true);
-    } catch {
-      review.flash('No se pudo copiar. Selecciónalo y cópialo a mano.');
-    }
-  }
-
-  function close() {
-    setCopied(false);
-    access.clearIssued();
-  }
+  const sheet = usePinResultSheet();
 
   return (
     <BottomSheet
-      open={access.issued() !== null}
+      open={sheet.issued() !== null}
       kicker="Accesos"
-      title={`PIN de ${access.issued()?.reviewer.name ?? ''}`}
+      title={`PIN de ${sheet.issued()?.reviewer.name ?? ''}`}
       compact
-      onClose={close}
+      onClose={sheet.close}
     >
-      <Show when={access.issued()}>
+      <Show when={sheet.issued()}>
         {(issued) => (
           <div class={styles.content}>
             <output class={styles.pin}>{issued().pin}</output>
@@ -45,20 +29,20 @@ export default function PinResultSheet() {
               <button
                 type="button"
                 class={styles.button}
-                onClick={() => void copy(issued().pin)}
+                onClick={() => void sheet.copy(issued().pin)}
               >
                 <Show
-                  when={copied()}
+                  when={sheet.copied()}
                   fallback={<CopyIcon class={styles.icon} />}
                 >
                   <CheckIcon class={styles.icon} />
                 </Show>
-                {copied() ? 'Copiado' : 'Copiar'}
+                {sheet.copied() ? 'Copiado' : 'Copiar'}
               </button>
               <button
                 type="button"
                 class={`${styles.button} ${styles.primary}`}
-                onClick={close}
+                onClick={sheet.close}
               >
                 Listo
               </button>

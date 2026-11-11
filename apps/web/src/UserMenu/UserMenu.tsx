@@ -1,77 +1,40 @@
-import { AccessSheet, useReview } from '@juntanza/review-ui';
-import { createSignal, Show } from 'solid-js';
-import { setDocumentsOpen } from '@/DocumentsSheet/documentsSheet.state';
-import { howToAvailable, setHowToOpen } from '@/HowToReview/howto.state';
+import { AccessSheet } from '@juntanza/review-ui';
+import { Show } from 'solid-js';
+import { howToAvailable } from '@/HowToReview/howto.state';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
 import FileTextIcon from '@/icons/FileTextIcon';
 import ListChecksIcon from '@/icons/ListChecksIcon';
 import LogOutIcon from '@/icons/LogOutIcon';
 import UsersIcon from '@/icons/UsersIcon';
 import ThemeSwitch from '@/ThemeSwitch/ThemeSwitch';
-import { openAfterMenuCloses } from './menu.utils';
+import { useUserMenu } from './UserMenu.hooks';
 import styles from './UserMenu.module.css';
-
-/** Separación entre el botón y el menú, en px. */
-const MENU_GAP_PX = 6;
 
 /** Tres puntos en el encabezado: abre un menú con quién eres y «Salir». */
 export default function UserMenu() {
-  const review = useReview();
-  let trigger!: HTMLButtonElement;
-  let menu!: HTMLDivElement;
-  const [open, setOpen] = createSignal(false);
-  const [accessOpen, setAccessOpen] = createSignal(false);
-
-  const me = () => review.snapshot()?.me ?? review.session()?.reviewer;
-
-  function toggle() {
-    if (!menu.matches(':popover-open')) {
-      // El popover vive en la capa superior: se ubica bajo el botón, alineado a la derecha.
-      const rect = trigger.getBoundingClientRect();
-      menu.style.top = `${rect.bottom + MENU_GAP_PX}px`;
-      menu.style.right = `${document.documentElement.clientWidth - rect.right}px`;
-    }
-    menu.togglePopover();
-  }
-
-  function openAccess() {
-    openAfterMenuCloses(menu, () => setAccessOpen(true));
-  }
-
-  function openHowTo() {
-    openAfterMenuCloses(menu, () => setHowToOpen(true));
-  }
-
-  function openDocuments() {
-    openAfterMenuCloses(menu, () => setDocumentsOpen(true));
-  }
-
-  function logout() {
-    menu.hidePopover();
-    review.logout();
-  }
+  const userMenu = useUserMenu();
 
   return (
     <>
       <button
-        ref={trigger}
+        ref={userMenu.refs.trigger}
         type="button"
         class={styles.trigger}
-        classList={{ [styles.open]: open() }}
+        classList={{ [styles.open]: userMenu.open() }}
         aria-label="Menú de la sesión"
         aria-haspopup="true"
-        aria-expanded={open()}
-        onClick={toggle}
+        aria-expanded={userMenu.open()}
+        onClick={userMenu.toggle}
       >
         <EllipsisVerticalIcon class={styles.icon} />
       </button>
       <div
-        ref={menu}
+        ref={userMenu.refs.menu}
         popover
         class={styles.menu}
-        on:toggle={(event: ToggleEvent) => setOpen(event.newState === 'open')}
+        on:toggle={userMenu.onToggle}
       >
-        <Show when={me()}>
+        <Show when={userMenu.me()}>
           {(reviewer) => (
             <div class={styles.who}>
               <span class={styles.kicker}>
@@ -95,18 +58,18 @@ export default function UserMenu() {
             type="button"
             class={styles.item}
             data-flat
-            onClick={openHowTo}
+            onClick={userMenu.openHowTo}
           >
             <ListChecksIcon class={styles.icon} />
             Cómo revisar
           </button>
         </Show>
-        <Show when={me()?.isAdmin}>
+        <Show when={userMenu.me()?.isAdmin}>
           <button
             type="button"
             class={styles.item}
             data-flat
-            onClick={openDocuments}
+            onClick={userMenu.openDocuments}
           >
             <FileTextIcon class={styles.icon} />
             Documentos
@@ -115,19 +78,27 @@ export default function UserMenu() {
             type="button"
             class={styles.item}
             data-flat
-            onClick={openAccess}
+            onClick={userMenu.openAccess}
           >
             <UsersIcon class={styles.icon} />
             Accesos
           </button>
         </Show>
-        <button type="button" class={styles.item} data-flat onClick={logout}>
+        <button
+          type="button"
+          class={styles.item}
+          data-flat
+          onClick={userMenu.logout}
+        >
           <LogOutIcon class={styles.icon} />
           Salir
         </button>
       </div>
-      <Show when={me()?.isAdmin}>
-        <AccessSheet open={accessOpen()} onClose={() => setAccessOpen(false)} />
+      <Show when={userMenu.me()?.isAdmin}>
+        <AccessSheet
+          open={userMenu.accessOpen()}
+          onClose={userMenu.closeAccess}
+        />
       </Show>
     </>
   );

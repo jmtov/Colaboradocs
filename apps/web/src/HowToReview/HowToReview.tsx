@@ -1,11 +1,9 @@
 import { BottomSheet } from '@juntanza/review-ui';
-import { createSignal, onCleanup, onMount, Show } from 'solid-js';
+import { Show } from 'solid-js';
+import { useHowToReview } from './HowToReview.hooks';
 import styles from './HowToReview.module.css';
-import { howToOpen, setHowToAvailable, setHowToOpen } from './howto.state';
-import { dismissHowTo, isHowToDismissed } from './howto.utils';
 
-/** Cuánto se espera, tras entrar a un documento, antes de abrir la guía. */
-export const HOWTO_OPEN_DELAY_MS = 100;
+export { HOWTO_OPEN_DELAY_MS } from './HowToReview.constants';
 
 /**
  * La guía «Cómo revisar», en una hoja inferior. Se abre cada vez que se abre un
@@ -13,37 +11,15 @@ export const HOWTO_OPEN_DELAY_MS = 100;
  * pedido, desde el menú de la sesión.
  */
 export default function HowToReview() {
-  const [dismissed, setDismissed] = createSignal(isHowToDismissed());
-
-  let openTimer: ReturnType<typeof setTimeout> | undefined;
-
-  onMount(() => {
-    setHowToAvailable(true);
-    // Un instante después de entrar al documento: así la hoja se desliza sobre una
-    // página ya pintada, en vez de competir con su carga.
-    if (!dismissed()) {
-      openTimer = setTimeout(() => setHowToOpen(true), HOWTO_OPEN_DELAY_MS);
-    }
-  });
-  onCleanup(() => {
-    clearTimeout(openTimer);
-    setHowToAvailable(false);
-    setHowToOpen(false);
-  });
-
-  function neverAgain() {
-    dismissHowTo();
-    setDismissed(true);
-    setHowToOpen(false);
-  }
+  const howTo = useHowToReview();
 
   return (
     <BottomSheet
-      open={howToOpen()}
+      open={howTo.open()}
       kicker="Guía"
       title="Cómo revisar"
       compact
-      onClose={() => setHowToOpen(false)}
+      onClose={howTo.close}
     >
       <div class={styles.content}>
         <ol class={styles.steps}>
@@ -70,15 +46,19 @@ export default function HowToReview() {
           </li>
         </ol>
         <div class={styles.row}>
-          <Show when={!dismissed()}>
-            <button type="button" class={styles.button} onClick={neverAgain}>
+          <Show when={!howTo.dismissed()}>
+            <button
+              type="button"
+              class={styles.button}
+              onClick={howTo.neverAgain}
+            >
               No volver a mostrar
             </button>
           </Show>
           <button
             type="button"
             class={`${styles.button} ${styles.primary}`}
-            onClick={() => setHowToOpen(false)}
+            onClick={howTo.close}
           >
             Entendido
           </button>

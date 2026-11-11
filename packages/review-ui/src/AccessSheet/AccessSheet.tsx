@@ -1,7 +1,7 @@
-import { createEffect, createSignal, For, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
 import BottomSheet from '../BottomSheet/BottomSheet';
 import UserPlusIcon from '../icons/UserPlusIcon';
-import { useReview } from '../ReviewProvider/review.context';
+import { useAccessSheet } from './AccessSheet.hooks';
 import styles from './AccessSheet.module.css';
 import AddPersonSheet from './components/AddPersonSheet/AddPersonSheet';
 import PersonRow from './components/PersonRow/PersonRow';
@@ -14,17 +14,7 @@ type Props = {
 
 /** Pantalla de accesos (solo admins): quién puede entrar, con qué nivel, y su PIN. */
 export default function AccessSheet(props: Props) {
-  const review = useReview();
-  const access = review.access;
-  const [adding, setAdding] = createSignal(false);
-  const [expanded, setExpanded] = createSignal<string | null>(null);
-
-  createEffect(() => {
-    if (props.open) void access.load();
-    else setExpanded(null);
-  });
-
-  const myId = () => review.snapshot()?.me.id ?? review.session()?.reviewer.id;
+  const sheet = useAccessSheet(() => props.open);
 
   return (
     <>
@@ -39,7 +29,7 @@ export default function AccessSheet(props: Props) {
           <button
             type="button"
             class={styles.add}
-            onClick={() => setAdding(true)}
+            onClick={() => sheet.openAdd()}
           >
             <UserPlusIcon class={styles.icon} />
             Agregar persona
@@ -48,38 +38,36 @@ export default function AccessSheet(props: Props) {
             El PIN solo se ve al crearlo o regenerarlo. Si alguien lo pierde,
             hay que regenerarlo.
           </p>
-          <Show when={access.status() === 'loading'}>
+          <Show when={sheet.status() === 'loading'}>
             <p class={styles.state}>Cargando…</p>
           </Show>
-          <Show when={access.status() === 'error'}>
+          <Show when={sheet.status() === 'error'}>
             <p class={styles.state}>
               No se pudo cargar la lista.{' '}
               <button
                 type="button"
                 class={styles.link}
-                onClick={() => void access.load()}
+                onClick={() => sheet.reload()}
               >
                 Reintentar
               </button>
             </p>
           </Show>
           <ul class={styles.list}>
-            <For each={access.people() ?? []}>
+            <For each={sheet.people() ?? []}>
               {(person) => (
                 <PersonRow
                   person={person}
-                  isMe={person.id === myId()}
-                  expanded={expanded() === person.id}
-                  onToggle={() =>
-                    setExpanded(expanded() === person.id ? null : person.id)
-                  }
+                  isMe={person.id === sheet.myId()}
+                  expanded={sheet.expanded() === person.id}
+                  onToggle={() => sheet.toggleExpanded(person.id)}
                 />
               )}
             </For>
           </ul>
         </div>
       </BottomSheet>
-      <AddPersonSheet open={adding()} onClose={() => setAdding(false)} />
+      <AddPersonSheet open={sheet.adding()} onClose={() => sheet.closeAdd()} />
       <PinResultSheet />
     </>
   );

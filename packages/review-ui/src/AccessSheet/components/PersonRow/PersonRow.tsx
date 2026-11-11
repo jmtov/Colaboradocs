@@ -1,7 +1,8 @@
 import type { ManagedReviewer } from '@juntanza/review-core';
-import { createSignal, Show } from 'solid-js';
+import { Show } from 'solid-js';
 import EllipsisVerticalIcon from '../../../icons/EllipsisVerticalIcon';
-import { useReview } from '../../../ReviewProvider/review.context';
+import { ROLE_EDIT_MAX_LENGTH } from './PersonRow.constants';
+import { usePersonRow } from './PersonRow.hooks';
 import styles from './PersonRow.module.css';
 
 type Props = {
@@ -11,43 +12,8 @@ type Props = {
   onToggle: () => void;
 };
 
-type Confirm = 'pin' | 'remove' | null;
-
 export default function PersonRow(props: Props) {
-  const review = useReview();
-  const access = review.access;
-  const [confirm, setConfirm] = createSignal<Confirm>(null);
-  const [editing, setEditing] = createSignal(false);
-  const [draft, setDraft] = createSignal('');
-  const [busy, setBusy] = createSignal(false);
-
-  /** Corre una acción; si falla, avisa. */
-  async function run(
-    action: () => Promise<{ ok: true } | { ok: false; message: string }>,
-    done?: string,
-  ) {
-    if (busy()) return;
-    setBusy(true);
-    const result = await action();
-    setBusy(false);
-    setConfirm(null);
-    if (!result.ok) review.flash(result.message);
-    else if (done) review.flash(done);
-    return result.ok;
-  }
-
-  async function saveRole() {
-    const value = draft().trim();
-    if (!value) return;
-    if (await run(() => access.setRole(props.person.id, value))) {
-      setEditing(false);
-    }
-  }
-
-  const role = () =>
-    props.person.municipality
-      ? review.role.format(props.person.municipality)
-      : null;
+  const row = usePersonRow(() => props.person);
 
   return (
     <li class={styles.row}>
@@ -60,14 +26,14 @@ export default function PersonRow(props: Props) {
             </Show>
           </span>
           <Show
-            when={role()}
+            when={row.role()}
             fallback={
               <span class={styles.missing}>
-                Sin {review.role.label.toLowerCase()}
+                Sin {row.roleLabel().toLowerCase()}
               </span>
             }
           >
-            <span class={styles.role}>{role()}</span>
+            <span class={styles.role}>{row.role()}</span>
           </Show>
           <span class={styles.meta}>
             {props.person.devices}/{props.person.maxDevices} dispositivos
@@ -85,11 +51,9 @@ export default function PersonRow(props: Props) {
           <input
             type="checkbox"
             checked={props.person.isAdmin}
-            disabled={props.person.locked || busy()}
+            disabled={props.person.locked || row.busy()}
             onChange={(event) =>
-              void run(() =>
-                access.setAdmin(props.person.id, event.currentTarget.checked),
-              )
+              void row.toggleAdmin(event.currentTarget.checked)
             }
           />
           Admin
@@ -116,40 +80,37 @@ export default function PersonRow(props: Props) {
           </Show>
 
           <Show
-            when={editing()}
+            when={row.editing()}
             fallback={
               <button
                 type="button"
                 class={styles.action}
-                onClick={() => {
-                  setDraft(props.person.municipality ?? '');
-                  setEditing(true);
-                }}
+                onClick={() => row.startEdit()}
               >
-                Editar {review.role.label.toLowerCase()}
+                Editar {row.roleLabel().toLowerCase()}
               </button>
             }
           >
             <div class={styles.edit}>
               <input
                 class={styles.field}
-                aria-label={review.role.label}
-                value={draft()}
-                maxLength={80}
-                onInput={(event) => setDraft(event.currentTarget.value)}
+                aria-label={row.roleLabel()}
+                value={row.draft()}
+                maxLength={ROLE_EDIT_MAX_LENGTH}
+                onInput={(event) => row.updateDraft(event.currentTarget.value)}
               />
               <button
                 type="button"
                 class={`${styles.action} ${styles.primary}`}
-                disabled={busy() || !draft().trim()}
-                onClick={() => void saveRole()}
+                disabled={row.busy() || !row.draft().trim()}
+                onClick={() => row.saveRole()}
               >
                 Guardar
               </button>
               <button
                 type="button"
                 class={styles.action}
-                onClick={() => setEditing(false)}
+                onClick={() => row.cancelEdit()}
               >
                 Cancelar
               </button>
@@ -160,24 +121,19 @@ export default function PersonRow(props: Props) {
             <button
               type="button"
               class={styles.action}
-              disabled={busy()}
-              onClick={() =>
-                void run(
-                  () => access.resetDevices(props.person.id),
-                  'Dispositivos restablecidos.',
-                )
-              }
+              disabled={row.busy()}
+              onClick={() => void row.resetDevices()}
             >
               Restablecer dispositivos
             </button>
 
             <Show
-              when={confirm() === 'pin'}
+              when={row.confirm() === 'pin'}
               fallback={
                 <button
                   type="button"
                   class={styles.action}
-                  onClick={() => setConfirm('pin')}
+                  onClick={() => row.askConfirm('pin')}
                 >
                   Regenerar PIN
                 </button>
@@ -191,17 +147,15 @@ export default function PersonRow(props: Props) {
                 <button
                   type="button"
                   class={`${styles.action} ${styles.primary}`}
-                  disabled={busy()}
-                  onClick={() =>
-                    void run(() => access.regeneratePin(props.person.id))
-                  }
+                  disabled={row.busy()}
+                  onClick={() => void row.regeneratePin()}
                 >
                   Regenerar
                 </button>
                 <button
                   type="button"
                   class={styles.action}
-                  onClick={() => setConfirm(null)}
+                  onClick={() => row.cancelConfirm()}
                 >
                   Cancelar
                 </button>
@@ -209,12 +163,12 @@ export default function PersonRow(props: Props) {
             </Show>
 
             <Show
-              when={confirm() === 'remove'}
+              when={row.confirm() === 'remove'}
               fallback={
                 <button
                   type="button"
                   class={`${styles.action} ${styles.danger}`}
-                  onClick={() => setConfirm('remove')}
+                  onClick={() => row.askConfirm('remove')}
                 >
                   Eliminar
                 </button>
@@ -228,15 +182,15 @@ export default function PersonRow(props: Props) {
                 <button
                   type="button"
                   class={`${styles.action} ${styles.dangerSolid}`}
-                  disabled={busy()}
-                  onClick={() => void run(() => access.remove(props.person.id))}
+                  disabled={row.busy()}
+                  onClick={() => void row.removePerson()}
                 >
                   Eliminar
                 </button>
                 <button
                   type="button"
                   class={styles.action}
-                  onClick={() => setConfirm(null)}
+                  onClick={() => row.cancelConfirm()}
                 >
                   Cancelar
                 </button>

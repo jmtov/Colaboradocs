@@ -1,122 +1,41 @@
-import { BottomSheet, useReview } from '@juntanza/review-ui';
-import { createEffect, createSignal, For, Show } from 'solid-js';
-import type { DocumentContent } from '@/content/content.types';
+import { BottomSheet } from '@juntanza/review-ui';
+import { For, Show } from 'solid-js';
 import FilePicker from './components/FilePicker/FilePicker';
+import { useUploadSheet } from './UploadSheet.hooks';
 import styles from './UploadSheet.module.css';
-
-type Props = {
-  /** `null`: cerrada. `{}`: documento nuevo. `{ replaceId }`: reemplaza ese documento. */
-  target: { replaceId?: string } | null;
-  onClose: () => void;
-};
-
-type Problem = { message: string; details: string[] };
+import type { UploadSheetProps } from './UploadSheet.types';
 
 /**
  * Subir un documento: se lee el archivo en el navegador, se muestra qué se
  * entendió (secciones y avisos) y recién entonces se publica.
  */
-export default function UploadSheet(props: Props) {
-  const review = useReview();
-  const [parsed, setParsed] = createSignal<DocumentContent | null>(null);
-  const [warnings, setWarnings] = createSignal<string[]>([]);
-  const [problem, setProblem] = createSignal<Problem | null>(null);
-  const [reading, setReading] = createSignal(false);
-  const [fileInfo, setFileInfo] = createSignal<{
-    name: string;
-    size: number;
-  } | null>(null);
-  const [busy, setBusy] = createSignal(false);
-  const [id, setId] = createSignal('');
-  const [title, setTitle] = createSignal('');
-  const [description, setDescription] = createSignal('');
-  const [version, setVersion] = createSignal('');
-
-  const replaceId = () => props.target?.replaceId;
-  const publishLabel = () => {
-    if (busy()) return 'Publicando…';
-    return exists() ? 'Reemplazar' : 'Publicar';
-  };
-  const exists = () =>
-    (review.documents() ?? []).find((document) => document.id === id());
-
-  createEffect(() => {
-    if (props.target === null) return;
-    setParsed(null);
-    setWarnings([]);
-    setProblem(null);
-    setFileInfo(null);
-    setBusy(false);
+export default function UploadSheet(props: UploadSheetProps) {
+  const upload = useUploadSheet({
+    target: () => props.target,
+    close: () => props.onClose(),
   });
-
-  async function onFile(file: File) {
-    setFileInfo({ name: file.name, size: file.size });
-    setReading(true);
-    setProblem(null);
-    setParsed(null);
-    // El convertidor (Word incluido) pesa: se descarga solo al subir algo.
-    const { parseUpload } = await import('@juntanza/doc-import');
-    const result = await parseUpload(file, { id: replaceId() });
-    setReading(false);
-    if (!result.ok) {
-      setProblem({
-        message: 'No pude usar ese archivo.',
-        details: result.errors,
-      });
-      return;
-    }
-    const document = result.document;
-    // Al reemplazar, el id es el del documento que se está reemplazando.
-    setParsed(
-      replaceId() ? { ...document, id: replaceId() as string } : document,
-    );
-    setWarnings(result.warnings);
-    setId(replaceId() ?? document.id);
-    setTitle(document.title);
-    setDescription(document.description ?? '');
-    setVersion(document.version);
-  }
-
-  async function publish() {
-    const base = parsed();
-    if (!base || busy()) return;
-    setBusy(true);
-    setProblem(null);
-    const result = await review.publishDocument({
-      ...base,
-      id: id().trim(),
-      title: title().trim(),
-      version: version().trim(),
-      description: description().trim() || undefined,
-    });
-    setBusy(false);
-    if (!result.ok) {
-      setProblem({ message: result.message, details: result.details });
-      return;
-    }
-    review.flash(
-      result.created ? 'Documento publicado.' : 'Documento reemplazado.',
-    );
-    props.onClose();
-  }
 
   return (
     <BottomSheet
-      open={props.target !== null}
+      open={upload.isOpen()}
       kicker="Documentos"
-      title={replaceId() ? `Reemplazar «${replaceId()}»` : 'Subir documento'}
+      title={
+        upload.replaceId()
+          ? `Reemplazar «${upload.replaceId()}»`
+          : 'Subir documento'
+      }
       compact
-      onClose={props.onClose}
+      onClose={upload.close}
     >
       <div class={styles.content}>
         <FilePicker
           accept=".docx,.md,.markdown,.json"
-          file={fileInfo()}
-          reading={reading()}
-          onFile={(file) => void onFile(file)}
+          file={upload.fileInfo()}
+          reading={upload.reading()}
+          onFile={(file) => void upload.onFile(file)}
         />
 
-        <Show when={problem()}>
+        <Show when={upload.problem()}>
           {(current) => (
             <div class={styles.problem} role="alert">
               <strong>{current().message}</strong>
@@ -129,7 +48,7 @@ export default function UploadSheet(props: Props) {
           )}
         </Show>
 
-        <Show when={parsed()}>
+        <Show when={upload.parsed()}>
           {(document) => (
             <>
               <div class={styles.form}>
@@ -137,29 +56,31 @@ export default function UploadSheet(props: Props) {
                   Título
                   <input
                     class={styles.field}
-                    value={title()}
+                    value={upload.title()}
                     maxLength={200}
-                    onInput={(event) => setTitle(event.currentTarget.value)}
+                    onInput={(event) =>
+                      upload.setTitle(event.currentTarget.value)
+                    }
                   />
                 </label>
                 <label class={styles.label}>
                   Id (va en la URL: /d/…)
                   <input
                     class={styles.field}
-                    value={id()}
+                    value={upload.id()}
                     maxLength={64}
-                    disabled={replaceId() !== undefined}
-                    onInput={(event) => setId(event.currentTarget.value)}
+                    disabled={upload.replaceId() !== undefined}
+                    onInput={(event) => upload.setId(event.currentTarget.value)}
                   />
                 </label>
                 <label class={styles.label}>
                   Descripción (la tarjeta de la home)
                   <input
                     class={styles.field}
-                    value={description()}
+                    value={upload.description()}
                     maxLength={500}
                     onInput={(event) =>
-                      setDescription(event.currentTarget.value)
+                      upload.setDescription(event.currentTarget.value)
                     }
                   />
                 </label>
@@ -167,14 +88,16 @@ export default function UploadSheet(props: Props) {
                   Versión
                   <input
                     class={styles.field}
-                    value={version()}
+                    value={upload.version()}
                     maxLength={40}
-                    onInput={(event) => setVersion(event.currentTarget.value)}
+                    onInput={(event) =>
+                      upload.setVersion(event.currentTarget.value)
+                    }
                   />
                 </label>
               </div>
 
-              <Show when={exists()}>
+              <Show when={upload.exists()}>
                 {(current) => (
                   <p class={styles.warn}>
                     Ya existe «{current().title}» con ese id: se reemplaza y se
@@ -204,11 +127,11 @@ export default function UploadSheet(props: Props) {
                 </ol>
               </div>
 
-              <Show when={warnings().length > 0}>
+              <Show when={upload.warnings().length > 0}>
                 <div class={styles.warn}>
                   <strong>Revisa esto del archivo original:</strong>
                   <ul>
-                    <For each={warnings()}>
+                    <For each={upload.warnings()}>
                       {(warning) => <li>{warning}</li>}
                     </For>
                   </ul>
@@ -219,22 +142,17 @@ export default function UploadSheet(props: Props) {
                 <button
                   type="button"
                   class={styles.button}
-                  onClick={props.onClose}
+                  onClick={upload.close}
                 >
                   Cancelar
                 </button>
                 <button
                   type="button"
                   class={`${styles.button} ${styles.primary}`}
-                  disabled={
-                    busy() ||
-                    !id().trim() ||
-                    !title().trim() ||
-                    !version().trim()
-                  }
-                  onClick={() => void publish()}
+                  disabled={upload.publishDisabled()}
+                  onClick={() => void upload.publish()}
                 >
-                  {publishLabel()}
+                  {upload.publishLabel()}
                 </button>
               </div>
             </>

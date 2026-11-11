@@ -1,18 +1,10 @@
-import { createSignal, Show } from 'solid-js';
+import { Show } from 'solid-js';
 import FileTextIcon from '@/icons/FileTextIcon';
 import UploadIcon from '@/icons/UploadIcon';
+import { useFilePicker } from './FilePicker.hooks';
 import styles from './FilePicker.module.css';
+import type { FilePickerProps } from './FilePicker.types';
 import { formatSize } from './size.utils';
-
-type Props = {
-  /** Extensiones que acepta el selector del sistema (el arrastre acepta cualquiera y se valida después). */
-  accept: string;
-  /** El archivo ya elegido: la zona se reemplaza por su nombre y tamaño. */
-  file: { name: string; size: number } | null;
-  /** Se está leyendo el archivo. */
-  reading: boolean;
-  onFile: (file: File) => void;
-};
 
 /**
  * Selector de archivo: una zona para arrastrar o hacer clic. Reemplaza al
@@ -20,48 +12,24 @@ type Props = {
  * el estilo de la interfaz. El input sigue existiendo (oculto) para abrir el
  * selector del sistema, y el teclado funciona como con cualquier botón.
  */
-export default function FilePicker(props: Props) {
-  let input!: HTMLInputElement;
-  const [dragging, setDragging] = createSignal(false);
-  // dragenter/dragleave se disparan también al cruzar los hijos: se cuentan para no parpadear.
-  let depth = 0;
-
-  function pick(file: File | undefined) {
-    if (file) props.onFile(file);
-    // Para poder volver a elegir el mismo archivo (si no, el navegador no avisa del cambio).
-    input.value = '';
-  }
-
-  function onDrop(event: DragEvent) {
-    event.preventDefault();
-    depth = 0;
-    setDragging(false);
-    const files = event.dataTransfer?.files;
-    pick(files?.[0]);
-  }
+export default function FilePicker(props: FilePickerProps) {
+  const picker = useFilePicker(() => props.onFile);
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: zona para soltar archivos; el control accesible (teclado, lector de pantalla) es el botón de adentro
     <div
       class={styles.picker}
-      onDragEnter={(event) => {
-        event.preventDefault();
-        depth += 1;
-        setDragging(true);
-      }}
-      onDragOver={(event) => event.preventDefault()}
-      onDragLeave={() => {
-        depth = Math.max(0, depth - 1);
-        if (depth === 0) setDragging(false);
-      }}
-      onDrop={onDrop}
+      onDragEnter={picker.onDragEnter}
+      onDragOver={picker.onDragOver}
+      onDragLeave={picker.onDragLeave}
+      onDrop={picker.onDrop}
     >
       <input
-        ref={input}
+        ref={picker.setInput}
         type="file"
         accept={props.accept}
         hidden
-        onChange={(event) => pick(event.currentTarget.files?.[0])}
+        onChange={(event) => picker.pick(event.currentTarget.files?.[0])}
       />
 
       <Show
@@ -70,13 +38,13 @@ export default function FilePicker(props: Props) {
           <button
             type="button"
             class={styles.zone}
-            classList={{ [styles.dragging]: dragging() }}
+            classList={{ [styles.dragging]: picker.dragging() }}
             data-flat
-            onClick={() => input.click()}
+            onClick={picker.openPicker}
           >
             <UploadIcon class={styles.icon} />
             <span class={styles.title}>
-              {dragging() ? 'Suéltalo aquí' : 'Arrastra tu archivo aquí'}
+              {picker.dragging() ? 'Suéltalo aquí' : 'Arrastra tu archivo aquí'}
             </span>
             <span class={styles.sub}>o haz clic para elegirlo</span>
             <span class={styles.hint}>Word (.docx), Markdown (.md) o JSON</span>
@@ -86,7 +54,7 @@ export default function FilePicker(props: Props) {
         {(file) => (
           <div
             class={styles.chip}
-            classList={{ [styles.dragging]: dragging() }}
+            classList={{ [styles.dragging]: picker.dragging() }}
           >
             <FileTextIcon class={styles.chipIcon} />
             <span class={styles.name}>
@@ -99,7 +67,7 @@ export default function FilePicker(props: Props) {
               type="button"
               class={styles.change}
               disabled={props.reading}
-              onClick={() => input.click()}
+              onClick={picker.openPicker}
             >
               Cambiar archivo
             </button>
