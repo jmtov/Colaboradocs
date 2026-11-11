@@ -22,6 +22,13 @@ describe('grillas de celdas con bordes colapsados', () => {
       box: '.card',
     },
     {
+      name: 'resumen de la revisión',
+      css: read('./ReviewSummary/ReviewSummary.module.css'),
+      grid: '.summary',
+      cell: '.tile',
+      box: '.tile',
+    },
+    {
       name: 'tarjetas de sección',
       css: read('./SectionCards/SectionCards.module.css'),
       grid: '.cards',

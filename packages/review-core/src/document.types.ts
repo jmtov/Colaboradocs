@@ -1,3 +1,5 @@
+import type { ReviewerLabel } from './review.types';
+
 export type SectionStatus = 'listo' | 'borrador' | 'pendiente';
 
 export type DocumentSection = {
@@ -68,4 +70,14 @@ export type DocumentListItem = {
   comments: number;
   approvals: number;
   lastActivityAt: string | null;
+};
+
+/** Una versión de un documento: la actual y las que se reemplazaron. */
+export type DocumentVersionItem = {
+  version: string;
+  /** Actual: cuándo se publicó. Anterior: cuándo se reemplazó. */
+  at: string;
+  /** Quién la publicó (la actual) o la reemplazó (una anterior); null si ya no existe. */
+  by: ReviewerLabel | null;
+  current: boolean;
 };

@@ -2,6 +2,7 @@ import { env } from 'cloudflare:test';
 import type {
   DocumentContent,
   DocumentListItem,
+  DocumentVersionItem,
   SpaceInfo,
 } from '@juntanza/review-core';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -269,5 +270,43 @@ describe('espacio', () => {
         })
       ).status,
     ).toBe(400);
+  });
+});
+
+describe('versiones de un documento', () => {
+  const versions = async (token: string, id = 'uno') => {
+    const response = await authed(token, `/documents/${id}/versions`);
+    return { status: response.status, body: await response.json() };
+  };
+
+  it('con una sola versión, lista la actual y quién la subió', async () => {
+    await put(adminToken, sample('uno'));
+    const { status, body } = await versions(memberToken);
+    expect(status).toBe(200);
+    const items = body as DocumentVersionItem[];
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      version: '0.1',
+      current: true,
+      by: { name: 'Admin', municipality: 'Rionegro' },
+    });
+  });
+
+  it('al reemplazar, la actual va primero y las anteriores después, la más reciente antes', async () => {
+    await put(adminToken, sample('uno', { version: '0.1' }));
+    await put(adminToken, sample('uno', { version: '0.2' }));
+    await put(adminToken, sample('uno', { version: '0.3' }));
+    const items = (await versions(memberToken)).body as DocumentVersionItem[];
+    expect(items.map((item) => [item.version, item.current])).toEqual([
+      ['0.3', true],
+      ['0.2', false],
+      ['0.1', false],
+    ]);
+  });
+
+  it('exige sesión y da 404 si no existe', async () => {
+    await put(adminToken, sample('uno'));
+    expect((await api('/documents/uno/versions')).status).toBe(401);
+    expect((await versions(memberToken, 'nada')).status).toBe(404);
   });
 });

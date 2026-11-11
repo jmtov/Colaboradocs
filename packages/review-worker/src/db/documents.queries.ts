@@ -1,6 +1,7 @@
 import type {
   DocumentContent,
   DocumentListItem,
+  DocumentVersionItem,
   SpaceInfo,
 } from '@juntanza/review-core';
 
@@ -178,4 +179,65 @@ export async function saveSpace(
     )
     .bind(JSON.stringify(space))
     .run();
+}
+
+/**
+ * Versiones de un documento, la actual primero y luego las reemplazadas (la más
+ * reciente antes). Null si no existe o está archivado.
+ */
+export async function listDocumentVersions(
+  db: D1Database,
+  id: string,
+): Promise<DocumentVersionItem[] | null> {
+  const current = await db
+    .prepare(
+      `SELECT d.version, d.created_at, d.updated_at, r.name, r.municipality
+       FROM documents d LEFT JOIN reviewers r ON r.id = d.created_by
+       WHERE d.id = ? AND d.archived_at IS NULL`,
+    )
+    .bind(id)
+    .first<{
+      version: string;
+      created_at: string;
+      updated_at: string;
+      name: string | null;
+      municipality: string | null;
+    }>();
+  if (!current) return null;
+
+  const { results } = await db
+    .prepare(
+      `SELECT json_extract(v.content, '$.version') AS version, v.saved_at, r.name, r.municipality
+       FROM document_versions v LEFT JOIN reviewers r ON r.id = v.saved_by
+       WHERE v.document_id = ?
+       ORDER BY v.saved_at DESC, v.id DESC`,
+    )
+    .bind(id)
+    .all<{
+      version: string | null;
+      saved_at: string;
+      name: string | null;
+      municipality: string | null;
+    }>();
+
+  const label = (name: string | null, municipality: string | null) =>
+    name ? { name, municipality } : null;
+  // Quien publicó la versión actual es quien reemplazó la anterior más reciente.
+  const latest = results[0];
+  return [
+    {
+      version: current.version,
+      at: latest ? latest.saved_at : current.created_at,
+      by: latest
+        ? label(latest.name, latest.municipality)
+        : label(current.name, current.municipality),
+      current: true,
+    },
+    ...results.map((row) => ({
+      version: row.version ?? '?',
+      at: row.saved_at,
+      by: label(row.name, row.municipality),
+      current: false,
+    })),
+  ];
 }

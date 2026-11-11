@@ -1,26 +1,31 @@
+/* Bordes colapsados, igual que las tarjetas: cada celda tiene su borde completo y se
+   monta 1px sobre la vecina (margen negativo); el padding compensa la última columna y fila. */
 .summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0 1px 1px 0;
   margin: 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
 }
 
 .tile {
+  display: block;
   min-width: 0;
-  padding: 0.875rem 1rem;
-  border-right: 1px solid var(--line);
+  padding: 0.875rem 1.125rem;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 1px solid var(--line);
+  margin: 0 -1px -1px 0;
 }
 
-.tile:first-child {
-  padding-left: 0;
-}
-
-.tile:last-child {
-  border-right: 0;
+.tile:hover {
+  background: var(--tint);
+  /* Por encima de las vecinas: así se ve su borde completo y su sombra. */
+  z-index: var(--z-raised);
 }
 
 .label {
+  display: block;
   margin: 0;
   font: 500 var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
@@ -29,6 +34,7 @@
 }
 
 .value {
+  display: block;
   margin: 0.25rem 0 0;
   font: 500 var(--font-size-sm) var(--font-mono);
   overflow-wrap: anywhere;
@@ -37,13 +43,5 @@
 @media (width <= 1000px) {
   .summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .tile {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .tile:first-child {
-    padding-left: 1rem;
   }
 }

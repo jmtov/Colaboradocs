@@ -4,12 +4,14 @@ import type { DocumentContent } from '@/content/content.types';
 import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import Hero from '@/Hero/Hero';
 import HowToReview from '@/HowToReview/HowToReview';
+import ReviewNavigation from '@/ReviewNavigation/ReviewNavigation';
 import ReviewSummary from '@/ReviewSummary/ReviewSummary';
 import SectionCards from '@/SectionCards/SectionCards';
 import SectionView from '@/SectionView/SectionView';
 import SideNav from '@/SideNav/SideNav';
 import SourcesFooter from '@/SourcesFooter/SourcesFooter';
 import TopBar from '@/TopBar/TopBar';
+import VersionsSheet from '@/VersionsSheet/VersionsSheet';
 import { useDocumentPage } from './DocumentPage.hooks';
 import styles from './DocumentPage.module.css';
 
@@ -41,10 +43,26 @@ export default function DocumentPage(props: {
         />
         <ReviewSummary
           tiles={[
-            { label: 'Versión', value: props.content.version },
-            { label: 'Pendientes', value: String(page.totalPending) },
-            { label: 'Hilos abiertos', value: page.openThreads() },
-            { label: 'Bloques con OK', value: page.approvedBlocks() },
+            {
+              label: 'Versión',
+              value: props.content.version,
+              onClick: page.navigation.openVersions,
+            },
+            {
+              label: 'Pendientes',
+              value: String(page.totalPending),
+              onClick: () => page.navigation.openList('pending'),
+            },
+            {
+              label: 'Hilos abiertos',
+              value: page.openThreads(),
+              onClick: () => page.navigation.openList('threads'),
+            },
+            {
+              label: 'Bloques con OK',
+              value: page.approvedBlocks(),
+              onClick: () => page.navigation.openList('approved'),
+            },
           ]}
         />
         <SectionCards
@@ -84,6 +102,12 @@ export default function DocumentPage(props: {
         />
       </div>
       <HowToReview />
+      <ReviewNavigation navigation={page.navigation} />
+      <VersionsSheet
+        open={page.navigation.versionsOpen()}
+        documentId={props.content.id}
+        onClose={page.navigation.closeVersions}
+      />
       <DocumentSheet
         sheet={page.sheet()}
         content={props.content}

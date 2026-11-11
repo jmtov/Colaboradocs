@@ -8,6 +8,7 @@ import {
   sectionLabel,
 } from '@/content/content.utils';
 import type { SheetState } from '@/DocumentSheet/sheet.types';
+import { useReviewNavigation } from '@/ReviewNavigation/ReviewNavigation.hooks';
 
 /** La sección activa es la última cuyo borde superior ya pasó este punto. */
 const ACTIVE_SECTION_OFFSET_PX = 110;
@@ -37,6 +38,8 @@ export function useDocumentPage(content: () => DocumentContent) {
   const first = sections[0];
   const firstSectionId = first?.id ?? '';
   const highlight = content().highlightSection;
+
+  const navigation = useReviewNavigation(() => sections);
 
   const [sheet, setSheet] = createSignal<SheetState>({ kind: 'none' });
   const [currentId, setCurrentId] = createSignal('');
@@ -155,5 +158,6 @@ export function useDocumentPage(content: () => DocumentContent) {
     onContentClick,
     openThreads,
     approvedBlocks,
+    navigation,
   };
 }

@@ -283,6 +283,8 @@ export function createReviewStore(options: ReviewStoreOptions) {
     },
     /** El contenido de un documento (lanza si no existe o no hay sesión). */
     fetchContent: (id: string) => api.fetchContent(id),
+    /** Versiones del documento: la actual y las que se reemplazaron. */
+    fetchVersions: (id: string) => api.fetchVersions(id),
     loadDocuments,
     publishDocument,
     archiveDocument,

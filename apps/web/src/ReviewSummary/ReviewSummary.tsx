@@ -1,19 +1,19 @@
 import { For } from 'solid-js';
 import styles from './ReviewSummary.module.css';
 
-type Tile = { label: string; value: string };
+type Tile = { label: string; value: string; onClick: () => void };
 
 export default function ReviewSummary(props: { tiles: Tile[] }) {
   return (
-    <dl class={styles.summary}>
+    <section class={styles.summary} aria-label="Resumen de la revisión">
       <For each={props.tiles}>
         {(tile) => (
-          <div class={styles.tile}>
-            <dt class={styles.label}>{tile.label}</dt>
-            <dd class={styles.value}>{tile.value}</dd>
-          </div>
+          <button type="button" class={styles.tile} onClick={tile.onClick}>
+            <span class={styles.label}>{tile.label}</span>
+            <span class={styles.value}>{tile.value}</span>
+          </button>
         )}
       </For>
-    </dl>
+    </section>
   );
 }

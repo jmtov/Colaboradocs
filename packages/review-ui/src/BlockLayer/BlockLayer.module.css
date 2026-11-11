@@ -13,6 +13,12 @@
   outline-offset: 4px;
 }
 
+.block[data-nav-current] {
+  background: color-mix(in srgb, var(--fg) 7%, var(--bg));
+  outline: 2px solid var(--fg);
+  outline-offset: 4px;
+}
+
 .block[data-badge]::after {
   content: attr(data-badge);
   margin-left: 0.5rem;

@@ -6,7 +6,11 @@ import {
 } from '@juntanza/review-core';
 import { Hono } from 'hono';
 import { requireReviewer } from '@/auth/auth.middleware';
-import { findDocument, listDocuments } from '@/db/documents.queries';
+import {
+  findDocument,
+  listDocuments,
+  listDocumentVersions,
+} from '@/db/documents.queries';
 import {
   addApproval,
   clearCommentText,
@@ -40,6 +44,14 @@ export const reviewRoute = new Hono<AppEnv>()
   .get('/documents/:documentId/content', async (c) => {
     const document = await findDocument(c.env.DB, c.req.param('documentId'));
     return document ? c.json(document) : errorResponse(c, 'not_found');
+  })
+
+  .get('/documents/:documentId/versions', async (c) => {
+    const versions = await listDocumentVersions(
+      c.env.DB,
+      c.req.param('documentId'),
+    );
+    return versions ? c.json(versions) : errorResponse(c, 'not_found');
   })
 
   .get('/documents/:documentId/review', async (c) => {

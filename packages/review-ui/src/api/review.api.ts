@@ -3,6 +3,7 @@ import type {
   ApiErrorCode,
   DocumentContent,
   DocumentListItem,
+  DocumentVersionItem,
   IssuedPin,
   LoginResponse,
   ManagedReviewer,
@@ -116,6 +117,10 @@ export function createReviewApi(options: ApiOptions) {
     async fetchContent(id: string): Promise<DocumentContent> {
       const response = await request(`/${id}/content`, {}, '/documents');
       return (await response.json()) as DocumentContent;
+    },
+    async fetchVersions(id: string): Promise<DocumentVersionItem[]> {
+      const response = await request(`/${id}/versions`, {}, '/documents');
+      return (await response.json()) as DocumentVersionItem[];
     },
     async putDocument(
       document: DocumentContent,
