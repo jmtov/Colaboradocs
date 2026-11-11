@@ -1,7 +1,6 @@
 import { type JSX, Show } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import BlockActionBar from '../BlockActionBar/BlockActionBar';
-import ThreadSheet from '../ThreadSheet/ThreadSheet';
 import { useBlockLayer } from './BlockLayer.hooks';
 import styles from './BlockLayer.module.css';
 
@@ -27,28 +26,20 @@ export default function BlockLayer(props: Props) {
       </div>
       <Show when={layer.selectedId()}>
         {(id) => (
-          <>
-            <Show when={layer.barHost()}>
-              {(host) => (
-                <Portal mount={host()}>
-                  <BlockActionBar
-                    approvedBy={layer.approvedNames()}
-                    mine={layer.isMine()}
-                    openThreads={layer.openThreadsFor(id())}
-                    onComment={layer.openComments}
-                    onToggleApproval={() => layer.toggleApproval(id())}
-                    onClose={layer.clearSelection}
-                  />
-                </Portal>
-              )}
-            </Show>
-            <ThreadSheet
-              open={layer.threadsOpen()}
-              blockId={id()}
-              blockText={layer.blockText()}
-              onClose={layer.closeComments}
-            />
-          </>
+          <Show when={layer.barHost()}>
+            {(host) => (
+              <Portal mount={host()}>
+                <BlockActionBar
+                  approvedBy={layer.approvedNames()}
+                  mine={layer.isMine()}
+                  openThreads={layer.openThreadsFor(id())}
+                  onComment={layer.openComments}
+                  onToggleApproval={() => layer.toggleApproval(id())}
+                  onClose={layer.clearSelection}
+                />
+              </Portal>
+            )}
+          </Show>
         )}
       </Show>
       <Show when={layer.notice()}>

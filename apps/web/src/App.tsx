@@ -1,7 +1,6 @@
 import { PinGate, ReviewProvider } from '@juntanza/review-ui';
 import { Match, Show, Switch } from 'solid-js';
 import DocumentPage from '@/DocumentPage/DocumentPage';
-import DocumentsSheet from '@/DocumentsSheet/DocumentsSheet';
 import HomePage from '@/HomePage/HomePage';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
@@ -94,7 +93,6 @@ export default function App() {
             </Match>
           </Switch>
         </div>
-        <DocumentsSheet />
       </PinGate>
     </ReviewProvider>
   );

@@ -1,16 +1,16 @@
-import { useReview } from '@juntanza/review-ui';
+import { AccessSheet, useOverlay, useReview } from '@juntanza/review-ui';
 import { createSignal } from 'solid-js';
-import { setDocumentsOpen } from '@/DocumentsSheet/documentsSheet.state';
-import { setHowToOpen } from '@/HowToReview/howto.state';
+import DocumentsSheet from '@/DocumentsSheet/DocumentsSheet';
+import HowToSheet from '@/HowToReview/components/HowToSheet/HowToSheet';
 import { openAfterMenuCloses } from './menu.utils';
 import { MENU_GAP_PX } from './UserMenu.constants';
 
 /** Estado y acciones del menú de la sesión. Las refs las asigna el .tsx. */
 export function useUserMenu() {
   const review = useReview();
+  const overlay = useOverlay();
   const refs = {} as { trigger: HTMLButtonElement; menu: HTMLDivElement };
   const [open, setOpen] = createSignal(false);
-  const [accessOpen, setAccessOpen] = createSignal(false);
 
   const me = () => review.snapshot()?.me ?? review.session()?.reviewer;
 
@@ -29,19 +29,21 @@ export function useUserMenu() {
   }
 
   function openAccess() {
-    openAfterMenuCloses(refs.menu, () => setAccessOpen(true));
-  }
-
-  function closeAccess() {
-    setAccessOpen(false);
+    openAfterMenuCloses(refs.menu, () => void overlay.sheet(AccessSheet, {}));
   }
 
   function openHowTo() {
-    openAfterMenuCloses(refs.menu, () => setHowToOpen(true));
+    openAfterMenuCloses(refs.menu, () => {
+      // Sin duplicar: si ya hay una hoja abierta (la guía de la página, por ejemplo), no se abre otra.
+      if (!overlay.isOpen()) void overlay.sheet(HowToSheet, {});
+    });
   }
 
   function openDocuments() {
-    openAfterMenuCloses(refs.menu, () => setDocumentsOpen(true));
+    openAfterMenuCloses(
+      refs.menu,
+      () => void overlay.sheet(DocumentsSheet, {}),
+    );
   }
 
   function logout() {
@@ -52,12 +54,10 @@ export function useUserMenu() {
   return {
     refs,
     open,
-    accessOpen,
     me,
     onToggle,
     toggle,
     openAccess,
-    closeAccess,
     openHowTo,
     openDocuments,
     logout,

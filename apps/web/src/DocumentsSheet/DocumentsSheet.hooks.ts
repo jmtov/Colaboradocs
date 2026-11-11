@@ -1,28 +1,20 @@
-import { useReview } from '@juntanza/review-ui';
-import { createEffect, createSignal, untrack } from 'solid-js';
-import {
-  documentsOpen,
-  setDocumentsOpen,
-  setUploadTarget,
-  uploadTarget,
-} from './documentsSheet.state';
+import { useOverlay, useReview } from '@juntanza/review-ui';
+import { createSignal, onMount } from 'solid-js';
+import UploadSheet from './components/UploadSheet/UploadSheet';
 
-/** Estado, efectos y acciones de la hoja de administración de documentos. */
+/** Estado y acciones de la hoja de administración de documentos. Se monta al abrirse. */
 export function useDocumentsSheet() {
   const review = useReview();
+  const overlay = useOverlay();
   const isAdmin = () =>
     (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
   const [confirming, setConfirming] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  // Solo depende de abrir o cerrar la hoja. Si siguiera a `isAdmin()` (que lee la
-  // revisión), cada recarga de la revisión volvería a pedir la lista, sin fin.
-  createEffect(() => {
-    if (documentsOpen()) {
-      if (untrack(isAdmin)) void review.loadDocuments();
-    } else {
-      setConfirming(null);
-    }
+  // Una vez por apertura (la hoja se monta al abrirse). No va en un efecto que siga a
+  // `isAdmin()` (que lee la revisión): cada recarga volvería a pedir la lista, sin fin.
+  onMount(() => {
+    if (isAdmin()) void review.loadDocuments();
   });
 
   async function archive(id: string) {
@@ -35,15 +27,12 @@ export function useDocumentsSheet() {
 
   return {
     isAdmin,
-    open: documentsOpen,
-    uploadTarget,
     documents: () => review.documents() ?? [],
     confirming,
     busy,
-    close: () => setDocumentsOpen(false),
-    startUpload: () => setUploadTarget({}),
-    startReplace: (id: string) => setUploadTarget({ replaceId: id }),
-    closeUpload: () => setUploadTarget(null),
+    startUpload: () => void overlay.sheet(UploadSheet, { target: {} }),
+    startReplace: (id: string) =>
+      void overlay.sheet(UploadSheet, { target: { replaceId: id } }),
     askArchive: (id: string) => setConfirming(id),
     cancelArchive: () => setConfirming(null),
     archive,

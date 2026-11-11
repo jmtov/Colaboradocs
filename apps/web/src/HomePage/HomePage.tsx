@@ -1,12 +1,11 @@
-import { useReview } from '@juntanza/review-ui';
 import { For, Show } from 'solid-js';
 import type { DocumentListItem } from '@/content/content.types';
-import { setUploadTarget } from '@/DocumentsSheet/documentsSheet.state';
 import PlusIcon from '@/icons/PlusIcon';
 import Link from '@/router/Link';
 import { documentPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
 import DocumentMenu from './components/DocumentMenu/DocumentMenu';
+import { useHomePage } from './HomePage.hooks';
 import styles from './HomePage.module.css';
 import { timeAgo } from './time.utils';
 
@@ -17,10 +16,7 @@ type Props = {
 };
 
 export default function HomePage(props: Props) {
-  const review = useReview();
-
-  const isAdmin = () =>
-    (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
+  const home = useHomePage();
 
   return (
     <>
@@ -28,7 +24,7 @@ export default function HomePage(props: Props) {
         <div class={styles.barInner}>
           <span class={styles.barName}>{props.name}</span>
           <div class={styles.account}>
-            <Show when={review.status() === 'error'}>
+            <Show when={home.offline()}>
               <span role="status">Sin conexión</span>
             </Show>
             <UserMenu />
@@ -50,7 +46,7 @@ export default function HomePage(props: Props) {
           <For
             each={props.documents}
             fallback={
-              <Show when={!isAdmin()}>
+              <Show when={!home.isAdmin()}>
                 <li class={styles.empty}>Todavía no hay documentos.</li>
               </Show>
             }
@@ -61,7 +57,7 @@ export default function HomePage(props: Props) {
                   lift
                   href={documentPath(document.id)}
                   class={
-                    isAdmin()
+                    home.isAdmin()
                       ? `${styles.card} ${styles.withMenu}`
                       : styles.card
                   }
@@ -92,7 +88,7 @@ export default function HomePage(props: Props) {
                     </span>
                   </span>
                 </Link>
-                <Show when={isAdmin()}>
+                <Show when={home.isAdmin()}>
                   <div class={styles.menu}>
                     <DocumentMenu id={document.id} title={document.title} />
                   </div>
@@ -100,12 +96,12 @@ export default function HomePage(props: Props) {
               </li>
             )}
           </For>
-          <Show when={isAdmin()}>
+          <Show when={home.isAdmin()}>
             <li class={styles.item}>
               <button
                 type="button"
                 class={`${styles.card} ${styles.add}`}
-                onClick={() => setUploadTarget({})}
+                onClick={home.openUpload}
               >
                 <PlusIcon class={styles.addIcon} />
                 <span class={styles.addLabel}>Subir documento</span>

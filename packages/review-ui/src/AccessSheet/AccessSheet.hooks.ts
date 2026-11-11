@@ -1,17 +1,17 @@
-import { type Accessor, createEffect, createSignal } from 'solid-js';
+import { createSignal, onMount } from 'solid-js';
+import { useOverlay } from '../overlay/useOverlay';
 import { useReview } from '../ReviewProvider/review.context';
+import AddPersonSheet from './components/AddPersonSheet/AddPersonSheet';
 
 /** Estado, efectos y acceso a datos de la pantalla de accesos (solo admins). */
-export function useAccessSheet(open: Accessor<boolean>) {
+export function useAccessSheet() {
   const review = useReview();
+  const overlay = useOverlay();
   const access = review.access;
-  const [adding, setAdding] = createSignal(false);
   const [expanded, setExpanded] = createSignal<string | null>(null);
 
-  createEffect(() => {
-    if (open()) void access.load();
-    else setExpanded(null);
-  });
+  // La hoja se monta al abrirse y se desmonta al cerrarse: la lista se pide una vez, al entrar.
+  onMount(() => void access.load());
 
   const myId = () => review.snapshot()?.me.id ?? review.session()?.reviewer.id;
 
@@ -23,9 +23,7 @@ export function useAccessSheet(open: Accessor<boolean>) {
     status: access.status,
     people: access.people,
     reload: () => void access.load(),
-    adding,
-    openAdd: () => setAdding(true),
-    closeAdd: () => setAdding(false),
+    openAdd: () => void overlay.sheet(AddPersonSheet, {}),
     expanded,
     toggleExpanded,
     myId,

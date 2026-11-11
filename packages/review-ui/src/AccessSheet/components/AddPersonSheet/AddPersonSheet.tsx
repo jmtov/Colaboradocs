@@ -1,19 +1,12 @@
 import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@juntanza/review-core';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
+import type { SheetLayerProps } from '../../../overlay/overlay.types';
 import { useAddPersonSheet } from './AddPersonSheet.hooks';
 import styles from './AddPersonSheet.module.css';
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
-};
-
-export default function AddPersonSheet(props: Props) {
-  const sheet = useAddPersonSheet(
-    () => props.open,
-    () => props.onClose(),
-  );
+export default function AddPersonSheet(props: SheetLayerProps) {
+  const sheet = useAddPersonSheet(() => props.close());
 
   return (
     <BottomSheet

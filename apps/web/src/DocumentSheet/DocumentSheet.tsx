@@ -1,4 +1,4 @@
-import { BottomSheet } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
 import { Match, Switch } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import ArrowDownToLineIcon from '@/icons/ArrowDownToLineIcon';
@@ -11,25 +11,24 @@ import { useDocumentSheet } from './DocumentSheet.hooks';
 import styles from './DocumentSheet.module.css';
 import type { SheetState } from './sheet.types';
 
-type Props = {
-  sheet: SheetState;
+type Props = SheetLayerProps & {
+  state: SheetState;
   content: DocumentContent;
   glossary: Map<string, string>;
-  onClose: () => void;
 };
 
 /** Hoja inferior del documento: índice, glosario, fuentes o una sección vecina. */
 export default function DocumentSheet(props: Props) {
   const sheet = useDocumentSheet({
-    sheet: () => props.sheet,
+    state: () => props.state,
     content: () => props.content,
     glossary: () => props.glossary,
-    onClose: () => props.onClose(),
+    close: () => props.close(),
   });
 
   return (
     <BottomSheet
-      open={sheet.open()}
+      open={props.open}
       kicker={sheet.kicker()}
       title={sheet.title()}
       onClose={props.onClose}

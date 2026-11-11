@@ -1,4 +1,5 @@
 import type { JSX } from 'solid-js';
+import OverlayProvider from '../overlay/OverlayProvider';
 import { discoverLegacyPrefixes } from '../session/session.utils';
 import { createReviewStore } from '../store/createReviewStore';
 import type { RoleField } from '../store/role.utils';
@@ -35,7 +36,7 @@ export default function ReviewProvider(props: Props) {
   store.start();
   return (
     <ReviewContext.Provider value={store}>
-      {props.children}
+      <OverlayProvider>{props.children}</OverlayProvider>
     </ReviewContext.Provider>
   );
 }

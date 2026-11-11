@@ -1,5 +1,9 @@
 // @vitest-environment happy-dom
-import { ReviewProvider } from '@juntanza/review-ui';
+import {
+  type OverlayApi,
+  ReviewProvider,
+  useOverlay,
+} from '@juntanza/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import UploadSheet from './UploadSheet';
@@ -27,21 +31,30 @@ function fakeApi() {
   return puts;
 }
 
-function mount(target: { replaceId?: string } | null = {}) {
-  const onClose = vi.fn();
+let overlay!: OverlayApi;
+
+/** Captura la API de hojas del ReviewProvider: así se abre la hoja como en la app. */
+function Probe() {
+  overlay = useOverlay();
+  return null;
+}
+
+function mount(target: { replaceId?: string } = {}) {
   const host = document.createElement('div');
   document.body.appendChild(host);
   disposers.push(
     render(
       () => (
         <ReviewProvider>
-          <UploadSheet target={target} onClose={onClose} />
+          <Probe />
         </ReviewProvider>
       ),
       host,
     ),
   );
-  return { host, onClose };
+  const closed = vi.fn();
+  void overlay.sheet(UploadSheet, { target }).then(closed);
+  return { host, closed };
 }
 
 async function choose(host: HTMLElement, file: File) {
@@ -105,13 +118,13 @@ describe('UploadSheet', () => {
 
   it('publicar sube el documento a /api/admin/documents/<id> y cierra la hoja', async () => {
     const puts = fakeApi();
-    const { host, onClose } = mount();
+    const { host, closed } = mount();
     await choose(host, new File(['# Mi doc\n\n## Uno\n\nHola\n'], 'mi-doc.md'));
     button(host, 'Publicar')?.click();
     await wait();
     expect(puts).toHaveLength(1);
     expect(puts[0]?.url).toBe('/api/admin/documents/mi-doc');
     expect(puts[0]?.body).toMatchObject({ id: 'mi-doc', title: 'Mi doc' });
-    expect(onClose).toHaveBeenCalled();
+    expect(closed).toHaveBeenCalled();
   });
 });

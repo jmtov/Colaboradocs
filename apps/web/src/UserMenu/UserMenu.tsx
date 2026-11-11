@@ -1,4 +1,3 @@
-import { AccessSheet } from '@juntanza/review-ui';
 import { Show } from 'solid-js';
 import { howToAvailable } from '@/HowToReview/howto.state';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
@@ -94,12 +93,6 @@ export default function UserMenu() {
           Salir
         </button>
       </div>
-      <Show when={userMenu.me()?.isAdmin}>
-        <AccessSheet
-          open={userMenu.accessOpen()}
-          onClose={userMenu.closeAccess}
-        />
-      </Show>
     </>
   );
 }

@@ -1,19 +1,16 @@
-import { BottomSheet } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
 import { For, Show } from 'solid-js';
 import { useVersionsSheet } from './VersionsSheet.hooks';
 import styles from './VersionsSheet.module.css';
 import { describeVersion } from './VersionsSheet.utils';
 
-type Props = {
-  open: boolean;
+type Props = SheetLayerProps & {
   documentId: string;
-  onClose: () => void;
 };
 
 /** Hoja con las versiones del documento: la actual y las que se reemplazaron. */
 export default function VersionsSheet(props: Props) {
   const sheet = useVersionsSheet({
-    open: () => props.open,
     documentId: () => props.documentId,
   });
 

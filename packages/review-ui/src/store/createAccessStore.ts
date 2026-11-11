@@ -1,13 +1,12 @@
-import type {
-  IssuedPin,
-  ManagedReviewer,
-  NewReviewer,
-} from '@juntanza/review-core';
+import type { ManagedReviewer, NewReviewer } from '@juntanza/review-core';
 import { createSignal, untrack } from 'solid-js';
 import type { ReviewApi } from '../api/review.api';
 import { describeAccessError } from './review.messages';
 
-export type AccessOutcome = { ok: true } | { ok: false; message: string };
+/** Resultado de una acción de accesos: el valor si sale bien, el mensaje si falla. */
+export type AccessOutcome<T = void> =
+  | { ok: true; value: T }
+  | { ok: false; message: string };
 
 /** Estado de la pantalla de accesos (solo admins). Cada acción recarga la lista real. */
 export function createAccessStore(api: ReviewApi) {
@@ -15,8 +14,6 @@ export function createAccessStore(api: ReviewApi) {
   const [status, setStatus] = createSignal<
     'idle' | 'loading' | 'ready' | 'error'
   >('idle');
-  /** El último PIN entregado: se muestra una sola vez y se descarta al cerrar. */
-  const [issued, setIssued] = createSignal<IssuedPin | null>(null);
 
   /**
    * Pide la lista. No lee `people()` de forma reactiva: quien llame a `load`
@@ -32,9 +29,7 @@ export function createAccessStore(api: ReviewApi) {
     }
   }
 
-  async function act<T>(
-    action: () => Promise<T>,
-  ): Promise<AccessOutcome & { value?: T }> {
+  async function act<T>(action: () => Promise<T>): Promise<AccessOutcome<T>> {
     try {
       const value = await action();
       await load();
@@ -46,26 +41,13 @@ export function createAccessStore(api: ReviewApi) {
     }
   }
 
-  async function add(person: NewReviewer): Promise<AccessOutcome> {
-    const result = await act(() => api.addPerson(person));
-    if (result.ok && result.value) setIssued(result.value);
-    return result.ok ? { ok: true } : result;
-  }
-
-  async function regeneratePin(id: string): Promise<AccessOutcome> {
-    const result = await act(() => api.regeneratePin(id));
-    if (result.ok && result.value) setIssued(result.value);
-    return result.ok ? { ok: true } : result;
-  }
-
   return {
     people,
     status,
-    issued,
-    clearIssued: () => setIssued(null),
     load,
-    add,
-    regeneratePin,
+    // Alta y regenerar PIN devuelven el PIN entregado: quien llama lo muestra.
+    add: (person: NewReviewer) => act(() => api.addPerson(person)),
+    regeneratePin: (id: string) => act(() => api.regeneratePin(id)),
     setAdmin: (id: string, isAdmin: boolean) =>
       act(() => api.patchPerson(id, { isAdmin })),
     setRole: (id: string, municipality: string) =>

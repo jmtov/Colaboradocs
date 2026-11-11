@@ -6,19 +6,18 @@ import { flashGlossaryTerm, scrollToId } from './outline.utils';
 import type { SheetState } from './sheet.types';
 
 type Options = {
-  sheet: () => SheetState;
+  state: () => SheetState;
   content: () => DocumentContent;
   glossary: () => Map<string, string>;
-  onClose: () => void;
+  close: () => void;
 };
 
 /** Estado y acciones de la hoja inferior del documento. */
 export function useDocumentSheet(options: Options) {
-  const kind = () => options.sheet().kind;
-  const open = () => kind() !== 'none';
+  const kind = () => options.state().kind;
 
   const section = createMemo(() => {
-    const sheet = options.sheet();
+    const sheet = options.state();
     if (sheet.kind !== 'section') return null;
     return (
       options
@@ -27,7 +26,7 @@ export function useDocumentSheet(options: Options) {
     );
   });
   const cite = createMemo(() => {
-    const sheet = options.sheet();
+    const sheet = options.state();
     if (sheet.kind !== 'cite') return null;
     return {
       key: citeKey(sheet.text),
@@ -36,14 +35,14 @@ export function useDocumentSheet(options: Options) {
   });
 
   const termText = () => {
-    const sheet = options.sheet();
+    const sheet = options.state();
     return sheet.kind === 'term'
       ? (options.glossary().get(sheet.label) ?? '')
       : '';
   };
 
   const kicker = () => {
-    const sheet = options.sheet();
+    const sheet = options.state();
     switch (sheet.kind) {
       case 'contents':
         return 'Documento';
@@ -55,12 +54,10 @@ export function useDocumentSheet(options: Options) {
         const found = section();
         return found ? sectionKicker(found) : '';
       }
-      default:
-        return '';
     }
   };
   const title = () => {
-    const sheet = options.sheet();
+    const sheet = options.state();
     switch (sheet.kind) {
       case 'contents':
         return 'Contenido';
@@ -70,13 +67,13 @@ export function useDocumentSheet(options: Options) {
         return `Nota [${cite()?.key ?? ''}]`;
       case 'section':
         return section()?.title ?? '';
-      default:
-        return '';
     }
   };
 
+  // Cierra la hoja y luego hace el efecto: el overlay la deja de pintar al instante
+  // y la desmonta cuando acaba la salida.
   function closeThen(action: () => void) {
-    options.onClose();
+    options.close();
     action();
   }
 
@@ -85,7 +82,7 @@ export function useDocumentSheet(options: Options) {
   }
 
   function openGlossaryTerm() {
-    const sheet = options.sheet();
+    const sheet = options.state();
     if (sheet.kind === 'term') {
       closeThen(() => flashGlossaryTerm(sheet.label));
     }
@@ -101,7 +98,6 @@ export function useDocumentSheet(options: Options) {
 
   return {
     kind,
-    open,
     kicker,
     title,
     section,

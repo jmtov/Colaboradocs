@@ -1,21 +1,20 @@
-import { BottomSheet } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
 import { For, Show } from 'solid-js';
-import UploadSheet from './components/UploadSheet/UploadSheet';
 import { useDocumentsSheet } from './DocumentsSheet.hooks';
 import styles from './DocumentsSheet.module.css';
 
 /** Administración de documentos (solo admins): subir, reemplazar y archivar. */
-export default function DocumentsSheet() {
+export default function DocumentsSheet(props: SheetLayerProps) {
   const sheet = useDocumentsSheet();
 
   return (
     <Show when={sheet.isAdmin()}>
       <BottomSheet
-        open={sheet.open()}
+        open={props.open}
         kicker="Administración"
         title="Documentos"
         compact
-        onClose={sheet.close}
+        onClose={props.onClose}
       >
         <div class={styles.content}>
           <button type="button" class={styles.add} onClick={sheet.startUpload}>
@@ -86,7 +85,6 @@ export default function DocumentsSheet() {
           </ul>
         </div>
       </BottomSheet>
-      <UploadSheet target={sheet.uploadTarget()} onClose={sheet.closeUpload} />
     </Show>
   );
 }

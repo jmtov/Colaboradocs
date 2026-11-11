@@ -1,5 +1,5 @@
+/** Qué muestra la hoja del documento. Cerrada no es un estado: la hoja se desmonta. */
 export type SheetState =
-  | { kind: 'none' }
   | { kind: 'contents' }
   | { kind: 'term'; label: string }
   | { kind: 'cite'; text: string }

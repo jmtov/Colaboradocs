@@ -4,10 +4,6 @@
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App';
-import {
-  setDocumentsOpen,
-  setUploadTarget,
-} from './DocumentsSheet/documentsSheet.state';
 
 const admin = { id: 'r1', name: 'Ana', isAdmin: true, municipality: null };
 const content = {
@@ -40,6 +36,19 @@ const listItem = {
 
 const wait = (ms = 60) => new Promise((resolve) => setTimeout(resolve, ms));
 const disposers: (() => void)[] = [];
+
+// happy-dom no implementa el popover del menú: al pulsar, no pasa nada y la hoja abre al instante.
+Object.assign(HTMLElement.prototype, { togglePopover() {}, hidePopover() {} });
+
+/** Abre «Documentos» desde el menú de la sesión, como lo hace el admin. */
+function openDocumentsFromMenu(host: HTMLElement) {
+  host
+    .querySelector<HTMLButtonElement>('button[aria-label="Menú de la sesión"]')
+    ?.click();
+  [...host.querySelectorAll('button')]
+    .find((item) => item.textContent?.includes('Documentos'))
+    ?.click();
+}
 
 /** Cuenta a qué URLs se llamó. */
 function fakeApi() {
@@ -75,8 +84,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  setDocumentsOpen(false);
-  setUploadTarget(null);
   for (const dispose of disposers.splice(0)) dispose();
   document.body.innerHTML = '';
   localStorage.clear();
@@ -93,7 +100,7 @@ describe('App (admin) con la hoja de documentos abierta', () => {
     const reviewsBefore = calls.filter((url) => url.endsWith('/review')).length;
     const listsBefore = calls.filter((url) => url === '/api/documents').length;
 
-    setDocumentsOpen(true);
+    openDocumentsFromMenu(host);
     await wait(400);
 
     const reviews =
@@ -101,6 +108,8 @@ describe('App (admin) con la hoja de documentos abierta', () => {
     const lists =
       calls.filter((url) => url === '/api/documents').length - listsBefore;
     // Abrir la hoja pide la lista una vez; no debe reiniciar la revisión una y otra vez.
+    // La hoja de documentos está abierta de verdad (si no, la prueba no dice nada).
+    expect(host.querySelector('dialog[open]')).not.toBeNull();
     expect(lists).toBeLessThanOrEqual(2);
     expect(reviews).toBeLessThanOrEqual(1);
     expect(host.textContent).not.toContain('Cargando revisión');

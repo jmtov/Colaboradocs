@@ -1,14 +1,17 @@
 import { useReview } from '@juntanza/review-ui';
-import { createEffect, createSignal } from 'solid-js';
+import { createSignal } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
-import type { Problem, UploadSheetProps } from './UploadSheet.types';
+import type { Problem } from './UploadSheet.types';
 
-/** Estado, efectos y publicación de la hoja de subida. Recibe accessors de las props. */
+/**
+ * Estado y publicación de la hoja de subida. Se monta al abrirse, así que cada
+ * apertura arranca limpia. Recibe accessors de las props.
+ */
 export function useUploadSheet({
-  target,
+  replaceId,
   close,
 }: {
-  target: () => UploadSheetProps['target'];
+  replaceId: () => string | undefined;
   close: () => void;
 }) {
   const review = useReview();
@@ -26,8 +29,6 @@ export function useUploadSheet({
   const [description, setDescription] = createSignal('');
   const [version, setVersion] = createSignal('');
 
-  const isOpen = () => target() !== null;
-  const replaceId = () => target()?.replaceId;
   const publishLabel = () => {
     if (busy()) return 'Publicando…';
     return exists() ? 'Reemplazar' : 'Publicar';
@@ -36,15 +37,6 @@ export function useUploadSheet({
     busy() || !id().trim() || !title().trim() || !version().trim();
   const exists = () =>
     (review.documents() ?? []).find((document) => document.id === id());
-
-  createEffect(() => {
-    if (target() === null) return;
-    setParsed(null);
-    setWarnings([]);
-    setProblem(null);
-    setFileInfo(null);
-    setBusy(false);
-  });
 
   async function onFile(file: File) {
     setFileInfo({ name: file.name, size: file.size });
@@ -98,7 +90,6 @@ export function useUploadSheet({
   }
 
   return {
-    isOpen,
     replaceId,
     parsed,
     warnings,

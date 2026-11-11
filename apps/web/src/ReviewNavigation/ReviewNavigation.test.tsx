@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { ReviewProvider } from '@juntanza/review-ui';
+import { ReviewProvider, useOverlay } from '@juntanza/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentSection } from '@/content/content.types';
@@ -29,9 +29,11 @@ function comment(id: string, blockId: string, resolved = false) {
 const wait = (ms = 40) => new Promise((resolve) => setTimeout(resolve, ms));
 const disposers: (() => void)[] = [];
 let navigation!: ReturnType<typeof useReviewNavigation>;
+let overlay!: ReturnType<typeof useOverlay>;
 
 function Harness() {
-  navigation = useReviewNavigation(() => sections);
+  navigation = useReviewNavigation(() => sections, 'd');
+  overlay = useOverlay();
   return <ReviewNavigation navigation={navigation} />;
 }
 
@@ -97,27 +99,39 @@ const current = () =>
   [...document.querySelectorAll('[data-nav-current]')].map(
     (element) => (element as HTMLElement).dataset.blockId,
   );
+// Los ítems de la hoja de bloques, ya montada por el overlay.
+const listed = () =>
+  [...document.querySelectorAll<HTMLButtonElement>('dialog nav button')].map(
+    (button) => button.textContent ?? '',
+  );
+// Elige en la hoja abierta el ítem que contiene ese texto.
+function choose(text: string) {
+  const item = [
+    ...document.querySelectorAll<HTMLButtonElement>('dialog nav button'),
+  ].find((button) => button.textContent?.includes(text));
+  if (!item) throw new Error(`No hay ítem con «${text}» en la hoja.`);
+  item.click();
+}
 
 describe('recorrer hilos abiertos', () => {
   it('la lista trae solo los bloques con hilo abierto, en el orden del documento', async () => {
     await wait();
-    navigation.openList('threads');
+    void navigation.openList('threads');
     await wait();
-    const items = navigation.listItems();
-    expect(
-      items.map((item) => [item.id, item.text, item.section, item.meta]),
-    ).toEqual([
-      ['b1', 'Primer bloque', '1. Plazos', '1 hilo'],
-      ['b2', 'Segundo bloque', '1. Plazos', '1 hilo'],
+    expect(listed()).toEqual([
+      '1. Plazos · 1 hiloPrimer bloque',
+      '1. Plazos · 1 hiloSegundo bloque',
     ]);
   });
 
   it('elegir uno cierra la hoja, muestra la barra «1 / 2» y marca el bloque', async () => {
     await wait();
-    navigation.openList('threads');
-    navigation.pick('b2');
+    const opened = navigation.openList('threads');
     await wait();
-    expect(navigation.listKind()).toBeNull();
+    choose('Segundo bloque');
+    await opened;
+    await wait();
+    expect(overlay.isOpen()).toBe(false);
     expect(bar()?.textContent).toContain('Hilos abiertos');
     expect(bar()?.textContent).toContain('2 / 2');
     expect(current()).toEqual(['b2']);
@@ -126,8 +140,10 @@ describe('recorrer hilos abiertos', () => {
 
   it('siguiente y anterior dan la vuelta; cerrar quita la barra y la marca', async () => {
     await wait();
-    navigation.openList('threads');
-    navigation.pick('b1');
+    const opened = navigation.openList('threads');
+    await wait();
+    choose('Primer bloque');
+    await opened;
     await wait();
     expect(bar()?.textContent).toContain('1 / 2');
     press('Siguiente');
@@ -148,10 +164,8 @@ describe('recorrer hilos abiertos', () => {
 
   it('«Bloques con OK» recorre los bloques con algún OK', async () => {
     await wait();
-    navigation.openList('approved');
+    void navigation.openList('approved');
     await wait();
-    expect(navigation.listItems().map((item) => [item.id, item.meta])).toEqual([
-      ['b3', '✓ 1'],
-    ]);
+    expect(listed()).toEqual(['1. Plazos · ✓ 1Tercer bloque']);
   });
 });

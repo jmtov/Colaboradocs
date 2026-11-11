@@ -1,5 +1,5 @@
 import { groupApprovals } from '@juntanza/review-core';
-import { useReview } from '@juntanza/review-ui';
+import { useOverlay, useReview } from '@juntanza/review-ui';
 import { createMemo, createSignal, onCleanup, onMount } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import {
@@ -7,6 +7,7 @@ import {
   readGlossary,
   sectionLabel,
 } from '@/content/content.utils';
+import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import type { SheetState } from '@/DocumentSheet/sheet.types';
 import { useReviewNavigation } from '@/ReviewNavigation/ReviewNavigation.hooks';
 
@@ -29,6 +30,7 @@ function readCurrentHeading(section: HTMLElement | null): string {
 /** Estado y acciones de la página del documento. `content` se lee una vez al armar la página, como antes. */
 export function useDocumentPage(content: () => DocumentContent) {
   const review = useReview();
+  const overlay = useOverlay();
   const sections = content().sections;
   const glossary = readGlossary(content());
   const pending = Object.fromEntries(
@@ -39,9 +41,8 @@ export function useDocumentPage(content: () => DocumentContent) {
   const firstSectionId = first?.id ?? '';
   const highlight = content().highlightSection;
 
-  const navigation = useReviewNavigation(() => sections);
+  const navigation = useReviewNavigation(() => sections, content().id);
 
-  const [sheet, setSheet] = createSignal<SheetState>({ kind: 'none' });
   const [currentId, setCurrentId] = createSignal('');
   const [currentHeading, setCurrentHeading] = createSignal('');
   const [blockIds, setBlockIds] = createSignal<Set<string>>(new Set());
@@ -93,29 +94,29 @@ export function useDocumentPage(content: () => DocumentContent) {
     document.getElementById(`sec-${sectionId}`)?.scrollIntoView();
   }
 
-  function openContents() {
-    setSheet({ kind: 'contents' });
+  function openSheet(state: SheetState) {
+    void overlay.sheet(DocumentSheet, { state, content: content(), glossary });
   }
 
-  function closeSheet() {
-    setSheet({ kind: 'none' });
+  function openContents() {
+    openSheet({ kind: 'contents' });
   }
 
   function onContentClick(event: MouseEvent) {
     const target = event.target as Element;
     const term = target.closest<HTMLElement>('[data-term]');
     if (term?.dataset.term) {
-      setSheet({ kind: 'term', label: term.dataset.term });
+      openSheet({ kind: 'term', label: term.dataset.term });
       return;
     }
     const cite = target.closest<HTMLElement>('[data-cite]');
     if (cite?.dataset.cite) {
-      setSheet({ kind: 'cite', text: cite.dataset.cite });
+      openSheet({ kind: 'cite', text: cite.dataset.cite });
       return;
     }
     const reference = target.closest<HTMLElement>('[data-section]');
     if (reference?.dataset.section) {
-      setSheet({ kind: 'section', sectionNumber: reference.dataset.section });
+      openSheet({ kind: 'section', sectionNumber: reference.dataset.section });
     }
   }
 
@@ -148,8 +149,6 @@ export function useDocumentPage(content: () => DocumentContent) {
     totalPending,
     firstSectionId,
     highlight,
-    sheet,
-    closeSheet,
     openContents,
     currentId,
     currentLabel,

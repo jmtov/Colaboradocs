@@ -3,7 +3,7 @@ import {
   groupThreads,
   openThreadCount,
 } from '@juntanza/review-core';
-import { useReview } from '@juntanza/review-ui';
+import { useOverlay, useReview } from '@juntanza/review-ui';
 import {
   createEffect,
   createMemo,
@@ -13,6 +13,8 @@ import {
 } from 'solid-js';
 import type { DocumentSection } from '@/content/content.types';
 import { sectionLabel } from '@/content/content.utils';
+import VersionsSheet from '@/VersionsSheet/VersionsSheet';
+import BlockListSheet from './components/BlockListSheet/BlockListSheet';
 import { EXCERPT_MAX_LENGTH } from './ReviewNavigation.constants';
 import type { NavItem, NavKind } from './ReviewNavigation.types';
 import {
@@ -46,12 +48,14 @@ function scrollToBlock(id: string) {
  * y al elegir uno, una barra inferior para ir de uno a otro. La lista sale de
  * la revisión en vivo: si un hilo se resuelve, deja de estar.
  */
-export function useReviewNavigation(sections: () => DocumentSection[]) {
+export function useReviewNavigation(
+  sections: () => DocumentSection[],
+  documentId: string,
+) {
   const review = useReview();
+  const overlay = useOverlay();
   const [order, setOrder] = createSignal<string[]>([]);
   const [pendingIds, setPendingIds] = createSignal<Set<string>>(new Set());
-  const [listKind, setListKind] = createSignal<NavKind | null>(null);
-  const [versionsOpen, setVersionsOpen] = createSignal(false);
   const [barKind, setBarKind] = createSignal<NavKind | null>(null);
   const [currentId, setCurrentId] = createSignal('');
   // Dónde estaba el bloque actual: si deja de estar en la lista, la barra cae ahí.
@@ -117,10 +121,6 @@ export function useReviewNavigation(sections: () => DocumentSection[]) {
     });
   }
 
-  const listItems = createMemo(() => {
-    const kind = listKind();
-    return kind ? itemsFor(kind) : [];
-  });
   const barIds = createMemo(() => {
     const kind = barKind();
     return kind ? blockIdsFor(kind) : [];
@@ -157,14 +157,26 @@ export function useReviewNavigation(sections: () => DocumentSection[]) {
     onCleanup(() => element?.removeAttribute(CURRENT_ATTRIBUTE));
   });
 
-  function pick(id: string) {
-    const kind = listKind();
-    if (!kind) return;
-    setListKind(null);
+  // Elegido un bloque en la lista: la barra arranca en él.
+  function showBar(kind: NavKind, id: string) {
     setBarKind(kind);
     setCurrentId(id);
     lastIndex = Math.max(0, blockIdsFor(kind).indexOf(id));
     scrollToBlock(id);
+  }
+
+  async function openList(kind: NavKind) {
+    const id = await overlay.sheet(BlockListSheet, {
+      kind,
+      get items() {
+        return itemsFor(kind);
+      },
+    });
+    if (id) showBar(kind, id);
+  }
+
+  function openVersions() {
+    void overlay.sheet(VersionsSheet, { documentId });
   }
 
   function step(delta: 1 | -1) {
@@ -176,20 +188,14 @@ export function useReviewNavigation(sections: () => DocumentSection[]) {
   }
 
   return {
-    listKind,
-    listItems,
-    openList: (kind: NavKind) => setListKind(kind),
-    closeList: () => setListKind(null),
-    pick,
     barKind,
     barIndex,
     barTotal: () => barIds().length,
     next: () => step(1),
     previous: () => step(-1),
     closeBar,
-    versionsOpen,
-    openVersions: () => setVersionsOpen(true),
-    closeVersions: () => setVersionsOpen(false),
+    openList,
+    openVersions,
   };
 }
 

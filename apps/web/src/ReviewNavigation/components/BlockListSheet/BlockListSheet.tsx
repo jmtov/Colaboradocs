@@ -1,4 +1,4 @@
-import { BottomSheet } from '@juntanza/review-ui';
+import { BottomSheet, type SheetLayerProps } from '@juntanza/review-ui';
 import { For, Show } from 'solid-js';
 import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import { NAV_TITLES } from '@/ReviewNavigation/ReviewNavigation.constants';
@@ -8,21 +8,18 @@ import type {
 } from '@/ReviewNavigation/ReviewNavigation.types';
 import styles from './BlockListSheet.module.css';
 
-type Props = {
-  /** `null`: cerrada. */
-  kind: NavKind | null;
+type Props = SheetLayerProps<string> & {
+  kind: NavKind;
   items: NavItem[];
-  onPick: (id: string) => void;
-  onClose: () => void;
 };
 
-/** Hoja con los bloques de un recorrido; elegir uno cierra la hoja y va a él. */
+/** Hoja con los bloques de un recorrido; elegir uno la cierra con el id del bloque. */
 export default function BlockListSheet(props: Props) {
   return (
     <BottomSheet
-      open={props.kind !== null}
+      open={props.open}
       kicker="Revisión"
-      title={props.kind ? NAV_TITLES[props.kind] : ''}
+      title={NAV_TITLES[props.kind]}
       onClose={props.onClose}
     >
       <Show
@@ -36,7 +33,7 @@ export default function BlockListSheet(props: Props) {
                 type="button"
                 class={styles.item}
                 data-flat
-                onClick={() => props.onPick(item.id)}
+                onClick={() => props.close(item.id)}
               >
                 <span class={styles.body}>
                   <span class={styles.section}>

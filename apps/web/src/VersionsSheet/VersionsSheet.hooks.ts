@@ -1,14 +1,11 @@
 import { useReview } from '@juntanza/review-ui';
 import { createResource } from 'solid-js';
 
-/** Las versiones del documento; se piden cada vez que se abre la hoja. */
-export function useVersionsSheet(options: {
-  open: () => boolean;
-  documentId: () => string;
-}) {
+/** Las versiones del documento. La hoja se monta al abrirse, así que se piden al montarse. */
+export function useVersionsSheet(options: { documentId: () => string }) {
   const review = useReview();
   const [versions] = createResource(
-    () => (options.open() ? options.documentId() : false),
+    () => options.documentId(),
     (id) => review.fetchVersions(id),
   );
   return { versions };

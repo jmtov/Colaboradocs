@@ -11,13 +11,13 @@ import type { UploadSheetProps } from './UploadSheet.types';
  */
 export default function UploadSheet(props: UploadSheetProps) {
   const upload = useUploadSheet({
-    target: () => props.target,
-    close: () => props.onClose(),
+    replaceId: () => props.target.replaceId,
+    close: () => props.close(),
   });
 
   return (
     <BottomSheet
-      open={upload.isOpen()}
+      open={props.open}
       kicker="Documentos"
       title={
         upload.replaceId()
@@ -25,7 +25,7 @@ export default function UploadSheet(props: UploadSheetProps) {
           : 'Subir documento'
       }
       compact
-      onClose={upload.close}
+      onClose={props.onClose}
     >
       <div class={styles.content}>
         <FilePicker

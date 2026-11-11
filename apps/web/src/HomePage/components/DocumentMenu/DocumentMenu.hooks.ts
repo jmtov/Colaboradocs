@@ -1,6 +1,6 @@
-import { useReview } from '@juntanza/review-ui';
+import { useOverlay, useReview } from '@juntanza/review-ui';
 import { createSignal } from 'solid-js';
-import { setUploadTarget } from '@/DocumentsSheet/documentsSheet.state';
+import UploadSheet from '@/DocumentsSheet/components/UploadSheet/UploadSheet';
 import { openAfterMenuCloses } from '@/UserMenu/menu.utils';
 import { MENU_GAP_PX } from './DocumentMenu.constants';
 
@@ -10,6 +10,7 @@ import { MENU_GAP_PX } from './DocumentMenu.constants';
  */
 export function useDocumentMenu(id: () => string) {
   const review = useReview();
+  const overlay = useOverlay();
   const refs = {} as { trigger: HTMLButtonElement; menu: HTMLDivElement };
   const [open, setOpen] = createSignal(false);
   const [confirming, setConfirming] = createSignal(false);
@@ -31,7 +32,10 @@ export function useDocumentMenu(id: () => string) {
   }
 
   function replace() {
-    openAfterMenuCloses(refs.menu, () => setUploadTarget({ replaceId: id() }));
+    openAfterMenuCloses(
+      refs.menu,
+      () => void overlay.sheet(UploadSheet, { target: { replaceId: id() } }),
+    );
   }
 
   function askArchive() {

@@ -5,14 +5,16 @@ import {
   openThreadCount,
 } from '@juntanza/review-core';
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { useOverlay } from '../overlay/useOverlay';
 import { useReview } from '../ReviewProvider/review.context';
+import ThreadSheet from '../ThreadSheet/ThreadSheet';
 import styles from './BlockLayer.module.css';
 
 export function useBlockLayer() {
   const review = useReview();
+  const overlay = useOverlay();
   let root!: HTMLDivElement;
   const [selectedId, setSelectedId] = createSignal<string | null>(null);
-  const [threadsOpen, setThreadsOpen] = createSignal(false);
   const [barHost, setBarHost] = createSignal<HTMLElement | null>(null);
 
   const approvalsByBlock = createMemo(() =>
@@ -82,7 +84,7 @@ export function useBlockLayer() {
   createEffect(() => {
     if (!selectedId()) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !threadsOpen()) setSelectedId(null);
+      if (event.key === 'Escape' && !overlay.isOpen()) setSelectedId(null);
     };
     document.addEventListener('keydown', onKey);
     onCleanup(() => document.removeEventListener('keydown', onKey));
@@ -124,14 +126,20 @@ export function useBlockLayer() {
     onClick,
     selectedId,
     barHost,
-    threadsOpen,
     blockText,
     approvedNames,
     isMine,
     openThreadsFor,
     notice,
-    openComments: () => setThreadsOpen(true),
-    closeComments: () => setThreadsOpen(false),
+    openComments: () =>
+      void overlay.sheet(ThreadSheet, {
+        get blockId() {
+          return selectedId() ?? '';
+        },
+        get blockText() {
+          return blockText();
+        },
+      }),
     clearSelection: () => setSelectedId(null),
     toggleApproval: (id: string) => review.toggleApproval(id),
   };

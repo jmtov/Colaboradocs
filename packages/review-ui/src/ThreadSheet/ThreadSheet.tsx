@@ -1,16 +1,15 @@
 import { For, Show } from 'solid-js';
 import BottomSheet from '../BottomSheet/BottomSheet';
+import type { SheetLayerProps } from '../overlay/overlay.types';
 import CommentComposer from './components/CommentComposer/CommentComposer';
 import ThreadView from './components/ThreadView/ThreadView';
 import { useThreadSheet } from './ThreadSheet.hooks';
 import styles from './ThreadSheet.module.css';
 
-type Props = {
-  open: boolean;
+type Props = SheetLayerProps & {
   blockId: string;
   /** Texto completo del bloque; se muestra recortado y se guarda como extracto. */
   blockText: string;
-  onClose: () => void;
 };
 
 export default function ThreadSheet(props: Props) {

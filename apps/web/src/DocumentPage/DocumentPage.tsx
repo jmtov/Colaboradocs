@@ -1,7 +1,6 @@
 import { BlockLayer } from '@juntanza/review-ui';
 import { For } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
-import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import Hero from '@/Hero/Hero';
 import HowToReview from '@/HowToReview/HowToReview';
 import ReviewNavigation from '@/ReviewNavigation/ReviewNavigation';
@@ -11,7 +10,6 @@ import SectionView from '@/SectionView/SectionView';
 import SideNav from '@/SideNav/SideNav';
 import SourcesFooter from '@/SourcesFooter/SourcesFooter';
 import TopBar from '@/TopBar/TopBar';
-import VersionsSheet from '@/VersionsSheet/VersionsSheet';
 import { useDocumentPage } from './DocumentPage.hooks';
 import styles from './DocumentPage.module.css';
 
@@ -103,17 +101,6 @@ export default function DocumentPage(props: {
       </div>
       <HowToReview />
       <ReviewNavigation navigation={page.navigation} />
-      <VersionsSheet
-        open={page.navigation.versionsOpen()}
-        documentId={props.content.id}
-        onClose={page.navigation.closeVersions}
-      />
-      <DocumentSheet
-        sheet={page.sheet()}
-        content={props.content}
-        glossary={page.glossary}
-        onClose={page.closeSheet}
-      />
     </>
   );
 }
