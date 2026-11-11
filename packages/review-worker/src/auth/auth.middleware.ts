@@ -1,7 +1,7 @@
 import { createMiddleware } from 'hono/factory';
-import { findReviewerForDevice } from '../db/reviewers.queries';
-import type { AppEnv } from '../env.types';
-import { errorResponse } from '../http.utils';
+import { findReviewerForDevice } from '@/db/reviewers.queries';
+import type { AppEnv } from '@/env.types';
+import { errorResponse } from '@/http.utils';
 import { verifyToken } from './token.utils';
 
 /** Además de la sesión, exige que la persona sea admin. */

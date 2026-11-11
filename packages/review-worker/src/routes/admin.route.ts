@@ -11,7 +11,7 @@ import {
   validateSpace,
 } from '@juntanza/review-core';
 import { Hono } from 'hono';
-import { requireAdmin, requireReviewer } from '../auth/auth.middleware';
+import { requireAdmin, requireReviewer } from '@/auth/auth.middleware';
 import {
   findStoredReviewer,
   findStoredReviewerByName,
@@ -26,14 +26,14 @@ import {
   toManaged,
   updateAdmin,
   updateMunicipality,
-} from '../db/access.queries';
+} from '@/db/access.queries';
 import {
   archiveDocument,
   saveDocument,
   saveSpace,
-} from '../db/documents.queries';
-import type { AppEnv } from '../env.types';
-import { errorResponse, readJsonObject } from '../http.utils';
+} from '@/db/documents.queries';
+import type { AppEnv } from '@/env.types';
+import { errorResponse, readJsonObject } from '@/http.utils';
 
 function cleanText(value: unknown, max: number): string | null {
   if (typeof value !== 'string') return null;

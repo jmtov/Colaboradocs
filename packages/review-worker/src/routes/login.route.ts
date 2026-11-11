@@ -11,8 +11,8 @@ import {
   LOGIN_FAILURE_WINDOW_MS,
   MAX_LOGIN_FAILURES,
   TOKEN_TTL_MS,
-} from '../auth/auth.constants';
-import { signToken } from '../auth/token.utils';
+} from '@/auth/auth.constants';
+import { signToken } from '@/auth/token.utils';
 import {
   countDevices,
   countRecentLoginFailures,
@@ -20,9 +20,9 @@ import {
   isDeviceRegistered,
   recordLoginFailure,
   registerDevice,
-} from '../db/reviewers.queries';
-import type { AppEnv } from '../env.types';
-import { errorResponse, readJsonObject } from '../http.utils';
+} from '@/db/reviewers.queries';
+import type { AppEnv } from '@/env.types';
+import { errorResponse, readJsonObject } from '@/http.utils';
 
 export const loginRoute = new Hono<AppEnv>().post('/login', async (c) => {
   const body = await readJsonObject(c);

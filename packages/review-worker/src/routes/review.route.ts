@@ -5,8 +5,8 @@ import {
   type ReviewSnapshot,
 } from '@juntanza/review-core';
 import { Hono } from 'hono';
-import { requireReviewer } from '../auth/auth.middleware';
-import { findDocument, listDocuments } from '../db/documents.queries';
+import { requireReviewer } from '@/auth/auth.middleware';
+import { findDocument, listDocuments } from '@/db/documents.queries';
 import {
   addApproval,
   clearCommentText,
@@ -16,10 +16,10 @@ import {
   listComments,
   removeApproval,
   setCommentResolved,
-} from '../db/review.queries';
-import { listReviewerLabels } from '../db/reviewers.queries';
-import type { AppEnv } from '../env.types';
-import { errorResponse, readJsonObject } from '../http.utils';
+} from '@/db/review.queries';
+import { listReviewerLabels } from '@/db/reviewers.queries';
+import type { AppEnv } from '@/env.types';
+import { errorResponse, readJsonObject } from '@/http.utils';
 
 const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const BLOCK_ID_PATTERN = /^[a-z0-9-]{1,100}$/;

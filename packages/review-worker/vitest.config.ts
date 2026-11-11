@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { cloudflareTest, readD1Migrations } from '@cloudflare/vitest-plugin';
 import { defineConfig } from 'vitest/config';
 
@@ -17,6 +18,9 @@ export default defineConfig(async () => {
         },
       }),
     ],
+    resolve: {
+      alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    },
     test: { setupFiles: ['./test/apply-migrations.ts'] },
   };
 });
