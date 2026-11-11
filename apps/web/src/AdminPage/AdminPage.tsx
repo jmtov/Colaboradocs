@@ -22,7 +22,12 @@ export default function AdminPage(props: Props) {
     <>
       <header class={styles.bar}>
         <div class={styles.barInner}>
-          <span class={styles.barName}>{props.name}</span>
+          <div class={styles.start}>
+            <Link href="/" class={styles.back} lift>
+              ← Inicio
+            </Link>
+            <span class={styles.barName}>{props.name}</span>
+          </div>
           <div class={styles.account}>
             <Show when={admin.offline()}>
               <span role="status">Sin conexión</span>
@@ -37,16 +42,10 @@ export default function AdminPage(props: Props) {
           fallback={
             <section class={styles.intro}>
               <h1 class={styles.title}>Solo para administradores</h1>
-              <Link href="/" class={styles.back} lift>
-                ← Volver
-              </Link>
             </section>
           }
         >
           <section class={styles.intro}>
-            <Link href="/" class={styles.back} lift>
-              ← Inicio
-            </Link>
             <span class={styles.eyebrow}>Administración</span>
             <h1 class={styles.title}>{ADMIN_TITLES[props.page]}</h1>
           </section>
