@@ -1,6 +1,12 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
-import { documentPath, navigate, pathname, resolveRoute } from './router';
+import {
+  adminPath,
+  documentPath,
+  navigate,
+  pathname,
+  resolveRoute,
+} from './router';
 
 describe('resolveRoute', () => {
   it('/ es la home', () => {
@@ -26,7 +32,21 @@ describe('resolveRoute', () => {
     });
   });
 
+  it('/documentos y /accesos son las páginas de administración', () => {
+    expect(resolveRoute('/documentos')).toEqual({
+      kind: 'admin',
+      page: 'documents',
+    });
+    expect(resolveRoute('/accesos/')).toEqual({
+      kind: 'admin',
+      page: 'access',
+    });
+    expect(adminPath('documents')).toBe('/documentos');
+    expect(adminPath('access')).toBe('/accesos');
+  });
+
   it('lo demás no existe', () => {
+    expect(resolveRoute('/accesos/otra')).toEqual({ kind: 'missing' });
     expect(resolveRoute('/otra/cosa')).toEqual({ kind: 'missing' });
     expect(resolveRoute('/d/')).toEqual({ kind: 'missing' });
     expect(resolveRoute('/d/%E0%A4%A')).toEqual({ kind: 'missing' });

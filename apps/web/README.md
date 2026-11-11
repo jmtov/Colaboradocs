@@ -10,7 +10,7 @@ La página **no trae documentos**: los pide a la API después de ingresar el PIN
 - `/d/<id>` abre un documento. Un id que no existe, o una ruta rara, muestra «No encontramos ese documento».
 - El nombre del espacio (título de la pestaña y de la puerta del PIN) sale de `GET /api/space`, público.
 - La sesión (PIN) es una sola para todo el espacio.
-- Administración (solo admins), en la home: cada tarjeta trae un menú ⋮ (`DocumentMenu`: reemplazar el archivo, archivar con confirmación) y la grilla termina con un bloque «+ Subir documento». Además, desde el menú ⋮ de la sesión: **Documentos** (`DocumentsSheet`: subir, reemplazar, archivar) y **Accesos** (`AccessSheet` de `review-ui`). La subida lee el archivo en el navegador con `@juntanza/doc-import` (que se descarga recién al subir algo), muestra qué entendió y publica con `review.publishDocument`.
+- Administración (solo admins), en la home: cada tarjeta trae un menú ⋮ (`DocumentMenu`: reemplazar el archivo, archivar con confirmación) y la grilla termina con un bloque «+ Subir documento». Además, desde el menú ⋮ de la sesión, dos páginas propias: **Documentos** (`/documentos`, `DocumentsPage`: subir, reemplazar, archivar) y **Accesos** (`/accesos`, `AccessPanel` de `review-ui`), ambas dentro de `AdminPage`. La subida lee el archivo en el navegador con `@juntanza/doc-import` (que se descarga recién al subir algo), muestra qué entendió y publica con `review.publishDocument`.
 
 ## Formato del documento
 
@@ -31,7 +31,8 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 | `App.tsx`, `main.tsx` | Providers (`ReviewProvider` → `PinGate`) y rutas: `HomeRoute` (home o redirección), `DocumentRoute` (pide el contenido) y «no encontrado». |
 | `router/` | Router mínimo con History API (`resolveRoute`, `navigate`, `Link`). |
 | `HomePage/` | La home: una tarjeta por documento, con su actividad. |
-| `DocumentsSheet/` | Administración de documentos (admins): lista, `UploadSheet` (subir y reemplazar con vista previa) y archivar. Se abre con `useOverlay().sheet` (capas de `review-ui`), igual que la subida, a la que también llegan la home y el menú de cada tarjeta: no hay estado global. Sirve para espacios de un solo documento, donde `/` redirige y no hay home. |
+| `AdminPage/` | Marco de `/documentos` y `/accesos` (solo admins; a los demás les dice «Solo para administradores»): encabezado, «← Inicio», título y el contenido de la página. |
+| `DocumentsPage/` | Contenido de `/documentos`: lista, subir, reemplazar y archivar. `UploadSheet` (subir y reemplazar con vista previa) es una hoja que se abre con `useOverlay().sheet`, igual desde la home y desde el menú de cada tarjeta: no hay estado global. Sirve para espacios de un solo documento, donde `/` redirige y no hay home. |
 | `HowToReview/` | `HowToReview` programa la guía (`HowToSheet`, una hoja inferior abierta con `useOverlay`): se abre sola cada vez que se abre un documento hasta que se elige «No volver a mostrar» (`localStorage`, clave `review:howto-dismissed`, vale para todos los documentos de ese navegador). Después se abre a pedido desde el menú ⋮ de la sesión. |
 | `Loading/` | Página de un mensaje: cargando, error, «no existe». |
 | `content/` | Utilidades del documento (pendientes, glosario, etiquetas de sección) y los tipos re-exportados de `review-core`. |
@@ -39,7 +40,7 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 | `DocumentPage/` | Pantalla principal: estado de la sección activa, métricas, hojas. |
 | `Hero/`, `SectionCards/`, `ReviewSummary/` | Inicio: título, tarjetas, contadores. |
 | `SectionView/`, `SideNav/`, `TopBar/`, `DocumentSheet/` | Lectura, navegación, índice y hojas (contenido, glosario, citas). |
-| `ThemeSwitch/`, `UserMenu/` | Tema claro/oscuro/auto (clave `review:theme`) y sesión. El selector de tema está en el menú ⋮ del usuario (`<ThemeSwitch fill />`), no en el pie de las páginas. Para admins, el menú trae «Accesos» (`AccessSheet` de `review-ui`). |
+| `ThemeSwitch/`, `UserMenu/` | Tema claro/oscuro/auto (clave `review:theme`) y sesión. El selector de tema está en el menú ⋮ del usuario (`<ThemeSwitch fill />`), no en el pie de las páginas. Para admins, el menú trae «Documentos» y «Accesos», que llevan a sus páginas. |
 | `index.css` | **Tokens de diseño** que exige `review-ui`. |
 
 Estilo: **esquinas rectas, sin `border-radius`** en ningún elemento. `index.css` lo reinicia para todo (`*`) y los componentes no declaran radios: no los agregues.

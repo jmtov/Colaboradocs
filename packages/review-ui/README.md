@@ -23,7 +23,7 @@ import { BlockLayer, PinGate, ReviewProvider } from '@juntanza/review-ui';
 | `PinGate` (`title`, `hint?`) | Muestra sus hijos solo con sesión; si no, pide el PIN. |
 | `BlockLayer` | Envuelve el contenido: tocar un bloque abre la barra Comentar / OK; cada bloque muestra insignias de OK e hilos abiertos; abre el hilo en una hoja inferior. |
 | `BottomSheet` | Hoja inferior reutilizable, sobre `<dialog>`. **Entra y sale deslizándose desde abajo** (500 ms, curva `cubic-bezier(0.32, 0.72, 0, 1)` de las hojas de iOS; se ajustan con `--sheet-duration` y `--sheet-ease`). Para poder animar la salida, al cerrarse el diálogo y su contenido siguen puestos hasta que termina la transición; Escape no cierra por su cuenta sino que pide cerrar (`onClose`) para que salga animada. Con «reducir movimiento» no hay deslizamiento. |
-| `AccessSheet` (`open`, `onClose`) | Pantalla de accesos para admins: lista (nombre, rol, dispositivos, toggle de admin) y menú por fila (editar rol, restablecer dispositivos, regenerar PIN, eliminar, con confirmación). «Agregar persona» abre otra hoja; el PIN nuevo se muestra una sola vez con botón de copiar. Montarla solo si `me.isAdmin`; el servidor valida igual. Estado en `useReview().access`. |
+| `AccessPanel` | Contenido de la página de accesos para admins (la app lo enmarca): lista (nombre, rol, dispositivos, toggle de admin) y menú por fila (editar rol, restablecer dispositivos, regenerar PIN, eliminar, con confirmación). «Agregar persona» abre una hoja (`useOverlay().sheet`); el PIN nuevo se muestra una sola vez con botón de copiar. Montarla solo si `me.isAdmin`; el servidor valida igual. Estado en `useReview().access`. |
 
 ## Contrato con el contenido
 

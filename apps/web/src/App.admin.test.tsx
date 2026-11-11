@@ -37,10 +37,10 @@ const listItem = {
 const wait = (ms = 60) => new Promise((resolve) => setTimeout(resolve, ms));
 const disposers: (() => void)[] = [];
 
-// happy-dom no implementa el popover del menú: al pulsar, no pasa nada y la hoja abre al instante.
+// happy-dom no implementa el popover del menú: al pulsar, no pasa nada y se navega al instante.
 Object.assign(HTMLElement.prototype, { togglePopover() {}, hidePopover() {} });
 
-/** Abre «Documentos» desde el menú de la sesión, como lo hace el admin. */
+/** Pulsa «Documentos» en el menú de la sesión, como lo hace el admin. */
 function openDocumentsFromMenu(host: HTMLElement) {
   host
     .querySelector<HTMLButtonElement>('button[aria-label="Menú de la sesión"]')
@@ -62,6 +62,7 @@ function fakeApi() {
       if (url === '/api/space') return json({ name: 'Mi espacio' });
       if (url === '/api/documents') return json([listItem]);
       if (url === '/api/documents/uno/content') return json(content);
+      if (url === '/api/admin/reviewers') return json([]);
       if (url === '/api/documents/uno/review') {
         return json({ me: admin, comments: [], approvals: [], reviewers: {} });
       }
@@ -90,28 +91,75 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('App (admin) con la hoja de documentos abierta', () => {
-  it('no entra en un bucle de recargas ni deja la revisión «cargando»', async () => {
-    const calls = fakeApi();
-    const host = document.createElement('div');
-    document.body.appendChild(host);
-    disposers.push(render(() => <App />, host));
+function mountApp() {
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+  disposers.push(render(() => <App />, host));
+  return host;
+}
+
+const goTo = (path: string) => {
+  window.history.replaceState(null, '', path);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+};
+
+describe('páginas de administración', () => {
+  it('«Documentos» del menú lleva a su página, no abre una hoja', async () => {
+    fakeApi();
+    const host = mountApp();
     await wait(120);
-    const reviewsBefore = calls.filter((url) => url.endsWith('/review')).length;
-    const listsBefore = calls.filter((url) => url === '/api/documents').length;
 
     openDocumentsFromMenu(host);
+    await wait(500);
+
+    expect(window.location.pathname).toBe('/documentos');
+    expect(host.querySelector('h1')?.textContent).toBe('Documentos');
+    expect(host.querySelector('dialog[open]')).toBeNull();
+    expect(host.textContent).toContain('Subir documento');
+    expect(host.textContent).toContain('Título de uno');
+  });
+
+  it('entrar directo a /accesos muestra la lista de personas', async () => {
+    const calls = fakeApi();
+    goTo('/accesos');
+    const host = mountApp();
+    await wait(300);
+
+    expect(host.querySelector('h1')?.textContent).toBe('Accesos');
+    expect(host.textContent).toContain('Agregar persona');
+    expect(calls.filter((url) => url === '/api/admin/reviewers')).toHaveLength(
+      1,
+    );
+  });
+
+  it('no entra en un bucle de recargas ni deja la revisión «cargando»', async () => {
+    const calls = fakeApi();
+    goTo('/documentos');
+    const host = mountApp();
     await wait(400);
 
-    const reviews =
-      calls.filter((url) => url.endsWith('/review')).length - reviewsBefore;
-    const lists =
-      calls.filter((url) => url === '/api/documents').length - listsBefore;
-    // Abrir la hoja pide la lista una vez; no debe reiniciar la revisión una y otra vez.
-    // La hoja de documentos está abierta de verdad (si no, la prueba no dice nada).
-    expect(host.querySelector('dialog[open]')).not.toBeNull();
+    const lists = calls.filter((url) => url === '/api/documents').length;
+    const reviews = calls.filter((url) => url.endsWith('/review')).length;
+    // La página pide la lista una vez; no reinicia la revisión una y otra vez.
     expect(lists).toBeLessThanOrEqual(2);
     expect(reviews).toBeLessThanOrEqual(1);
     expect(host.textContent).not.toContain('Cargando revisión');
+  });
+
+  it('quien no es admin no ve la administración', async () => {
+    fakeApi();
+    localStorage.setItem(
+      'review:session',
+      JSON.stringify({
+        token: 't',
+        reviewer: { ...admin, isAdmin: false },
+      }),
+    );
+    goTo('/documentos');
+    const host = mountApp();
+    await wait(300);
+
+    expect(host.textContent).toContain('Solo para administradores');
+    expect(host.textContent).not.toContain('Subir documento');
   });
 });

@@ -2,20 +2,16 @@ import { useOverlay, useReview } from '@juntanza/review-ui';
 import { createSignal, onMount } from 'solid-js';
 import UploadSheet from './components/UploadSheet/UploadSheet';
 
-/** Estado y acciones de la hoja de administración de documentos. Se monta al abrirse. */
-export function useDocumentsSheet() {
+/** Estado y acciones de la página de administración de documentos. */
+export function useDocumentsPage() {
   const review = useReview();
   const overlay = useOverlay();
-  const isAdmin = () =>
-    (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
   const [confirming, setConfirming] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  // Una vez por apertura (la hoja se monta al abrirse). No va en un efecto que siga a
-  // `isAdmin()` (que lee la revisión): cada recarga volvería a pedir la lista, sin fin.
-  onMount(() => {
-    if (isAdmin()) void review.loadDocuments();
-  });
+  // Una vez al entrar a la página (solo se monta para admins). No va en un efecto que siga
+  // a la revisión: cada recarga volvería a pedir la lista, sin fin.
+  onMount(() => void review.loadDocuments());
 
   async function archive(id: string) {
     setBusy(true);
@@ -26,7 +22,6 @@ export function useDocumentsSheet() {
   }
 
   return {
-    isAdmin,
     documents: () => review.documents() ?? [],
     confirming,
     busy,

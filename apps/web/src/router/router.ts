@@ -1,14 +1,27 @@
 import { createSignal } from 'solid-js';
 
+/** Páginas de administración (solo admins). */
+export type AdminPageName = 'documents' | 'access';
+
+const ADMIN_PATHS: Record<AdminPageName, string> = {
+  documents: '/documentos',
+  access: '/accesos',
+};
+
 export type Route =
   | { kind: 'home' }
   | { kind: 'document'; id: string }
+  | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home y `/d/<id>` un documento. Lo demás no existe. */
+/** `/` es la home, `/d/<id>` un documento y `/documentos` y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };
+  for (const [page, adminPath] of Object.entries(ADMIN_PATHS)) {
+    if (path === adminPath)
+      return { kind: 'admin', page: page as AdminPageName };
+  }
   const match = /^\/d\/([^/]+)$/.exec(path);
   if (!match) return { kind: 'missing' };
   try {
@@ -16,6 +29,10 @@ export function resolveRoute(pathname: string): Route {
   } catch {
     return { kind: 'missing' };
   }
+}
+
+export function adminPath(page: AdminPageName): string {
+  return ADMIN_PATHS[page];
 }
 
 export function documentPath(id: string): string {

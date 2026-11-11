@@ -3,14 +3,14 @@ import { useOverlay } from '../overlay/useOverlay';
 import { useReview } from '../ReviewProvider/review.context';
 import AddPersonSheet from './components/AddPersonSheet/AddPersonSheet';
 
-/** Estado, efectos y acceso a datos de la pantalla de accesos (solo admins). */
-export function useAccessSheet() {
+/** Estado, efectos y acceso a datos del panel de accesos (solo admins). */
+export function useAccessPanel() {
   const review = useReview();
   const overlay = useOverlay();
   const access = review.access;
   const [expanded, setExpanded] = createSignal<string | null>(null);
 
-  // La hoja se monta al abrirse y se desmonta al cerrarse: la lista se pide una vez, al entrar.
+  // El panel se monta al entrar a la página: la lista se pide una vez.
   onMount(() => void access.load());
 
   const myId = () => review.snapshot()?.me.id ?? review.session()?.reviewer.id;

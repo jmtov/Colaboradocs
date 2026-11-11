@@ -1,5 +1,5 @@
 import { useOverlay, useReview } from '@juntanza/review-ui';
-import UploadSheet from '@/DocumentsSheet/components/UploadSheet/UploadSheet';
+import UploadSheet from '@/DocumentsPage/components/UploadSheet/UploadSheet';
 
 /** Estado y acciones de la home: si quien mira es admin, si hay conexión y subir un documento nuevo. */
 export function useHomePage() {

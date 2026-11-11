@@ -1,4 +1,4 @@
-export { default as AccessSheet } from './AccessSheet/AccessSheet';
+export { default as AccessPanel } from './AccessPanel/AccessPanel';
 export { ApiRequestError, fetchSpace } from './api/review.api';
 export { default as BlockLayer } from './BlockLayer/BlockLayer';
 export { default as BottomSheet } from './BottomSheet/BottomSheet';

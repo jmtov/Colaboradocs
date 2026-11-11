@@ -80,5 +80,10 @@ export function useApp() {
     return current.kind === 'document' ? current.id : undefined;
   };
 
-  return { refs, space, name, phase, route, documentId };
+  const adminPage = () => {
+    const current = route();
+    return current.kind === 'admin' ? current.page : undefined;
+  };
+
+  return { refs, space, name, phase, route, documentId, adminPage };
 }

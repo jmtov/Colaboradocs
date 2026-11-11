@@ -68,7 +68,7 @@ export default function UserMenu() {
             type="button"
             class={styles.item}
             data-flat
-            onClick={userMenu.openDocuments}
+            onClick={() => userMenu.goToAdmin('documents')}
           >
             <FileTextIcon class={styles.icon} />
             Documentos
@@ -77,7 +77,7 @@ export default function UserMenu() {
             type="button"
             class={styles.item}
             data-flat
-            onClick={userMenu.openAccess}
+            onClick={() => userMenu.goToAdmin('access')}
           >
             <UsersIcon class={styles.icon} />
             Accesos

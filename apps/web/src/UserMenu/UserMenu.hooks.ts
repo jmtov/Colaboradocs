@@ -1,7 +1,7 @@
-import { AccessSheet, useOverlay, useReview } from '@juntanza/review-ui';
+import { useOverlay, useReview } from '@juntanza/review-ui';
 import { createSignal } from 'solid-js';
-import DocumentsSheet from '@/DocumentsSheet/DocumentsSheet';
 import HowToSheet from '@/HowToReview/components/HowToSheet/HowToSheet';
+import { type AdminPageName, adminPath, navigate } from '@/router/router';
 import { openAfterMenuCloses } from './menu.utils';
 import { MENU_GAP_PX } from './UserMenu.constants';
 
@@ -28,8 +28,9 @@ export function useUserMenu() {
     setOpen(event.newState === 'open');
   }
 
-  function openAccess() {
-    openAfterMenuCloses(refs.menu, () => void overlay.sheet(AccessSheet, {}));
+  /** Va a una página de administración con el menú ya cerrado. */
+  function goToAdmin(page: AdminPageName) {
+    openAfterMenuCloses(refs.menu, () => navigate(adminPath(page)));
   }
 
   function openHowTo() {
@@ -37,13 +38,6 @@ export function useUserMenu() {
       // Sin duplicar: si ya hay una hoja abierta (la guía de la página, por ejemplo), no se abre otra.
       if (!overlay.isOpen()) void overlay.sheet(HowToSheet, {});
     });
-  }
-
-  function openDocuments() {
-    openAfterMenuCloses(
-      refs.menu,
-      () => void overlay.sheet(DocumentsSheet, {}),
-    );
   }
 
   function logout() {
@@ -57,9 +51,8 @@ export function useUserMenu() {
     me,
     onToggle,
     toggle,
-    openAccess,
     openHowTo,
-    openDocuments,
+    goToAdmin,
     logout,
   };
 }

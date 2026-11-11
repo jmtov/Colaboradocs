@@ -1,5 +1,6 @@
 import { PinGate, ReviewProvider } from '@juntanza/review-ui';
 import { Match, Show, Switch } from 'solid-js';
+import AdminPage from '@/AdminPage/AdminPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
 import HomePage from '@/HomePage/HomePage';
 import Loading from '@/Loading/Loading';
@@ -83,6 +84,9 @@ export default function App() {
                 name={app.name()}
                 description={app.space()?.description}
               />
+            </Match>
+            <Match when={app.adminPage()} keyed>
+              {(page) => <AdminPage name={app.name()} page={page} />}
             </Match>
             <Match when={app.documentId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}
