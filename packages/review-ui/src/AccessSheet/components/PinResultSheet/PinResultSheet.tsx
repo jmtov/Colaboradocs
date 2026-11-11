@@ -1,8 +1,8 @@
 import { createSignal, Show } from 'solid-js';
-import BottomSheet from '../BottomSheet/BottomSheet';
-import CheckIcon from '../icons/CheckIcon';
-import CopyIcon from '../icons/CopyIcon';
-import { useReview } from '../ReviewProvider/review.context';
+import BottomSheet from '../../../BottomSheet/BottomSheet';
+import CheckIcon from '../../../icons/CheckIcon';
+import CopyIcon from '../../../icons/CopyIcon';
+import { useReview } from '../../../ReviewProvider/review.context';
 import styles from './PinResultSheet.module.css';
 
 /** Muestra el PIN recién creado o regenerado. Es la única vez que se ve. */

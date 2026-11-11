@@ -7,9 +7,9 @@ import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import BookOpenIcon from '@/icons/BookOpenIcon';
 import { citeKey, parseCite } from '@/Prose/cite.utils';
 import Prose from '@/Prose/Prose';
-import CiteList from './CiteList';
+import CiteList from './components/CiteList/CiteList';
+import OutlineList from './components/OutlineList/OutlineList';
 import styles from './DocumentSheet.module.css';
-import OutlineList from './OutlineList';
 import { flashGlossaryTerm, scrollToId } from './outline.utils';
 import type { SheetState } from './sheet.types';
 

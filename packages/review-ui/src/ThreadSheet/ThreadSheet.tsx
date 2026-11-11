@@ -2,9 +2,9 @@ import { excerptOf, groupThreads } from '@juntanza/review-core';
 import { createMemo, For, Show } from 'solid-js';
 import BottomSheet from '../BottomSheet/BottomSheet';
 import { useReview } from '../ReviewProvider/review.context';
-import CommentComposer from './CommentComposer';
+import CommentComposer from './components/CommentComposer/CommentComposer';
+import ThreadView from './components/ThreadView/ThreadView';
 import styles from './ThreadSheet.module.css';
-import ThreadView from './ThreadView';
 
 type Props = {
   open: boolean;

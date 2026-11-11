@@ -1,7 +1,7 @@
 import type { ManagedReviewer } from '@juntanza/review-core';
 import { createSignal, Show } from 'solid-js';
-import EllipsisVerticalIcon from '../icons/EllipsisVerticalIcon';
-import { useReview } from '../ReviewProvider/review.context';
+import EllipsisVerticalIcon from '../../../icons/EllipsisVerticalIcon';
+import { useReview } from '../../../ReviewProvider/review.context';
 import styles from './PersonRow.module.css';
 
 type Props = {

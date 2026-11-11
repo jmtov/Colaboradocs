@@ -1,7 +1,7 @@
 import { For } from 'solid-js';
+import { type OutlineItem, readOutline } from '@/DocumentSheet/outline.utils';
 import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import styles from './OutlineList.module.css';
-import { type OutlineItem, readOutline } from './outline.utils';
 
 const LEVEL_CLASS: Record<OutlineItem['level'], string | undefined> = {
   1: styles.level1,

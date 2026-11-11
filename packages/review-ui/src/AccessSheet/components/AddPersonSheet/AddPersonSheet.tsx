@@ -1,7 +1,7 @@
 import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@juntanza/review-core';
 import { createEffect, createSignal, Show } from 'solid-js';
-import BottomSheet from '../BottomSheet/BottomSheet';
-import { useReview } from '../ReviewProvider/review.context';
+import BottomSheet from '../../../BottomSheet/BottomSheet';
+import { useReview } from '../../../ReviewProvider/review.context';
 import styles from './AddPersonSheet.module.css';
 
 type Props = {

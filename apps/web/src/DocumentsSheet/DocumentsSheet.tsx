@@ -1,5 +1,6 @@
 import { BottomSheet, useReview } from '@juntanza/review-ui';
 import { createEffect, createSignal, For, Show, untrack } from 'solid-js';
+import UploadSheet from './components/UploadSheet/UploadSheet';
 import styles from './DocumentsSheet.module.css';
 import {
   documentsOpen,
@@ -7,7 +8,6 @@ import {
   setUploadTarget,
   uploadTarget,
 } from './documentsSheet.state';
-import UploadSheet from './UploadSheet';
 
 /** Administración de documentos (solo admins): subir, reemplazar y archivar. */
 export default function DocumentsSheet() {

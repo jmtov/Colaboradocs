@@ -3,9 +3,9 @@ import BottomSheet from '../BottomSheet/BottomSheet';
 import UserPlusIcon from '../icons/UserPlusIcon';
 import { useReview } from '../ReviewProvider/review.context';
 import styles from './AccessSheet.module.css';
-import AddPersonSheet from './AddPersonSheet';
-import PersonRow from './PersonRow';
-import PinResultSheet from './PinResultSheet';
+import AddPersonSheet from './components/AddPersonSheet/AddPersonSheet';
+import PersonRow from './components/PersonRow/PersonRow';
+import PinResultSheet from './components/PinResultSheet/PinResultSheet';
 
 type Props = {
   open: boolean;

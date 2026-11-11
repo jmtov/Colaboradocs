@@ -1,7 +1,7 @@
 import { MAX_COMMENT_LENGTH } from '@juntanza/review-core';
 import { createSignal, Show } from 'solid-js';
-import CloseIcon from '../icons/CloseIcon';
-import SendIcon from '../icons/SendIcon';
+import CloseIcon from '../../../icons/CloseIcon';
+import SendIcon from '../../../icons/SendIcon';
 import styles from './CommentComposer.module.css';
 
 /** Desde cuántos caracteres se muestra el contador. */

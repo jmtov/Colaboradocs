@@ -1,12 +1,12 @@
 import type { ReviewComment, Thread } from '@juntanza/review-core';
 import { createSignal, For, Show } from 'solid-js';
-import CircleCheckIcon from '../icons/CircleCheckIcon';
-import ReplyIcon from '../icons/ReplyIcon';
-import RotateCcwIcon from '../icons/RotateCcwIcon';
-import TrashIcon from '../icons/TrashIcon';
-import { useReview } from '../ReviewProvider/review.context';
-import { formatRelativeTime } from '../time/time.utils';
-import CommentComposer from './CommentComposer';
+import CircleCheckIcon from '../../../icons/CircleCheckIcon';
+import ReplyIcon from '../../../icons/ReplyIcon';
+import RotateCcwIcon from '../../../icons/RotateCcwIcon';
+import TrashIcon from '../../../icons/TrashIcon';
+import { useReview } from '../../../ReviewProvider/review.context';
+import { formatRelativeTime } from '../../../time/time.utils';
+import CommentComposer from '../CommentComposer/CommentComposer';
 import styles from './ThreadView.module.css';
 
 type Props = {

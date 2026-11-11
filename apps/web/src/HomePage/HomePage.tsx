@@ -6,7 +6,7 @@ import PlusIcon from '@/icons/PlusIcon';
 import Link from '@/router/Link';
 import { documentPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
-import DocumentMenu from './DocumentMenu';
+import DocumentMenu from './components/DocumentMenu/DocumentMenu';
 import styles from './HomePage.module.css';
 import { timeAgo } from './time.utils';
 

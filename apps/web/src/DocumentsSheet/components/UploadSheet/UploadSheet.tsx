@@ -1,7 +1,7 @@
 import { BottomSheet, useReview } from '@juntanza/review-ui';
 import { createEffect, createSignal, For, Show } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
-import FilePicker from './FilePicker';
+import FilePicker from './components/FilePicker/FilePicker';
 import styles from './UploadSheet.module.css';
 
 type Props = {
