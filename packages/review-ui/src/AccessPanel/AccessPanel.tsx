@@ -1,4 +1,6 @@
 import { For, Show } from 'solid-js';
+import Button from '../Button/Button';
+import RefreshIcon from '../icons/RefreshIcon';
 import UserPlusIcon from '../icons/UserPlusIcon';
 import { useAccessPanel } from './AccessPanel.hooks';
 import styles from './AccessPanel.module.css';
@@ -10,10 +12,13 @@ export default function AccessPanel() {
 
   return (
     <div class={styles.content}>
-      <button type="button" class={styles.add} onClick={() => panel.openAdd()}>
-        <UserPlusIcon class={styles.icon} />
+      <Button
+        icon={UserPlusIcon}
+        class={styles.add}
+        onClick={() => panel.openAdd()}
+      >
         Agregar persona
-      </button>
+      </Button>
       <p class={styles.hint}>
         El PIN solo se ve al crearlo o regenerarlo. Si alguien lo pierde, hay
         que regenerarlo.
@@ -24,13 +29,9 @@ export default function AccessPanel() {
       <Show when={panel.status() === 'error'}>
         <p class={styles.state}>
           No se pudo cargar la lista.{' '}
-          <button
-            type="button"
-            class={styles.link}
-            onClick={() => panel.reload()}
-          >
+          <Button icon={RefreshIcon} onClick={() => panel.reload()}>
             Reintentar
-          </button>
+          </Button>
         </p>
       </Show>
       <ul class={styles.list}>

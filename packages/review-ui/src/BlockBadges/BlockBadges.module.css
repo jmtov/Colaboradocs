@@ -1,31 +1,5 @@
+/* Solo su lugar en el texto: el aspecto es el de `Button`. */
 .pill {
-  display: inline-flex;
-  gap: 0.25rem;
-  align-items: center;
   margin-left: 0.5rem;
-  padding: 0.0625rem 0.5rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
-  line-height: 1.6;
-  color: var(--ok);
-  white-space: nowrap;
   vertical-align: middle;
-  background: var(--ok-bg);
-  border: 1px solid var(--ok);
-  cursor: pointer;
-}
-
-.pill:hover,
-.pill:focus-visible {
-  background: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
-}
-
-.pill:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 2px;
-}
-
-.icon {
-  flex: none;
-  width: 1em;
-  height: 1em;
 }

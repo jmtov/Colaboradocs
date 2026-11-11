@@ -31,27 +31,6 @@
   margin-left: auto;
 }
 
-.button {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-  color: var(--fg);
-  background: none;
-  border: 1px solid var(--line-strong);
-}
-
-.button:hover,
-.button:focus-visible {
-  background: var(--tint);
-}
-
-.icon {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
 @media print {
   .bar {
     display: none;

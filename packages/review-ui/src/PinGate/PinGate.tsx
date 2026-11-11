@@ -1,4 +1,5 @@
 import { type JSX, Show } from 'solid-js';
+import Button from '../Button/Button';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import { usePinGate } from './PinGate.hooks';
 import styles from './PinGate.module.css';
@@ -44,14 +45,14 @@ export default function PinGate(props: Props) {
               </p>
             )}
           </Show>
-          <button
-            type="submit"
-            class={styles.submit}
+          <Button
+            icon={ArrowRightIcon}
+            variant="primary"
+            submit
             disabled={gate.submitDisabled()}
           >
             {gate.busy() ? 'Verificando…' : 'Entrar'}
-            <ArrowRightIcon class={styles.icon} />
-          </button>
+          </Button>
         </form>
       </main>
     </Show>

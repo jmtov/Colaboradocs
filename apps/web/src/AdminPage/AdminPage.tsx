@@ -19,7 +19,7 @@ export default function AdminPage(props: Props) {
 
   return (
     <>
-      <PageBar backLabel="← Inicio" backHref="/" name={props.name}>
+      <PageBar backLabel="Inicio" backHref="/" name={props.name}>
         <Show when={admin.offline()}>
           <span role="status">Sin conexión</span>
         </Show>

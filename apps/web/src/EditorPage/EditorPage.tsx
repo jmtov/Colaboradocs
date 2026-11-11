@@ -1,5 +1,8 @@
+import { ActionMenu, Button } from '@colaboradocs/review-ui';
 import { For, Match, Show, Switch } from 'solid-js';
 import DocumentEditor from '@/Editor/DocumentEditor/DocumentEditor';
+import PencilIcon from '@/icons/PencilIcon';
+import RefreshIcon from '@/icons/RefreshIcon';
 import SaveIcon from '@/icons/SaveIcon';
 import TrashIcon from '@/icons/TrashIcon';
 import UploadIcon from '@/icons/UploadIcon';
@@ -8,6 +11,7 @@ import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';
 import EditorOutline from './components/EditorOutline/EditorOutline';
 import EditorToolbar from './components/EditorToolbar/EditorToolbar';
 import GlossaryLinks from './components/GlossaryLinks/GlossaryLinks';
+import GlossaryList from './components/GlossaryList/GlossaryList';
 import SourcesEditor from './components/SourcesEditor/SourcesEditor';
 import { useEditorPage } from './EditorPage.hooks';
 import styles from './EditorPage.module.css';
@@ -32,9 +36,9 @@ export default function EditorPage(props: Props) {
   return (
     <>
       <PageBar
-        backLabel="← Volver al documento"
+        backLabel="Volver al documento"
         onBack={() => void page.leave()}
-        name={props.name}
+        name={page.details().title || props.name}
       />
 
       <main class={styles.page}>
@@ -51,13 +55,9 @@ export default function EditorPage(props: Props) {
               <section class={styles.intro}>
                 <h1 class={styles.title}>No se pudo abrir el editor</h1>
                 <p class={styles.hint}>{page.loadError()}</p>
-                <button
-                  type="button"
-                  class={styles.button}
-                  onClick={() => void page.reload()}
-                >
+                <Button icon={RefreshIcon} onClick={() => void page.reload()}>
                   Reintentar
-                </button>
+                </Button>
               </section>
             </Match>
             <Match when={page.status() === 'ready'}>
@@ -67,25 +67,14 @@ export default function EditorPage(props: Props) {
                     <section class={styles.intro}>
                       <span class={styles.eyebrow}>Editando</span>
                       <div class={styles.head}>
-                        <h1 class={styles.title}>{doc().title}</h1>
+                        <h1 class={styles.title}>{page.details().title}</h1>
                         <div class={styles.actions}>
                           <span class={styles.status} role="status">
                             {statusText()}
                           </span>
-                          <button
-                            type="button"
-                            class={styles.button}
-                            disabled={
-                              !page.dirty() || page.saving() || page.busy()
-                            }
-                            onClick={() => void page.save()}
-                          >
-                            <SaveIcon class={styles.icon} />
-                            Guardar borrador
-                          </button>
-                          <button
-                            type="button"
-                            class={`${styles.button} ${styles.primary}`}
+                          <Button
+                            icon={UploadIcon}
+                            variant="primary"
                             disabled={
                               (!page.dirty() && !page.hasDraft()) ||
                               page.saving() ||
@@ -93,18 +82,32 @@ export default function EditorPage(props: Props) {
                             }
                             onClick={() => void page.publish()}
                           >
-                            <UploadIcon class={styles.icon} />
                             Publicar…
-                          </button>
-                          <button
-                            type="button"
-                            class={styles.button}
-                            disabled={page.busy()}
-                            onClick={() => void page.discard()}
-                          >
-                            <TrashIcon class={styles.icon} />
-                            Descartar
-                          </button>
+                          </Button>
+                          <ActionMenu
+                            label="Más opciones del borrador"
+                            items={[
+                              {
+                                label: 'Editar título y descripción',
+                                icon: PencilIcon,
+                                onSelect: () => void page.editDetails(),
+                              },
+                              {
+                                label: 'Guardar borrador',
+                                icon: SaveIcon,
+                                disabled:
+                                  !page.dirty() || page.saving() || page.busy(),
+                                onSelect: () => void page.save(),
+                              },
+                              {
+                                label: 'Descartar',
+                                icon: TrashIcon,
+                                danger: true,
+                                disabled: page.busy(),
+                                onSelect: () => void page.discard(),
+                              },
+                            ]}
+                          />
                         </div>
                       </div>
                     </section>
@@ -117,6 +120,8 @@ export default function EditorPage(props: Props) {
                           onSelect={page.goTo}
                           sourcesCount={page.sources().length}
                           onSources={page.goToSources}
+                          glossaryCount={page.glossaryParts().entries.length}
+                          onGlossary={page.goToGlossary}
                         />
                       </aside>
 
@@ -146,49 +151,49 @@ export default function EditorPage(props: Props) {
                                 </ul>
                               </Show>
                               <Show when={current().code === 'conflict'}>
-                                <button
-                                  type="button"
-                                  class={styles.button}
+                                <Button
+                                  icon={RefreshIcon}
                                   onClick={() => void page.reload()}
                                 >
                                   Recargar el borrador
-                                </button>
+                                </Button>
                               </Show>
                             </div>
                           )}
                         </Show>
 
                         <div class={styles.editing}>
-                          <DocumentEditor
-                            sections={page.sections()}
-                            onChange={page.setSections}
-                            onSettings={(id) => void page.openSettings(id)}
-                            onReady={page.ready}
-                          />
-                          <GlossaryLinks
-                            html={
-                              page
-                                .sections()
-                                .find((item) => item.id === 'glosario')?.html ??
-                              ''
-                            }
-                            links={page.links()}
-                            onForms={page.setGlossaryForms}
-                            onRemove={page.removeGlossaryLink}
-                          />
-                          <SourcesEditor
-                            sources={page.sources()}
-                            onChange={page.setSourceField}
-                            onAdd={page.addSource}
-                            onRemoveLast={() => void page.removeLastSource()}
-                          />
-                          <div class={styles.toolbar}>
-                            <EditorToolbar
-                              variant={
-                                page.inGlossary() ? 'glossary' : 'section'
+                          <div class={styles.editorBlock}>
+                            <div class={styles.toolbar}>
+                              <EditorToolbar
+                                editor={page.editor()}
+                                onCite={() => void page.cite()}
+                              />
+                            </div>
+                            <DocumentEditor
+                              sections={page.sections()}
+                              onChange={page.setSections}
+                              onSettings={(id) => void page.openSettings(id)}
+                              onEditCitation={(pos, text) =>
+                                void page.editCitation(pos, text)
                               }
-                              editor={page.editor()}
-                              onCite={() => void page.cite()}
+                              onReady={page.ready}
+                            />
+                            <GlossaryList
+                              entries={page.glossaryParts().entries}
+                              links={page.links()}
+                              onEdit={(index) => void page.editTerm(index)}
+                              onAdd={() => void page.editTerm()}
+                            />
+                            <GlossaryLinks
+                              html={page.glossary().html}
+                              links={page.links()}
+                              onRemove={page.removeGlossaryLink}
+                            />
+                            <SourcesEditor
+                              sources={page.sources()}
+                              onEdit={(index) => void page.editSource(index)}
+                              onAdd={() => void page.editSource()}
                             />
                           </div>
                         </div>

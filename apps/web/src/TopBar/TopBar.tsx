@@ -1,4 +1,4 @@
-import { useReview } from '@colaboradocs/review-ui';
+import { Button, useReview } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
@@ -74,15 +74,12 @@ export default function TopBar(props: Props) {
               Editar
             </Link>
           </Show>
-          <button
-            type="button"
-            class={styles.print}
+          <Button
+            icon={PrinterIcon}
             aria-label="Imprimir o guardar como PDF"
             title="Imprimir o guardar como PDF"
             onClick={props.onPrint}
-          >
-            <PrinterIcon class={styles.icon} />
-          </button>
+          ></Button>
           <UserMenu />
         </div>
       </div>

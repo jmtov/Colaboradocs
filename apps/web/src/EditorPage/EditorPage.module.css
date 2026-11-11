@@ -58,9 +58,14 @@
   display: none;
 }
 
+.editorBlock {
+  display: grid;
+  gap: 1.25rem;
+}
+
 .toolbar {
   position: sticky;
-  bottom: env(safe-area-inset-bottom, 0px);
+  top: calc(4rem + env(safe-area-inset-top, 0px));
   z-index: 1;
   background: var(--bg);
   border: 1px solid var(--line-strong);
@@ -104,32 +109,6 @@
   color: var(--muted);
 }
 
-.button {
-  display: inline-flex;
-  gap: 0.5rem;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0.5rem 1rem;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--fg);
-  cursor: pointer;
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-}
-
-.primary {
-  color: var(--bg);
-  background: var(--fg);
-  border-color: var(--fg);
-  --lift-color: var(--fg);
-}
-
-.button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
 .warn,
 .problem {
   display: grid;
@@ -158,10 +137,4 @@
 .section {
   display: grid;
   gap: 1rem;
-}
-
-.icon {
-  flex: none;
-  width: 1.125rem;
-  height: 1.125rem;
 }

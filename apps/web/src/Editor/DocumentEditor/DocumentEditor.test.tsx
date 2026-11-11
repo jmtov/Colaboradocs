@@ -5,7 +5,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentSection } from '@/content/content.types';
 import {
   addNote,
-  addTerm,
   locateSections,
   removeSection,
   sectionAt,
@@ -242,20 +241,6 @@ describe('comandos de sección', () => {
     expect(notes).toBe(1);
     expect(editor().state.selection.$from.parent.textContent).toBe(
       'Para qué sirve. Explica.',
-    );
-  });
-
-  it('addTerm agrega un término al final del glosario, o crea la lista', () => {
-    const { editor, last } = mount();
-    endOf(editor(), 'D');
-    addTerm(editor());
-    expect(last()[2]?.html).toBe(
-      '<dl><dt>T</dt><dd>D</dd><dt>Nuevo término</dt><dd>Definición</dd></dl>',
-    );
-    endOf(editor(), 'Hola');
-    addTerm(editor());
-    expect(last()[0]?.html).toBe(
-      '<p>Hola</p><dl><dt>Nuevo término</dt><dd>Definición</dd></dl>',
     );
   });
 });

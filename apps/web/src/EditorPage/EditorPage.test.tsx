@@ -196,7 +196,7 @@ async function editorOf(host: HTMLElement): Promise<Editor> {
 const inputs = (host: ParentNode, label: string) =>
   [...host.querySelectorAll('label')]
     .filter((item) => item.textContent?.trim().startsWith(label))
-    .map((item) => item.querySelector('input') as HTMLInputElement);
+    .map((item) => item.querySelector('input, textarea') as HTMLInputElement);
 
 function write(input: HTMLInputElement, value: string) {
   input.value = value;
@@ -275,8 +275,8 @@ describe('EditorPage', () => {
     const host = mount();
     const editor = await editorOf(host);
     expect(host.textContent).toContain('Mi documento');
-    // el glosario está siempre, al final (antes de la bibliografía), aunque el documento no lo tenga
-    expect(titles(host)).toEqual(['Primera', 'Glosario']);
+    // el glosario no está en el editor: va debajo, con su propia lista
+    expect(titles(host)).toEqual(['Primera']);
     expect(editor.getText()).toContain('Hola');
     expect(host.textContent).toContain('Sin cambios');
     expect(button(host, 'Guardar borrador').disabled).toBe(true);
@@ -428,34 +428,71 @@ describe('EditorPage', () => {
     expect(host.textContent).toContain('Sin cambios');
   });
 
+  it('el título y la descripción se editan desde el menú y se guardan', async () => {
+    const calls = fakeApi();
+    const host = mount();
+    await editorOf(host);
+    button(host, 'Editar título y descripción').click();
+    await wait(300);
+    write(sheetInputs('Título')[0] as HTMLInputElement, 'Otro título');
+    write(sheetInputs('Descripción')[0] as HTMLInputElement, 'Una línea');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    expect(host.querySelector('h1')?.textContent).toBe('Otro título');
+    expect(host.textContent).toContain('Cambios sin guardar');
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.title).toBe('Otro título');
+    expect(calls.puts[0]?.content.description).toBe('Una línea');
+  });
+
+  it('la barra y la pestaña llevan el título del documento, y al salir vuelve el del espacio', async () => {
+    document.title = 'Espacio';
+    fakeApi();
+    const host = mount();
+    await editorOf(host);
+    expect(host.querySelector('header')?.textContent).toContain(
+      PUBLISHED.title,
+    );
+    expect(document.title).toBe(`${PUBLISHED.title} · Editando`);
+    disposers.pop()?.();
+    expect(document.title).toBe('Espacio');
+  });
+
   it('la bibliografía se edita: agregar fuentes, escribirlas y guardarlas', async () => {
     const calls = fakeApi();
     const host = mount();
     await editorOf(host);
     expect(host.textContent).toContain('Bibliografía');
-    button(host, '+ Agregar fuente').click();
-    await wait(20);
-    const label = host.querySelector(
-      'input[aria-label="Fuente 1: referencia"]',
-    ) as HTMLInputElement;
-    write(label, 'Ostrom, 1990');
-    write(
-      host.querySelector(
-        'input[aria-label="Fuente 1: enlace"]',
-      ) as HTMLInputElement,
-      'https://example.org',
-    );
-    await wait(20);
-    // Escribir no recrea la fila: el campo sigue siendo el mismo.
-    expect(host.querySelector('input[aria-label="Fuente 1: referencia"]')).toBe(
-      label,
-    );
+    button(host, 'Agregar fuente').click();
+    await wait(300);
+    write(sheetInputs('Referencia')[0] as HTMLInputElement, 'Ostrom, 1990');
+    write(sheetInputs('Enlace')[0] as HTMLInputElement, 'https://example.org');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    expect(host.textContent).toContain('Ostrom, 1990');
     expect(host.textContent).toContain('Cambios sin guardar');
     button(host, 'Guardar borrador').click();
     await wait();
     expect(calls.puts[0]?.content.sources).toEqual([
       { label: 'Ostrom, 1990', url: 'https://example.org' },
     ]);
+  });
+
+  it('solo la última fuente se puede quitar desde su hoja', async () => {
+    const published: DocumentContent = {
+      ...PUBLISHED,
+      sources: [
+        { label: 'A', url: '' },
+        { label: 'B', url: '' },
+      ],
+    };
+    fakeApi({ published });
+    const host = mount();
+    await editorOf(host);
+    button(host, 'Editar fuente 1').click();
+    await wait(300);
+    expect(document.body.textContent).not.toContain('Quitar fuente');
   });
 
   it('quitar la última fuente avisa si el texto la cita', async () => {
@@ -475,7 +512,9 @@ describe('EditorPage', () => {
     const calls = fakeApi({ published });
     const host = mount();
     await editorOf(host);
-    button(host, 'Quitar la última').click();
+    button(host, 'Editar fuente 2').click();
+    await wait(300);
+    button(document.body, 'Quitar fuente').click();
     await wait(300);
     expect(document.body.textContent).toContain('1 cita');
     expect(document.body.textContent).toContain('[2]');
@@ -493,7 +532,7 @@ describe('EditorPage', () => {
     const outline = host.querySelector('nav') as HTMLElement;
     button(outline, '0Bibliografía').click();
     await wait(20);
-    expect(document.activeElement?.textContent).toBe('+ Agregar fuente');
+    expect(document.activeElement?.textContent).toBe('Agregar fuente');
   });
 
   it('el índice muestra las secciones y al tocar una lleva el cursor ahí', async () => {
@@ -543,7 +582,7 @@ describe('EditorPage', () => {
     expect(document.body.textContent).toContain('1 comentarios y OK');
     button(document.body, 'Eliminar').click();
     await wait(50);
-    expect(titles(host)).toEqual(['Primera', 'Glosario']);
+    expect(titles(host)).toEqual(['Primera']);
   });
 
   it('con una sola sección no se puede eliminar', async () => {
@@ -627,32 +666,42 @@ describe('EditorPage', () => {
   it('la nota «Para qué sirve» se ve apagada y «Nota» agrega una a la sección actual', async () => {
     const calls = fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
     const host = mount();
-    const editor = await editorOf(host);
+    await editorOf(host);
     expect(host.querySelectorAll('[data-note]')).toHaveLength(1);
+
+    const other = fakeApi();
+    const second = mount();
+    const editor = await editorOf(second);
+    expect(second.querySelectorAll('[data-note]')).toHaveLength(0);
     cursorAtEndOf(editor, 'Hola');
     await wait(20);
-    cursorAtEndOf(editor, 'Quórum');
+    button(second, 'Nota').click();
     await wait(20);
-    button(host, 'Nota').click();
-    await wait(20);
-    button(host, 'Guardar borrador').click();
+    button(second, 'Guardar borrador').click();
     await wait();
-    expect(calls.puts[0]?.content.sections[1]?.html).toContain(
-      '<p><strong>Para qué sirve.</strong> </p><dl>',
+    expect(other.puts[0]?.content.sections[0]?.html).toContain(
+      '<p><strong>Para qué sirve.</strong> </p><p>Hola</p>',
     );
+    expect(calls.puts).toHaveLength(0);
   });
 
-  it('en el glosario cada término muestra cómo aparece en el texto', async () => {
+  it('el glosario va fuera del editor: cada término en una lista, y se edita uno a la vez en una hoja', async () => {
     const calls = fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
     const host = mount();
-    await editorOf(host);
-    const quorum = inputs(host, 'Quórum')[0] as HTMLInputElement;
-    const amo = inputs(host, 'AMO')[0] as HTMLInputElement;
-    expect(quorum.value).toBe('quórum');
-    expect(amo.value).toBe('');
-    amo.value = 'AMO, A.M.O.';
-    amo.dispatchEvent(new Event('change', { bubbles: true }));
-    await wait(20);
+    const editor = await editorOf(host);
+    expect(titles(host)).toEqual(['Primera']);
+    expect(editor.getText()).not.toContain('Quórum');
+    const list = host.querySelector('#glosario-lista') as HTMLElement;
+    expect(list.textContent).toContain('Quórum');
+    expect(list.textContent).toContain('AMO');
+    expect(list.textContent).toContain('quórum'); // cómo aparece en el texto
+
+    button(host, 'Editar AMO').click();
+    await wait(300);
+    expect((sheetInputs('Término')[0] as HTMLInputElement).value).toBe('AMO');
+    write(sheetInputs('Aparece como')[0] as HTMLInputElement, 'AMO, A.M.O.');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
     expect(host.textContent).toContain('Cambios sin guardar');
     button(host, 'Guardar borrador').click();
     await wait();
@@ -662,6 +711,56 @@ describe('EditorPage', () => {
       amo: 'AMO',
       'a.m.o.': 'AMO',
     });
+    // lo que no se tocó se guarda igual
+    expect(calls.puts[0]?.content.sections[1]?.html).toContain(
+      '<dt>Quórum</dt>',
+    );
+  });
+
+  it('un término se cambia, se quita y se agrega; los otros no se tocan', async () => {
+    const calls = fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
+    const host = mount();
+    await editorOf(host);
+    button(host, 'Editar AMO').click();
+    await wait(300);
+    write(sheetInputs('Definición')[0] as HTMLInputElement, 'Otra definición');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+
+    button(host, 'Editar Quórum').click();
+    await wait(300);
+    button(document.body, 'Quitar término').click();
+    await wait(300);
+
+    button(host, 'Agregar término').click();
+    await wait(300);
+    write(sheetInputs('Término')[0] as HTMLInputElement, 'Mayoría');
+    write(sheetInputs('Definición')[0] as HTMLInputElement, 'La mitad más uno');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+
+    button(host, 'Guardar borrador').click();
+    await wait();
+    const saved = calls.puts[0]?.content.sections[1]?.html ?? '';
+    expect(saved).toContain('<dt>AMO</dt><dd>Otra definición</dd>');
+    expect(saved).toContain('<dt>Mayoría</dt><dd>La mitad más uno</dd>');
+    expect(saved).not.toContain('Quórum');
+    // quitar un término quita sus enlaces
+    expect(calls.puts[0]?.content.glossaryTerms).toEqual({
+      'qué era': 'Viejo',
+    });
+  });
+
+  it('un término a medias no se puede aplicar', async () => {
+    fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
+    const host = mount();
+    await editorOf(host);
+    button(host, 'Agregar término').click();
+    await wait(300);
+    write(sheetInputs('Término')[0] as HTMLInputElement, 'Solo término');
+    expect(
+      (button(document.body, 'Aplicar') as HTMLButtonElement).disabled,
+    ).toBe(true);
   });
 
   it('un enlace a un término que ya no existe se ve aparte y se puede quitar', async () => {
@@ -676,22 +775,6 @@ describe('EditorPage', () => {
     button(host, 'Guardar borrador').click();
     await wait();
     expect(calls.puts[0]?.content.glossaryTerms).toEqual({ quórum: 'Quórum' });
-  });
-
-  it('«+ Término» solo aparece dentro del glosario y agrega el término ahí', async () => {
-    const calls = fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
-    const host = mount();
-    const editor = await editorOf(host);
-    expect(() => button(host, '+ Término')).toThrow();
-    cursorAtEndOf(editor, 'Área.');
-    await wait(20);
-    button(host, '+ Término').click();
-    await wait(20);
-    button(host, 'Guardar borrador').click();
-    await wait();
-    const saved = calls.puts[0]?.content.sections[1]?.html ?? '';
-    expect(saved).toContain('<dt>Nuevo término</dt><dd>Definición</dd>');
-    expect(saved.startsWith('<dl><dt>Quórum</dt>')).toBe(true);
   });
 
   it('si otra persona guardó antes, avisa, no pierde lo escrito y ofrece recargar', async () => {
@@ -724,9 +807,9 @@ describe('EditorPage', () => {
       expect(item.nextElementSibling?.textContent).toBeTruthy();
     }
     expect(labels).toEqual([
-      'Sección',
       'Negrilla',
       'Cursiva',
+      'Sección',
       'Encabezado 1',
       'Encabezado 2',
       'Encabezado 3',
@@ -739,15 +822,14 @@ describe('EditorPage', () => {
     ]);
   });
 
-  it('la barra va al pie: después del editor en la página y pegada abajo, con fondo blanco', async () => {
+  it('la barra va arriba: antes del editor en la página y pegada arriba, con fondo blanco', async () => {
     fakeApi();
     const host = mount();
     await editorOf(host);
     const bar = host.querySelector('[role="toolbar"]') as HTMLElement;
     const prose = host.querySelector('.ProseMirror') as HTMLElement;
-    // si fuera antes que el texto, «sticky bottom» no la dejaría pegada al pie al recorrer el documento
     expect(
-      prose.compareDocumentPosition(bar) & Node.DOCUMENT_POSITION_FOLLOWING,
+      prose.compareDocumentPosition(bar) & Node.DOCUMENT_POSITION_PRECEDING,
     ).toBeTruthy();
     const css = readFileSync(
       join(import.meta.dirname, 'EditorPage.module.css'),
@@ -755,9 +837,49 @@ describe('EditorPage', () => {
     );
     const rule = /\.toolbar\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
     expect(rule).toMatch(/position:\s*sticky/);
-    expect(rule).toMatch(/bottom:/);
-    expect(rule).not.toMatch(/top:/);
+    expect(rule).toMatch(/top:/);
+    expect(rule).not.toMatch(/bottom:/);
     expect(rule).toMatch(/background:\s*var\(--bg\)/);
+  });
+
+  it('tocar una cita abre la hoja con sus fuentes marcadas y la cambia', async () => {
+    const published: DocumentContent = {
+      ...PUBLISHED,
+      sources: [
+        { label: 'A', url: '' },
+        { label: 'B', url: '' },
+        { label: 'C', url: '' },
+      ],
+      sections: [
+        {
+          ...(PUBLISHED.sections[0] as DocumentContent['sections'][number]),
+          html: '<p>Dato <em>[1, 2]</em>.</p>',
+        },
+      ],
+    };
+    const calls = fakeApi({ published });
+    const host = mount();
+    const editor = await editorOf(host);
+    // jsdom no tiene diseño, así que el clic no se traduce a una posición: se llama al manejador del plugin.
+    editor.state.doc.descendants((node, pos) => {
+      if (node.type.name !== 'citation') return;
+      editor.view.someProp('handleClickOn', (handle) =>
+        handle(editor.view, pos, node, pos, new MouseEvent('click'), true),
+      );
+    });
+    await wait(300);
+    const checks = [
+      ...document.body.querySelectorAll('input[type="checkbox"]'),
+    ] as HTMLInputElement[];
+    expect(checks.map((c) => c.checked)).toEqual([true, true, false]);
+    checks[2]?.click();
+    await wait(20);
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    expect(editor.getHTML()).toContain('[1, 2, 3]');
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.sections[0]?.html).toContain('[1, 2, 3]');
   });
 
   it('«Cita» elige fuentes de la bibliografía e inserta «[1, 2]» donde está el cursor', async () => {
@@ -831,7 +953,7 @@ describe('EditorPage', () => {
     cursorAtEndOf(editor, 'Mundo');
     button(host, 'Sección').click();
     await wait(20);
-    expect(titles(host)).toEqual(['Primera', 'Mundo', 'Glosario']);
+    expect(titles(host)).toEqual(['Primera', 'Mundo']);
     button(host, 'Guardar borrador').click();
     await wait();
     const saved = calls.puts[0]?.content.sections ?? [];
@@ -876,8 +998,8 @@ describe('EditorPage', () => {
     const host = mount();
     await editorOf(host);
     for (const text of [
-      '+ Agregar sección',
-      '+ Agregar glosario',
+      'Agregar sección',
+      'Agregar glosario',
       'Vista previa',
     ]) {
       expect(() => button(host, text)).toThrow();
@@ -896,28 +1018,18 @@ describe('EditorPage', () => {
       'uno',
     ]);
 
-    // dentro del glosario la barra ofrece «+ Término»
-    let at = -1;
-    editor.state.doc.descendants((node, pos) => {
-      if (
-        node.type.name === 'sectionTitle' &&
-        node.textContent === 'Glosario'
-      ) {
-        at = pos + node.nodeSize + 1;
-      }
-    });
-    editor.commands.focus(at);
-    await wait(20);
-    button(host, '+ Término').click();
-    await wait(20);
+    button(host, 'Agregar término').click();
+    await wait(300);
+    write(sheetInputs('Término')[0] as HTMLInputElement, 'T');
+    write(sheetInputs('Definición')[0] as HTMLInputElement, 'D');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
     button(host, 'Guardar borrador').click();
     await wait();
     const added = calls.puts[1]?.content.sections[1];
     expect(added?.id).toBe('glosario');
     expect(added?.num).toBe('A');
-    expect(added?.html).toBe(
-      '<dl><dt>Nuevo término</dt><dd>Definición</dd></dl>',
-    );
+    expect(added?.html).toBe('<dl><dt>T</dt><dd>D</dd></dl>');
   });
 
   it('los botones de guardar, publicar y descartar van junto al título y llevan ícono', async () => {
@@ -999,6 +1111,29 @@ describe('EditorPage', () => {
     expect(calls.puts[0]?.content.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(calls.publishes).toEqual([{ expectedRevision: 1 }]);
     expect(window.location.pathname).toBe('/d/doc');
+  });
+
+  it('al publicar, propone la versión siguiente y no deja una igual o anterior', async () => {
+    const calls = fakeApi();
+    const host = mount();
+    const editor = await editorOf(host);
+    typeAtEndOf(editor, 'Hola', ' nuevo');
+    await wait(20);
+    button(host, 'Publicar…').click();
+    await wait(300);
+    expect((sheetInputs('Actual')[0] as HTMLInputElement).value).toBe('1.0');
+    expect((sheetInputs('Actual')[0] as HTMLInputElement).disabled).toBe(true);
+    const field = sheetInputs('Nueva')[0] as HTMLInputElement;
+    expect(field.value).toBe('1.1');
+    write(field, '1.0');
+    await wait(20);
+    expect(document.body.textContent).toContain('posterior a la actual');
+    expect(button(document.body, 'Publicar').disabled).toBe(true);
+    write(field, '2.0');
+    await wait(20);
+    button(document.body, 'Publicar').click();
+    await wait(400);
+    expect(calls.puts[0]?.content.version).toBe('2.0');
   });
 
   it('si lo publicado cambió, pregunta y publica con force solo si se confirma', async () => {

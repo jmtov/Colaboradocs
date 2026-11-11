@@ -1,5 +1,8 @@
 import type { ManagedReviewer } from '@colaboradocs/review-core';
 import BottomSheet from '../../../../../BottomSheet/BottomSheet';
+import Button from '../../../../../Button/Button';
+import CheckIcon from '../../../../../icons/CheckIcon';
+import CloseIcon from '../../../../../icons/CloseIcon';
 import type { SheetLayerProps } from '../../../../../overlay/overlay.types';
 import { ROLE_EDIT_MAX_LENGTH } from '../../PersonRow.constants';
 import { useEditPersonSheet } from './EditPersonSheet.hooks';
@@ -39,16 +42,17 @@ export default function EditPersonSheet(props: Props) {
           />
         </label>
         <div class={styles.row}>
-          <button type="button" class={styles.button} onClick={props.onClose}>
+          <Button icon={CloseIcon} onClick={props.onClose}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            class={`${styles.button} ${styles.primary}`}
+          </Button>
+          <Button
+            icon={CheckIcon}
+            variant="primary"
+            submit
             disabled={!sheet.canSave()}
           >
             Guardar
-          </button>
+          </Button>
         </div>
       </form>
     </BottomSheet>

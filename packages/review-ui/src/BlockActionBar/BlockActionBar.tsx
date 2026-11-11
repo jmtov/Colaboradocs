@@ -1,4 +1,5 @@
 import { Show } from 'solid-js';
+import Button from '../Button/Button';
 import CheckIcon from '../icons/CheckIcon';
 import CloseIcon from '../icons/CloseIcon';
 import CommentIcon from '../icons/CommentIcon';
@@ -23,29 +24,20 @@ export default function BlockActionBar(props: Props) {
       aria-label="Acciones del párrafo"
       data-review-bar
     >
-      <button type="button" class={styles.button} onClick={props.onComment}>
-        <CommentIcon class={styles.icon} />
+      <Button icon={CommentIcon} onClick={props.onComment}>
         Comentar
         <Show when={props.openThreads > 0}> ({props.openThreads})</Show>
-      </button>
-      <button
-        type="button"
-        class={styles.button}
-        classList={{ [styles.on]: props.mine }}
-        aria-pressed={props.mine}
+      </Button>
+      <Button
+        icon={CheckIcon}
+        pressed={props.mine}
         onClick={props.onToggleApproval}
       >
-        <CheckIcon class={styles.icon} />
         {props.mine ? 'Marcado OK' : 'OK'}
-      </button>
-      <button
-        type="button"
-        class={`${styles.button} ${styles.close}`}
-        onClick={props.onClose}
-      >
-        <CloseIcon class={styles.icon} />
+      </Button>
+      <Button icon={CloseIcon} class={styles.close} onClick={props.onClose}>
         Cerrar
-      </button>
+      </Button>
     </div>
   );
 }

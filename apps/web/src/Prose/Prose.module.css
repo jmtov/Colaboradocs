@@ -78,21 +78,24 @@
   font-weight: 600;
 }
 
-.emphasis,
-.cite {
+.emphasis {
   font-family: var(--font-mono);
   font-size: var(--font-size-sm);
   font-style: normal;
   color: var(--muted);
 }
 
+/* Igual que en el editor (`[data-citation]` en DocumentEditor.module.css): una etiqueta que se toca. */
 .cite {
+  padding: 0.25em;
+  font-size: 0.75em;
+  font-style: normal;
   cursor: pointer;
+  background: var(--tint);
 }
 
 .cite:hover {
-  color: var(--fg);
-  text-decoration: underline;
+  background: var(--line);
 }
 
 .definitions {
@@ -168,5 +171,11 @@
   .paragraph {
     orphans: 3;
     widows: 3;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cite {
+    transition: background-color 0.15s ease;
   }
 }

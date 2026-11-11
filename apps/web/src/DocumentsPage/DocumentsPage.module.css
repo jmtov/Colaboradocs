@@ -83,19 +83,6 @@
   cursor: default;
 }
 
-.danger {
-  color: var(--danger);
-  border-color: var(--danger);
-  --lift-color: var(--danger);
-}
-
-.dangerSolid {
-  color: var(--bg);
-  background: var(--danger);
-  border-color: var(--danger);
-  --lift-color: var(--danger);
-}
-
 .confirm {
   flex-basis: 100%;
   font-size: var(--font-size-sm);

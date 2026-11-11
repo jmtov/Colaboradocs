@@ -1,6 +1,7 @@
 import type { IssuedPin } from '@colaboradocs/review-core';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
+import Button from '../../../Button/Button';
 import CheckIcon from '../../../icons/CheckIcon';
 import CopyIcon from '../../../icons/CopyIcon';
 import type { SheetLayerProps } from '../../../overlay/overlay.types';
@@ -31,26 +32,19 @@ export default function PinResultSheet(props: Props) {
           regenerarlo.
         </p>
         <div class={styles.row}>
-          <button
-            type="button"
-            class={styles.button}
+          <Button
+            icon={sheet.copied() ? CheckIcon : CopyIcon}
             onClick={() => void sheet.copy(props.issued.pin)}
           >
-            <Show
-              when={sheet.copied()}
-              fallback={<CopyIcon class={styles.icon} />}
-            >
-              <CheckIcon class={styles.icon} />
-            </Show>
             {sheet.copied() ? 'Copiado' : 'Copiar'}
-          </button>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
+          </Button>
+          <Button
+            icon={CheckIcon}
+            variant="primary"
             onClick={() => props.close()}
           >
             Listo
-          </button>
+          </Button>
         </div>
       </div>
     </BottomSheet>

@@ -1,6 +1,10 @@
 import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@colaboradocs/review-core';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
+import Button from '../../../Button/Button';
+import CloseIcon from '../../../icons/CloseIcon';
+import UserPlusIcon from '../../../icons/UserPlusIcon';
+// '../../../icons/CloseIcon';
 import type { SheetLayerProps } from '../../../overlay/overlay.types';
 import { useAddPersonSheet } from './AddPersonSheet.hooks';
 import styles from './AddPersonSheet.module.css';
@@ -58,16 +62,17 @@ export default function AddPersonSheet(props: SheetLayerProps) {
           </p>
         </Show>
         <div class={styles.row}>
-          <button type="button" class={styles.button} onClick={props.onClose}>
+          <Button icon={CloseIcon} onClick={props.onClose}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            class={`${styles.button} ${styles.primary}`}
+          </Button>
+          <Button
+            icon={UserPlusIcon}
+            variant="primary"
+            submit
             disabled={!sheet.valid() || sheet.busy()}
           >
             {sheet.busy() ? 'Agregando…' : 'Agregar'}
-          </button>
+          </Button>
         </div>
         <p class={styles.note}>
           El PIN se genera al guardar y se muestra una sola vez.

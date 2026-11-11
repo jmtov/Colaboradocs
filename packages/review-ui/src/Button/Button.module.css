@@ -1,0 +1,99 @@
+.button {
+  display: inline-flex;
+  flex: none;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  cursor: pointer;
+  /* El borde y la sombra larga (index.css) son del mismo color. */
+  --edge: var(--line-strong);
+  --lift-color: var(--edge);
+  background: var(--bg);
+  border: 1px solid var(--edge);
+}
+
+/* Declarar `transition` aquí reemplaza la de index.css (que solo anima --t, el despegue y la
+   sombra larga), así que --t va también: hover, activo y presionar se animan juntos. */
+@media (prefers-reduced-motion: no-preference) {
+  .button {
+    transition:
+      --t 150ms ease-out,
+      background-color 150ms ease-out;
+  }
+}
+
+/* Encendido: se hunde como al presionar (index.css, aria-pressed) y además va más oscuro. */
+.button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Tamaños */
+.md {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.sm {
+  gap: 0.25rem;
+  padding: 0.0625rem 0.5rem;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.md.iconOnly {
+  width: 2.75rem;
+  padding: 0;
+}
+
+/* Variantes */
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  --edge: var(--fg);
+}
+
+.danger {
+  color: var(--danger);
+  --edge: var(--danger);
+}
+
+.dangerSolid {
+  color: var(--bg);
+  background: var(--danger);
+  --edge: var(--danger);
+}
+
+.ok {
+  color: var(--ok);
+  background: var(--ok-bg);
+  --edge: var(--ok);
+}
+
+.ok:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}
+
+.sm .icon {
+  width: 1em;
+  height: 1em;
+}

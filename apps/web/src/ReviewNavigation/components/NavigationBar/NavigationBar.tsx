@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
 import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import CloseIcon from '@/icons/CloseIcon';
@@ -22,33 +23,24 @@ export default function NavigationBar(props: Props) {
         {props.index + 1} / {props.total}
       </p>
       <div class={styles.actions}>
-        <button
-          type="button"
-          class={styles.button}
+        <Button
+          icon={ArrowLeftIcon}
           data-flat
           aria-label="Anterior"
           onClick={props.onPrevious}
-        >
-          <ArrowLeftIcon class={styles.icon} />
-        </button>
-        <button
-          type="button"
-          class={styles.button}
+        ></Button>
+        <Button
+          icon={ArrowRightIcon}
           data-flat
           aria-label="Siguiente"
           onClick={props.onNext}
-        >
-          <ArrowRightIcon class={styles.icon} />
-        </button>
-        <button
-          type="button"
-          class={styles.button}
+        ></Button>
+        <Button
+          icon={CloseIcon}
           data-flat
           aria-label="Cerrar"
           onClick={props.onClose}
-        >
-          <CloseIcon class={styles.icon} />
-        </button>
+        ></Button>
       </div>
     </section>
   );

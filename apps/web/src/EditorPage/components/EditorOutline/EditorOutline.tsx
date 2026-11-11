@@ -10,6 +10,10 @@ type Props = {
   /** Cuántas fuentes tiene la bibliografía. */
   sourcesCount: number;
   onSources: () => void;
+  /** Cuántos términos tiene el glosario. */
+  glossaryCount: number;
+  /** Ir al glosario, debajo del editor. */
+  onGlossary: () => void;
 };
 
 /** Las secciones del documento, tal como van quedando mientras se escribe. */
@@ -46,6 +50,16 @@ export default function EditorOutline(props: Props) {
           type="button"
           data-flat
           class={`${styles.link} ${styles.sources}`}
+          aria-label="Glosario"
+          onClick={props.onGlossary}
+        >
+          <span class={styles.number}>{props.glossaryCount}</span>
+          <span class={styles.title}>Glosario</span>
+        </button>
+        <button
+          type="button"
+          data-flat
+          class={styles.link}
           onClick={props.onSources}
         >
           <span class={styles.number}>{props.sourcesCount}</span>

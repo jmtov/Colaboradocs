@@ -12,19 +12,9 @@ function rule(css: string, selector: string): string {
   );
 }
 
-describe('botones con borde', () => {
-  it('en la barra de acciones: Comentar, OK y Cerrar tienen borde', () => {
+describe('botones de la barra', () => {
+  it('Cerrar es un Button más: `.close` solo lo coloca, no cambia su aspecto', () => {
     const css = read('./BlockActionBar.module.css');
-    expect(rule(css, '.button')).toMatch(/border:\s*1px solid/);
-    // Cerrar usa `.button` (mismo tamaño y borde que los demás): `.close` solo lo coloca.
-    expect(rule(css, '.close')).not.toMatch(/padding|border|font-size/);
-  });
-
-  it('en el hilo: Eliminar, Responder y Marcar resuelto tienen borde', () => {
-    const css = read(
-      '../ThreadSheet/components/ThreadView/ThreadView.module.css',
-    );
-    expect(rule(css, '.link')).toMatch(/border:\s*1px solid/);
-    expect(rule(css, '.link')).not.toMatch(/underline/);
+    expect(rule(css, '.close')).not.toMatch(/padding|border|font-size|color/);
   });
 });

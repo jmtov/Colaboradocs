@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import FileTextIcon from '@/icons/FileTextIcon';
 import UploadIcon from '@/icons/UploadIcon';
@@ -63,14 +64,13 @@ export default function FilePicker(props: FilePickerProps) {
                 {props.reading ? 'Leyendo…' : formatSize(file().size)}
               </span>
             </span>
-            <button
-              type="button"
-              class={styles.change}
+            <Button
+              icon={UploadIcon}
               disabled={props.reading}
               onClick={picker.openPicker}
             >
               Cambiar archivo
-            </button>
+            </Button>
           </div>
         )}
       </Show>

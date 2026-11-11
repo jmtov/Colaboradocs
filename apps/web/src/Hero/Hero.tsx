@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArrowDownIcon from '@/icons/ArrowDownIcon';
 import ListChecksIcon from '@/icons/ListChecksIcon';
@@ -28,24 +29,21 @@ export default function Hero(props: Props) {
           <p class={styles.lead}>{props.lead}</p>
         </Show>
         <div class={styles.actions}>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
+          <Button
+            icon={ArrowDownIcon}
+            variant="primary"
             onClick={() => props.onGo(props.firstSectionId)}
           >
-            <ArrowDownIcon class={styles.icon} />
             Leer el documento
-          </button>
+          </Button>
           <Show when={props.highlight}>
             {(highlight) => (
-              <button
-                type="button"
-                class={styles.button}
+              <Button
+                icon={ListChecksIcon}
                 onClick={() => props.onGo(highlight().id)}
               >
-                <ListChecksIcon class={styles.icon} />
                 {highlight().label}
-              </button>
+              </Button>
             )}
           </Show>
         </div>

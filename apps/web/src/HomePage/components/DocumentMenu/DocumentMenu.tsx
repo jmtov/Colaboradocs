@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArchiveIcon from '@/icons/ArchiveIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
@@ -16,18 +17,14 @@ export default function DocumentMenu(props: Props) {
 
   return (
     <>
-      <button
+      <Button
+        icon={EllipsisVerticalIcon}
         ref={documentMenu.refs.trigger}
-        type="button"
-        class={styles.trigger}
-        classList={{ [styles.open]: documentMenu.open() }}
         aria-label={`Acciones de «${props.title}»`}
         aria-haspopup="true"
         aria-expanded={documentMenu.open()}
         onClick={documentMenu.toggle}
-      >
-        <EllipsisVerticalIcon class={styles.icon} />
-      </button>
+      />
       <div
         ref={documentMenu.refs.menu}
         popover

@@ -1,4 +1,5 @@
 import { type JSX, Show } from 'solid-js';
+import Button from '../Button/Button';
 import CloseIcon from '../icons/CloseIcon';
 import { useBottomSheet } from './BottomSheet.hooks';
 import styles from './BottomSheet.module.css';
@@ -43,14 +44,13 @@ export default function BottomSheet(props: Props) {
         <div class={styles.inner}>
           <div class={styles.head}>
             <span class={styles.kicker}>{props.kicker}</span>
-            <button
-              type="button"
+            <Button
+              icon={CloseIcon}
               class={styles.close}
               onClick={sheet.onCloseClick}
             >
-              <CloseIcon class={styles.icon} />
               Cerrar
-            </button>
+            </Button>
           </div>
           <h2
             id={sheet.titleId}

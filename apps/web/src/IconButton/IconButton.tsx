@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import type { Component } from 'solid-js';
 import styles from './IconButton.module.css';
 
@@ -24,18 +25,14 @@ type Props = {
 export default function IconButton(props: Props) {
   return (
     <span class={styles.wrap}>
-      <button
-        type="button"
-        class={styles.button}
+      <Button
+        icon={props.icon}
         aria-label={props.label}
-        aria-pressed={props.pressed}
+        pressed={props.pressed}
         disabled={props.disabled}
-        // mousedown: el clic no le quita el foco (y la selección) al editor
-        onMouseDown={(event) => event.preventDefault()}
-        onClick={() => props.onClick()}
-      >
-        <props.icon class={styles.icon} />
-      </button>
+        keepFocus
+        onClick={props.onClick}
+      />
       <span
         class={styles.tip}
         data-placement={props.placement ?? 'bottom'}

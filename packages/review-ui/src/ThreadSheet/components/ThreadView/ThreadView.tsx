@@ -1,5 +1,6 @@
 import type { ReviewComment, Thread } from '@colaboradocs/review-core';
 import { createSignal, For, Show } from 'solid-js';
+import Button from '../../../Button/Button';
 import CircleCheckIcon from '../../../icons/CircleCheckIcon';
 import ReplyIcon from '../../../icons/ReplyIcon';
 import RotateCcwIcon from '../../../icons/RotateCcwIcon';
@@ -50,14 +51,14 @@ export default function ThreadView(props: Props) {
             {formatRelativeTime(comment.createdAt, Date.now())}
           </span>
           <Show when={comment.text !== null && canModerate(comment)}>
-            <button
-              type="button"
-              class={`${styles.link} ${styles.danger}`}
+            <Button
+              icon={TrashIcon}
+              variant="danger"
+              size="sm"
               onClick={() => review.deleteComment(comment.id)}
             >
-              <TrashIcon class={styles.icon} />
               Eliminar
-            </button>
+            </Button>
           </Show>
         </div>
         <Show
@@ -90,27 +91,21 @@ export default function ThreadView(props: Props) {
         when={replying()}
         fallback={
           <div class={styles.actions}>
-            <button
-              type="button"
-              class={styles.link}
+            <Button
+              icon={ReplyIcon}
+              size="sm"
               onClick={() => setReplying(true)}
             >
-              <ReplyIcon class={styles.icon} />
               Responder
-            </button>
+            </Button>
             <Show when={canModerate(root())}>
-              <button
-                type="button"
-                class={styles.link}
+              <Button
+                icon={root().resolved ? RotateCcwIcon : CircleCheckIcon}
+                size="sm"
                 onClick={() => review.setResolved(root().id, !root().resolved)}
               >
-                {root().resolved ? (
-                  <RotateCcwIcon class={styles.icon} />
-                ) : (
-                  <CircleCheckIcon class={styles.icon} />
-                )}
                 {root().resolved ? 'Reabrir' : 'Marcar resuelto'}
-              </button>
+              </Button>
             </Show>
           </div>
         }

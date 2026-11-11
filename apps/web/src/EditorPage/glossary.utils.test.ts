@@ -1,9 +1,12 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import {
+  buildGlossary,
   formsOf,
   orphanLinks,
   parseForms,
+  parseGlossary,
+  plainDefinition,
   readTerms,
   sameLinks,
   withForms,
@@ -70,5 +73,35 @@ describe('sameLinks', () => {
     expect(sameLinks({ a: 'A', b: 'B' }, { b: 'B', a: 'A' })).toBe(true);
     expect(sameLinks({ a: 'A' }, { a: 'B' })).toBe(false);
     expect(sameLinks({ a: 'A' }, {})).toBe(false);
+  });
+});
+
+describe('parseGlossary / buildGlossary', () => {
+  it('lee términos con su definición y conserva lo que no es una lista', () => {
+    const { rest, entries } = parseGlossary(
+      '<p>Intro</p><dl><dt>Quórum</dt><dd>Mínimo <em>[2]</em></dd><dt>AMO</dt><dd>Otra</dd></dl>',
+    );
+    expect(rest).toBe('<p>Intro</p>');
+    expect(entries).toEqual([
+      {
+        term: 'Quórum',
+        definition: 'Mínimo [2]',
+        defs: ['Mínimo <em>[2]</em>'],
+      },
+      { term: 'AMO', definition: 'Otra', defs: ['Otra'] },
+    ]);
+  });
+
+  it('buildGlossary vuelve a escribirlo igual, y sin términos no deja lista', () => {
+    const html =
+      '<p>Intro</p><dl><dt>Quórum</dt><dd>Mínimo <em>[2]</em></dd></dl>';
+    const { rest, entries } = parseGlossary(html);
+    expect(buildGlossary(rest, entries)).toBe(html);
+    expect(buildGlossary(rest, [])).toBe('<p>Intro</p>');
+    expect(buildGlossary('', [])).toBe('');
+  });
+
+  it('escapa el texto escrito a mano', () => {
+    expect(plainDefinition('a < b & c')).toBe('a &lt; b &amp; c');
   });
 });

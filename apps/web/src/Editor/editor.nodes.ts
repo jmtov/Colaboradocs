@@ -1,4 +1,6 @@
 import { Node } from '@tiptap/core';
+import { Plugin } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
 
 /**
  * Nodos propios del formato del documento (los que Tiptap no trae):
@@ -41,7 +43,40 @@ export const Citation = Node.create({
   inline: true,
   atom: true,
   selectable: true,
+  addOptions: () => ({
+    /** Se llama al tocar una cita, con su posición y su texto («[2, 3]»). */
+    onEdit: undefined as ((pos: number, text: string) => void) | undefined,
+  }),
   addAttributes: () => ({ text: { default: '' } }),
+  addProseMirrorPlugins() {
+    const { onEdit } = this.options;
+    if (!onEdit) return [];
+    return [
+      new Plugin({
+        props: {
+          // La clase es solo de la pantalla (decoración): no entra en el HTML guardado.
+          decorations: ({ doc }) => {
+            const marks: Decoration[] = [];
+            doc.descendants((node, pos) => {
+              if (node.type.name === 'citation') {
+                marks.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    'data-citation': '',
+                  }),
+                );
+              }
+            });
+            return DecorationSet.create(doc, marks);
+          },
+          handleClickOn: (_view, _pos, node, nodePos) => {
+            if (node.type.name !== 'citation') return false;
+            onEdit(nodePos, node.attrs.text as string);
+            return true;
+          },
+        },
+      }),
+    ];
+  },
   parseHTML: () => [
     {
       tag: 'em',

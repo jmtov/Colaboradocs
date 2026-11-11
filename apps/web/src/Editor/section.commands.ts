@@ -121,40 +121,6 @@ export function addNote(editor: Editor) {
     .run();
 }
 
-const TERM_PAIR = [
-  {
-    type: 'definitionTerm',
-    content: [{ type: 'text', text: 'Nuevo término' }],
-  },
-  {
-    type: 'definitionDescription',
-    content: [{ type: 'text', text: 'Definición' }],
-  },
-];
-
-/** Agrega un término con su definición al final de la lista de la sección actual (o crea la lista). */
-export function addTerm(editor: Editor) {
-  const id = sectionAt(editor);
-  const target = locateSections(editor.state.doc).find(
-    (item) => item.id === id,
-  );
-  if (!target) return;
-  const last = editor.state.doc.resolve(target.end).nodeBefore;
-  if (last?.type.name === 'definitionList') {
-    editor
-      .chain()
-      .focus()
-      .insertContentAt(target.end - 1, TERM_PAIR)
-      .run();
-    return;
-  }
-  editor
-    .chain()
-    .focus()
-    .insertContentAt(target.end, { type: 'definitionList', content: TERM_PAIR })
-    .run();
-}
-
 /** Inserta una cita («[2, 3]») donde está el cursor, a las fuentes con esos números (1 = la primera). */
 export function insertCitation(editor: Editor, numbers: number[]): boolean {
   if (numbers.length === 0) return false;
@@ -164,6 +130,22 @@ export function insertCitation(editor: Editor, numbers: number[]): boolean {
     .insertContent({
       type: 'citation',
       attrs: { text: `[${numbers.join(', ')}]` },
+    })
+    .run();
+}
+
+/** Cambia la cita que está en `pos` para que remita a las fuentes con esos números. */
+export function replaceCitation(
+  editor: Editor,
+  pos: number,
+  numbers: number[],
+): boolean {
+  if (numbers.length === 0) return false;
+  return editor
+    .chain()
+    .command(({ tr }) => {
+      tr.setNodeMarkup(pos, undefined, { text: `[${numbers.join(', ')}]` });
+      return true;
     })
     .run();
 }

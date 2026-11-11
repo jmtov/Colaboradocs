@@ -1,5 +1,11 @@
-import { BottomSheet, type SheetLayerProps } from '@colaboradocs/review-ui';
+import {
+  BottomSheet,
+  Button,
+  type SheetLayerProps,
+} from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
+import CheckIcon from '@/icons/CheckIcon';
+import CloseIcon from '@/icons/CloseIcon';
 import { useHowToSheet } from './HowToSheet.hooks';
 import styles from './HowToSheet.module.css';
 
@@ -45,21 +51,13 @@ export default function HowToSheet(props: SheetLayerProps) {
         </ol>
         <div class={styles.row}>
           <Show when={!howTo.dismissed()}>
-            <button
-              type="button"
-              class={styles.button}
-              onClick={howTo.neverAgain}
-            >
+            <Button icon={CloseIcon} onClick={howTo.neverAgain}>
               No volver a mostrar
-            </button>
+            </Button>
           </Show>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
-            onClick={howTo.close}
-          >
+          <Button icon={CheckIcon} variant="primary" onClick={howTo.close}>
             Entendido
-          </button>
+          </Button>
         </div>
       </div>
     </BottomSheet>

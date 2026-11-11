@@ -36,12 +36,12 @@ afterEach(() => {
 describe('PageBar', () => {
   it('con backHref el regreso es un enlace; muestra el nombre y lo que se le pasa', () => {
     const host = mount(() => (
-      <PageBar backLabel="← Inicio" backHref="/" name="Mi espacio">
+      <PageBar backLabel="Inicio" backHref="/" name="Mi espacio">
         <span>Sin conexión</span>
       </PageBar>
     ));
     const link = host.querySelector('a');
-    expect(link?.textContent).toBe('← Inicio');
+    expect(link?.textContent).toBe('Inicio');
     expect(link?.getAttribute('href')).toBe('/');
     expect(host.textContent).toContain('Mi espacio');
     expect(host.textContent).toContain('Sin conexión');
@@ -50,11 +50,11 @@ describe('PageBar', () => {
   it('sin backHref es un botón que llama a onBack', () => {
     const onBack = vi.fn();
     const host = mount(() => (
-      <PageBar backLabel="← Volver" onBack={onBack} name="Mi espacio" />
+      <PageBar backLabel="Volver" onBack={onBack} name="Mi espacio" />
     ));
     expect(host.querySelector('a')).toBeNull();
     const button = [...host.querySelectorAll('button')].find(
-      (item) => item.textContent === '← Volver',
+      (item) => item.textContent === 'Volver',
     );
     button?.click();
     expect(onBack).toHaveBeenCalledTimes(1);

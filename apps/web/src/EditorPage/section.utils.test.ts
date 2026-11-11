@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DocumentSection } from '@/content/content.types';
-import {
-  sameSections,
-  withGlossary,
-  withoutEmptyGlossary,
-} from './section.utils';
+import { joinGlossary, sameSections, splitGlossary } from './section.utils';
 
 const section = (id: string, num: string, html = ''): DocumentSection => ({
   id,
@@ -30,29 +26,49 @@ describe('sameSections', () => {
   });
 });
 
-describe('el glosario siempre disponible', () => {
-  it('withGlossary agrega «Glosario» como anexo al final, con la primera letra libre', () => {
-    const list = [section('a', '1'), section('b', 'A')];
-    const result = withGlossary(list);
-    expect(result.map((item) => item.id)).toEqual(['a', 'b', 'glosario']);
-    expect(result[2]).toMatchObject({ num: 'B', title: 'Glosario', html: '' });
-    expect(withGlossary([section('a', '1')])[1]?.num).toBe('A');
-  });
+describe('el glosario fuera del editor', () => {
+  const DL = '<dl><dt>T</dt><dd>D</dd></dl>';
 
-  it('withGlossary no toca un documento que ya lo tiene', () => {
-    const list = [section('a', '1'), section('glosario', 'A', '<dl></dl>')];
-    expect(withGlossary(list)).toBe(list);
-  });
-
-  it('withoutEmptyGlossary quita el glosario solo si está vacío', () => {
-    const empty = [section('a', '1'), section('glosario', 'A', '')];
-    expect(withoutEmptyGlossary(empty).map((item) => item.id)).toEqual(['a']);
-    const used = [
+  it('splitGlossary separa la sección glosario y recuerda dónde estaba', () => {
+    const list = [
       section('a', '1'),
-      section('glosario', 'A', '<dl><dt>T</dt><dd>D</dd></dl>'),
+      { ...section('glosario', 'A', DL), description: 'Palabras' },
+      section('b', 'B'),
     ];
-    expect(withoutEmptyGlossary(used)).toEqual(used);
-    // las que no son el glosario no se tocan aunque estén vacías
-    expect(withoutEmptyGlossary([section('a', '1', '')])).toHaveLength(1);
+    const { main, glossary } = splitGlossary(list);
+    expect(main.map((item) => item.id)).toEqual(['a', 'b']);
+    expect(glossary).toMatchObject({
+      html: DL,
+      at: 1,
+      meta: { num: 'A', title: 'glosario', description: 'Palabras' },
+    });
+  });
+
+  it('joinGlossary devuelve lo mismo que se separó, sin cambios', () => {
+    const list = [
+      section('a', '1'),
+      section('glosario', 'A', DL),
+      section('b', 'B'),
+    ];
+    const { main, glossary } = splitGlossary(list);
+    expect(joinGlossary(main, glossary)).toEqual(list);
+  });
+
+  it('un glosario vacío no se guarda; con términos, va como anexo con la primera letra libre', () => {
+    const { main, glossary } = splitGlossary([
+      section('a', '1'),
+      section('b', 'A'),
+    ]);
+    expect(glossary.html).toBe('');
+    expect(joinGlossary(main, glossary)).toBe(main);
+    const used = joinGlossary(main, { ...glossary, html: DL });
+    expect(used.map((item) => item.id)).toEqual(['a', 'b', 'glosario']);
+    expect(used[2]).toMatchObject({ num: 'B', title: 'Glosario' });
+  });
+
+  it('si su letra la tomó otro anexo, usa la primera libre', () => {
+    const { glossary } = splitGlossary([section('glosario', 'A', DL)]);
+    const result = joinGlossary([section('x', 'A')], glossary);
+    expect(result.find((item) => item.id === 'glosario')?.num).toBe('B');
   });
 });

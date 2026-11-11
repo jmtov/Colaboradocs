@@ -46,3 +46,12 @@
   font-size: var(--font-size-sm);
   color: var(--muted);
 }
+
+/* Con un campo de varias líneas, la etiqueta se alinea con la primera línea. */
+.row:has(textarea) {
+  align-items: flex-start;
+}
+
+.row:has(textarea) .label {
+  padding-top: 0.6875rem;
+}

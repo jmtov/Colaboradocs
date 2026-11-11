@@ -14,37 +14,6 @@
   box-shadow: 0 4px 16px rgb(0 0 0 / 14%);
 }
 
-.button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 2px;
-}
-
-.on {
-  color: var(--bg);
-  background: var(--fg);
-  border-color: var(--fg);
-  --lift-color: var(--fg);
-}
-
-.icon {
-  flex: none;
-  width: 1.125em;
-  height: 1.125em;
-}
-
 /* Cerrar es un botón más (mismo tamaño y borde); solo se va al extremo. */
 .close {
   margin-left: auto;

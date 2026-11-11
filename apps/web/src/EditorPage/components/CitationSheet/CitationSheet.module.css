@@ -54,26 +54,3 @@
   gap: 0.5rem;
   justify-content: flex-end;
 }
-
-.button {
-  min-height: 2.75rem;
-  padding: 0.5rem 1rem;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--fg);
-  cursor: pointer;
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-}
-
-.primary {
-  color: var(--bg);
-  background: var(--fg);
-  border-color: var(--fg);
-  --lift-color: var(--fg);
-}
-
-.button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}

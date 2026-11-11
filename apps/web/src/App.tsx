@@ -1,8 +1,9 @@
-import { PinGate, ReviewProvider } from '@colaboradocs/review-ui';
+import { Button, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 import { lazy, Match, Show, Suspense, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
 import HomePage from '@/HomePage/HomePage';
+import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
 import { useApp, useDocumentRoute, useHomeRoute } from './App.hooks';
@@ -24,9 +25,9 @@ function DocumentRoute(props: { id: string }) {
         <Loading>
           <h1>No se pudo cargar el documento</h1>
           <p>
-            <button type="button" onClick={() => void route.refetch()}>
+            <Button icon={RefreshIcon} onClick={() => void route.refetch()}>
               Reintentar
-            </button>
+            </Button>
           </p>
         </Loading>
       </Match>

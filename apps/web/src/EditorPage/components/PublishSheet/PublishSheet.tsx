@@ -1,14 +1,23 @@
-import { BottomSheet } from '@colaboradocs/review-ui';
+import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { createSignal, For, Show } from 'solid-js';
+import { FieldGroup, FieldRow } from '@/FieldGroup/FieldGroup';
+import fieldStyles from '@/FieldGroup/FieldInput.module.css';
+import CloseIcon from '@/icons/CloseIcon';
+import UploadIcon from '@/icons/UploadIcon';
+import { isLaterVersion } from '../../version.utils';
 import styles from './PublishSheet.module.css';
 import type { PublishSheetProps } from './PublishSheet.types';
 
 const plural = (count: number, one: string, many: string) =>
   `${count} ${count === 1 ? one : many}`;
 
-/** Última pregunta antes de publicar: la versión y qué comentarios y OK se pierden. */
+/** Última pregunta antes de publicar: la versión actual, la nueva y qué comentarios y OK se pierden. */
 export default function PublishSheet(props: PublishSheetProps) {
   const [version, setVersion] = createSignal(props.version);
+  const valid = () =>
+    props.published === null
+      ? version().trim() !== ''
+      : isLaterVersion(version(), props.published);
 
   const totals = () => ({
     comments: props.affected.reduce((sum, item) => sum + item.comments, 0),
@@ -24,20 +33,29 @@ export default function PublishSheet(props: PublishSheetProps) {
       onClose={props.onClose}
     >
       <div class={styles.content}>
-        <p class={styles.text}>
-          Publicar reemplaza la versión actual, que queda guardada en el
-          historial. Los revisores verán el documento nuevo de inmediato.
-        </p>
-
-        <label class={styles.label}>
-          Versión
-          <input
-            class={styles.field}
-            value={version()}
-            maxLength={40}
-            onInput={(event) => setVersion(event.currentTarget.value)}
-          />
-        </label>
+        <FieldGroup title="Versión">
+          <Show when={props.published}>
+            {(published) => (
+              <FieldRow label="Actual">
+                <input class={fieldStyles.input} value={published()} disabled />
+              </FieldRow>
+            )}
+          </Show>
+          <FieldRow label="Nueva">
+            <input
+              class={fieldStyles.input}
+              value={version()}
+              maxLength={40}
+              aria-invalid={!valid()}
+              onInput={(event) => setVersion(event.currentTarget.value)}
+            />
+          </FieldRow>
+        </FieldGroup>
+        <Show when={!valid() && version().trim() !== ''}>
+          <p class={styles.error} role="alert">
+            Tiene que ser posterior a la actual ({props.published}).
+          </p>
+        </Show>
 
         <Show when={props.affected.length > 0}>
           <div class={styles.warn}>
@@ -66,21 +84,17 @@ export default function PublishSheet(props: PublishSheetProps) {
         </Show>
 
         <div class={styles.row}>
-          <button
-            type="button"
-            class={styles.button}
-            onClick={() => props.close()}
-          >
+          <Button icon={CloseIcon} onClick={() => props.close()}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
-            disabled={!version().trim()}
+          </Button>
+          <Button
+            icon={UploadIcon}
+            variant="primary"
+            disabled={!valid()}
             onClick={() => props.close(version().trim())}
           >
             Publicar
-          </button>
+          </Button>
         </div>
       </div>
     </BottomSheet>

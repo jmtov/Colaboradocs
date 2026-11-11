@@ -1,5 +1,6 @@
 import { For, Show } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
+import Button from '../Button/Button';
 import EllipsisVerticalIcon from '../icons/EllipsisVerticalIcon';
 import { useActionMenu } from './ActionMenu.hooks';
 import styles from './ActionMenu.module.css';
@@ -19,18 +20,14 @@ export default function ActionMenu(props: Props) {
 
   return (
     <>
-      <button
+      <Button
+        icon={EllipsisVerticalIcon}
         ref={menu.refs.trigger}
-        type="button"
-        class={styles.trigger}
-        classList={{ [styles.open]: menu.open() }}
         aria-label={props.label}
         aria-haspopup="true"
         aria-expanded={menu.open()}
         onClick={menu.toggle}
-      >
-        <EllipsisVerticalIcon class={styles.icon} />
-      </button>
+      ></Button>
       <div
         ref={menu.refs.menu}
         popover

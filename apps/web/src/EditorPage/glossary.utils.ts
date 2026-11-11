@@ -77,3 +77,62 @@ export function sameLinks(a: GlossaryLinks, b: GlossaryLinks): boolean {
     )
   );
 }
+
+export type GlossaryEntry = {
+  term: string;
+  /** La definición en texto plano. */
+  definition: string;
+  /** El HTML de cada `<dd>`, para no perder el formato de lo que no se edita. */
+  defs: string[];
+};
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** Los términos del glosario y lo que la sección tiene aparte de las listas (que no se edita aquí). */
+export function parseGlossary(html: string): {
+  rest: string;
+  entries: GlossaryEntry[];
+} {
+  const parsed = new DOMParser().parseFromString(
+    `<body>${html}</body>`,
+    'text/html',
+  );
+  let rest = '';
+  const entries: GlossaryEntry[] = [];
+  for (const child of parsed.body.children) {
+    if (child.tagName !== 'DL') {
+      rest += child.outerHTML;
+      continue;
+    }
+    for (const item of child.children) {
+      const last = entries[entries.length - 1];
+      if (item.tagName === 'DT' || !last) {
+        entries.push({
+          term: (item.textContent ?? '').trim(),
+          definition: '',
+          defs: [],
+        });
+      } else {
+        last.defs.push(item.innerHTML);
+        last.definition = `${last.definition} ${item.textContent ?? ''}`.trim();
+      }
+    }
+  }
+  return { rest, entries };
+}
+
+/** El HTML de la sección: lo que no son términos y la lista. Sin términos, no hay lista. */
+export function buildGlossary(rest: string, entries: GlossaryEntry[]): string {
+  if (entries.length === 0) return rest;
+  const items = entries
+    .map(
+      (entry) =>
+        `<dt>${escapeHtml(entry.term)}</dt>${entry.defs.map((def) => `<dd>${def}</dd>`).join('')}`,
+    )
+    .join('');
+  return `${rest}<dl>${items}</dl>`;
+}
+
+/** Una definición escrita a mano, como el HTML de un `<dd>`. */
+export const plainDefinition = escapeHtml;

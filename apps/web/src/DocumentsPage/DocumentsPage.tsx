@@ -1,4 +1,8 @@
+import { Button } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
+import ArchiveIcon from '@/icons/ArchiveIcon';
+import CloseIcon from '@/icons/CloseIcon';
+import UploadIcon from '@/icons/UploadIcon';
 import { useDocumentsPage } from './DocumentsPage.hooks';
 import styles from './DocumentsPage.module.css';
 
@@ -8,9 +12,9 @@ export default function DocumentsPage() {
 
   return (
     <div class={styles.content}>
-      <button type="button" class={styles.add} onClick={sheet.startUpload}>
+      <Button icon={UploadIcon} class={styles.add} onClick={sheet.startUpload}>
         Subir documento
-      </button>
+      </Button>
       <p class={styles.hint}>
         Acepta Word (.docx), Markdown (.md) o el JSON de un documento. Al
         reemplazar uno, se guarda la versión anterior.
@@ -29,43 +33,38 @@ export default function DocumentsPage() {
                 </span>
               </div>
               <div class={styles.actions}>
-                <button
-                  type="button"
-                  class={styles.action}
+                <Button
+                  icon={UploadIcon}
                   onClick={() => sheet.startReplace(document.id)}
                 >
                   Reemplazar
-                </button>
+                </Button>
                 <Show
                   when={sheet.confirming() === document.id}
                   fallback={
-                    <button
-                      type="button"
-                      class={`${styles.action} ${styles.danger}`}
+                    <Button
+                      icon={ArchiveIcon}
+                      variant="danger"
                       onClick={() => sheet.askArchive(document.id)}
                     >
                       Archivar
-                    </button>
+                    </Button>
                   }
                 >
                   <span class={styles.confirm}>
                     Se oculta; sus comentarios se conservan.
                   </span>
-                  <button
-                    type="button"
-                    class={`${styles.action} ${styles.dangerSolid}`}
+                  <Button
+                    icon={ArchiveIcon}
+                    variant="dangerSolid"
                     disabled={sheet.busy()}
                     onClick={() => void sheet.archive(document.id)}
                   >
                     Archivar
-                  </button>
-                  <button
-                    type="button"
-                    class={styles.action}
-                    onClick={sheet.cancelArchive}
-                  >
+                  </Button>
+                  <Button icon={CloseIcon} onClick={sheet.cancelArchive}>
                     Cancelar
-                  </button>
+                  </Button>
                 </Show>
               </div>
             </li>

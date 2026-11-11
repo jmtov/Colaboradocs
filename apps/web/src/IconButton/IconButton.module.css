@@ -3,54 +3,6 @@
   display: inline-flex;
 }
 
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  color: var(--fg);
-  cursor: pointer;
-  /* El borde y la sombra larga (index.css) son del mismo color. */
-  --edge: var(--line-strong);
-  --lift-color: var(--edge);
-  background: var(--bg);
-  border: 1px solid var(--edge);
-}
-
-/* Declarar `transition` aquí reemplaza la de index.css (que solo anima --t, el despegue y la
-   sombra larga), así que --t va también: hover, activo y presionar se animan juntos. */
-@media (prefers-reduced-motion: no-preference) {
-  .button {
-    transition:
-      --t 150ms ease-out,
-      background-color 150ms ease-out;
-  }
-}
-
-/* Encendido: se hunde como al presionar (index.css, aria-pressed) y además va más oscuro. */
-.button[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 1px;
-}
-
-.button:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* El tooltip sale al pasar el cursor o al enfocar con teclado; en pantallas táctiles no hay cursor.
-   Es hermano del botón: el clip-path de éste (index.css) lo recortaría si fuera hijo. */
 .tip {
   position: absolute;
   top: calc(100% + 0.375rem);

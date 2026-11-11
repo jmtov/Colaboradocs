@@ -69,33 +69,3 @@
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-
-.link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
-  font-size: var(--font-size-sm);
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-}
-
-.link:hover,
-.link:focus-visible {
-  background: var(--tint);
-}
-
-.icon {
-  flex: none;
-  width: 1.125em;
-  height: 1.125em;
-}
-
-.danger {
-  margin-left: auto;
-  color: var(--danger);
-  border-color: var(--danger);
-  --lift-color: var(--danger);
-}

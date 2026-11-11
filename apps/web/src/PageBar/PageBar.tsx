@@ -1,10 +1,12 @@
-import { type JSX, Show } from 'solid-js';
-import Link from '@/router/Link';
+import { Button } from '@colaboradocs/review-ui';
+import type { JSX } from 'solid-js';
+import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
+import { navigate } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
 import styles from './PageBar.module.css';
 
 type Props = {
-  /** Texto del botón de regreso («← Inicio»). */
+  /** Texto del botón de regreso («Inicio»). */
   backLabel: string;
   /** Enlace de regreso; sin él, el botón llama a `onBack` (p. ej. para preguntar antes de salir). */
   backHref?: string;
@@ -21,20 +23,17 @@ export default function PageBar(props: Props) {
     <header class={styles.bar}>
       <div class={styles.inner}>
         <div class={styles.start}>
-          <Show
-            when={props.backHref}
-            fallback={
-              <button type="button" class={styles.back} onClick={props.onBack}>
-                {props.backLabel}
-              </button>
-            }
+          <Button
+            icon={ArrowLeftIcon}
+            href={props.backHref}
+            onClick={() => {
+              const href = props.backHref;
+              if (href) navigate(href);
+              else props.onBack?.();
+            }}
           >
-            {(href) => (
-              <Link href={href()} class={styles.back} lift>
-                {props.backLabel}
-              </Link>
-            )}
-          </Show>
+            {props.backLabel}
+          </Button>
           <span class={styles.name}>{props.name}</span>
         </div>
         <div class={styles.account}>

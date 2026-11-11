@@ -17,9 +17,11 @@ import {
   goToSection,
   insertCitation,
   removeSection,
+  replaceCitation,
   sectionAt,
   updateSection,
 } from '@/Editor/section.commands';
+import { parseCite } from '@/Prose/cite.utils';
 import { documentPath, navigate } from '@/router/router';
 import {
   type AffectedBlock,
@@ -27,21 +29,30 @@ import {
   renumberedSections,
 } from './affected.utils';
 import CitationSheet from './components/CitationSheet/CitationSheet';
+import DetailsSheet from './components/DetailsSheet/DetailsSheet';
 import PublishSheet from './components/PublishSheet/PublishSheet';
 import SectionSheet from './components/SectionSheet/SectionSheet';
+import SourceSheet from './components/SourceSheet/SourceSheet';
+import TermSheet from './components/TermSheet/TermSheet';
 import type { EditorProblem } from './EditorPage.types';
 import {
+  buildGlossary,
+  formsOf,
   type GlossaryLinks,
+  parseGlossary,
+  plainDefinition,
   sameLinks,
   withForms,
   withoutLink,
 } from './glossary.utils';
 import {
+  type GlossaryState,
+  joinGlossary,
   sameSections,
-  withGlossary,
-  withoutEmptyGlossary,
+  splitGlossary,
 } from './section.utils';
 import { citationsTo, sameSources } from './sources.utils';
+import { nextVersion } from './version.utils';
 
 type Status = 'loading' | 'ready' | 'error';
 
@@ -62,14 +73,21 @@ export function useEditorPage(id: () => string) {
   const [loadError, setLoadError] = createSignal('');
   const [base, setBase] = createSignal<DocumentContent | null>(null);
   const [published, setPublished] = createSignal<DocumentContent | null>(null);
-  // La copia de trabajo: todas las secciones tal como se están editando. `base` es lo último guardado.
-  // Incluye siempre el glosario (aunque el documento no lo tenga); `saved` es lo que se guarda.
+  // La copia de trabajo: las secciones tal como se están editando (el glosario va aparte, fuera del
+  // editor). `base` es lo último guardado y `saved` lo que se guardaría.
   const [sections, setSections] = createSignal<DocumentSection[]>([]);
-  const saved = createMemo(() => withoutEmptyGlossary(sections()));
+  const [glossary, setGlossary] = createSignal<GlossaryState>({
+    html: '',
+    at: 0,
+  });
+  const saved = createMemo(() => joinGlossary(sections(), glossary()));
+  const glossaryParts = createMemo(() => parseGlossary(glossary().html));
   // Los enlaces automáticos del glosario (`glossaryTerms`), también como copia de trabajo.
   const [links, setLinks] = createSignal<GlossaryLinks>({});
   // La bibliografía (`sources`), también como copia de trabajo.
   const [sources, setSources] = createSignal<DocumentSource[]>([]);
+  // El título y la descripción, también como copia de trabajo.
+  const [details, setDetails] = createSignal({ title: '', description: '' });
   const [revision, setRevision] = createSignal(0);
   const [stale, setStale] = createSignal(false);
   const [saving, setSaving] = createSignal(false);
@@ -89,8 +107,12 @@ export function useEditorPage(id: () => string) {
     const written = links();
     // Sin enlaces y sin que los hubiera, el campo no existe (no se agrega un `{}` de la nada).
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
+    const { title, description } = details();
+    const { description: _old, ...rest } = current;
     return {
-      ...current,
+      ...rest,
+      title,
+      ...(description ? { description } : {}),
       sections: saved(),
       sources: sources(),
       ...(keep ? { glossaryTerms: written } : {}),
@@ -101,12 +123,25 @@ export function useEditorPage(id: () => string) {
     const last = base();
     if (!last) return false;
     return (
+      details().title !== last.title ||
+      details().description !== (last.description ?? '') ||
       !sameSections(last.sections, saved()) ||
       !sameSources(last.sources, sources()) ||
       !sameLinks(last.glossaryTerms ?? {}, links())
     );
   });
   const hasDraft = () => revision() > 0;
+
+  // La pestaña lleva el título del documento (el que se está editando, no el publicado) y,
+  // al salir, vuelve al del espacio.
+  const spaceTitle = document.title;
+  createEffect(() => {
+    const title = details().title;
+    if (title) document.title = `${title} · Editando`;
+  });
+  onCleanup(() => {
+    document.title = spaceTitle;
+  });
 
   async function load() {
     setStatus('loading');
@@ -131,9 +166,15 @@ export function useEditorPage(id: () => string) {
       setStatus('error');
       return;
     }
-    setSections(withGlossary(base()?.sections ?? []));
+    const split = splitGlossary(base()?.sections ?? []);
+    setSections(split.main);
+    setGlossary(split.glossary);
     setLinks(base()?.glossaryTerms ?? {});
     setSources(base()?.sources ?? []);
+    setDetails({
+      title: base()?.title ?? '',
+      description: base()?.description ?? '',
+    });
     setRevision(draft.value ? draft.value.revision : 0);
     setStale(draft.value ? draft.value.stale : false);
     setStatus('ready');
@@ -182,8 +223,6 @@ export function useEditorPage(id: () => string) {
     return before && next ? renumberedSections(before, next) : [];
   });
 
-  const inGlossary = () => currentId() === 'glosario';
-
   /** Abre los ajustes de una sección (estado, descripción, anexo) y aplica lo que se decida. */
   async function openSettings(sectionId: string) {
     const instance = editor();
@@ -191,7 +230,7 @@ export function useEditorPage(id: () => string) {
     if (!instance || !section) return;
     const result = await overlay.sheet(SectionSheet, {
       section,
-      canRemove: saved().length > 1,
+      canRemove: sections().length > 1,
     });
     if (!result) return;
     if ('remove' in result) await removeSectionById(sectionId);
@@ -227,20 +266,52 @@ export function useEditorPage(id: () => string) {
     if (instance) goToSection(instance, id);
   }
 
-  function setSourceField(
-    index: number,
-    field: keyof DocumentSource,
-    value: string,
-  ) {
-    setSources((current) =>
-      current.map((source, at) =>
-        at === index ? { ...source, [field]: value } : source,
-      ),
+  /** Tocar una cita del texto: elegir otras fuentes y cambiarla ahí mismo. */
+  async function editCitation(pos: number, text: string) {
+    const instance = editor();
+    if (!instance) return;
+    const groups = parseCite(text, sources().length);
+    const selected = groups.flatMap((group) =>
+      group.items.map((item) => item.number),
     );
+    const plain = /^\[\d+(,\s*\d+)*\]$/.test(text.trim());
+    const numbers = await overlay.sheet(CitationSheet, {
+      sources: sources(),
+      selected,
+      note: plain
+        ? undefined
+        : `Esta cita dice «${text}»: al aplicar queda solo con los números de las fuentes.`,
+    });
+    if (numbers) replaceCitation(instance, pos, numbers);
   }
 
-  function addSource() {
-    setSources((current) => [...current, { label: '', url: '' }]);
+  /** Abre la hoja del título y la descripción del documento. */
+  async function editDetails() {
+    const result = await overlay.sheet(DetailsSheet, details());
+    if (result) setDetails(result);
+  }
+
+  /** Abre la hoja de una fuente (sin posición, una nueva al final) y aplica lo que se decida. */
+  async function editSource(index?: number) {
+    const current = sources();
+    const source = index === undefined ? undefined : current[index];
+    const result = await overlay.sheet(SourceSheet, {
+      number: (index ?? current.length) + 1,
+      label: source?.label ?? '',
+      url: source?.url ?? '',
+      isNew: !source,
+      canRemove: index === current.length - 1,
+    });
+    if (!result) return;
+    if ('remove' in result) {
+      await removeLastSource();
+      return;
+    }
+    setSources((list) =>
+      index === undefined
+        ? [...list, result]
+        : list.map((item, at) => (at === index ? result : item)),
+    );
   }
 
   /** Quita la última fuente; si el texto tiene citas a ella, lo dice antes. */
@@ -272,16 +343,57 @@ export function useEditorPage(id: () => string) {
     if (numbers) insertCitation(instance, numbers);
   }
 
+  /** Abre la hoja de un término (sin posición, uno nuevo) y aplica lo que se decida. */
+  async function editTerm(index?: number) {
+    const parts = glossaryParts();
+    const entry = index === undefined ? undefined : parts.entries[index];
+    const result = await overlay.sheet(TermSheet, {
+      term: entry?.term ?? '',
+      definition: entry?.definition ?? '',
+      forms: entry ? formsOf(links(), entry.term).join(', ') : '',
+      isNew: !entry,
+    });
+    if (!result) return;
+    const entries = [...parts.entries];
+    if ('remove' in result) {
+      if (index !== undefined) entries.splice(index, 1);
+    } else {
+      // Lo que no se tocó conserva su formato; lo reescrito queda en texto plano.
+      const changed = !entry || entry.definition !== result.definition;
+      const next = {
+        term: result.term,
+        definition: result.definition,
+        defs: changed ? [plainDefinition(result.definition)] : entry.defs,
+      };
+      if (index === undefined) entries.push(next);
+      else entries[index] = next;
+    }
+    setGlossary((current) => ({
+      ...current,
+      html: buildGlossary(parts.rest, entries),
+    }));
+    setLinks((current) => {
+      const old = entry?.term;
+      const next = Object.fromEntries(
+        Object.entries(current).filter(([, term]) => term !== old),
+      );
+      return 'remove' in result
+        ? next
+        : { ...next, ...withForms({}, result.term, result.forms) };
+    });
+  }
+
   /** Lleva a la bibliografía y enfoca su primer campo (o, si no hay fuentes, el botón de agregar). */
+  function goToGlossary() {
+    document
+      .getElementById('glosario-lista')
+      ?.scrollIntoView?.({ block: 'start' });
+  }
+
   function goToSources() {
     const block = document.getElementById('bibliografia');
     block?.scrollIntoView?.({ block: 'start' });
     block?.querySelector<HTMLElement>('input, button')?.focus();
-  }
-
-  /** Cómo aparece un término del glosario en el texto (separado por comas). */
-  function setGlossaryForms(term: string, text: string) {
-    setLinks((current) => withForms(current, term, text));
   }
 
   function removeGlossaryLink(form: string) {
@@ -374,8 +486,10 @@ export function useEditorPage(id: () => string) {
     const affected = before
       ? affectedBlocks(before, current, comments, approvals)
       : [];
+    // Se propone la que sigue a la publicada; la hoja no deja una igual o anterior.
     const version = await overlay.sheet(PublishSheet, {
-      version: current.version,
+      published: before?.version ?? null,
+      version: before ? nextVersion(before.version) : current.version,
       affected,
     });
     if (version === undefined) return;
@@ -422,7 +536,6 @@ export function useEditorPage(id: () => string) {
     editor,
     ready,
     currentId,
-    inGlossary,
     openSettings,
     goTo,
     losses,
@@ -436,12 +549,16 @@ export function useEditorPage(id: () => string) {
     problem,
     links,
     sources,
-    setSourceField,
-    addSource,
-    removeLastSource,
+    editSource,
+    details,
+    editDetails,
+    editCitation,
     goToSources,
+    goToGlossary,
     cite,
-    setGlossaryForms,
+    editTerm,
+    glossaryParts,
+    glossary,
     removeGlossaryLink,
     save: () => save(),
     discard,

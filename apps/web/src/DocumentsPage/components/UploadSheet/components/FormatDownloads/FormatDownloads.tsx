@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import ArrowDownToLineIcon from '@/icons/ArrowDownToLineIcon';
 import { useFormatDownloads } from './FormatDownloads.hooks';
 import styles from './FormatDownloads.module.css';
@@ -17,22 +18,18 @@ export default function FormatDownloads() {
         que lo convierta. Luego sube aquí el JSON que te dé.
       </p>
       <div class={styles.actions}>
-        <button
-          type="button"
-          class={styles.button}
+        <Button
+          icon={ArrowDownToLineIcon}
           onClick={() => void downloads.downloadGuide()}
         >
-          <ArrowDownToLineIcon class={styles.icon} />
           Guía para Claude (.md)
-        </button>
-        <button
-          type="button"
-          class={styles.button}
+        </Button>
+        <Button
+          icon={ArrowDownToLineIcon}
           onClick={() => void downloads.downloadExample()}
         >
-          <ArrowDownToLineIcon class={styles.icon} />
           Ejemplo (.json)
-        </button>
+        </Button>
       </div>
     </div>
   );

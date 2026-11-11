@@ -38,7 +38,10 @@ const SectionsDocument = Document.extend({
  * Lo que no está aquí no se puede escribir ni pegar.
  */
 export const createExtensions = (
-  options: { onSettings?: (id: string) => void } = {},
+  options: {
+    onSettings?: (id: string) => void;
+    onEditCitation?: (pos: number, text: string) => void;
+  } = {},
 ) => [
   SectionsDocument,
   SectionTitle.configure({ onSettings: options.onSettings }),
@@ -55,7 +58,7 @@ export const createExtensions = (
   DefinitionList,
   DefinitionTerm,
   DefinitionDescription,
-  Citation,
+  Citation.configure({ onEdit: options.onEditCitation }),
   UndoRedo,
 ];
 

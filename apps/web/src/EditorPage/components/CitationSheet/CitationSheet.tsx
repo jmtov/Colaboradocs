@@ -1,11 +1,13 @@
-import { BottomSheet } from '@colaboradocs/review-ui';
+import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { createSignal, For, Show } from 'solid-js';
+import CloseIcon from '@/icons/CloseIcon';
+import QuoteIcon from '@/icons/QuoteIcon';
 import styles from './CitationSheet.module.css';
 import type { CitationSheetProps } from './CitationSheet.types';
 
 /** Elegir de la bibliografía a qué fuentes remite una cita («[2, 3]»). */
 export default function CitationSheet(props: CitationSheetProps) {
-  const [chosen, setChosen] = createSignal<number[]>([]);
+  const [chosen, setChosen] = createSignal<number[]>(props.selected ?? []);
 
   function toggle(number: number, on: boolean) {
     setChosen((current) =>
@@ -17,7 +19,7 @@ export default function CitationSheet(props: CitationSheetProps) {
     <BottomSheet
       open={props.open}
       kicker="Bibliografía"
-      title="Insertar una cita"
+      title={props.selected ? 'Editar la cita' : 'Insertar una cita'}
       compact
       onClose={props.onClose}
     >
@@ -32,9 +34,12 @@ export default function CitationSheet(props: CitationSheetProps) {
           }
         >
           <p class={styles.text}>
-            Elige una o varias fuentes: la cita queda como «[2, 3]» donde está
-            el cursor.
+            Elige una o varias fuentes: la cita queda como «[2, 3]»
+            {props.selected ? '.' : ' donde está el cursor.'}
           </p>
+          <Show when={props.note}>
+            <p class={styles.text}>{props.note}</p>
+          </Show>
           <ul class={styles.list}>
             <For each={props.sources}>
               {(source, index) => (
@@ -43,6 +48,7 @@ export default function CitationSheet(props: CitationSheetProps) {
                     <input
                       type="checkbox"
                       class={styles.check}
+                      checked={chosen().includes(index() + 1)}
                       onChange={(event) =>
                         toggle(index() + 1, event.currentTarget.checked)
                       }
@@ -57,21 +63,17 @@ export default function CitationSheet(props: CitationSheetProps) {
         </Show>
 
         <div class={styles.row}>
-          <button
-            type="button"
-            class={styles.button}
-            onClick={() => props.close()}
-          >
+          <Button icon={CloseIcon} onClick={() => props.close()}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
+          </Button>
+          <Button
+            icon={QuoteIcon}
+            variant="primary"
             disabled={chosen().length === 0}
             onClick={() => props.close([...chosen()].sort((a, b) => a - b))}
           >
-            Insertar
-          </button>
+            {props.selected ? 'Aplicar' : 'Insertar'}
+          </Button>
         </div>
       </div>
     </BottomSheet>

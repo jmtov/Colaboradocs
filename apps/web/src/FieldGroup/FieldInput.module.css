@@ -13,3 +13,12 @@
 .input::placeholder {
   color: var(--faint);
 }
+
+.input:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.input[aria-invalid="true"] {
+  color: var(--danger);
+}

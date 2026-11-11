@@ -1,4 +1,8 @@
-import { BottomSheet, type SheetLayerProps } from '@colaboradocs/review-ui';
+import {
+  BottomSheet,
+  Button,
+  type SheetLayerProps,
+} from '@colaboradocs/review-ui';
 import { Match, Switch } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import ArrowDownToLineIcon from '@/icons/ArrowDownToLineIcon';
@@ -39,41 +43,29 @@ export default function DocumentSheet(props: Props) {
         </Match>
         <Match when={sheet.kind() === 'term'}>
           <p class={styles.text}>{sheet.termText()}</p>
-          <button
-            type="button"
-            class={styles.action}
-            onClick={sheet.openGlossaryTerm}
-          >
-            <BookOpenIcon class={styles.icon} />
+          <Button icon={BookOpenIcon} onClick={sheet.openGlossaryTerm}>
             Ver en el glosario
-          </button>
+          </Button>
         </Match>
         <Match when={sheet.kind() === 'cite'}>
           <CiteList
             groups={sheet.cite()?.groups ?? []}
             sources={props.content.sources}
           />
-          <button
-            type="button"
-            class={styles.action}
-            onClick={sheet.openSources}
-          >
-            <ArrowDownToLineIcon class={styles.icon} />
+          <Button icon={ArrowDownToLineIcon} onClick={sheet.openSources}>
             Ver en el pie de página
-          </button>
+          </Button>
         </Match>
         <Match when={sheet.section()}>
           {(found) => (
             <>
               <Prose section={found()} reviewable={false} />
-              <button
-                type="button"
-                class={styles.action}
+              <Button
+                icon={ArrowRightIcon}
                 onClick={() => sheet.goToSection(found().id)}
               >
-                <ArrowRightIcon class={styles.icon} />
                 Ir a la sección
-              </button>
+              </Button>
             </>
           )}
         </Match>

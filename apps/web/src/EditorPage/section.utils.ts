@@ -19,33 +19,52 @@ export const GLOSSARY_ID = 'glosario';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-/**
- * El editor siempre ofrece la sección «Glosario» (un anexo, al final de las
- * secciones y antes de la bibliografía), aunque el documento no la tenga: así
- * hay dónde escribir términos sin un botón aparte. Vacía no se guarda
- * (`withoutEmptyGlossary`), así que un documento que no la usa no cambia.
- */
-export function withGlossary(sections: DocumentSection[]): DocumentSection[] {
-  if (sections.some((section) => section.id === GLOSSARY_ID)) return sections;
-  const used = sections.map((section) => section.num);
-  const letter = [...LETTERS].find((item) => !used.includes(item)) ?? 'Z';
-  return [
-    ...sections,
-    {
-      id: GLOSSARY_ID,
-      num: letter,
-      title: 'Glosario',
-      status: 'borrador',
-      html: '',
-    },
-  ];
+/** El glosario fuera del editor: su HTML y lo que la sección tenía aparte del texto. */
+export type GlossaryState = {
+  html: string;
+  /** Título, estado y demás de la sección, si el documento ya la tenía. */
+  meta?: Omit<DocumentSection, 'id' | 'html'>;
+  /** Dónde estaba entre las secciones, para guardarla en el mismo lugar. */
+  at: number;
+};
+
+/** Separa la sección glosario del resto: el editor solo lleva las demás. */
+export function splitGlossary(sections: DocumentSection[]): {
+  main: DocumentSection[];
+  glossary: GlossaryState;
+} {
+  const at = sections.findIndex((section) => section.id === GLOSSARY_ID);
+  const found = sections[at];
+  const main = sections.filter((section) => section.id !== GLOSSARY_ID);
+  if (!found) return { main, glossary: { html: '', at: main.length } };
+  const { id: _id, html, ...meta } = found;
+  return { main, glossary: { html, meta, at } };
 }
 
-/** Lo que se guarda: las secciones sin el glosario si está vacío. */
-export function withoutEmptyGlossary(
-  sections: DocumentSection[],
+/**
+ * Las secciones tal como se guardan: las del editor y, si tiene términos, el
+ * glosario (un anexo: conserva su letra si está libre; si no, la primera libre).
+ */
+export function joinGlossary(
+  main: DocumentSection[],
+  glossary: GlossaryState,
 ): DocumentSection[] {
-  return sections.filter(
-    (section) => section.id !== GLOSSARY_ID || section.html.trim() !== '',
-  );
+  if (glossary.html.trim() === '') return main;
+  const used = main.map((section) => section.num);
+  const keep = glossary.meta?.num;
+  const num =
+    keep && !used.includes(keep)
+      ? keep
+      : ([...LETTERS].find((item) => !used.includes(item)) ?? 'Z');
+  const section: DocumentSection = {
+    ...glossary.meta,
+    id: GLOSSARY_ID,
+    num,
+    title: glossary.meta?.title ?? 'Glosario',
+    status: glossary.meta?.status ?? 'borrador',
+    html: glossary.html,
+  };
+  const list = [...main];
+  list.splice(Math.min(glossary.at, list.length), 0, section);
+  return list;
 }

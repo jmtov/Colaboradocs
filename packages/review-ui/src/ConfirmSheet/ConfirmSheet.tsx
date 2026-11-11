@@ -1,4 +1,7 @@
 import BottomSheet from '../BottomSheet/BottomSheet';
+import Button from '../Button/Button';
+import CheckIcon from '../icons/CheckIcon';
+import CloseIcon from '../icons/CloseIcon';
 import type { SheetLayerProps } from '../overlay/overlay.types';
 import styles from './ConfirmSheet.module.css';
 
@@ -23,20 +26,16 @@ export default function ConfirmSheet(props: Props) {
       <div class={styles.content}>
         <p class={styles.message}>{props.message}</p>
         <div class={styles.row}>
-          <button
-            type="button"
-            class={styles.button}
-            onClick={() => props.close(false)}
-          >
+          <Button icon={CloseIcon} onClick={() => props.close(false)}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            class={`${styles.button} ${props.danger ? styles.danger : styles.primary}`}
+          </Button>
+          <Button
+            icon={CheckIcon}
+            variant={props.danger ? 'dangerSolid' : 'primary'}
             onClick={() => props.close(true)}
           >
             {props.confirmLabel}
-          </button>
+          </Button>
         </div>
       </div>
     </BottomSheet>

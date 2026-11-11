@@ -1,6 +1,6 @@
 type Props = { class?: string };
 
-export default function DefinitionIcon(props: Props) {
+export default function PlusIcon(props: Props) {
   return (
     <svg
       class={props.class}
@@ -12,9 +12,8 @@ export default function DefinitionIcon(props: Props) {
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <line x1="21" x2="3" y1="6" y2="6" />
-      <line x1="15" x2="3" y1="12" y2="12" />
-      <line x1="17" x2="3" y1="18" y2="18" />
+      <path d="M5 12h14" />
+      <path d="M12 5v14" />
     </svg>
   );
 }

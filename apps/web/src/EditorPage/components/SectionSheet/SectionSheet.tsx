@@ -1,9 +1,12 @@
-import { BottomSheet } from '@colaboradocs/review-ui';
+import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { createSignal, For } from 'solid-js';
 import type { DocumentSection } from '@/content/content.types';
 import { sectionKicker } from '@/content/content.utils';
 import { FieldGroup, FieldRow } from '@/FieldGroup/FieldGroup';
 import fieldStyles from '@/FieldGroup/FieldInput.module.css';
+import CheckIcon from '@/icons/CheckIcon';
+import CloseIcon from '@/icons/CloseIcon';
+import TrashIcon from '@/icons/TrashIcon';
 import styles from './SectionSheet.module.css';
 import type { SectionSheetProps } from './SectionSheet.types';
 
@@ -69,25 +72,21 @@ export default function SectionSheet(props: SectionSheetProps) {
         </FieldGroup>
 
         <div class={styles.row}>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.remove}`}
+          <Button
+            icon={TrashIcon}
+            variant="danger"
             disabled={!props.canRemove}
             onClick={() => props.close({ remove: true })}
           >
             Eliminar sección
-          </button>
+          </Button>
           <span class={styles.gap} />
-          <button
-            type="button"
-            class={styles.button}
-            onClick={() => props.close()}
-          >
+          <Button icon={CloseIcon} onClick={() => props.close()}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            class={`${styles.button} ${styles.primary}`}
+          </Button>
+          <Button
+            icon={CheckIcon}
+            variant="primary"
             onClick={() =>
               props.close({
                 attrs: {
@@ -99,7 +98,7 @@ export default function SectionSheet(props: SectionSheetProps) {
             }
           >
             Aplicar
-          </button>
+          </Button>
         </div>
       </div>
     </BottomSheet>

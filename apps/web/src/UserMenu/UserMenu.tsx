@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import { howToAvailable } from '@/HowToReview/howto.state';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
@@ -15,18 +16,14 @@ export default function UserMenu() {
 
   return (
     <>
-      <button
+      <Button
+        icon={EllipsisVerticalIcon}
         ref={userMenu.refs.trigger}
-        type="button"
-        class={styles.trigger}
-        classList={{ [styles.open]: userMenu.open() }}
         aria-label="Menú de la sesión"
         aria-haspopup="true"
         aria-expanded={userMenu.open()}
         onClick={userMenu.toggle}
-      >
-        <EllipsisVerticalIcon class={styles.icon} />
-      </button>
+      />
       <div
         ref={userMenu.refs.menu}
         popover

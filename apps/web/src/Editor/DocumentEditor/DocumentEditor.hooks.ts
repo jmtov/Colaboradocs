@@ -16,7 +16,10 @@ export function useDocumentEditor(props: DocumentEditorProps) {
   onMount(() => {
     editor = new Editor({
       element,
-      extensions: createExtensions({ onSettings: props.onSettings }),
+      extensions: createExtensions({
+        onSettings: props.onSettings,
+        onEditCitation: props.onEditCitation,
+      }),
       content: sectionsToHtml(props.sections),
       onUpdate: ({ editor: current }) =>
         props.onChange(htmlToSections(current.getHTML())),

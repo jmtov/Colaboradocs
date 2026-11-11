@@ -1,5 +1,6 @@
 import { MAX_COMMENT_LENGTH } from '@colaboradocs/review-core';
 import { createSignal, Show } from 'solid-js';
+import Button from '../../../Button/Button';
 import CloseIcon from '../../../icons/CloseIcon';
 import SendIcon from '../../../icons/SendIcon';
 import styles from './CommentComposer.module.css';
@@ -45,20 +46,18 @@ export default function CommentComposer(props: Props) {
           </span>
         </Show>
         <Show when={props.onCancel}>
-          <button type="button" class={styles.button} onClick={props.onCancel}>
-            <CloseIcon class={styles.icon} />
+          <Button icon={CloseIcon} onClick={props.onCancel}>
             Cancelar
-          </button>
+          </Button>
         </Show>
-        <button
-          type="button"
-          class={`${styles.button} ${styles.primary}`}
+        <Button
+          icon={SendIcon}
+          variant="primary"
           disabled={busy() || !text().trim()}
           onClick={send}
         >
-          <SendIcon class={styles.icon} />
           {busy() ? 'Enviando…' : props.submitLabel}
-        </button>
+        </Button>
       </div>
     </div>
   );

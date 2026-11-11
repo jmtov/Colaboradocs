@@ -5,6 +5,7 @@ export { openAfterMenuCloses } from './ActionMenu/popover.utils';
 export { ApiRequestError, fetchSpace } from './api/review.api';
 export { default as BlockLayer } from './BlockLayer/BlockLayer';
 export { default as BottomSheet } from './BottomSheet/BottomSheet';
+export { default as Button } from './Button/Button';
 export { default as ConfirmSheet } from './ConfirmSheet/ConfirmSheet';
 export { default as OverlayProvider } from './overlay/OverlayProvider';
 export type { OverlayApi, SheetLayerProps } from './overlay/overlay.types';

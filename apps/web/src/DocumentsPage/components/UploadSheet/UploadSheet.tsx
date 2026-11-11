@@ -1,5 +1,7 @@
-import { BottomSheet } from '@colaboradocs/review-ui';
+import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
+import CloseIcon from '@/icons/CloseIcon';
+import UploadIcon from '@/icons/UploadIcon';
 import FilePicker from './components/FilePicker/FilePicker';
 import FormatDownloads from './components/FormatDownloads/FormatDownloads';
 import { useUploadSheet } from './UploadSheet.hooks';
@@ -144,21 +146,17 @@ export default function UploadSheet(props: UploadSheetProps) {
               </Show>
 
               <div class={styles.row}>
-                <button
-                  type="button"
-                  class={styles.button}
-                  onClick={upload.close}
-                >
+                <Button icon={CloseIcon} onClick={upload.close}>
                   Cancelar
-                </button>
-                <button
-                  type="button"
-                  class={`${styles.button} ${styles.primary}`}
+                </Button>
+                <Button
+                  icon={UploadIcon}
+                  variant="primary"
                   disabled={upload.publishDisabled()}
                   onClick={() => void upload.publish()}
                 >
                   {upload.publishLabel()}
-                </button>
+                </Button>
               </div>
             </>
           )}

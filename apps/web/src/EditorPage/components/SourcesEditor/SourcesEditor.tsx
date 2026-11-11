@@ -1,16 +1,18 @@
-import { Index, Show } from 'solid-js';
+import { Button } from '@colaboradocs/review-ui';
+import { For, Show } from 'solid-js';
 import type { DocumentSource } from '@/content/content.types';
+import PencilIcon from '@/icons/PencilIcon';
+import PlusIcon from '@/icons/PlusIcon';
 import styles from './SourcesEditor.module.css';
 
 type Props = {
   sources: DocumentSource[];
-  onChange: (index: number, field: keyof DocumentSource, value: string) => void;
+  /** Editar la fuente de esa posición. */
+  onEdit: (index: number) => void;
   onAdd: () => void;
-  /** Quita la última fuente (las citas son por número: quitar otra las desfasaría). */
-  onRemoveLast: () => void;
 };
 
-/** La bibliografía del documento: las fuentes a las que remiten las citas «[n]». */
+/** La bibliografía del documento: las fuentes a las que remiten las citas «[n]», una a la vez en su hoja. */
 export default function SourcesEditor(props: Props) {
   return (
     <section id="bibliografia" class={styles.section}>
@@ -20,51 +22,33 @@ export default function SourcesEditor(props: Props) {
         la segunda de esta lista, así que el orden importa: por ahora se agregan
         al final y solo se puede quitar la última.
       </p>
-      <ol class={styles.list}>
-        {/* Index: la fila sigue siendo la misma mientras se escribe en ella. */}
-        <Index each={props.sources}>
-          {(source, index) => (
-            <li class={styles.item}>
-              <span class={styles.number}>[{index + 1}]</span>
-              <div class={styles.fields}>
-                <input
-                  class={styles.input}
-                  aria-label={`Fuente ${index + 1}: referencia`}
-                  value={source().label}
-                  maxLength={300}
-                  placeholder="Autor, título, año"
-                  onInput={(event) =>
-                    props.onChange(index, 'label', event.currentTarget.value)
-                  }
-                />
-                <input
-                  class={styles.input}
-                  aria-label={`Fuente ${index + 1}: enlace`}
-                  value={source().url}
-                  placeholder="https://… (opcional)"
-                  onInput={(event) =>
-                    props.onChange(index, 'url', event.currentTarget.value)
-                  }
-                />
-              </div>
-            </li>
-          )}
-        </Index>
-      </ol>
-      <div class={styles.actions}>
-        <button type="button" class={styles.button} onClick={props.onAdd}>
-          + Agregar fuente
-        </button>
-        <Show when={props.sources.length > 0}>
-          <button
-            type="button"
-            class={styles.button}
-            onClick={props.onRemoveLast}
-          >
-            Quitar la última
-          </button>
-        </Show>
-      </div>
+      <Show when={props.sources.length > 0}>
+        <ol class={styles.list}>
+          <For each={props.sources}>
+            {(source, index) => (
+              <li class={styles.item}>
+                <span class={styles.number}>[{index() + 1}]</span>
+                <div class={styles.text}>
+                  <span class={styles.label}>{source.label}</span>
+                  <Show when={source.url}>
+                    <span class={styles.url}>{source.url}</span>
+                  </Show>
+                </div>
+                <Button
+                  icon={PencilIcon}
+                  aria-label={`Editar fuente ${index() + 1}`}
+                  onClick={() => props.onEdit(index())}
+                >
+                  Editar
+                </Button>
+              </li>
+            )}
+          </For>
+        </ol>
+      </Show>
+      <Button icon={PlusIcon} class={styles.add} onClick={props.onAdd}>
+        Agregar fuente
+      </Button>
     </section>
   );
 }
