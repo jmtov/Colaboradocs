@@ -7,6 +7,7 @@ La página: Vite + Solid. Lee **un documento JSON** y lo monta sobre `@juntanza/
 La página **no trae documentos**: los pide a la API después de ingresar el PIN (`GET /api/documents`, `GET /api/documents/:id/content`). Cuántos y cuáles hay lo decide la base, no la compilación.
 
 - `/` es la home: una tarjeta por documento, con hilos abiertos, OK y última actividad. Con un solo documento, redirige a `/d/<id>` (sin dejar entrada en el historial).
+- `/documentos` y `/accesos` son la administración (solo admins; los demás ven «Solo para administradores»), a las que se llega desde el menú ⋮ de la sesión.
 - `/d/<id>` abre un documento. Un id que no existe, o una ruta rara, muestra «No encontramos ese documento».
 - El nombre del espacio (título de la pestaña y de la puerta del PIN) sale de `GET /api/space`, público.
 - La sesión (PIN) es una sola para todo el espacio.
@@ -28,7 +29,7 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 
 | Carpeta | Qué es |
 |---|---|
-| `App.tsx`, `main.tsx` | Providers (`ReviewProvider` → `PinGate`) y rutas: `HomeRoute` (home o redirección), `DocumentRoute` (pide el contenido) y «no encontrado». |
+| `App.tsx`, `main.tsx` | Providers (`ReviewProvider` → `PinGate`) y rutas: `HomeRoute` (home o redirección), `DocumentRoute` (pide el contenido), `AdminPage` (administración) y «no encontrado». |
 | `router/` | Router mínimo con History API (`resolveRoute`, `navigate`, `Link`). |
 | `HomePage/` | La home: una tarjeta por documento, con su actividad. |
 | `AdminPage/` | Marco de `/documentos` y `/accesos` (solo admins; a los demás les dice «Solo para administradores»): encabezado, «← Inicio», título y el contenido de la página. |
@@ -37,8 +38,10 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 | `Loading/` | Página de un mensaje: cargando, error, «no existe». |
 | `content/` | Utilidades del documento (pendientes, glosario, etiquetas de sección) y los tipos re-exportados de `review-core`. |
 | `Prose/` | `buildProse`: HTML limitado → DOM con clases, `data-block-id`, `data-outline-level`, enlaces de glosario/cita/sección. Es el punto donde se unen contenido y `review-ui`. |
-| `DocumentPage/` | Pantalla principal: estado de la sección activa, métricas, hojas. |
-| `Hero/`, `SectionCards/`, `ReviewSummary/` | Inicio: título, tarjetas, contadores. |
+| `DocumentPage/` | Pantalla principal: estado de la sección activa, resumen de la revisión, hojas y vista de impresión (botón en `TopBar`; `print.utils.ts` da el título del PDF). |
+| `ReviewNavigation/` | Recorrer la revisión desde el resumen: «Hilos abiertos», «Pendientes» y «Bloques con OK» abren una hoja con sus bloques (`BlockListSheet`); al elegir uno se va a él y aparece una barra inferior (`NavigationBar`) con contador y flechas. La lista sale de la revisión en vivo. |
+| `VersionsSheet/` | Hoja de solo lectura con las versiones del documento (`GET /api/documents/:doc/versions`). |
+| `Hero/`, `SectionCards/`, `ReviewSummary/` | Inicio: título, tarjetas y los cuatro datos de la revisión, que son botones (borde colapsado como las tarjetas). |
 | `SectionView/`, `SideNav/`, `TopBar/`, `DocumentSheet/` | Lectura, navegación, índice y hojas (contenido, glosario, citas). |
 | `ThemeSwitch/`, `UserMenu/` | Tema claro/oscuro/auto (clave `review:theme`) y sesión. El selector de tema está en el menú ⋮ del usuario (`<ThemeSwitch fill />`), no en el pie de las páginas. Para admins, el menú trae «Documentos» y «Accesos», que llevan a sus páginas. |
 | `index.css` | **Tokens de diseño** que exige `review-ui`. |

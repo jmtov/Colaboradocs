@@ -30,6 +30,7 @@ Errores: `{ "error": <ApiErrorCode> }` (ver `review-core`), con el HTTP de `src/
 | `GET /api/space` | **Público.** → `SpaceInfo` (`name`, `description?`, `roleField?`): la puerta del PIN lo muestra. |
 | `GET /api/documents` | → `DocumentListItem[]`: documentos no archivados, con `openThreads`, `comments`, `approvals` y `lastActivityAt`. Alimenta la home. |
 | `GET /api/documents/:doc/content` | → `DocumentContent`. Exige sesión: el texto no es público. `404` si no existe o está archivado. |
+| `GET /api/documents/:doc/versions` | → `DocumentVersionItem[]`: la versión actual primero (`current: true`, cuándo y quién la publicó) y luego las reemplazadas, la más reciente antes (cuándo y quién las reemplazó). Sale de `document_versions`. `404` si no existe o está archivado. |
 | `GET /api/documents/:doc/review` | → `ReviewSnapshot` (`me`, `comments`, `approvals`, `reviewers`). |
 | `POST /api/documents/:doc/comments` | `{ blockId, parentId\|null, text, blockExcerpt }` → `201` comentario. Si hay `parentId`, tiene que ser del mismo bloque. |
 | `DELETE /api/documents/:doc/comments/:id` | `204`. Borrado suave (`text = null`). Solo el autor o un admin. |
