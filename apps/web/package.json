@@ -11,10 +11,21 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@colaboradocs/doc-import": "*",
     "@colaboradocs/review-core": "*",
     "@colaboradocs/review-ui": "*",
-    "solid-js": "^1.9.3",
-    "@colaboradocs/doc-import": "*"
+    "@tiptap/core": "^3.33.1",
+    "@tiptap/extension-bold": "^3.33.1",
+    "@tiptap/extension-document": "^3.33.1",
+    "@tiptap/extension-hard-break": "^3.33.1",
+    "@tiptap/extension-heading": "^3.33.1",
+    "@tiptap/extension-italic": "^3.33.1",
+    "@tiptap/extension-list": "^3.33.1",
+    "@tiptap/extension-paragraph": "^3.33.1",
+    "@tiptap/extension-text": "^3.33.1",
+    "@tiptap/extensions": "^3.33.1",
+    "@tiptap/pm": "^3.33.1",
+    "solid-js": "^1.9.3"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",
