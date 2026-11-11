@@ -11,6 +11,7 @@ Convierte archivos (Word, Markdown, JSON) a un documento válido. Corre en Node 
 | `parseUpload(file, { id?, title? })` | Lee un `File`-like (`name`, `text()`, `arrayBuffer()`) .md, .docx o .json. Devuelve `{ ok: true, kind, document, warnings }` con el documento **ya validado y limpio** (`validateDocument` de `review-core`), o `{ ok: false, errors }`. Para .md y .docx el id sale del nombre del archivo. |
 | `markdownToDocument(text, options)`, `docxToDocument(input, options)` | Los convertidores por separado. `docxToDocument` acepta `{ path }` (Node) o `{ arrayBuffer }` (ambos entornos). |
 | `slugify`, `idFromFileName` | Ids a partir de texto. |
+| `buildFormatGuide(exampleJson)` | La guía de formato en Markdown que se descarga desde la pantalla de subida: instrucciones para Claude, reglas del documento y el ejemplo embebido. Los límites y las etiquetas salen de `review-core`; una prueba comprueba que el ejemplo embebido valida. **Si cambias una regla del formato, cámbiala aquí también.** |
 
 ## Cómo se interpretan los archivos
 

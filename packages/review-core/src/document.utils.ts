@@ -12,7 +12,7 @@ import {
 } from './review.constants';
 
 /** Etiquetas que entiende la página; las demás se quitan (queda su texto). */
-const ALLOWED_TAGS = new Set([
+export const ALLOWED_HTML_TAGS = [
   'p',
   'ul',
   'ol',
@@ -26,7 +26,9 @@ const ALLOWED_TAGS = new Set([
   'dl',
   'dt',
   'dd',
-]);
+] as const;
+
+const ALLOWED_TAGS = new Set<string>(ALLOWED_HTML_TAGS);
 
 /** Títulos que Word o Markdown pueden dejar y que la página no usa. */
 const RENAMED_TAGS: Record<string, string> = {

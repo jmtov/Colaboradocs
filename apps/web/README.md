@@ -67,5 +67,5 @@ npm test -w @juntanza/web && npm run typecheck -w @juntanza/web
 ## Cambiar la interfaz o el formato
 
 - **Texto fijo de la UI** (instrucciones del inicio «Cómo revisar», etiquetas): en los componentes, en español.
-- **Campo nuevo del documento:** tipo en `content.types.ts`, uso en el componente, valor en `example.json` y una línea en el README de la raíz.
+- **Campo nuevo del documento:** tipo en `content.types.ts`, uso en el componente, valor en `example.json` y una línea en el README de la raíz y en la guía de `buildFormatGuide` (`doc-import`), que es lo que se descarga desde «Subir documento».
 - **Nuevo tipo de bloque revisable:** hay que tocar `buildProse.ts` (qué elementos son bloques y cuáles son notas) y mantener la regla de `review-core`: el id sale de `assignBlockIds`.

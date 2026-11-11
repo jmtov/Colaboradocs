@@ -1,6 +1,7 @@
 import { BottomSheet } from '@juntanza/review-ui';
 import { For, Show } from 'solid-js';
 import FilePicker from './components/FilePicker/FilePicker';
+import FormatDownloads from './components/FormatDownloads/FormatDownloads';
 import { useUploadSheet } from './UploadSheet.hooks';
 import styles from './UploadSheet.module.css';
 import type { UploadSheetProps } from './UploadSheet.types';
@@ -34,6 +35,10 @@ export default function UploadSheet(props: UploadSheetProps) {
           reading={upload.reading()}
           onFile={(file) => void upload.onFile(file)}
         />
+
+        <Show when={!upload.parsed()}>
+          <FormatDownloads />
+        </Show>
 
         <Show when={upload.problem()}>
           {(current) => (

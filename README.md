@@ -54,6 +54,8 @@ Un documento es un JSON (ver `documents/example.json` y los tipos en `packages/r
 - **Markdown:** `# Título`, un `## Sección` por sección, `### Grupo`, párrafos, listas, **negrita** y *cursiva*.
 - **JSON:** el documento completo, con todo lo avanzado (glosario, fuentes, estados).
 
+La pantalla de subida ofrece dos descargas para quien no tiene su documento en un formato que la página lea: `formato-colaboradocs.md` (guía para adjuntar a una conversación con Claude u otro asistente, con las reglas y el ejemplo) y `ejemplo.json`. Se arman desde `documents/example.json` y `buildFormatGuide` (`doc-import`).
+
 Por CLI: `npm run convert -w @juntanza/doc-import -- mi.docx --id mi-doc > documents/mi-doc.json`. Todo lo que se sube se valida y se limpia (solo quedan las etiquetas HTML que entiende la página).
 
 Campos del JSON:

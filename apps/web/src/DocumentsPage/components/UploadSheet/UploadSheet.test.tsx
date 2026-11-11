@@ -91,6 +91,23 @@ describe('UploadSheet', () => {
     expect(host.textContent).not.toContain('Publicar');
   });
 
+  it('ofrece las descargas del formato hasta que hay un documento leído', async () => {
+    fakeApi();
+    const { host } = mount();
+    expect(host.textContent).toContain('Guía para Claude');
+    expect(host.textContent).toContain('Ejemplo (.json)');
+    await choose(host, new File(['# Mi doc\n\n## Uno\n\nHola\n'], 'mi-doc.md'));
+    expect(host.textContent).not.toContain('Guía para Claude');
+  });
+
+  it('un archivo que no sirve sigue ofreciendo las descargas', async () => {
+    fakeApi();
+    const { host } = mount();
+    await choose(host, new File(['x'], 'foto.pdf'));
+    expect(host.textContent).toContain('No pude usar ese archivo');
+    expect(host.textContent).toContain('Guía para Claude');
+  });
+
   it('elegir un .md muestra el archivo, el resumen de secciones y el formulario', async () => {
     fakeApi();
     const { host } = mount();
