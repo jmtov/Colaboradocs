@@ -54,3 +54,18 @@
   margin: 0;
   list-style: none;
 }
+
+/* En papel no hay revisión: ni insignias, ni selección, ni barra de acciones. */
+@media print {
+  .block[data-badge]::after,
+  .notice,
+  .barHost {
+    display: none;
+  }
+
+  .block[data-selected],
+  .block[data-nav-current] {
+    background: none;
+    outline: none;
+  }
+}

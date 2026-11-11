@@ -1,6 +1,7 @@
 import { useReview } from '@juntanza/review-ui';
 import { Show } from 'solid-js';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
+import PrinterIcon from '@/icons/PrinterIcon';
 import Link from '@/router/Link';
 import UserMenu from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
@@ -14,6 +15,8 @@ type Props = {
   /** Título de grupo (h3) que se está leyendo dentro de la sección, si hay. */
   currentHeading: string;
   onOpenContents: () => void;
+  /** Imprimir el documento o guardarlo como PDF. */
+  onPrint: () => void;
 };
 
 export default function TopBar(props: Props) {
@@ -60,6 +63,15 @@ export default function TopBar(props: Props) {
           <Show when={statusText()}>
             <span role="status">{statusText()}</span>
           </Show>
+          <button
+            type="button"
+            class={styles.print}
+            aria-label="Imprimir o guardar como PDF"
+            title="Imprimir o guardar como PDF"
+            onClick={props.onPrint}
+          >
+            <PrinterIcon class={styles.icon} />
+          </button>
           <UserMenu />
         </div>
       </div>

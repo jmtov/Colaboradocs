@@ -68,3 +68,10 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+@media print {
+  .footer {
+    break-inside: avoid;
+    padding-bottom: 0;
+  }
+}

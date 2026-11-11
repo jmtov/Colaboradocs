@@ -144,3 +144,29 @@
     margin-top: 1.375rem;
   }
 }
+
+@media print {
+  .heading,
+  .subheading,
+  .label {
+    break-after: avoid;
+  }
+
+  .heading {
+    margin-top: 2rem;
+  }
+
+  .subheading {
+    margin-top: 1.5rem;
+  }
+
+  .item,
+  .definition {
+    break-inside: avoid;
+  }
+
+  .paragraph {
+    orphans: 3;
+    widows: 3;
+  }
+}

@@ -28,6 +28,7 @@ export default function DocumentPage(props: {
         currentLabel={page.currentLabel()}
         currentHeading={page.currentHeading()}
         onOpenContents={page.openContents}
+        onPrint={page.print}
       />
       <div class={styles.page}>
         <Hero

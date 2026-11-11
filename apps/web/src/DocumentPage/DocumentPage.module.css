@@ -21,3 +21,14 @@
     gap: 1.25rem;
   }
 }
+
+@media print {
+  .shell {
+    display: block;
+    padding-bottom: 0;
+  }
+
+  .main {
+    max-width: none;
+  }
+}

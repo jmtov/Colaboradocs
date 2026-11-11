@@ -165,3 +165,44 @@ textarea {
 button {
   cursor: pointer;
 }
+
+/* Impresión / PDF: siempre en claro (el papel es blanco), sin márgenes de pantalla. */
+@media print {
+  @page {
+    margin: 16mm 14mm;
+
+    @bottom-center {
+      /* Las variables no llegan a las cajas de margen de la página: valor literal. */
+      font:
+        9pt ui-monospace,
+        "SF Mono",
+        Menlo,
+        monospace;
+      color: #555;
+      content: counter(page) " / " counter(pages);
+    }
+  }
+
+  :root,
+  :root[data-theme="dark"],
+  :root:not([data-theme="light"]) {
+    color-scheme: light;
+    --bg: #fff;
+    --fg: #070707;
+    --ok: #0a6a85;
+    --ok-bg: #e5f2f7;
+    --warn: #92480a;
+    --warn-bg: #fdeedd;
+    --danger: #b3261e;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    padding-inline: 0;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+}

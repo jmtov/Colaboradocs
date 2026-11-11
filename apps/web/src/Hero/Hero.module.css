@@ -81,3 +81,14 @@
   width: 1.125em;
   height: 1.125em;
 }
+
+@media print {
+  .hero {
+    padding: 0 0 1.5rem;
+  }
+
+  .hero::before,
+  .actions {
+    display: none;
+  }
+}

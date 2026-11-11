@@ -26,3 +26,14 @@
   letter-spacing: -0.025em;
   text-wrap: balance;
 }
+
+/* Un título de sección no queda solo al final de una página. */
+@media print {
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .header {
+    break-after: avoid;
+  }
+}

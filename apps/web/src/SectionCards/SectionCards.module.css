@@ -94,3 +94,10 @@
   width: 1.125em;
   height: 1.125em;
 }
+
+/* El índice de tarjetas es navegación: en papel no sirve. */
+@media print {
+  .contents {
+    display: none;
+  }
+}

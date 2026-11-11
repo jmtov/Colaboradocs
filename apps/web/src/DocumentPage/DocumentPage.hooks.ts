@@ -10,6 +10,7 @@ import {
 import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import type { SheetState } from '@/DocumentSheet/sheet.types';
 import { useReviewNavigation } from '@/ReviewNavigation/ReviewNavigation.hooks';
+import { printTitle } from './print.utils';
 
 /** La sección activa es la última cuyo borde superior ya pasó este punto. */
 const ACTIVE_SECTION_OFFSET_PX = 110;
@@ -90,6 +91,26 @@ export function useDocumentPage(content: () => DocumentContent) {
     });
   });
 
+  // El navegador nombra el PDF con el título de la página: durante la impresión (botón o
+  // Cmd/Ctrl+P) lleva el del documento y su versión, y después vuelve al del espacio.
+  onMount(() => {
+    let previous = document.title;
+    const onBeforePrint = () => {
+      previous = document.title;
+      document.title = printTitle(content());
+    };
+    const onAfterPrint = () => {
+      document.title = previous;
+    };
+    window.addEventListener('beforeprint', onBeforePrint);
+    window.addEventListener('afterprint', onAfterPrint);
+    onCleanup(() => {
+      window.removeEventListener('beforeprint', onBeforePrint);
+      window.removeEventListener('afterprint', onAfterPrint);
+      document.title = previous;
+    });
+  });
+
   function goTo(sectionId: string) {
     document.getElementById(`sec-${sectionId}`)?.scrollIntoView();
   }
@@ -150,6 +171,7 @@ export function useDocumentPage(content: () => DocumentContent) {
     firstSectionId,
     highlight,
     openContents,
+    print: () => window.print(),
     currentId,
     currentLabel,
     currentHeading,
