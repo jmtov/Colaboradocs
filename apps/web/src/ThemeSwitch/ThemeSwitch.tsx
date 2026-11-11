@@ -40,7 +40,6 @@ export default function ThemeSwitch(props: {
           <button
             type="button"
             class={styles.option}
-            data-flat
             classList={{ [styles.on]: theme() === option.value }}
             aria-pressed={theme() === option.value}
             onClick={() => choose(option.value)}

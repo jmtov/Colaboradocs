@@ -1,6 +1,8 @@
+/* Bordes colapsados, igual que las tarjetas accionables: cada opción tiene su borde
+   completo y se monta 1px sobre la vecina; el padding compensa la última. */
 .group {
   display: inline-flex;
-  border: 1px solid var(--line-strong);
+  padding: 0 1px 1px 0;
 }
 
 .option {
@@ -11,12 +13,23 @@
   font-size: var(--font-size-sm);
   color: var(--fg);
   background: none;
-  border: 0;
+  border: 1px solid var(--line-strong);
+  margin: 0 -1px -1px 0;
+  /* La opción elegida va rellena: su sombra no puede salir del color del texto (que es el fondo). */
+  --lift-color: var(--fg);
 }
 
-.on {
+.option:hover {
+  background: var(--tint);
+  /* Por encima de las vecinas: así se ve su borde completo y su sombra. */
+  z-index: var(--z-raised);
+}
+
+.on,
+.on:hover {
   color: var(--bg);
   background: var(--fg);
+  border-color: var(--fg);
 }
 
 .icon {

@@ -1,5 +1,7 @@
 import { Show } from 'solid-js';
+import ArchiveIcon from '@/icons/ArchiveIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
+import UploadIcon from '@/icons/UploadIcon';
 import { useDocumentMenu } from './DocumentMenu.hooks';
 import styles from './DocumentMenu.module.css';
 
@@ -42,6 +44,7 @@ export default function DocumentMenu(props: Props) {
                 data-flat
                 onClick={documentMenu.replace}
               >
+                <UploadIcon class={styles.itemIcon} />
                 Reemplazar documento
               </button>
               <button
@@ -50,6 +53,7 @@ export default function DocumentMenu(props: Props) {
                 data-flat
                 onClick={documentMenu.askArchive}
               >
+                <ArchiveIcon class={styles.itemIcon} />
                 Archivar
               </button>
             </>

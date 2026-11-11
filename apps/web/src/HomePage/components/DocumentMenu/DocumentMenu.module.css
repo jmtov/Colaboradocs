@@ -39,7 +39,9 @@
 }
 
 .item {
-  display: block;
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
   width: 100%;
   min-height: 2.5rem;
   padding: 0.5rem 0.625rem;
@@ -49,6 +51,12 @@
   background: none;
   border: 0;
   cursor: pointer;
+}
+
+.itemIcon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
 }
 
 .item:hover,
@@ -77,6 +85,7 @@
 }
 
 .row .item {
+  justify-content: center;
   text-align: center;
   border: 1px solid var(--line-strong);
 }

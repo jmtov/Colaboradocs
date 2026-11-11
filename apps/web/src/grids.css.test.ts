@@ -22,6 +22,13 @@ describe('grillas de celdas con bordes colapsados', () => {
       box: '.card',
     },
     {
+      name: 'selector de tema',
+      css: read('./ThemeSwitch/ThemeSwitch.module.css'),
+      grid: '.group',
+      cell: '.option',
+      box: '.option',
+    },
+    {
       name: 'resumen de la revisión',
       css: read('./ReviewSummary/ReviewSummary.module.css'),
       grid: '.summary',

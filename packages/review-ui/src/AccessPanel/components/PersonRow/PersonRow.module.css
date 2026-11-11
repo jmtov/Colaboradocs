@@ -1,14 +1,9 @@
 .row {
-  display: grid;
-  gap: 0.75rem;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--line);
-}
-
-.main {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--line);
 }
 
 .who {
@@ -69,102 +64,4 @@
 .disabled {
   color: var(--muted);
   cursor: not-allowed;
-}
-
-.more {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-}
-
-.icon {
-  flex: none;
-  width: 1.125em;
-  height: 1.125em;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--line);
-}
-
-.note {
-  flex-basis: 100%;
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--muted);
-}
-
-.action {
-  min-height: 2.5rem;
-  padding: 0.5rem 0.875rem;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-  cursor: pointer;
-}
-
-.action:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.primary {
-  color: var(--bg);
-  background: var(--fg);
-  border-color: var(--fg);
-}
-
-.danger {
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
-.dangerSolid {
-  color: var(--bg);
-  background: var(--danger);
-  border-color: var(--danger);
-}
-
-.edit,
-.confirm {
-  display: flex;
-  flex-basis: 100%;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  font-size: var(--font-size-sm);
-}
-
-.confirm span {
-  flex-basis: 100%;
-}
-
-.field {
-  flex: 1;
-  min-width: 10rem;
-  min-height: 2.5rem;
-  padding: 0.5rem 0.75rem;
-  font: inherit;
-  font-size: var(--font-size-md);
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line-strong);
-}
-
-.field:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 2px;
 }

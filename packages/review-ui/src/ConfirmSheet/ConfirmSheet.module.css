@@ -1,0 +1,39 @@
+.content {
+  display: grid;
+  gap: 1rem;
+}
+
+.message {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.button {
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+
+.primary {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.danger {
+  color: var(--bg);
+  background: var(--danger);
+  border-color: var(--danger);
+}

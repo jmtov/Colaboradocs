@@ -1,8 +1,11 @@
-import { useOverlay, useReview } from '@juntanza/review-ui';
+import {
+  openAfterMenuCloses,
+  useOverlay,
+  useReview,
+} from '@juntanza/review-ui';
 import { createSignal } from 'solid-js';
 import HowToSheet from '@/HowToReview/components/HowToSheet/HowToSheet';
 import { type AdminPageName, adminPath, navigate } from '@/router/router';
-import { openAfterMenuCloses } from './menu.utils';
 import { MENU_GAP_PX } from './UserMenu.constants';
 
 /** Estado y acciones del menú de la sesión. Las refs las asigna el .tsx. */

@@ -1,7 +1,10 @@
-import { useOverlay, useReview } from '@juntanza/review-ui';
+import {
+  openAfterMenuCloses,
+  useOverlay,
+  useReview,
+} from '@juntanza/review-ui';
 import { createSignal } from 'solid-js';
 import UploadSheet from '@/DocumentsPage/components/UploadSheet/UploadSheet';
-import { openAfterMenuCloses } from '@/UserMenu/menu.utils';
 import { MENU_GAP_PX } from './DocumentMenu.constants';
 
 /**

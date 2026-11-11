@@ -1,20 +1,23 @@
 import type { ManagedReviewer } from '@juntanza/review-core';
-import { type Accessor, createSignal } from 'solid-js';
+import type { Accessor } from 'solid-js';
+import { createSignal } from 'solid-js';
+import type { ActionMenuItem } from '../../../ActionMenu/ActionMenu.types';
+import ConfirmSheet from '../../../ConfirmSheet/ConfirmSheet';
+import KeyIcon from '../../../icons/KeyIcon';
+import PencilIcon from '../../../icons/PencilIcon';
+import RotateCcwIcon from '../../../icons/RotateCcwIcon';
+import TrashIcon from '../../../icons/TrashIcon';
 import { useOverlay } from '../../../overlay/useOverlay';
 import { useReview } from '../../../ReviewProvider/review.context';
 import type { AccessOutcome } from '../../../store/createAccessStore';
 import PinResultSheet from '../PinResultSheet/PinResultSheet';
-
-type Confirm = 'pin' | 'remove' | null;
+import EditPersonSheet from './components/EditPersonSheet/EditPersonSheet';
 
 /** Estado, acciones y acceso a datos de una fila de persona. */
 export function usePersonRow(person: Accessor<ManagedReviewer>) {
   const review = useReview();
   const overlay = useOverlay();
   const access = review.access;
-  const [confirm, setConfirm] = createSignal<Confirm>(null);
-  const [editing, setEditing] = createSignal(false);
-  const [draft, setDraft] = createSignal('');
   const [busy, setBusy] = createSignal(false);
 
   /** Corre una acción; si falla, avisa. Devuelve su resultado, o null si ya había otra en curso. */
@@ -26,23 +29,38 @@ export function usePersonRow(person: Accessor<ManagedReviewer>) {
     setBusy(true);
     const result = await action();
     setBusy(false);
-    setConfirm(null);
     if (!result.ok) review.flash(result.message);
     else if (done) review.flash(done);
     return result;
   }
 
-  async function saveRole() {
-    const value = draft().trim();
-    if (!value) return;
-    const result = await run(() => access.setRole(person().id, value));
-    if (result?.ok) setEditing(false);
-  }
+  const confirm = (options: {
+    title: string;
+    message: string;
+    confirmLabel: string;
+    danger?: boolean;
+  }) => overlay.sheet(ConfirmSheet, options);
 
   async function regeneratePin() {
+    const accepted = await confirm({
+      title: 'Regenerar PIN',
+      message: `El PIN actual deja de servir y ${person().name} queda fuera hasta recibir el nuevo.`,
+      confirmLabel: 'Regenerar',
+    });
+    if (!accepted) return;
     const result = await run(() => access.regeneratePin(person().id));
     if (result?.ok)
       void overlay.sheet(PinResultSheet, { issued: result.value });
+  }
+
+  async function removePerson() {
+    const accepted = await confirm({
+      title: 'Eliminar persona',
+      message: `${person().name} pierde el acceso. Sus comentarios se conservan.`,
+      confirmLabel: 'Eliminar',
+      danger: true,
+    });
+    if (accepted) await run(() => access.remove(person().id));
   }
 
   const role = () => {
@@ -50,30 +68,62 @@ export function usePersonRow(person: Accessor<ManagedReviewer>) {
     return municipality ? review.role.format(municipality) : null;
   };
 
+  /** Las acciones del menú; las que cambian el acceso faltan si la persona está protegida. */
+  function menuItems(): ActionMenuItem[] {
+    const items: ActionMenuItem[] = [
+      {
+        label: 'Editar',
+        icon: PencilIcon,
+        onSelect: () =>
+          void overlay.sheet(EditPersonSheet, {
+            get person() {
+              return person();
+            },
+          }),
+      },
+    ];
+    if (person().locked) return items;
+    items.push(
+      {
+        label: 'Restablecer dispositivos',
+        icon: RotateCcwIcon,
+        disabled: busy(),
+        onSelect: () =>
+          void run(
+            () => access.resetDevices(person().id),
+            'Dispositivos restablecidos.',
+          ),
+      },
+      {
+        label: 'Regenerar PIN',
+        icon: KeyIcon,
+        onSelect: () => void regeneratePin(),
+      },
+      {
+        label: 'Eliminar',
+        icon: TrashIcon,
+        danger: true,
+        onSelect: () => void removePerson(),
+      },
+    );
+    return items;
+  }
+
+  /** Por qué faltan acciones, si la persona está protegida. */
+  const lockedNote = (isMe: boolean) => {
+    if (!person().locked) return undefined;
+    return isMe
+      ? 'Eres tú: no puedes cambiar tu propio acceso.'
+      : 'Esta persona te dio acceso (o lo dio a quien te lo dio): no puedes cambiar su acceso.';
+  };
+
   return {
     role,
     roleLabel: () => review.role.label,
-    confirm,
-    editing,
-    draft,
     busy,
-    startEdit: () => {
-      setDraft(person().municipality ?? '');
-      setEditing(true);
-    },
-    cancelEdit: () => setEditing(false),
-    updateDraft: (value: string) => setDraft(value),
-    saveRole: () => void saveRole(),
-    askConfirm: (kind: Exclude<Confirm, null>) => setConfirm(kind),
-    cancelConfirm: () => setConfirm(null),
+    menuItems,
+    lockedNote,
     toggleAdmin: (isAdmin: boolean) =>
       run(() => access.setAdmin(person().id, isAdmin)),
-    resetDevices: () =>
-      run(
-        () => access.resetDevices(person().id),
-        'Dispositivos restablecidos.',
-      ),
-    regeneratePin: () => void regeneratePin(),
-    removePerson: () => run(() => access.remove(person().id)),
   };
 }

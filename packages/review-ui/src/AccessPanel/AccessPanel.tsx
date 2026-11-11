@@ -36,12 +36,7 @@ export default function AccessPanel() {
       <ul class={styles.list}>
         <For each={panel.people() ?? []}>
           {(person) => (
-            <PersonRow
-              person={person}
-              isMe={person.id === panel.myId()}
-              expanded={panel.expanded() === person.id}
-              onToggle={() => panel.toggleExpanded(person.id)}
-            />
+            <PersonRow person={person} isMe={person.id === panel.myId()} />
           )}
         </For>
       </ul>

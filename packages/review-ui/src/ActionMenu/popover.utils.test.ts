@@ -3,7 +3,7 @@ import {
   MENU_CLOSE_TIMEOUT_MS,
   openAfterMenuCloses,
   type PopoverLike,
-} from './menu.utils';
+} from './popover.utils';
 
 afterEach(() => {
   vi.useRealTimers();
