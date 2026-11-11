@@ -5,7 +5,7 @@ import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
 import { editPath, navigate } from '@/router/router';
-import UserMenu from '@/UserMenu/UserMenu';
+import UserMenu, { type UserMenuAction } from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
 type Props = {
@@ -28,6 +28,20 @@ export default function TopBar(props: Props) {
 
   const isAdmin = () =>
     (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
+
+  /** Imprimir y, para quien administra, editar: van en el menú de la sesión. */
+  const actions = (): UserMenuAction[] => [
+    { label: 'Imprimir', icon: PrinterIcon, onSelect: props.onPrint },
+    ...(isAdmin()
+      ? [
+          {
+            label: 'Editar',
+            icon: PencilIcon,
+            onSelect: () => navigate(editPath(props.documentId)),
+          },
+        ]
+      : []),
+  ];
 
   const statusText = () => {
     switch (review.status()) {
@@ -75,24 +89,7 @@ export default function TopBar(props: Props) {
           <Show when={statusText()}>
             <span role="status">{statusText()}</span>
           </Show>
-          <Show when={isAdmin()}>
-            <Button
-              icon={PencilIcon}
-              size="sm"
-              href={editPath(props.documentId)}
-              onClick={() => navigate(editPath(props.documentId))}
-            >
-              Editar
-            </Button>
-          </Show>
-          <Button
-            icon={PrinterIcon}
-            size="sm"
-            aria-label="Imprimir o guardar como PDF"
-            title="Imprimir o guardar como PDF"
-            onClick={props.onPrint}
-          ></Button>
-          <UserMenu />
+          <UserMenu actions={actions()} />
         </div>
       </div>
     </header>

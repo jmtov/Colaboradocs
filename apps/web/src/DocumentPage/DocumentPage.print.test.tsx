@@ -65,14 +65,12 @@ afterEach(() => {
 });
 
 describe('imprimir el documento', () => {
-  it('el botón de la barra abre el diálogo de impresión', async () => {
+  it('«Imprimir» del menú abre el diálogo de impresión', async () => {
     await wait();
     const print = vi.fn();
     vi.stubGlobal('print', print);
-    document
-      .querySelector<HTMLButtonElement>(
-        'button[aria-label="Imprimir o guardar como PDF"]',
-      )
+    [...document.querySelectorAll('button')]
+      .find((item) => item.textContent?.trim() === 'Imprimir')
       ?.click();
     expect(print).toHaveBeenCalledOnce();
   });

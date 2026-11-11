@@ -30,6 +30,11 @@ export function useUserMenu() {
     openAfterMenuCloses(refs.menu, () => navigate(adminPath(page)));
   }
 
+  /** Hace una acción de la página con el menú ya cerrado (imprimir abre un diálogo del navegador). */
+  function run(action: () => void) {
+    openAfterMenuCloses(refs.menu, action);
+  }
+
   function openHowTo() {
     openAfterMenuCloses(refs.menu, () => {
       // Sin duplicar: si ya hay una hoja abierta (la guía de la página, por ejemplo), no se abre otra.
@@ -50,6 +55,7 @@ export function useUserMenu() {
     toggle,
     openHowTo,
     goToAdmin,
+    run,
     logout,
   };
 }

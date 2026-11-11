@@ -45,8 +45,10 @@ function mount(isAdmin: boolean) {
   return host;
 }
 
-const editLink = (host: HTMLElement) =>
-  [...host.querySelectorAll('a')].find((link) => link.textContent === 'Editar');
+const editItem = (host: HTMLElement) =>
+  [...host.querySelectorAll('button')].find(
+    (item) => item.textContent?.trim() === 'Editar',
+  );
 
 afterEach(() => {
   for (const dispose of disposers.splice(0)) dispose();
@@ -56,15 +58,32 @@ afterEach(() => {
 });
 
 describe('TopBar', () => {
-  it('un admin ve «Editar» y va al editor del documento', async () => {
+  it('un admin ve «Editar» en el menú y va al editor del documento', async () => {
     const host = mount(true);
     await wait();
-    expect(editLink(host)?.getAttribute('href')).toBe('/d/mi-doc/editar');
+    editItem(host)?.click();
+    expect(window.location.pathname).toBe('/d/mi-doc/editar');
+  });
+
+  it('el menú va por secciones: acciones de la página, administración, tema y salir', async () => {
+    const host = mount(true);
+    await wait();
+    const text = host.querySelector('[popover]')?.textContent ?? '';
+    const at = [
+      'Imprimir',
+      'Editar',
+      'Documentos',
+      'Accesos',
+      'Tema',
+      'Salir',
+    ].map((label) => text.indexOf(label));
+    expect(at.every((index) => index >= 0)).toBe(true);
+    expect([...at].sort((a, b) => a - b)).toEqual(at);
   });
 
   it('quien no es admin no lo ve', async () => {
     const host = mount(false);
     await wait();
-    expect(editLink(host)).toBeUndefined();
+    expect(editItem(host)).toBeUndefined();
   });
 });
