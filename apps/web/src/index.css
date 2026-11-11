@@ -24,6 +24,7 @@
   --font-size-xl: 1.75rem;
   --font-size-display: clamp(2.25rem, 5.2vw, 3.9rem);
 
+  --z-raised: 5;
   --z-sticky: 10;
   --z-fixed: 100;
 }

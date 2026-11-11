@@ -5,7 +5,7 @@
 
 .pin {
   padding: 1rem;
-  font: 600 1.75rem var(--font-mono);
+  font: 600 var(--font-size-xl) var(--font-mono);
   letter-spacing: 0.12em;
   text-align: center;
   user-select: all;

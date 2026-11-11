@@ -101,7 +101,7 @@ export default function AddPersonSheet(props: Props) {
             {busy() ? 'Agregando…' : 'Agregar'}
           </button>
         </div>
-        <p class={styles.help}>
+        <p class={styles.note}>
           El PIN se genera al guardar y se muestra una sola vez.
         </p>
       </form>

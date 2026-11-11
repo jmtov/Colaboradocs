@@ -50,8 +50,11 @@
   color: var(--muted);
 }
 
-p.help {
-  grid-column: auto;
+.note {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  color: var(--muted);
 }
 
 .error {

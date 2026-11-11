@@ -35,7 +35,7 @@
 .card:hover {
   background: var(--tint);
   /* Por encima de las vecinas: así se ve su borde completo y su sombra. */
-  z-index: 1;
+  z-index: var(--z-raised);
 }
 
 .number {

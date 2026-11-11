@@ -36,7 +36,8 @@ export default function FilePicker(props: Props) {
     event.preventDefault();
     depth = 0;
     setDragging(false);
-    pick(event.dataTransfer?.files?.[0]);
+    const files = event.dataTransfer?.files;
+    pick(files?.[0]);
   }
 
   return (
