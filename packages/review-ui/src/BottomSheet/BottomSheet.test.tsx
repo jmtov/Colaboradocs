@@ -1,8 +1,9 @@
 // @vitest-environment happy-dom
-import { BottomSheet } from '@juntanza/review-ui';
+
 import { createSignal } from 'solid-js';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import BottomSheet from './BottomSheet';
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const disposers: (() => void)[] = [];

@@ -1,9 +1,11 @@
 // @vitest-environment happy-dom
 // Prueba de regresión: si una recarga vuelve a dispararse a sí misma en bucle, esta
 // prueba NO termina (las respuestas simuladas son inmediatas y acaparan el hilo).
-import { AccessSheet, ReviewProvider } from '@juntanza/review-ui';
+
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import ReviewProvider from '../ReviewProvider/ReviewProvider';
+import AccessSheet from './AccessSheet';
 
 const admin = { id: 'r1', name: 'Ana', isAdmin: true, municipality: null };
 const wait = (ms = 60) => new Promise((resolve) => setTimeout(resolve, ms));

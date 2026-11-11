@@ -17,8 +17,10 @@
     "solid-js": "^1.9.0"
   },
   "devDependencies": {
+    "happy-dom": "^21.0.4",
     "solid-js": "^1.9.3",
     "vite": "^6.0.3",
+    "vite-plugin-solid": "^2.11.0",
     "vitest": "^4.1.0"
   }
 }
