@@ -30,6 +30,7 @@ export default function BlockActionBar(props: Props) {
       </Button>
       <Button
         icon={CheckIcon}
+        variant={props.mine ? 'ok' : 'default'}
         pressed={props.mine}
         onClick={props.onToggleApproval}
       >

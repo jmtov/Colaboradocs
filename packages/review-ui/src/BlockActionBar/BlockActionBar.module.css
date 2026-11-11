@@ -18,3 +18,17 @@
 .close {
   margin-left: auto;
 }
+
+/* En el teléfono, columnas: Comentar y OK lado a lado, y Cerrar en su propia fila. */
+@media (width <= 600px) {
+  .bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .close {
+    grid-column: 1 / -1;
+    margin-left: 0;
+  }
+}
