@@ -86,4 +86,17 @@ describe('TopBar', () => {
     await wait();
     expect(editItem(host)).toBeUndefined();
   });
+
+  it('un admin siempre ve el regreso, y con un solo documento va a Documentos', async () => {
+    const host = mount(true);
+    await wait();
+    const back = host.querySelector('a[title="Volver a los documentos"]');
+    expect(back?.getAttribute('href')).toBe('/documentos');
+  });
+
+  it('quien no es admin y tiene un solo documento no ve el regreso', async () => {
+    const host = mount(false);
+    await wait();
+    expect(host.querySelector('a[title="Volver a los documentos"]')).toBeNull();
+  });
 });

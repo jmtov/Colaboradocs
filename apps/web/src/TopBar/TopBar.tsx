@@ -4,7 +4,7 @@ import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
-import { editPath, navigate } from '@/router/router';
+import { adminPath, editPath, navigate } from '@/router/router';
 import UserMenu, { type UserMenuAction } from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
@@ -43,6 +43,10 @@ export default function TopBar(props: Props) {
       : []),
   ];
 
+  /** Con un solo documento `/` rebota a él: para quien administra, el regreso va a Documentos. */
+  const backHref = () =>
+    props.showBack ? '/' : isAdmin() ? adminPath('documents') : undefined;
+
   const statusText = () => {
     switch (review.status()) {
       case 'loading':
@@ -57,15 +61,17 @@ export default function TopBar(props: Props) {
   return (
     <header class={styles.top}>
       <div class={styles.inner}>
-        <Show when={props.showBack}>
-          <Button
-            icon={ArrowLeftIcon}
-            size="sm"
-            href="/"
-            aria-label="Volver a los documentos"
-            title="Volver a los documentos"
-            onClick={() => navigate('/')}
-          />
+        <Show when={backHref()}>
+          {(href) => (
+            <Button
+              icon={ArrowLeftIcon}
+              size="sm"
+              href={href()}
+              aria-label="Volver a los documentos"
+              title="Volver a los documentos"
+              onClick={() => navigate(href())}
+            />
+          )}
         </Show>
         <button
           type="button"
