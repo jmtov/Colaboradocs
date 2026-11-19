@@ -120,3 +120,22 @@ export function describeDraftError(error: unknown): {
       return { ...base, message: 'No se pudo completar la acción.' };
   }
 }
+
+/** Mensaje para mostrar cuando falla una acción sobre una tarea. */
+export function describeTaskError(error: unknown): string {
+  if (!(error instanceof ApiRequestError)) {
+    return 'No se pudo completar la acción.';
+  }
+  switch (error.code) {
+    case 'invalid_request':
+      return error.details[0] ?? 'Revisa el título y la fecha de la tarea.';
+    case 'forbidden':
+      return 'No puedes hacer eso con esta tarea.';
+    case 'not_found':
+      return 'Esa tarea ya no existe. Se actualizó la lista.';
+    case 'network':
+      return 'Sin conexión con el servidor. Intenta de nuevo.';
+    default:
+      return 'No se pudo completar la acción.';
+  }
+}

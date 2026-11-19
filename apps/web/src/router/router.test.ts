@@ -15,6 +15,11 @@ describe('resolveRoute', () => {
     expect(resolveRoute('')).toEqual({ kind: 'home' });
   });
 
+  it('/tareas es «Mis tareas», con o sin barra final', () => {
+    expect(resolveRoute('/tareas')).toEqual({ kind: 'tasks' });
+    expect(resolveRoute('/tareas/')).toEqual({ kind: 'tasks' });
+  });
+
   it('/d/<id> abre ese documento, con o sin barra final', () => {
     expect(resolveRoute('/d/principios')).toEqual({
       kind: 'document',

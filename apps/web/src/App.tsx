@@ -6,6 +6,7 @@ import HomePage from '@/HomePage/HomePage';
 import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
+import TasksPage from '@/TasksPage/TasksPage';
 import { useApp, useDocumentRoute, useHomeRoute } from './App.hooks';
 import styles from './App.module.css';
 
@@ -88,6 +89,9 @@ export default function App() {
                 name={app.name()}
                 description={app.space()?.description}
               />
+            </Match>
+            <Match when={app.route().kind === 'tasks'}>
+              <TasksPage name={app.name()} />
             </Match>
             <Match when={app.adminPage()} keyed>
               {(page) => <AdminPage name={app.name()} page={page} />}

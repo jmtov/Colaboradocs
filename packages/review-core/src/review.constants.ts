@@ -23,3 +23,6 @@ export const MAX_DOCUMENT_BYTES = 1_000_000;
 /** Límites de forma de un documento. */
 export const MAX_SECTIONS = 200;
 export const MAX_SECTION_HTML_LENGTH = 300_000;
+
+/** Largo máximo del título de una tarea. */
+export const MAX_TASK_TITLE_LENGTH = 200;

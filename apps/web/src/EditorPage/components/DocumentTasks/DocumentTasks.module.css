@@ -1,0 +1,35 @@
+.section {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 4rem;
+  scroll-margin-top: calc(4.5rem + env(safe-area-inset-top, 0px));
+}
+
+/* Igual que el título de una sección del documento, sin número. */
+.title {
+  padding-bottom: 0.75rem;
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  border-bottom: 1px dashed var(--line-strong);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.add {
+  justify-self: start;
+}

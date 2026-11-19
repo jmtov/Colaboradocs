@@ -8,4 +8,6 @@ export * from './pin.utils';
 export * from './review.constants';
 export * from './review.types';
 export * from './reviewers.utils';
+export * from './tasks.types';
+export * from './tasks.utils';
 export * from './threads.utils';

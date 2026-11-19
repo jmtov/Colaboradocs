@@ -83,6 +83,7 @@ export function postComment(
 /** Los nombres son únicos y la base se comparte: vacía todo para empezar de cero. */
 export async function resetDatabase() {
   for (const table of [
+    'tasks',
     'approvals',
     'comments',
     'devices',

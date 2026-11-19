@@ -17,6 +17,7 @@ import {
   type StoredSession,
 } from '../session/session.utils';
 import { createAccessStore } from './createAccessStore';
+import { createTasksStore } from './createTasksStore';
 import {
   describeDraftError,
   describeLoginError,
@@ -81,6 +82,7 @@ export function createReviewStore(options: ReviewStoreOptions) {
   });
 
   const access = createAccessStore(api);
+  const tasks = createTasksStore(api);
 
   async function refresh() {
     if (!session()) return;
@@ -310,6 +312,7 @@ export function createReviewStore(options: ReviewStoreOptions) {
     toggleApproval,
     flash,
     access,
+    tasks,
     role: {
       get label() {
         return roleField().label;

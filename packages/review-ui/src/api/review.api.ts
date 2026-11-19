@@ -12,10 +12,14 @@ import type {
   ManagedReviewer,
   NewComment,
   NewReviewer,
+  NewTask,
   ReviewComment,
   ReviewerPatch,
   ReviewSnapshot,
   SpaceInfo,
+  Task,
+  TaskPatch,
+  TaskPerson,
 } from '@colaboradocs/review-core';
 
 export class ApiRequestError extends Error {
@@ -204,6 +208,43 @@ export function createReviewApi(options: ApiOptions) {
     },
     async deleteApproval(blockId: string): Promise<void> {
       await request(`/approvals/${blockId}`, { method: 'DELETE' });
+    },
+
+    // Tareas: no cuelgan del documento abierto.
+    async fetchMyTasks(): Promise<Task[]> {
+      const response = await request('', {}, '/tasks');
+      return (await response.json()) as Task[];
+    },
+    async fetchDocumentTasks(documentId: string): Promise<Task[]> {
+      const response = await request(
+        `?document=${encodeURIComponent(documentId)}`,
+        {},
+        '/tasks',
+      );
+      return (await response.json()) as Task[];
+    },
+    async fetchTaskPeople(): Promise<TaskPerson[]> {
+      const response = await request('/people', {}, '/tasks');
+      return (await response.json()) as TaskPerson[];
+    },
+    async postTask(task: NewTask): Promise<Task> {
+      const response = await request(
+        '',
+        { method: 'POST', body: JSON.stringify(task) },
+        '/tasks',
+      );
+      return (await response.json()) as Task;
+    },
+    async patchTask(id: string, patch: TaskPatch): Promise<Task> {
+      const response = await request(
+        `/${id}`,
+        { method: 'PATCH', body: JSON.stringify(patch) },
+        '/tasks',
+      );
+      return (await response.json()) as Task;
+    },
+    async deleteTask(id: string): Promise<void> {
+      await request(`/${id}`, { method: 'DELETE' }, '/tasks');
     },
 
     // Accesos (solo admins): no cuelgan de un documento.

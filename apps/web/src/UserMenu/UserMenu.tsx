@@ -2,6 +2,7 @@ import { Button } from '@colaboradocs/review-ui';
 import { type Component, For, Show } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 import { howToAvailable } from '@/HowToReview/howto.state';
+import CalendarCheckIcon from '@/icons/CalendarCheckIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
 import FileTextIcon from '@/icons/FileTextIcon';
 import ListChecksIcon from '@/icons/ListChecksIcon';
@@ -62,6 +63,17 @@ export default function UserMenu(props: Props) {
             </div>
           )}
         </Show>
+        <div class={styles.group}>
+          <button
+            type="button"
+            class={styles.item}
+            data-flat
+            onClick={userMenu.goToTasks}
+          >
+            <CalendarCheckIcon class={styles.icon} />
+            Mis tareas
+          </button>
+        </div>
         <Show when={howToAvailable()}>
           <div class={styles.group}>
             <button

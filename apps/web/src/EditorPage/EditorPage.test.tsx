@@ -84,6 +84,10 @@ type Calls = {
   puts: { expectedRevision: number; content: DocumentContent }[];
   publishes: { expectedRevision: number; force?: boolean }[];
   discards: number;
+  /** Las tareas que se crearon. */
+  newTasks: Record<string, unknown>[];
+  /** Los cambios a tareas: la ruta y lo que se envió. */
+  taskPatches: { url: string; body: Record<string, unknown> }[];
 };
 
 type Options = {
@@ -98,11 +102,22 @@ type Options = {
   comments?: object[];
   /** Las personas del espacio (para mencionar). */
   reviewers?: Record<string, { name: string; municipality: string | null }>;
+  /** Las tareas del documento y las personas a quienes asignar. */
+  tasks?: object[];
+  people?: { id: string; name: string; municipality: string | null }[];
+  /** El documento no existe publicado (uno nuevo, solo borrador). */
+  unpublished?: boolean;
 };
 
 /** Una API simulada: lleva la cuenta de lo que se guardó, publicó y descartó. */
 function fakeApi(options: Options = {}) {
-  const calls: Calls = { puts: [], publishes: [], discards: 0 };
+  const calls: Calls = {
+    puts: [],
+    publishes: [],
+    discards: 0,
+    newTasks: [],
+    taskPatches: [],
+  };
   let revision = options.draft?.revision ?? 0;
   const publishResults = [...(options.publishResults ?? ['ok'])];
   const json = (body: unknown, status = 200) =>
@@ -120,7 +135,18 @@ function fakeApi(options: Options = {}) {
           reviewers: options.reviewers ?? {},
         });
       }
+      if (url === '/api/tasks?document=doc') return json(options.tasks ?? []);
+      if (url === '/api/tasks/people') return json(options.people ?? []);
+      if (url.startsWith('/api/tasks/') && method === 'PATCH') {
+        calls.taskPatches.push({ url, body: JSON.parse(String(init?.body)) });
+        return json({});
+      }
+      if (url === '/api/tasks' && method === 'POST') {
+        calls.newTasks.push(JSON.parse(String(init?.body)));
+        return json({}, 201);
+      }
       if (url === '/api/documents/doc/content') {
+        if (options.unpublished) return json({ error: 'not_found' }, 404);
         return json(options.published ?? PUBLISHED);
       }
       if (url === '/api/admin/documents/doc/draft') {
@@ -1042,6 +1068,171 @@ describe('EditorPage', () => {
     await wait();
     expect(calls.puts[0]?.content.peopleTerms).toEqual({});
     expect(calls.puts[0]?.content.sections[0]?.html).toContain('Ana López');
+  });
+
+  it('la sección «Tareas» lista las del documento, con quién las tiene', async () => {
+    fakeApi({
+      tasks: [
+        {
+          id: 't1',
+          title: 'Escribir a Abejorral',
+          documentId: 'doc',
+          documentTitle: 'Mi documento',
+          blockId: null,
+          assigneeId: 'r2',
+          assigneeName: 'Luis Gómez',
+          assigneeMunicipality: 'Guarne',
+          dueDate: '2099-01-01',
+          doneAt: null,
+          createdById: 'r1',
+          createdByName: 'Ana',
+          createdAt: '2026-11-01T10:00:00.000Z',
+        },
+      ],
+    });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    const section = host.querySelector('#tareas') as HTMLElement;
+    expect(section.querySelector('h2')?.textContent).toBe('Tareas');
+    expect(section.textContent).toContain('Escribir a Abejorral');
+    expect(section.textContent).toContain('Luis Gómez (Guarne)');
+  });
+
+  it('«Agregar tarea» crea una de este documento para la persona elegida, sin tocar el borrador', async () => {
+    const calls = fakeApi({
+      people: [
+        { id: 'r1', name: 'Ana', municipality: null },
+        { id: 'r2', name: 'Luis Gómez', municipality: 'Guarne' },
+      ],
+    });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    button(host, 'Agregar tarea').click();
+    await wait(300);
+    // el documento ya está dado: no hay selector de documento
+    expect(document.body.textContent).not.toContain('Ninguno');
+    const [title, date] = [
+      ...document.body.querySelectorAll('dialog[open] input'),
+    ] as HTMLInputElement[];
+    if (!title || !date) throw new Error('faltan los campos de la tarea');
+    write(title, 'Invitar a los de Guarne');
+    write(date, '2099-02-03');
+    const select = document.body.querySelector(
+      'dialog[open] select',
+    ) as HTMLSelectElement;
+    select.value = 'r2';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait(20);
+    button(document.body, 'Crear tarea').click();
+    await wait(300);
+    expect(calls.newTasks).toEqual([
+      {
+        title: 'Invitar a los de Guarne',
+        dueDate: '2099-02-03',
+        documentId: 'doc',
+        assigneeId: 'r2',
+      },
+    ]);
+    // las tareas no son parte del documento: no hay nada que guardar
+    expect(calls.puts).toHaveLength(0);
+  });
+
+  it('«Editar la tarea» cambia el título, la fecha y la persona, y envía solo lo que cambió', async () => {
+    const task = {
+      id: 't1',
+      title: 'Escribir a Abejorral',
+      documentId: 'doc',
+      documentTitle: 'Mi documento',
+      blockId: null,
+      assigneeId: 'r1',
+      assigneeName: 'Ana',
+      assigneeMunicipality: null,
+      dueDate: '2099-01-01',
+      doneAt: null,
+      createdById: 'r1',
+      createdByName: 'Ana',
+      createdAt: '2026-11-01T10:00:00.000Z',
+    };
+    const calls = fakeApi({
+      tasks: [task],
+      people: [
+        { id: 'r1', name: 'Ana', municipality: null },
+        { id: 'r2', name: 'Luis Gómez', municipality: 'Guarne' },
+      ],
+    });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    host
+      .querySelector<HTMLButtonElement>('button[aria-label="Editar la tarea"]')
+      ?.click();
+    await wait(300);
+    const [title, date] = [
+      ...document.body.querySelectorAll('dialog[open] input'),
+    ] as HTMLInputElement[];
+    if (!title || !date) throw new Error('faltan los campos de la tarea');
+    expect(title.value).toBe('Escribir a Abejorral');
+    expect(date.value).toBe('2099-01-01');
+    write(title, 'Escribir a Marinilla');
+    const select = document.body.querySelector(
+      'dialog[open] select',
+    ) as HTMLSelectElement;
+    select.value = 'r2';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait(20);
+    button(document.body, 'Guardar').click();
+    await wait(300);
+    expect(calls.taskPatches).toEqual([
+      {
+        url: '/api/tasks/t1',
+        body: { title: 'Escribir a Marinilla', assigneeId: 'r2' },
+      },
+    ]);
+  });
+
+  it('guardar sin cambiar nada no envía nada', async () => {
+    const calls = fakeApi({
+      tasks: [
+        {
+          id: 't1',
+          title: 'Igual',
+          documentId: 'doc',
+          documentTitle: 'Mi documento',
+          blockId: null,
+          assigneeId: 'r1',
+          assigneeName: 'Ana',
+          assigneeMunicipality: null,
+          dueDate: '2099-01-01',
+          doneAt: null,
+          createdById: 'r1',
+          createdByName: 'Ana',
+          createdAt: '2026-11-01T10:00:00.000Z',
+        },
+      ],
+    });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    host
+      .querySelector<HTMLButtonElement>('button[aria-label="Editar la tarea"]')
+      ?.click();
+    await wait(300);
+    button(document.body, 'Guardar').click();
+    await wait(300);
+    expect(calls.taskPatches).toEqual([]);
+  });
+
+  it('un documento sin publicar no admite tareas todavía', async () => {
+    fakeApi({ unpublished: true, draft: { content: PUBLISHED, revision: 1 } });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    expect(host.querySelector('#tareas')?.textContent).toContain(
+      'Publica el documento',
+    );
+    expect([...host.querySelectorAll('#tareas button')]).toHaveLength(0);
   });
 
   it('sin fuentes, «Cita» manda a la bibliografía y no deja insertar', async () => {

@@ -8,17 +8,22 @@ const ADMIN_PATHS: Record<AdminPageName, string> = {
   access: '/accesos',
 };
 
+/** «Mis tareas»: las de quien entró, en todos los documentos. */
+export const TASKS_PATH = '/tareas';
+
 export type Route =
   | { kind: 'home' }
   | { kind: 'document'; id: string }
   | { kind: 'edit'; id: string }
+  | { kind: 'tasks' }
   | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor y `/documentos` y `/accesos` la administración. Lo demás no existe. */
+/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor y `/tareas` las tareas de quien entró, y `/documentos` y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };
+  if (path === TASKS_PATH) return { kind: 'tasks' };
   for (const [page, adminPath] of Object.entries(ADMIN_PATHS)) {
     if (path === adminPath)
       return { kind: 'admin', page: page as AdminPageName };

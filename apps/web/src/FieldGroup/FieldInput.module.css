@@ -22,3 +22,23 @@
 .input[aria-invalid="true"] {
   color: var(--danger);
 }
+
+/*
+ * El campo de fecha del navegador pone su texto a la izquierda aunque se pida
+ * `text-align: right`: se alinea por flex (Chrome/Safari) y con el texto (Firefox).
+ */
+.input[type="date"] {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 2.75rem;
+  text-align: right;
+}
+
+.input[type="date"]::-webkit-datetime-edit {
+  flex: none;
+  padding: 0;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-inline-start: 0.5rem;
+}
