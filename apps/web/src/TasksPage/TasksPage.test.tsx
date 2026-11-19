@@ -35,8 +35,14 @@ Object.assign(HTMLElement.prototype, {
 
 type Calls = { patches: { url: string; body: unknown }[]; deletes: string[] };
 
-const edits = (host: HTMLElement) =>
-  host.querySelectorAll('button[aria-label="Editar la tarea"]');
+/** Los menús de acciones de las tareas: solo hay uno por tarea que la persona puede cambiar. */
+const menus = (host: HTMLElement) =>
+  host.querySelectorAll('button[aria-label^="Acciones de la tarea"]');
+
+const menuItem = (host: HTMLElement, label: string) =>
+  [...host.querySelectorAll<HTMLButtonElement>('[popover] button')].find(
+    (item) => item.textContent?.trim() === label,
+  );
 
 function fakeApi(initial: object[]) {
   const calls: Calls = { patches: [], deletes: [] };
@@ -174,18 +180,22 @@ describe('Mis tareas', () => {
     ]);
   });
 
-  it('solo ofrece borrar las que creó la persona (o todas si es admin)', async () => {
+  it('solo ofrece eliminar las que creó la persona (o todas si es admin), con confirmación', async () => {
     const calls = fakeApi([
       task('a', 'Mía', '2099-01-01'),
       task('b', 'De otra persona', '2099-01-02', { createdById: 'r9' }),
     ]);
     const host = mount();
     await wait(200);
-    const deletes = host.querySelectorAll(
-      'button[aria-label="Eliminar la tarea"]',
-    );
-    expect(deletes).toHaveLength(1);
-    (deletes[0] as HTMLButtonElement).click();
+    expect(menus(host)).toHaveLength(1);
+    menuItem(host, 'Eliminar')?.click();
+    await wait(50);
+    // pide confirmar antes de borrar
+    expect(calls.deletes).toEqual([]);
+    const confirm = [
+      ...host.querySelectorAll<HTMLButtonElement>('[popover] button'),
+    ].find((item) => item.textContent?.trim() === 'Eliminar');
+    confirm?.click();
     await wait(200);
     expect(calls.deletes).toEqual(['/api/tasks/a']);
     expect(titles(host)).toEqual(['De otra persona']);
@@ -198,8 +208,8 @@ describe('Mis tareas', () => {
     ]);
     const host = mount();
     await wait(200);
-    expect(edits(host)).toHaveLength(1);
-    (edits(host)[0] as HTMLButtonElement).click();
+    expect(menus(host)).toHaveLength(1);
+    menuItem(host, 'Editar')?.click();
     await wait(300);
     const title = document.body.querySelector(
       'dialog[open] input',

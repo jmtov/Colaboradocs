@@ -1,29 +1,32 @@
-import { compareTasks, type Task, todayIso } from '@colaboradocs/review-core';
+import { compareTasks } from '@colaboradocs/review-core';
 import { useReview } from '@colaboradocs/review-ui';
 import { createMemo, onMount } from 'solid-js';
+import { useTaskActions } from '@/NewTaskSheet/TaskActions.hooks';
 
-/** Las tareas del documento que se está leyendo, de todas las personas. */
+/** Las tareas del documento que se está leyendo, de todas las personas, y lo que se puede hacer con ellas. */
 export function useDocumentTaskList(documentId: () => string) {
   const review = useReview();
-  const me = () => review.snapshot()?.me ?? review.session()?.reviewer;
+  const actions = useTaskActions();
 
-  onMount(() => void review.tasks.loadForDocument(documentId()));
+  onMount(() => {
+    void review.tasks.loadForDocument(documentId());
+    void review.loadDocuments();
+    if (actions.isAdmin()) void review.tasks.loadPeople();
+  });
 
   const tasks = createMemo(() =>
     [...(review.tasks.documentTasks() ?? [])].sort(compareTasks),
   );
 
-  async function toggle(task: Task, done: boolean) {
-    const result = await review.tasks.setDone(task.id, done);
-    if (!result.ok) review.flash(result.message);
-  }
-
   return {
     tasks,
-    today: () => todayIso(new Date()),
-    /** Las marca quien las tiene o un admin; las demás personas solo las ven. */
-    canToggle: (task: Task) =>
-      task.assigneeId === me()?.id || me()?.isAdmin === true,
-    toggle: (task: Task, done: boolean) => void toggle(task, done),
+    today: actions.today,
+    canToggle: actions.canToggle,
+    canChange: actions.canChange,
+    toggle: actions.toggle,
+    edit: actions.edit,
+    remove: actions.remove,
+    add: () =>
+      actions.create({ documentId: documentId(), documentLocked: true }),
   };
 }

@@ -1,9 +1,7 @@
 import { dueState, type Task } from '@colaboradocs/review-core';
-import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import CheckIcon from '@/icons/CheckIcon';
-import PencilIcon from '@/icons/PencilIcon';
-import TrashIcon from '@/icons/TrashIcon';
+import TaskMenu from '@/TaskMenu/TaskMenu';
 import styles from './TaskRow.module.css';
 import { dueLabel, formatDueDate } from './task.utils';
 
@@ -13,13 +11,13 @@ type Props = {
   today: string;
   /** Quién la tiene (nombre y, si hay, municipio): se muestra en las listas de varias personas. */
   assignee?: string;
-  /** Sin esto no hay botón de editar. */
+  /** Sin esto no hay «Editar» en el menú. */
   onEdit?: () => void;
+  /** Sin esto no hay «Eliminar» en el menú. */
+  onDelete?: () => void;
   /** Si quien mira puede marcarla; por defecto sí. Sin permiso, el botón se ve pero no responde. */
   canToggle?: boolean;
-  canDelete: boolean;
   onToggle: (done: boolean) => void;
-  onDelete: () => void;
   /** Sin esto, el documento no se muestra (ya se está en él). */
   onOpenDocument?: (documentId: string) => void;
 };
@@ -69,21 +67,11 @@ export default function TaskRow(props: Props) {
           </Show>
         </span>
       </div>
-      <Show when={props.onEdit}>
-        <Button
-          icon={PencilIcon}
-          size="sm"
-          aria-label="Editar la tarea"
-          onClick={() => props.onEdit?.()}
-        />
-      </Show>
-      <Show when={props.canDelete}>
-        <Button
-          icon={TrashIcon}
-          size="sm"
-          variant="danger"
-          aria-label="Eliminar la tarea"
-          onClick={props.onDelete}
+      <Show when={props.onEdit || props.onDelete}>
+        <TaskMenu
+          title={props.task.title}
+          onEdit={props.onEdit}
+          onDelete={props.onDelete}
         />
       </Show>
     </li>

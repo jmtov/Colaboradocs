@@ -89,13 +89,16 @@ export default function TasksPage(props: Props) {
                             task={task}
                             today={page.today()}
                             onEdit={
-                              page.canEdit(task)
+                              page.canChange(task)
                                 ? () => page.edit(task)
                                 : undefined
                             }
-                            canDelete={page.canDelete(task)}
                             onToggle={(done) => page.toggle(task, done)}
-                            onDelete={() => page.remove(task)}
+                            onDelete={
+                              page.canChange(task)
+                                ? () => page.remove(task)
+                                : undefined
+                            }
                             onOpenDocument={page.openDocument}
                           />
                         )}

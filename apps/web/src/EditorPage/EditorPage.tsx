@@ -1,4 +1,3 @@
-import { todayIso } from '@colaboradocs/review-core';
 import { ActionMenu, Button } from '@colaboradocs/review-ui';
 import { For, Match, Show, Switch } from 'solid-js';
 import DocumentEditor from '@/Editor/DocumentEditor/DocumentEditor';
@@ -9,7 +8,6 @@ import TrashIcon from '@/icons/TrashIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import PageBar from '@/PageBar/PageBar';
 import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';
-import DocumentTasks from './components/DocumentTasks/DocumentTasks';
 import EditorOutline from './components/EditorOutline/EditorOutline';
 import EditorToolbar from './components/EditorToolbar/EditorToolbar';
 import GlossaryLinks from './components/GlossaryLinks/GlossaryLinks';
@@ -202,15 +200,6 @@ export default function EditorPage(props: Props) {
                               sources={page.sources()}
                               onEdit={(index) => void page.editSource(index)}
                               onAdd={() => void page.editSource()}
-                            />
-                            <DocumentTasks
-                              tasks={page.documentTasks()}
-                              today={todayIso(new Date())}
-                              canAdd={page.canAddTasks()}
-                              onAdd={page.addTask}
-                              onEdit={page.editTask}
-                              onToggle={page.toggleTask}
-                              onDelete={page.removeTask}
                             />
                           </div>
                         </div>

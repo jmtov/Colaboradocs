@@ -1,9 +1,3 @@
-import {
-  type NewTask,
-  type Task,
-  type TaskPatch,
-  todayIso,
-} from '@colaboradocs/review-core';
 import { ConfirmSheet, useOverlay, useReview } from '@colaboradocs/review-ui';
 import type { Editor } from '@tiptap/core';
 import {
@@ -28,7 +22,6 @@ import {
   sectionAt,
   updateSection,
 } from '@/Editor/section.commands';
-import NewTaskSheet from '@/NewTaskSheet/NewTaskSheet';
 import { parseCite } from '@/Prose/cite.utils';
 import { documentPath, navigate } from '@/router/router';
 import {
@@ -199,9 +192,6 @@ export function useEditorPage(id: () => string) {
 
   onMount(() => {
     void load();
-    // Las tareas del documento y, para asignarlas, las personas: se guardan al instante, aparte del borrador.
-    void review.tasks.loadForDocument(id());
-    void review.tasks.loadPeople();
   });
 
   // Avisar antes de cerrar la pestaña con cambios sin guardar.
@@ -386,44 +376,6 @@ export function useEditorPage(id: () => string) {
     if (!result || 'remove' in result) return;
     setPeople((current) => addPerson(current, result.text, result.name));
     instance.chain().focus().insertContent(`${result.text} `).run();
-  }
-
-  /** Crear una tarea de este documento (para quien se elija); se guarda ya, no con el borrador. */
-  async function addTask() {
-    const reviewer = review.snapshot()?.me ?? review.session()?.reviewer;
-    if (!reviewer) return;
-    const task = await overlay.sheet(NewTaskSheet, {
-      documents: [],
-      people: review.tasks.people(),
-      meId: reviewer.id,
-      today: todayIso(new Date()),
-      documentId: id(),
-      documentLocked: true,
-    });
-    if (task) await reportTask(review.tasks.create(task as NewTask));
-  }
-
-  /** Cambiar el título, la fecha o la persona de una tarea; se guarda ya. */
-  async function editTask(task: Task) {
-    const reviewer = review.snapshot()?.me ?? review.session()?.reviewer;
-    if (!reviewer) return;
-    const patch = await overlay.sheet(NewTaskSheet, {
-      task,
-      documents: [],
-      people: review.tasks.people(),
-      meId: reviewer.id,
-      today: todayIso(new Date()),
-    });
-    if (patch) {
-      await reportTask(review.tasks.patch(task.id, patch as TaskPatch));
-    }
-  }
-
-  async function reportTask(
-    outcome: Promise<{ ok: boolean; message?: string }>,
-  ) {
-    const result = await outcome;
-    if (!result.ok && result.message) review.flash(result.message);
   }
 
   /** Tocar un nombre de persona del texto: cambiar a quién apunta o quitar la mención. */
@@ -665,14 +617,6 @@ export function useEditorPage(id: () => string) {
     cite,
     link,
     mention,
-    documentTasks: review.tasks.documentTasks,
-    // Un documento nuevo (solo borrador) todavía no existe para las tareas.
-    canAddTasks: () => published() !== null,
-    addTask: () => void addTask(),
-    editTask: (task: Task) => void editTask(task),
-    toggleTask: (task: Task, done: boolean) =>
-      void reportTask(review.tasks.setDone(task.id, done)),
-    removeTask: (task: Task) => void reportTask(review.tasks.remove(task.id)),
     editPerson,
     people,
     editTerm,
