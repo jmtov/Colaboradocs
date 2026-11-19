@@ -1,0 +1,16 @@
+.card {
+  display: grid;
+  gap: 0.125rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line-strong);
+}
+
+.name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.municipality {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}

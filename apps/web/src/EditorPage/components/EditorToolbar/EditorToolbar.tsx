@@ -1,6 +1,8 @@
 import type { Editor } from '@tiptap/core';
 import { For, Show } from 'solid-js';
 import IconButton from '@/IconButton/IconButton';
+import AtSignIcon from '@/icons/AtSignIcon';
+import LinkIcon from '@/icons/LinkIcon';
 import QuoteIcon from '@/icons/QuoteIcon';
 import RedoIcon from '@/icons/RedoIcon';
 import UndoIcon from '@/icons/UndoIcon';
@@ -13,6 +15,10 @@ type Props = {
   editor: Editor | undefined;
   /** Insertar una cita de la bibliografía en el cursor; sin esto no hay botón de cita. */
   onCite?: () => void;
+  /** Poner o editar un enlace en el texto; sin esto no hay botón de enlace. */
+  onLink?: () => void;
+  /** Mencionar a una persona del espacio; sin esto no hay botón de mención. */
+  onMention?: () => void;
 };
 
 /** Formato del documento: solo lo que el documento admite. Solo íconos; el nombre sale en el tooltip. */
@@ -42,6 +48,31 @@ export default function EditorToolbar(props: Props) {
                 />
               )}
             </For>
+            <Show when={index() === FORMAT_GROUPS.length - 1 && props.onLink}>
+              {(link) => (
+                <IconButton
+                  label="Enlace"
+                  tooltip="Enlace: lleva a una página, un correo o un documento"
+                  icon={LinkIcon}
+                  pressed={toolbar.isActive('link')}
+                  disabled={!props.editor}
+                  onClick={link()}
+                />
+              )}
+            </Show>
+            <Show
+              when={index() === FORMAT_GROUPS.length - 1 && props.onMention}
+            >
+              {(mention) => (
+                <IconButton
+                  label="Mencionar"
+                  tooltip="Mencionar: una persona del espacio; al tocarla se ve su tarjeta"
+                  icon={AtSignIcon}
+                  disabled={!props.editor}
+                  onClick={mention()}
+                />
+              )}
+            </Show>
             <Show when={index() === FORMAT_GROUPS.length - 1 && props.onCite}>
               {(cite) => (
                 <IconButton

@@ -168,6 +168,8 @@ export default function EditorPage(props: Props) {
                               <EditorToolbar
                                 editor={page.editor()}
                                 onCite={() => void page.cite()}
+                                onLink={() => void page.link()}
+                                onMention={() => void page.mention()}
                               />
                             </div>
                             <DocumentEditor

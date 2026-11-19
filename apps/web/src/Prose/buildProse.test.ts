@@ -82,6 +82,78 @@ describe('buildProse', () => {
   });
 });
 
+describe('enlaces en el texto', () => {
+  it('un enlace web se abre en otra pestaña y uno propio, en la misma', () => {
+    const root = buildProse(
+      '<p><a href="https://a.co/x">web</a> <a href="/d/acta">ruta</a></p>',
+      { sectionId: 's', reviewable: true },
+    );
+    const [web, own] = root.querySelectorAll('a');
+    expect(web?.getAttribute('href')).toBe('https://a.co/x');
+    expect(web?.target).toBe('_blank');
+    expect(web?.rel).toContain('noopener');
+    expect(own?.getAttribute('href')).toBe('/d/acta');
+    expect(own?.target).toBe('');
+  });
+
+  it('una dirección peligrosa no crea enlace, solo deja el texto', () => {
+    const root = buildProse('<p><a href="javascript:alert(1)">x</a></p>', {
+      sectionId: 's',
+      reviewable: true,
+    });
+    expect(root.querySelector('a')).toBeNull();
+    expect(root.textContent).toBe('x');
+  });
+
+  it('no enlaza glosario ni personas dentro de un enlace', () => {
+    const root = buildProse('<p><a href="/x">Ana López</a></p>', {
+      sectionId: 's',
+      reviewable: true,
+      peopleTerms: { 'ana lópez': 'Ana López' },
+    });
+    expect(root.querySelector('[data-person]')).toBeNull();
+  });
+});
+
+describe('personas en el texto', () => {
+  const peopleTerms = { 'ana lópez': 'Ana María López Mora' };
+
+  it('envuelve el nombre en un botón con el nombre registrado, en cada aparición', () => {
+    const root = buildProse(
+      '<p>Lleva Ana López.</p><ul><li>Apoya Ana López.</li></ul>',
+      { sectionId: 's', reviewable: true, peopleTerms },
+    );
+    const links = root.querySelectorAll<HTMLElement>('[data-person]');
+    expect(links).toHaveLength(2);
+    expect(links[0]?.dataset.person).toBe('Ana María López Mora');
+    expect(links[0]?.textContent).toBe('Ana López');
+    expect(root.textContent).toBe('Lleva Ana López.Apoya Ana López.');
+  });
+
+  it('no enlaza en títulos ni en la copia de solo lectura', () => {
+    const heading = buildProse('<h3>Ana López</h3>', {
+      sectionId: 's',
+      reviewable: true,
+      peopleTerms,
+    });
+    expect(heading.querySelector('[data-person]')).toBeNull();
+    const readOnly = buildProse('<p>Ana López</p>', {
+      sectionId: 's',
+      reviewable: false,
+      peopleTerms,
+    });
+    expect(readOnly.querySelector('[data-person]')).toBeNull();
+  });
+
+  it('sin peopleTerms no enlaza nada', () => {
+    const root = buildProse('<p>Ana López</p>', {
+      sectionId: 's',
+      reviewable: true,
+    });
+    expect(root.querySelector('[data-person]')).toBeNull();
+  });
+});
+
 describe('el documento de ejemplo', () => {
   const roots = content.sections.map((item) =>
     buildProse(item.html, {

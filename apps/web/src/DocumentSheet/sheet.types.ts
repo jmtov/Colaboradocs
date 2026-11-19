@@ -2,5 +2,6 @@
 export type SheetState =
   | { kind: 'contents' }
   | { kind: 'term'; label: string }
+  | { kind: 'person'; name: string }
   | { kind: 'cite'; text: string }
   | { kind: 'section'; sectionNumber: string };

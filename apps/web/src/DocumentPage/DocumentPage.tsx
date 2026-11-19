@@ -88,6 +88,7 @@ export default function DocumentPage(props: {
                   <SectionView
                     section={section}
                     glossaryTerms={props.content.glossaryTerms}
+                    peopleTerms={props.content.peopleTerms}
                   />
                 )}
               </For>

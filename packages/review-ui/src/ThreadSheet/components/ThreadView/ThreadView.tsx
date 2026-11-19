@@ -8,6 +8,7 @@ import TrashIcon from '../../../icons/TrashIcon';
 import { useReview } from '../../../ReviewProvider/review.context';
 import { formatRelativeTime } from '../../../time/time.utils';
 import CommentComposer from '../CommentComposer/CommentComposer';
+import CommentText from '../CommentText/CommentText';
 import styles from './ThreadView.module.css';
 
 type Props = {
@@ -69,7 +70,7 @@ export default function ThreadView(props: Props) {
             </p>
           }
         >
-          {(text) => <p class={styles.text}>{text()}</p>}
+          {(text) => <CommentText text={text()} />}
         </Show>
       </article>
     );

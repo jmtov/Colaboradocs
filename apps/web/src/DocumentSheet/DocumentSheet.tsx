@@ -1,6 +1,7 @@
 import {
   BottomSheet,
   Button,
+  PersonCard,
   type SheetLayerProps,
 } from '@colaboradocs/review-ui';
 import { Match, Switch } from 'solid-js';
@@ -46,6 +47,14 @@ export default function DocumentSheet(props: Props) {
           <Button icon={BookOpenIcon} onClick={sheet.openGlossaryTerm}>
             Ver en el glosario
           </Button>
+        </Match>
+        <Match when={sheet.person()}>
+          {(person) => (
+            <PersonCard
+              name={person().name}
+              municipality={person().municipality}
+            />
+          )}
         </Match>
         <Match when={sheet.kind() === 'cite'}>
           <CiteList

@@ -5,6 +5,7 @@ import styles from './SectionView.module.css';
 export default function SectionView(props: {
   section: DocumentSection;
   glossaryTerms?: Record<string, string>;
+  peopleTerms?: Record<string, string>;
 }) {
   return (
     <section
@@ -20,6 +21,7 @@ export default function SectionView(props: {
       <Prose
         section={props.section}
         glossaryTerms={props.glossaryTerms}
+        peopleTerms={props.peopleTerms}
         reviewable
       />
     </section>

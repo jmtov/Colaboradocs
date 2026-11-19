@@ -3,6 +3,7 @@ export * from './approvals.utils';
 export * from './blocks.utils';
 export * from './document.types';
 export * from './document.utils';
+export * from './mentions.utils';
 export * from './pin.utils';
 export * from './review.constants';
 export * from './review.types';

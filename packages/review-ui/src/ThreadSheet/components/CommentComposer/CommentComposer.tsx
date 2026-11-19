@@ -3,6 +3,8 @@ import { createSignal, Show } from 'solid-js';
 import Button from '../../../Button/Button';
 import CloseIcon from '../../../icons/CloseIcon';
 import SendIcon from '../../../icons/SendIcon';
+import MentionList from '../MentionList/MentionList';
+import { useMentionPicker } from './CommentComposer.hooks';
 import styles from './CommentComposer.module.css';
 
 /** Desde cuántos caracteres se muestra el contador. */
@@ -19,6 +21,7 @@ type Props = {
 export default function CommentComposer(props: Props) {
   const [text, setText] = createSignal('');
   const [busy, setBusy] = createSignal(false);
+  const mentions = useMentionPicker(text, setText);
 
   async function send() {
     const value = text().trim();
@@ -37,7 +40,17 @@ export default function CommentComposer(props: Props) {
         aria-label={props.placeholder}
         maxLength={MAX_COMMENT_LENGTH}
         value={text()}
-        onInput={(event) => setText(event.currentTarget.value)}
+        onInput={(event) => mentions.onInput(event.currentTarget)}
+        onClick={(event) => mentions.track(event.currentTarget)}
+        onKeyUp={(event) => mentions.track(event.currentTarget)}
+        onKeyDown={(event) => {
+          if (mentions.onKeyDown(event)) event.preventDefault();
+        }}
+      />
+      <MentionList
+        people={mentions.suggestions()}
+        active={mentions.active()}
+        onPick={mentions.pick}
       />
       <div class={styles.row}>
         <Show when={text().length >= COUNTER_FROM}>

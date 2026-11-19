@@ -130,6 +130,11 @@ export function useDocumentPage(content: () => DocumentContent) {
       openSheet({ kind: 'term', label: term.dataset.term });
       return;
     }
+    const person = target.closest<HTMLElement>('[data-person]');
+    if (person?.dataset.person) {
+      openSheet({ kind: 'person', name: person.dataset.person });
+      return;
+    }
     const cite = target.closest<HTMLElement>('[data-cite]');
     if (cite?.dataset.cite) {
       openSheet({ kind: 'cite', text: cite.dataset.cite });

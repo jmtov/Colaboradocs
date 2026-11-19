@@ -1,6 +1,7 @@
-import { assignBlockIds } from '@colaboradocs/review-core';
+import { assignBlockIds, isSafeLinkUrl } from '@colaboradocs/review-core';
 import { findLinks } from './linkify.utils';
 import styles from './Prose.module.css';
+import { findPeople } from './people.utils';
 
 export type ProseOptions = {
   sectionId: string;
@@ -11,6 +12,8 @@ export type ProseOptions = {
   reviewable: boolean;
   /** Términos del glosario a enlazar: cómo se escribe -> entrada. */
   glossaryTerms?: Record<string, string>;
+  /** Personas a enlazar: cómo se escribe -> nombre registrado. */
+  peopleTerms?: Record<string, string>;
 };
 
 type Context = {
@@ -127,6 +130,23 @@ function convertElement(source: Element, context: Context): Node {
       convertChildren(source, element, context);
       return element;
     }
+    case 'A': {
+      const href = source.getAttribute('href') ?? '';
+      if (!isSafeLinkUrl(href)) {
+        const fragment = document.createDocumentFragment();
+        convertChildren(source, fragment, context);
+        return fragment;
+      }
+      const element = create('a', styles.link);
+      element.href = href;
+      // Los de afuera se abren en otra pestaña para no perder el documento ni los comentarios.
+      if (/^https?:/i.test(href)) {
+        element.target = '_blank';
+        element.rel = 'noopener noreferrer';
+      }
+      convertChildren(source, element, context);
+      return element;
+    }
     case 'EM': {
       const text = source.textContent ?? '';
       const isCite = text.startsWith('[');
@@ -148,6 +168,37 @@ function convertElement(source: Element, context: Context): Node {
   }
 }
 
+/** Envuelve en un botón de tarjeta cada nombre de persona del texto. */
+function linkPeople(root: HTMLElement, people: Record<string, string>) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const textNodes: Text[] = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode as Text);
+
+  for (const node of textNodes) {
+    const parent = node.parentElement;
+    if (!parent || parent.closest('h3, h4, h5, em, a')) continue;
+    const text = node.nodeValue ?? '';
+    const found = findPeople(text, people);
+    if (found.length === 0) continue;
+
+    const fragment = document.createDocumentFragment();
+    let cursor = 0;
+    for (const person of found) {
+      fragment.appendChild(
+        document.createTextNode(text.slice(cursor, person.start)),
+      );
+      const span = create('span', styles.personLink);
+      span.textContent = text.slice(person.start, person.end);
+      span.dataset.interactive = '';
+      span.dataset.person = person.name;
+      fragment.appendChild(span);
+      cursor = person.end;
+    }
+    fragment.appendChild(document.createTextNode(text.slice(cursor)));
+    node.replaceWith(fragment);
+  }
+}
+
 /** Enlaza términos del glosario y "sección N" dentro del texto corrido. */
 function linkify(
   root: HTMLElement,
@@ -161,7 +212,7 @@ function linkify(
 
   for (const node of textNodes) {
     const parent = node.parentElement;
-    if (!parent || parent.closest('h3, em')) continue;
+    if (!parent || parent.closest('h3, em, a, [data-person]')) continue;
     const text = node.nodeValue ?? '';
     const links = findLinks(
       text,
@@ -227,6 +278,7 @@ export function buildProse(html: string, options: ProseOptions): HTMLElement {
       const id = ids[index];
       if (id) block.element.dataset.blockId = id;
     });
+    linkPeople(root, options.peopleTerms ?? {});
     linkify(root, options.sectionId, options.glossaryTerms ?? {});
   }
   return root;

@@ -13,6 +13,7 @@ export { default as ConfirmSheet } from './ConfirmSheet/ConfirmSheet';
 export { default as OverlayProvider } from './overlay/OverlayProvider';
 export type { OverlayApi, SheetLayerProps } from './overlay/overlay.types';
 export { useOverlay } from './overlay/useOverlay';
+export { default as PersonCard } from './PersonCard/PersonCard';
 export { default as PinGate } from './PinGate/PinGate';
 export { default as ReviewProvider } from './ReviewProvider/ReviewProvider';
 export { useReview } from './ReviewProvider/review.context';

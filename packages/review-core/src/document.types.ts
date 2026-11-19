@@ -10,7 +10,7 @@ export type DocumentSection = {
   status: SectionStatus;
   /** Una línea para la tarjeta del inicio (opcional). */
   description?: string;
-  /** HTML limitado: p, ul, ol, li, strong, em, br, h3, h4, h5, dl, dt, dd. */
+  /** HTML limitado: p, ul, ol, li, strong, em, a (con href), br, h3, h4, h5, dl, dt, dd. */
   html: string;
 };
 
@@ -40,6 +40,12 @@ export type DocumentContent = {
    * sección `glosario`. Opcional: sin esto no se enlaza nada.
    */
   glossaryTerms?: Record<string, string>;
+  /**
+   * Cómo se escribe el nombre de una persona en el texto (minúsculas) -> su
+   * nombre tal como está registrado en el espacio. Al tocarlo se abre su tarjeta
+   * con el municipio. Opcional: sin esto no se enlaza ninguna persona.
+   */
+  peopleTerms?: Record<string, string>;
   sources: DocumentSource[];
   sections: DocumentSection[];
 };

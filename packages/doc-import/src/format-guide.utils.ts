@@ -61,7 +61,7 @@ Un objeto JSON con estos campos.
 
 ## El HTML de cada sección
 
-Solo estas etiquetas: ${tags}. Cualquier otra se quita (queda su texto). Sin atributos, estilos ni imágenes, y las tablas hay que reescribirlas como párrafos o listas. Títulos dentro de una sección: \`h3\` (grupo), \`h4\`, \`h5\`; no uses \`h1\` ni \`h2\` (el título de la sección va en \`title\`).
+Solo estas etiquetas: ${tags}. Cualquier otra se quita (queda su texto). Sin atributos (solo \`href\` en \`a\`: web, \`mailto:\` o ruta propia), estilos ni imágenes, y las tablas hay que reescribirlas como párrafos o listas. Títulos dentro de una sección: \`h3\` (grupo), \`h4\`, \`h5\`; no uses \`h1\` ni \`h2\` (el título de la sección va en \`title\`).
 
 Cada **párrafo, viñeta o definición** es un bloque que se comenta y aprueba por separado, así que conviene un párrafo por idea.
 

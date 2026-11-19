@@ -1,3 +1,4 @@
+import { useReview } from '@colaboradocs/review-ui';
 import { createMemo } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import { sectionKicker } from '@/content/content.utils';
@@ -14,7 +15,18 @@ type Options = {
 
 /** Estado y acciones de la hoja inferior del documento. */
 export function useDocumentSheet(options: Options) {
+  const review = useReview();
   const kind = () => options.state().kind;
+
+  /** La persona de la tarjeta: si está registrada, con su municipio. */
+  const person = createMemo(() => {
+    const sheet = options.state();
+    if (sheet.kind !== 'person') return null;
+    const registered = Object.values(review.snapshot()?.reviewers ?? {}).find(
+      (item) => item.name === sheet.name,
+    );
+    return { name: sheet.name, municipality: registered?.municipality ?? null };
+  });
 
   const section = createMemo(() => {
     const sheet = options.state();
@@ -48,6 +60,8 @@ export function useDocumentSheet(options: Options) {
         return 'Documento';
       case 'term':
         return 'Glosario';
+      case 'person':
+        return 'Persona';
       case 'cite':
         return (cite()?.groups.length ?? 0) > 0 ? 'Fuentes' : 'Nota';
       case 'section': {
@@ -63,6 +77,8 @@ export function useDocumentSheet(options: Options) {
         return 'Contenido';
       case 'term':
         return sheet.label;
+      case 'person':
+        return sheet.name;
       case 'cite':
         return `Nota [${cite()?.key ?? ''}]`;
       case 'section':
@@ -102,6 +118,7 @@ export function useDocumentSheet(options: Options) {
     title,
     section,
     cite,
+    person,
     termText,
     pickOutlineItem,
     openGlossaryTerm,

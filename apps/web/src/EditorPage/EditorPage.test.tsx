@@ -96,6 +96,8 @@ type Options = {
   putDelay?: number;
   publishResults?: ('ok' | 'draft_stale')[];
   comments?: object[];
+  /** Las personas del espacio (para mencionar). */
+  reviewers?: Record<string, { name: string; municipality: string | null }>;
 };
 
 /** Una API simulada: lleva la cuenta de lo que se guardó, publicó y descartó. */
@@ -115,7 +117,7 @@ function fakeApi(options: Options = {}) {
           me: options.me ?? admin,
           comments: options.comments ?? [],
           approvals: [],
-          reviewers: {},
+          reviewers: options.reviewers ?? {},
         });
       }
       if (url === '/api/documents/doc/content') {
@@ -816,6 +818,8 @@ describe('EditorPage', () => {
       'Lista numerada',
       'Lista',
       'Nota',
+      'Enlace',
+      'Mencionar',
       'Cita',
       'Deshacer',
       'Rehacer',
@@ -919,6 +923,60 @@ describe('EditorPage', () => {
       types.push(node.type.name);
     });
     expect(types).toContain('citation');
+  });
+
+  it('«Enlace» pone un enlace con su texto donde está el cursor y guarda solo el href', async () => {
+    const calls = fakeApi();
+    const host = mount();
+    const editor = await editorOf(host);
+    cursorAtEndOf(editor, 'Hola');
+    button(host, 'Enlace').click();
+    await wait(300);
+    expect(button(document.body, 'Aplicar').disabled).toBe(true);
+    const [text, address] = [
+      ...document.body.querySelectorAll('dialog[open] input'),
+    ] as HTMLInputElement[];
+    if (!text || !address) throw new Error('faltan los campos del enlace');
+    text.value = ' la página';
+    text.dispatchEvent(new Event('input', { bubbles: true }));
+    address.value = 'a.co/x';
+    address.dispatchEvent(new Event('input', { bubbles: true }));
+    await wait(20);
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.sections[0]?.html).toBe(
+      '<p>Hola<a href="https://a.co/x">la página</a></p><p>Mundo</p>',
+    );
+  });
+
+  it('«Mencionar» escribe a la persona en el texto y guarda cómo se escribe → su nombre', async () => {
+    const calls = fakeApi({
+      reviewers: {
+        r1: { name: 'Ana López', municipality: 'La Ceja' },
+        r2: { name: 'Luis Gómez', municipality: null },
+      },
+    });
+    const host = mount();
+    const editor = await editorOf(host);
+    cursorAtEndOf(editor, 'Hola');
+    button(host, 'Mencionar').click();
+    await wait(300);
+    expect(button(document.body, 'Insertar').disabled).toBe(true);
+    const option = [...document.body.querySelectorAll('button')].find((item) =>
+      item.textContent?.startsWith('Ana López'),
+    );
+    if (!option) throw new Error('falta la persona en la lista');
+    option.click();
+    await wait(20);
+    button(document.body, 'Insertar').click();
+    await wait(300);
+    button(host, 'Guardar borrador').click();
+    await wait();
+    const saved = calls.puts[0]?.content;
+    expect(saved?.peopleTerms).toEqual({ 'ana lópez': 'Ana López' });
+    expect(saved?.sections[0]?.html).toContain('Ana López');
   });
 
   it('sin fuentes, «Cita» manda a la bibliografía y no deja insertar', async () => {

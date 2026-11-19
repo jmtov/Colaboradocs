@@ -28,7 +28,8 @@ describe('buildFormatGuide', () => {
   it('lista cada etiqueta que la página conserva, y solo esas', () => {
     for (const tag of ALLOWED_HTML_TAGS) {
       expect(guide).toContain(`\`${tag}\``);
-      expect(sanitizeSectionHtml(`<${tag}>x</${tag}>`)).toContain(`<${tag}>`);
+      const open = tag === 'a' ? '<a href="https://x.co">' : `<${tag}>`;
+      expect(sanitizeSectionHtml(`${open}x</${tag}>`)).toContain(open);
     }
     expect(sanitizeSectionHtml('<table>x</table>')).toBe('x');
   });

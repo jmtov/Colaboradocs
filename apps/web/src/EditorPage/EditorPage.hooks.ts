@@ -13,6 +13,7 @@ import type {
   DocumentSection,
   DocumentSource,
 } from '@/content/content.types';
+import { applyLink, linkState, removeLink } from '@/Editor/link.commands';
 import {
   goToSection,
   insertCitation,
@@ -30,6 +31,8 @@ import {
 } from './affected.utils';
 import CitationSheet from './components/CitationSheet/CitationSheet';
 import DetailsSheet from './components/DetailsSheet/DetailsSheet';
+import LinkSheet from './components/LinkSheet/LinkSheet';
+import PersonSheet from './components/PersonSheet/PersonSheet';
 import PublishSheet from './components/PublishSheet/PublishSheet';
 import SectionSheet from './components/SectionSheet/SectionSheet';
 import SourceSheet from './components/SourceSheet/SourceSheet';
@@ -45,6 +48,7 @@ import {
   withForms,
   withoutLink,
 } from './glossary.utils';
+import { addPerson, samePeople } from './people.utils';
 import {
   type GlossaryState,
   joinGlossary,
@@ -84,6 +88,8 @@ export function useEditorPage(id: () => string) {
   const glossaryParts = createMemo(() => parseGlossary(glossary().html));
   // Los enlaces automáticos del glosario (`glossaryTerms`), también como copia de trabajo.
   const [links, setLinks] = createSignal<GlossaryLinks>({});
+  // Las personas del texto (`peopleTerms`): cómo se escribe -> nombre registrado, también de trabajo.
+  const [people, setPeople] = createSignal<Record<string, string>>({});
   // La bibliografía (`sources`), también como copia de trabajo.
   const [sources, setSources] = createSignal<DocumentSource[]>([]);
   // El título y la descripción, también como copia de trabajo.
@@ -107,6 +113,7 @@ export function useEditorPage(id: () => string) {
     const written = links();
     // Sin enlaces y sin que los hubiera, el campo no existe (no se agrega un `{}` de la nada).
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
+    const keepPeople = current.peopleTerms !== undefined || hasKeys(people());
     const { title, description } = details();
     const { description: _old, ...rest } = current;
     return {
@@ -116,6 +123,7 @@ export function useEditorPage(id: () => string) {
       sections: saved(),
       sources: sources(),
       ...(keep ? { glossaryTerms: written } : {}),
+      ...(keepPeople ? { peopleTerms: people() } : {}),
     };
   });
 
@@ -127,7 +135,8 @@ export function useEditorPage(id: () => string) {
       details().description !== (last.description ?? '') ||
       !sameSections(last.sections, saved()) ||
       !sameSources(last.sources, sources()) ||
-      !sameLinks(last.glossaryTerms ?? {}, links())
+      !sameLinks(last.glossaryTerms ?? {}, links()) ||
+      !samePeople(last.peopleTerms ?? {}, people())
     );
   });
   const hasDraft = () => revision() > 0;
@@ -170,6 +179,7 @@ export function useEditorPage(id: () => string) {
     setSections(split.main);
     setGlossary(split.glossary);
     setLinks(base()?.glossaryTerms ?? {});
+    setPeople(base()?.peopleTerms ?? {});
     setSources(base()?.sources ?? []);
     setDetails({
       title: base()?.title ?? '',
@@ -341,6 +351,29 @@ export function useEditorPage(id: () => string) {
       sources: sources(),
     });
     if (numbers) insertCitation(instance, numbers);
+  }
+
+  /** Poner, cambiar o quitar el enlace del cursor o de la selección. */
+  async function link() {
+    const instance = editor();
+    if (!instance) return;
+    const result = await overlay.sheet(LinkSheet, {
+      state: linkState(instance),
+    });
+    if (!result) return;
+    if ('remove' in result) removeLink(instance);
+    else applyLink(instance, result.url, result.text);
+  }
+
+  /** Elegir a una persona del espacio y escribir su nombre en el cursor; al tocarlo se ve su tarjeta. */
+  async function mention() {
+    const instance = editor();
+    if (!instance) return;
+    const everyone = Object.values(review.snapshot()?.reviewers ?? {});
+    const result = await overlay.sheet(PersonSheet, { people: everyone });
+    if (!result) return;
+    setPeople((current) => addPerson(current, result.text, result.name));
+    instance.chain().focus().insertContent(`${result.text} `).run();
   }
 
   /** Abre la hoja de un término (sin posición, uno nuevo) y aplica lo que se decida. */
@@ -556,6 +589,8 @@ export function useEditorPage(id: () => string) {
     goToSources,
     goToGlossary,
     cite,
+    link,
+    mention,
     editTerm,
     glossaryParts,
     glossary,

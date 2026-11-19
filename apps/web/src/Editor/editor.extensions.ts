@@ -1,8 +1,10 @@
+import { isSafeLinkUrl } from '@colaboradocs/review-core';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
 import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
 import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list';
 import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
@@ -34,7 +36,7 @@ const SectionsDocument = Document.extend({
 
 /**
  * El schema del editor: solo lo que el formato del documento admite
- * (`p, ul, ol, li, strong, em, br, h3-h5, dl, dt, dd`) más el título de sección.
+ * (`p, ul, ol, li, strong, em, a, br, h3-h5, dl, dt, dd`) más el título de sección.
  * Lo que no está aquí no se puede escribir ni pegar.
  */
 export const createExtensions = (
@@ -50,6 +52,14 @@ export const createExtensions = (
   Text,
   Bold,
   Italic,
+  // Solo `href`: el documento no guarda ni `target` ni `rel` (los pone la página al mostrarlo).
+  Link.configure({
+    openOnClick: false,
+    autolink: false,
+    linkOnPaste: false,
+    HTMLAttributes: { target: null, rel: null, class: null },
+    isAllowedUri: (url) => isSafeLinkUrl(url),
+  }),
   HardBreak,
   Heading.configure({ levels: [3, 4, 5] }),
   BulletList,

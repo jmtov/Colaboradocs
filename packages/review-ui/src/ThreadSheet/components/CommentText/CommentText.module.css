@@ -1,0 +1,23 @@
+.text {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mention {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 8%, var(--bg));
+  border: 0;
+  border-bottom: 1px solid var(--line-strong);
+  cursor: pointer;
+}
+
+.mention[aria-expanded="true"] {
+  background: var(--fg);
+  color: var(--bg);
+}

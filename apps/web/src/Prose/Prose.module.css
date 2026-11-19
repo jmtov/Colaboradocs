@@ -123,6 +123,21 @@
   cursor: help;
 }
 
+.link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+/* Se ve como el glosario pero con trazo sólido: es un botón que abre una tarjeta. */
+.personLink {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 .sectionRef {
   text-decoration: underline;
   text-underline-offset: 3px;

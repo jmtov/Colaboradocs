@@ -65,7 +65,7 @@ Campos del JSON:
 - `highlightSection`: segundo botón del inicio que salta a una sección (opcional).
 - `sources`: lista del pie. `url` vacío = solo texto; si no, tiene que empezar con `https://`, `http://` o `/`.
 - `sections[]`: `id`, `num` («1», «2»… o «A» para anexos), `title`, `status` (`listo | borrador | pendiente`), `description` y `html`.
-- `html` admite `p, ul, ol, li, strong, em, br, h3, h4, h5, dl, dt, dd`. Convenciones:
+- `html` admite `p, ul, ol, li, strong, em, a, br, h3, h4, h5, dl, dt, dd` (el enlace `a` solo lleva `href`, web, `mailto:` o ruta propia). Convenciones:
   - Un primer párrafo que empieza con **«Para qué sirve»** es una nota: no se comenta.
   - Un `<em>` que empieza con `[` (p. ej. `[2, 3]`) es una cita a `sources`.
   - Un `<h3>` que empieza con «Pendientes» cuenta sus viñetas como pendientes.

@@ -19,6 +19,7 @@ export const ALLOWED_HTML_TAGS = [
   'li',
   'strong',
   'em',
+  'a',
   'br',
   'h3',
   'h4',
@@ -49,14 +50,39 @@ const STATUSES: SectionStatus[] = ['listo', 'borrador', 'pendiente'];
  * principal —la página no inyecta HTML crudo—, pero mantiene limpio lo guardado.
  */
 export function sanitizeSectionHtml(html: string): string {
-  return html
-    .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '')
-    .replace(/<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (_match, slash, name) => {
-      const lower = String(name).toLowerCase();
-      const tag = RENAMED_TAGS[lower] ?? lower;
-      return ALLOWED_TAGS.has(tag) ? `<${slash}${tag}>` : '';
-    });
+  return (
+    html
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, '')
+      .replace(
+        /<(\/?)([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)>/g,
+        (_match, slash, name, attributes) => {
+          const lower = String(name).toLowerCase();
+          const tag = RENAMED_TAGS[lower] ?? lower;
+          if (!ALLOWED_TAGS.has(tag)) return '';
+          if (tag === 'a' && !slash) return `<a${hrefAttribute(attributes)}>`;
+          return `<${slash}${tag}>`;
+        },
+      )
+      // Un enlace sin dirección válida (javascript:, vacío…) queda como texto.
+      .replace(/<a>([\s\S]*?)<\/a>/g, '$1')
+  );
+}
+
+/** Direcciones que un enlace puede tener: web, correo o una ruta del propio sitio. */
+export function isSafeLinkUrl(url: string): boolean {
+  return /^(https?:\/\/|mailto:)\S+$/i.test(url) || /^\/(?!\/)\S*$/.test(url);
+}
+
+/** ` href="…"` si el atributo es una dirección segura; si no, nada. */
+function hrefAttribute(attributes: string): string {
+  const found = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(attributes);
+  const url = (found?.[1] ?? found?.[2] ?? '').trim();
+  if (!isSafeLinkUrl(url)) return '';
+  return ` href="${url
+    .replace(/&(?!amp;|quot;|lt;|gt;)/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')}"`;
 }
 
 export type ValidationResult<T> =
@@ -155,36 +181,35 @@ export function validateDocument(
   }
   document.sources = sources;
 
-  // Glosario
-  if (raw.glossaryTerms !== undefined) {
-    const terms = raw.glossaryTerms as Record<string, unknown>;
+  // Glosario y personas: mismo formato, «cómo se escribe» -> «entrada».
+  for (const key of ['glossaryTerms', 'peopleTerms'] as const) {
+    const value = raw[key];
+    if (value === undefined) continue;
     if (
-      typeof terms !== 'object' ||
-      terms === null ||
-      Array.isArray(terms) ||
-      Object.keys(terms).length > 500
+      typeof value !== 'object' ||
+      value === null ||
+      Array.isArray(value) ||
+      Object.keys(value).length > 500
     ) {
-      errors.push(
-        '«glossaryTerms» tiene que ser un objeto de hasta 500 términos.',
-      );
-    } else {
-      const clean: Record<string, string> = {};
-      for (const [term, entry] of Object.entries(terms)) {
-        if (
-          typeof entry !== 'string' ||
-          !term.trim() ||
-          term.length > 100 ||
-          entry.length > 100
-        ) {
-          errors.push(
-            `«glossaryTerms» tiene un término inválido: «${term.slice(0, 30)}».`,
-          );
-          break;
-        }
-        clean[term.trim().toLowerCase()] = entry.trim();
-      }
-      document.glossaryTerms = clean;
+      errors.push(`«${key}» tiene que ser un objeto de hasta 500 términos.`);
+      continue;
     }
+    const clean: Record<string, string> = {};
+    for (const [term, entry] of Object.entries(value)) {
+      if (
+        typeof entry !== 'string' ||
+        !term.trim() ||
+        term.length > 100 ||
+        entry.length > 100
+      ) {
+        errors.push(
+          `«${key}» tiene un término inválido: «${term.slice(0, 30)}».`,
+        );
+        break;
+      }
+      clean[term.trim().toLowerCase()] = entry.trim();
+    }
+    document[key] = clean;
   }
 
   // Secciones

@@ -41,10 +41,26 @@ describe('sanitizeSectionHtml', () => {
 
   it('quita las etiquetas desconocidas pero conserva su texto', () => {
     expect(
+      sanitizeSectionHtml('<p><u>subrayado</u> <img src=x onerror=y></p>'),
+    ).toBe('<p>subrayado </p>');
+  });
+
+  it('conserva solo el href de un enlace y solo si es seguro', () => {
+    expect(
       sanitizeSectionHtml(
-        '<p><a href="javascript:x">enlace</a> <img src=x onerror=y></p>',
+        '<p><a href="https://a.co/x?y=1&z=2" onclick="evil()" target="_blank">web</a> <a href=\'mailto:a@b.co\'>correo</a> <a href="/d/acta">ruta</a></p>',
       ),
-    ).toBe('<p>enlace </p>');
+    ).toBe(
+      '<p><a href="https://a.co/x?y=1&amp;z=2">web</a> <a href="mailto:a@b.co">correo</a> <a href="/d/acta">ruta</a></p>',
+    );
+  });
+
+  it('un enlace con dirección peligrosa o vacía queda como texto', () => {
+    expect(
+      sanitizeSectionHtml(
+        '<p><a href="javascript:x">uno</a> <a href="//evil.co">dos</a> <a>tres</a> <a href="data:text/html,x">cuatro</a></p>',
+      ),
+    ).toBe('<p>uno dos tres cuatro</p>');
   });
 
   it('renombra títulos y énfasis equivalentes', () => {
@@ -166,6 +182,20 @@ describe('validateDocument', () => {
     expect(result.ok && result.value.glossaryTerms).toEqual({
       quórum: 'Quórum',
     });
+  });
+
+  it('normaliza las personas a minúsculas y rechaza las inválidas', () => {
+    const result = validateDocument({
+      ...valid(),
+      peopleTerms: { 'Ana López': 'Ana María López Mora' },
+    });
+    expect(result.ok && result.value.peopleTerms).toEqual({
+      'ana lópez': 'Ana María López Mora',
+    });
+    expect(
+      validateDocument({ ...valid(), peopleTerms: { 'Ana López': 7 } }).ok,
+    ).toBe(false);
+    expect(validateDocument({ ...valid(), peopleTerms: [] }).ok).toBe(false);
   });
 
   it('rechaza documentos demasiado grandes', () => {
