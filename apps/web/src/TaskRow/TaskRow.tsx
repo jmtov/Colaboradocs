@@ -15,6 +15,8 @@ type Props = {
   assignee?: string;
   /** Sin esto no hay botón de editar. */
   onEdit?: () => void;
+  /** Si quien mira puede marcarla; por defecto sí. Sin permiso, el botón se ve pero no responde. */
+  canToggle?: boolean;
   canDelete: boolean;
   onToggle: (done: boolean) => void;
   onDelete: () => void;
@@ -34,6 +36,7 @@ export default function TaskRow(props: Props) {
         type="button"
         class={styles.check}
         aria-pressed={done()}
+        disabled={props.canToggle === false}
         aria-label={done() ? 'Reabrir la tarea' : 'Marcar como hecha'}
         onClick={() => props.onToggle(!done())}
       >

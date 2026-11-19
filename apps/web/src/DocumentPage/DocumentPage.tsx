@@ -10,6 +10,7 @@ import SectionView from '@/SectionView/SectionView';
 import SideNav from '@/SideNav/SideNav';
 import SourcesFooter from '@/SourcesFooter/SourcesFooter';
 import TopBar from '@/TopBar/TopBar';
+import DocumentTaskList from './components/DocumentTaskList/DocumentTaskList';
 import { useDocumentPage } from './DocumentPage.hooks';
 import styles from './DocumentPage.module.css';
 
@@ -95,6 +96,7 @@ export default function DocumentPage(props: {
             </BlockLayer>
           </main>
         </div>
+        <DocumentTaskList documentId={props.content.id} />
         <SourcesFooter
           title={props.content.title}
           version={props.content.version}
