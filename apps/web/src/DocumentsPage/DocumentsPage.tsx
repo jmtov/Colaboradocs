@@ -2,6 +2,7 @@ import { Button } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
 import ArchiveIcon from '@/icons/ArchiveIcon';
 import CloseIcon from '@/icons/CloseIcon';
+import PlusIcon from '@/icons/PlusIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import { useDocumentsPage } from './DocumentsPage.hooks';
 import styles from './DocumentsPage.module.css';
@@ -12,12 +13,22 @@ export default function DocumentsPage() {
 
   return (
     <div class={styles.content}>
-      <Button icon={UploadIcon} class={styles.add} onClick={sheet.startUpload}>
-        Subir documento
-      </Button>
+      <div class={styles.adds}>
+        <Button icon={PlusIcon} class={styles.add} onClick={sheet.startNew}>
+          Nuevo documento
+        </Button>
+        <Button
+          icon={UploadIcon}
+          class={styles.add}
+          onClick={sheet.startUpload}
+        >
+          Subir documento
+        </Button>
+      </div>
       <p class={styles.hint}>
-        Acepta Word (.docx), Markdown (.md) o el JSON de un documento. Al
-        reemplazar uno, se guarda la versión anterior.
+        «Nuevo» abre el editor con un documento en blanco. «Subir» acepta Word
+        (.docx), Markdown (.md) o el JSON de un documento. Al reemplazar uno, se
+        guarda la versión anterior.
       </p>
       <ul class={styles.list}>
         <For

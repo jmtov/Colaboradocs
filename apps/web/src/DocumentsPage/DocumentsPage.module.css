@@ -3,6 +3,12 @@
   gap: 0.875rem;
 }
 
+.adds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .add {
   min-height: 2.75rem;
   padding: 0.5rem 1rem;

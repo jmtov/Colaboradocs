@@ -1,5 +1,6 @@
 import { useOverlay, useReview } from '@colaboradocs/review-ui';
 import { createSignal, onMount } from 'solid-js';
+import NewDocumentSheet from './components/NewDocumentSheet/NewDocumentSheet';
 import UploadSheet from './components/UploadSheet/UploadSheet';
 
 /** Estado y acciones de la página de administración de documentos. */
@@ -25,6 +26,7 @@ export function useDocumentsPage() {
     documents: () => review.documents() ?? [],
     confirming,
     busy,
+    startNew: () => void overlay.sheet(NewDocumentSheet, {}),
     startUpload: () => void overlay.sheet(UploadSheet, { target: {} }),
     startReplace: (id: string) =>
       void overlay.sheet(UploadSheet, { target: { replaceId: id } }),
