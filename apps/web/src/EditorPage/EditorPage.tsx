@@ -179,6 +179,10 @@ export default function EditorPage(props: Props) {
                               onEditCitation={(pos, text) =>
                                 void page.editCitation(pos, text)
                               }
+                              getPeople={page.people}
+                              onEditPerson={(key, name) =>
+                                void page.editPerson(key, name)
+                              }
                               onReady={page.ready}
                             />
                             <GlossaryList

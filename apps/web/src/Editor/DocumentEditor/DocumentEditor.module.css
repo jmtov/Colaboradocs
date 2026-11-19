@@ -199,6 +199,17 @@
   background: var(--line);
 }
 
+/* Un nombre de persona se subraya y se toca para cambiar a quién apunta o quitarlo. */
+.editor :global([data-person]) {
+  text-decoration: underline dashed;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.editor :global([data-person]:hover) {
+  background: var(--tint);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .editor :global([data-citation]) {
     transition: background-color 0.15s ease;

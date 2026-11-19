@@ -4,27 +4,44 @@ import { createMemo, createSignal, For, Show } from 'solid-js';
 import { FieldGroup, FieldRow } from '@/FieldGroup/FieldGroup';
 import fieldStyles from '@/FieldGroup/FieldInput.module.css';
 import AtSignIcon from '@/icons/AtSignIcon';
+import CheckIcon from '@/icons/CheckIcon';
 import CloseIcon from '@/icons/CloseIcon';
+import TrashIcon from '@/icons/TrashIcon';
 import styles from './PersonSheet.module.css';
 import type { PersonSheetProps } from './PersonSheet.types';
 
-/** Elegir a una persona del espacio para mencionarla: su nombre en el texto abre su tarjeta. */
+/**
+ * Elegir a una persona del espacio para mencionarla (su nombre en el texto abre su
+ * tarjeta) o, con `current`, cambiar a quién apunta una mención que ya está o quitarla.
+ */
 export default function PersonSheet(props: PersonSheetProps) {
+  const editing = () => props.current !== undefined;
+  // Quien se menciona puede ya no estar registrado: igual se muestra, para poder cambiarla.
+  const everyone = createMemo(() => {
+    const current = props.current;
+    if (current === undefined || props.people.some((p) => p.name === current)) {
+      return props.people;
+    }
+    return [{ name: current, municipality: null }, ...props.people];
+  });
   const [query, setQuery] = createSignal('');
-  const [chosen, setChosen] = createSignal<ReviewerLabel | null>(null);
+  const [chosen, setChosen] = createSignal<ReviewerLabel | null>(
+    everyone().find((person) => person.name === props.current) ?? null,
+  );
   const [text, setText] = createSignal('');
   const shown = createMemo(() =>
-    filterPeople(props.people, query(), props.people.length),
+    filterPeople(everyone(), query(), everyone().length),
   );
+  const canApply = () => chosen() !== null && (editing() || text().trim());
 
   function choose(person: ReviewerLabel) {
     setChosen(person);
     setText(person.name);
   }
 
-  function insert() {
+  function apply() {
     const person = chosen();
-    if (!person || !text().trim()) return;
+    if (!person || !canApply()) return;
     props.close({ name: person.name, text: text().trim() });
   }
 
@@ -32,14 +49,19 @@ export default function PersonSheet(props: PersonSheetProps) {
     <BottomSheet
       open={props.open}
       kicker="Texto"
-      title="Mencionar a una persona"
+      title={editing() ? 'Editar la mención' : 'Mencionar a una persona'}
       compact
       onClose={props.onClose}
     >
       <div class={styles.content}>
         <p class={styles.hint}>
-          La persona queda escrita en el texto y, al tocarla, se abre su tarjeta
-          con el municipio.
+          <Show
+            when={editing()}
+            fallback="La persona queda escrita en el texto y, al tocarla, se abre su tarjeta con el municipio."
+          >
+            Elige a quién apunta este nombre, o quita la mención: el texto se
+            queda como está.
+          </Show>
         </p>
         <input
           class={`${fieldStyles.input} ${styles.search}`}
@@ -73,7 +95,7 @@ export default function PersonSheet(props: PersonSheetProps) {
             )}
           </For>
         </ul>
-        <Show when={chosen()}>
+        <Show when={chosen() && !editing()}>
           <FieldGroup
             title="En el texto"
             hint="Puedes acortarlo («Norberto Giraldo»): seguirá abriendo la tarjeta de esta persona."
@@ -89,16 +111,28 @@ export default function PersonSheet(props: PersonSheetProps) {
           </FieldGroup>
         </Show>
         <div class={styles.row}>
+          <Show when={editing()}>
+            <Button
+              icon={TrashIcon}
+              variant="danger"
+              onClick={() => props.close({ remove: true })}
+            >
+              Quitar mención
+            </Button>
+          </Show>
+          <span class={styles.gap} />
           <Button icon={CloseIcon} onClick={() => props.close()}>
             Cancelar
           </Button>
           <Button
-            icon={AtSignIcon}
+            icon={editing() ? CheckIcon : AtSignIcon}
             variant="primary"
-            disabled={!chosen() || !text().trim()}
-            onClick={insert}
+            disabled={!canApply()}
+            onClick={apply}
           >
-            Insertar
+            <Show when={editing()} fallback="Insertar">
+              Aplicar
+            </Show>
           </Button>
         </div>
       </div>

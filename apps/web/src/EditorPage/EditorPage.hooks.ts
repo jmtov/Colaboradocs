@@ -48,7 +48,7 @@ import {
   withForms,
   withoutLink,
 } from './glossary.utils';
-import { addPerson, samePeople } from './people.utils';
+import { addPerson, samePeople, withoutPerson } from './people.utils';
 import {
   type GlossaryState,
   joinGlossary,
@@ -371,10 +371,34 @@ export function useEditorPage(id: () => string) {
     if (!instance) return;
     const everyone = Object.values(review.snapshot()?.reviewers ?? {});
     const result = await overlay.sheet(PersonSheet, { people: everyone });
-    if (!result) return;
+    if (!result || 'remove' in result) return;
     setPeople((current) => addPerson(current, result.text, result.name));
     instance.chain().focus().insertContent(`${result.text} `).run();
   }
+
+  /** Tocar un nombre de persona del texto: cambiar a quién apunta o quitar la mención. */
+  async function editPerson(key: string, name: string) {
+    const everyone = Object.values(review.snapshot()?.reviewers ?? {});
+    const result = await overlay.sheet(PersonSheet, {
+      people: everyone,
+      current: name,
+    });
+    if (!result) return;
+    if ('remove' in result) {
+      setPeople((current) => withoutPerson(current, key));
+    } else {
+      setPeople((current) => addPerson(current, key, result.name));
+    }
+  }
+
+  // Los nombres marcados en el texto siguen a las personas: al cambiarlas, se repintan.
+  createEffect(() => {
+    people();
+    const instance = editor();
+    if (instance) {
+      instance.view.dispatch(instance.state.tr.setMeta('people', true));
+    }
+  });
 
   /** Abre la hoja de un término (sin posición, uno nuevo) y aplica lo que se decida. */
   async function editTerm(index?: number) {
@@ -591,6 +615,8 @@ export function useEditorPage(id: () => string) {
     cite,
     link,
     mention,
+    editPerson,
+    people,
     editTerm,
     glossaryParts,
     glossary,

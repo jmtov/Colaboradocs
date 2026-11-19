@@ -15,6 +15,7 @@ import {
   DefinitionList,
   DefinitionTerm,
 } from './editor.nodes';
+import { PersonMarks } from './editor.people';
 import { NoteStyle, SectionTitle } from './editor.sections';
 
 /**
@@ -43,6 +44,8 @@ export const createExtensions = (
   options: {
     onSettings?: (id: string) => void;
     onEditCitation?: (pos: number, text: string) => void;
+    getPeople?: () => Record<string, string>;
+    onEditPerson?: (key: string, name: string) => void;
   } = {},
 ) => [
   SectionsDocument,
@@ -70,6 +73,10 @@ export const createExtensions = (
   DefinitionDescription,
   Citation.configure({ onEdit: options.onEditCitation }),
   UndoRedo,
+  PersonMarks.configure({
+    getPeople: options.getPeople,
+    onEdit: options.onEditPerson,
+  }),
 ];
 
 /** El schema sin botón de ajustes (para convertir y probar sin interfaz). */

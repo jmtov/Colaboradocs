@@ -19,6 +19,8 @@ export function useDocumentEditor(props: DocumentEditorProps) {
       extensions: createExtensions({
         onSettings: props.onSettings,
         onEditCitation: props.onEditCitation,
+        getPeople: props.getPeople,
+        onEditPerson: props.onEditPerson,
       }),
       content: sectionsToHtml(props.sections),
       onUpdate: ({ editor: current }) =>

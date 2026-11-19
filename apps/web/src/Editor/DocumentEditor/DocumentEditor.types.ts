@@ -10,6 +10,10 @@ export type DocumentEditorProps = {
   onSettings?: (id: string) => void;
   /** Se llama al tocar una cita («[2, 3]»): su posición en el documento y su texto. */
   onEditCitation?: (pos: number, text: string) => void;
+  /** Las personas del documento (cómo se escribe -> nombre registrado), para marcarlas en el texto. */
+  getPeople?: () => Record<string, string>;
+  /** Se llama al tocar un nombre de persona: su clave y el nombre registrado. */
+  onEditPerson?: (key: string, name: string) => void;
   /** Para quien necesite comandos (barra de herramientas, panel, tests). */
   onReady?: (editor: Editor) => void;
 };

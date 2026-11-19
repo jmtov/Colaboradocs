@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addPerson, samePeople } from './people.utils';
+import { addPerson, samePeople, withoutPerson } from './people.utils';
 
 describe('addPerson', () => {
   it('guarda cómo se escribe en minúsculas, apuntando al nombre registrado', () => {
@@ -26,5 +26,16 @@ describe('samePeople', () => {
     expect(samePeople({ a: 'A', b: 'B' }, { b: 'B', a: 'A' })).toBe(true);
     expect(samePeople({ a: 'A' }, { a: 'X' })).toBe(false);
     expect(samePeople({ a: 'A' }, {})).toBe(false);
+  });
+});
+
+describe('withoutPerson', () => {
+  it('quita solo esa clave', () => {
+    expect(withoutPerson({ a: 'A', b: 'B' }, 'a')).toEqual({ b: 'B' });
+  });
+
+  it('si no está, devuelve el mismo objeto', () => {
+    const terms = { a: 'A' };
+    expect(withoutPerson(terms, 'x')).toBe(terms);
   });
 });

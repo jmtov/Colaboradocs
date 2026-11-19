@@ -979,6 +979,71 @@ describe('EditorPage', () => {
     expect(saved?.sections[0]?.html).toContain('Ana López');
   });
 
+  it('tocar un nombre mencionado deja cambiar a quién apunta', async () => {
+    const published: DocumentContent = {
+      ...PUBLISHED,
+      sections: PUBLISHED.sections.map((section, index) =>
+        index === 0
+          ? { ...section, html: '<p>Hola Ana López</p><p>Mundo</p>' }
+          : section,
+      ),
+      peopleTerms: { 'ana lópez': 'Ana López' },
+    };
+    const calls = fakeApi({
+      published,
+      reviewers: {
+        r1: { name: 'Ana López', municipality: 'La Ceja' },
+        r2: { name: 'Ana María Ruiz', municipality: 'Guarne' },
+      },
+    });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    const mark = host.querySelector('[data-person]') as HTMLElement | null;
+    expect(mark?.dataset.person).toBe('Ana López');
+    mark?.click();
+    await wait(300);
+    expect(document.body.textContent).toContain('Editar la mención');
+    const other = [...document.body.querySelectorAll('button')].find((item) =>
+      item.textContent?.startsWith('Ana María Ruiz'),
+    );
+    if (!other) throw new Error('falta la otra persona');
+    other.click();
+    await wait(20);
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.peopleTerms).toEqual({
+      'ana lópez': 'Ana María Ruiz',
+    });
+  });
+
+  it('«Quitar mención» deja el texto y borra a la persona del documento', async () => {
+    const published: DocumentContent = {
+      ...PUBLISHED,
+      sections: PUBLISHED.sections.map((section, index) =>
+        index === 0
+          ? { ...section, html: '<p>Hola Ana López</p><p>Mundo</p>' }
+          : section,
+      ),
+      peopleTerms: { 'ana lópez': 'Ana López' },
+    };
+    const calls = fakeApi({ published });
+    const host = mount();
+    await editorOf(host);
+    await wait(100);
+    (host.querySelector('[data-person]') as HTMLElement).click();
+    await wait(300);
+    button(document.body, 'Quitar mención').click();
+    await wait(300);
+    expect(host.querySelector('[data-person]')).toBeNull();
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.peopleTerms).toEqual({});
+    expect(calls.puts[0]?.content.sections[0]?.html).toContain('Ana López');
+  });
+
   it('sin fuentes, «Cita» manda a la bibliografía y no deja insertar', async () => {
     fakeApi();
     const host = mount();

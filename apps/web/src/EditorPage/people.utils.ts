@@ -19,3 +19,13 @@ export function samePeople(
     keys.length === Object.keys(b).length && keys.every((k) => a[k] === b[k])
   );
 }
+
+/** Quita a una persona (por cómo se escribe); el texto no cambia, solo deja de ser una mención. */
+export function withoutPerson(
+  terms: Record<string, string>,
+  key: string,
+): Record<string, string> {
+  if (!(key in terms)) return terms;
+  const { [key]: _removed, ...rest } = terms;
+  return rest;
+}
