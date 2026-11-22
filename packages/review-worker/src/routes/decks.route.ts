@@ -11,15 +11,19 @@ import {
   archiveDeck,
   base64ToBytes,
   bytesToBase64,
+  discardDeckDraft,
   findDeck,
+  findDeckDraft,
   findDeckFile,
   findTheme,
   findThemeFile,
   listDeckFilePaths,
   listDecks,
+  listFullThemes,
   listThemes,
   type StoredFile,
   saveDeck,
+  saveDeckDraft,
   saveDeckFile,
   saveTheme,
   saveThemeFile,
@@ -33,6 +37,7 @@ const THEME_FILE_PATTERN = /^[A-Za-z0-9._-]{1,100}$/;
 /** Ruta de un archivo del deck, relativa a `assets/`: sin `..` ni rutas absolutas. */
 const DECK_FILE_PATTERN = /^[A-Za-z0-9._-]+(\/[A-Za-z0-9._-]+)*$/;
 const MAX_FILE_BYTES = 1_000_000;
+const MAX_DRAFT_CHARS = 1_000_000;
 const ALLOWED_TYPES = new Set([
   'font/woff2',
   'image/svg+xml',
@@ -82,6 +87,11 @@ export const decksRoute = new Hono<AppEnv>()
     };
     return c.json(bundle);
   })
+
+  // Todos los temas completos: el editor cambia de tema sin pedir otra vez.
+  .get('/themes', requireReviewer, async (c) =>
+    c.json(await listFullThemes(c.env.DB)),
+  )
 
   // Los archivos piden el PIN igual que todo: el visor los baja con el token y los inserta en la página.
   .get('/themes/:id/files/:file', requireReviewer, async (c) => {
@@ -179,6 +189,61 @@ export const decksRoute = new Hono<AppEnv>()
       new Date().toISOString(),
     );
     return archived ? c.body(null, 204) : errorResponse(c, 'not_found');
+  })
+
+  .get('/admin/decks/:id/draft', async (c) => {
+    const draft = await findDeckDraft(c.env.DB, c.req.param('id'));
+    return draft ? c.json(draft) : errorResponse(c, 'not_found');
+  })
+
+  // El borrador no se valida: puede estar a medias. Solo tiene que ser un deck con su id.
+  .put('/admin/decks/:id/draft', async (c) => {
+    const id = c.req.param('id');
+    const body = await readJsonObject(c);
+    const slides: unknown = body?.slides;
+    if (!body || body.id !== id || !Array.isArray(slides))
+      return errorResponse(c, 'invalid_request', [
+        'El borrador debe ser un deck con el id de la ruta y una lista de slides.',
+      ]);
+    if (JSON.stringify(body).length > MAX_DRAFT_CHARS)
+      return errorResponse(c, 'invalid_request', [
+        'El borrador es demasiado grande.',
+      ]);
+    const saved = await saveDeckDraft(
+      c.env.DB,
+      id,
+      body,
+      new Date().toISOString(),
+    );
+    return saved ? c.body(null, 204) : errorResponse(c, 'not_found');
+  })
+
+  .delete('/admin/decks/:id/draft', async (c) => {
+    await discardDeckDraft(c.env.DB, c.req.param('id'));
+    return c.body(null, 204);
+  })
+
+  // Publicar: se valida el borrador contra su tema y pasa a ser la presentación (guarda la anterior).
+  .post('/admin/decks/:id/publish', async (c) => {
+    const id = c.req.param('id');
+    const draft = await findDeckDraft(c.env.DB, id);
+    if (!draft) return errorResponse(c, 'not_found');
+    const deck = draft.content;
+    const theme = await findTheme(c.env.DB, String(deck.theme));
+    if (!theme)
+      return errorResponse(c, 'invalid_request', [
+        `No existe el tema «${String(deck.theme)}».`,
+      ]);
+    const issues = validateDeck(deck, theme);
+    if (issues.length > 0)
+      return errorResponse(c, 'invalid_request', issueMessages(issues));
+    await saveDeck(
+      c.env.DB,
+      deck,
+      c.get('reviewer').id,
+      new Date().toISOString(),
+    );
+    return c.body(null, 204);
   })
 
   .put('/admin/decks/:id/files/*', async (c) => {

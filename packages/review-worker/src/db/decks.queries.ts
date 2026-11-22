@@ -1,5 +1,6 @@
 import type {
   Deck,
+  DeckDraft,
   DeckListItem,
   Theme,
   ThemeListItem,
@@ -99,7 +100,7 @@ export async function findThemeFile(
 export async function listDecks(db: D1Database): Promise<DeckListItem[]> {
   const { results } = await db
     .prepare(
-      `SELECT id, title, theme_id, content, updated_at FROM decks
+      `SELECT id, title, theme_id, content, updated_at, draft IS NOT NULL AS has_draft FROM decks
        WHERE archived_at IS NULL ORDER BY updated_at DESC, title`,
     )
     .all<{
@@ -108,11 +109,13 @@ export async function listDecks(db: D1Database): Promise<DeckListItem[]> {
       theme_id: string;
       content: string;
       updated_at: string;
+      has_draft: number;
     }>();
   return results.map((row) => ({
     id: row.id,
     title: row.title,
     themeId: row.theme_id,
+    hasDraft: row.has_draft === 1,
     slides: (JSON.parse(row.content) as Deck).slides.length,
     updatedAt: row.updated_at,
   }));
@@ -128,6 +131,55 @@ export async function findDeck(
     .bind(id)
     .first<{ content: string }>();
   return row ? (JSON.parse(row.content) as Deck) : null;
+}
+
+/** Los temas completos, para el editor (que cambia de tema sin otra petición). */
+export async function listFullThemes(db: D1Database): Promise<Theme[]> {
+  const { results } = await db
+    .prepare('SELECT content FROM themes ORDER BY name')
+    .all<{ content: string }>();
+  return results.map((row) => JSON.parse(row.content) as Theme);
+}
+
+export async function findDeckDraft(
+  db: D1Database,
+  id: string,
+): Promise<DeckDraft | null> {
+  const row = await db
+    .prepare(
+      'SELECT draft, draft_at FROM decks WHERE id = ? AND archived_at IS NULL AND draft IS NOT NULL',
+    )
+    .bind(id)
+    .first<{ draft: string; draft_at: string }>();
+  return row
+    ? { content: JSON.parse(row.draft) as Deck, savedAt: row.draft_at }
+    : null;
+}
+
+/** Guarda el borrador (sin validar). Devuelve false si el deck no existe o está archivado. */
+export async function saveDeckDraft(
+  db: D1Database,
+  id: string,
+  content: unknown,
+  now: string,
+): Promise<boolean> {
+  const result = await db
+    .prepare(
+      'UPDATE decks SET draft = ?, draft_at = ? WHERE id = ? AND archived_at IS NULL',
+    )
+    .bind(JSON.stringify(content), now, id)
+    .run();
+  return (result.meta.changes ?? 0) > 0;
+}
+
+export async function discardDeckDraft(
+  db: D1Database,
+  id: string,
+): Promise<void> {
+  await db
+    .prepare('UPDATE decks SET draft = NULL, draft_at = NULL WHERE id = ?')
+    .bind(id)
+    .run();
 }
 
 /** Crea el deck o lo reemplaza (y lo reactiva); lo anterior queda en `deck_versions`. */
@@ -160,7 +212,8 @@ export async function saveDeck(
       .bind(deck.id, existing.content, reviewerId, now),
     db
       .prepare(
-        `UPDATE decks SET title = ?, theme_id = ?, content = ?, updated_at = ?, archived_at = NULL
+        `UPDATE decks SET title = ?, theme_id = ?, content = ?, updated_at = ?, archived_at = NULL,
+           draft = NULL, draft_at = NULL
          WHERE id = ?`,
       )
       .bind(deck.title, deck.theme, content, now, deck.id),

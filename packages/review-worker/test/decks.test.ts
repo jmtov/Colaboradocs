@@ -228,3 +228,92 @@ describe('decks', () => {
     );
   });
 });
+
+describe('borradores y temas completos', () => {
+  beforeEach(async () => {
+    await putJson(admin, '/admin/themes/neutral', neutralTheme);
+    await putJson(admin, '/admin/decks/charla', deck());
+  });
+
+  it('cualquier PIN pide los temas completos', async () => {
+    const themes = (await (await authed(member, '/themes')).json()) as {
+      id: string;
+    }[];
+    expect(themes.map((t) => t.id)).toEqual(['neutral']);
+  });
+
+  it('guarda un borrador incompleto sin validarlo, y no toca lo publicado', async () => {
+    const draft = deck('charla', {
+      title: 'Borrador',
+      slides: [{ kind: 'content', category: 99, body: [] }],
+    });
+    expect(
+      (await putJson(admin, '/admin/decks/charla/draft', draft)).status,
+    ).toBe(204);
+    const got = (await (
+      await authed(admin, '/admin/decks/charla/draft')
+    ).json()) as { content: Deck };
+    expect(got.content.title).toBe('Borrador');
+    const published = (await (
+      await authed(member, '/decks/charla')
+    ).json()) as DeckBundle;
+    expect(published.deck.title).toBe('Deck charla');
+    const list = (await (
+      await authed(admin, '/decks')
+    ).json()) as DeckListItem[];
+    expect(list[0]?.hasDraft).toBe(true);
+  });
+
+  it('rechaza un borrador con otro id o sin slides, y para un deck que no existe', async () => {
+    expect(
+      (await putJson(admin, '/admin/decks/charla/draft', deck('otra'))).status,
+    ).toBe(400);
+    expect(
+      (await putJson(admin, '/admin/decks/charla/draft', { id: 'charla' }))
+        .status,
+    ).toBe(400);
+    expect(
+      (await putJson(admin, '/admin/decks/nada/draft', deck('nada'))).status,
+    ).toBe(404);
+  });
+
+  it('publicar valida: uno inválido se rechaza y el borrador queda; uno válido reemplaza y se borra', async () => {
+    await putJson(
+      admin,
+      '/admin/decks/charla/draft',
+      deck('charla', { slides: [{ kind: 'content', category: 99, body: [] }] }),
+    );
+    expect(
+      (await authed(admin, '/admin/decks/charla/publish', { method: 'POST' }))
+        .status,
+    ).toBe(400);
+    expect((await authed(admin, '/admin/decks/charla/draft')).status).toBe(200);
+
+    await putJson(
+      admin,
+      '/admin/decks/charla/draft',
+      deck('charla', { title: 'Listo' }),
+    );
+    expect(
+      (await authed(admin, '/admin/decks/charla/publish', { method: 'POST' }))
+        .status,
+    ).toBe(204);
+    const bundle = (await (
+      await authed(member, '/decks/charla')
+    ).json()) as DeckBundle;
+    expect(bundle.deck.title).toBe('Listo');
+    expect((await authed(admin, '/admin/decks/charla/draft')).status).toBe(404);
+  });
+
+  it('descartar borra el borrador; solo admins tocan borradores', async () => {
+    await putJson(admin, '/admin/decks/charla/draft', deck());
+    expect((await authed(member, '/admin/decks/charla/draft')).status).toBe(
+      403,
+    );
+    expect(
+      (await authed(admin, '/admin/decks/charla/draft', { method: 'DELETE' }))
+        .status,
+    ).toBe(204);
+    expect((await authed(admin, '/admin/decks/charla/draft')).status).toBe(404);
+  });
+});
