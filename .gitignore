@@ -30,3 +30,9 @@ docs/
 
 # Respaldos de la base (contienen comentarios y hashes de PIN): nunca al repo
 packages/review-worker/backups/
+
+# Presentaciones propias (JSON + `assets/`) y temas de cada organización para importar con
+# `npm run decks`. La de ejemplo sí se versiona.
+decks/*
+!decks/example
+themes/

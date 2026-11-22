@@ -1,0 +1,518 @@
+{
+  "version": 1,
+  "id": "galeria",
+  "title": "Galería de layouts y bloques",
+  "lang": "es",
+  "theme": "neutral",
+  "slides": [
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "00",
+        "text": "cover (probar tono y título)"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Título de portada",
+            "en dos líneas"
+          ],
+          "titleSize": "xl",
+          "subtitle": "Una frase que explica de qué va, con máximo un par de líneas.",
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "chips",
+          "items": [
+            {
+              "text": "Solo etiqueta"
+            },
+            {
+              "text": "Rellena",
+              "variant": "solid"
+            },
+            {
+              "text": "Punteada",
+              "variant": "dashed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "02",
+        "text": "section (probar tono y título)"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Cambio de sección"
+          ],
+          "titleSize": "xl",
+          "col": 1,
+          "row": 1
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "02",
+        "text": "stack · list y note",
+        "minutes": 8,
+        "mode": "inform"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Lista numerada"
+          ],
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "list",
+          "ordered": true,
+          "items": [
+            {
+              "text": "Primer punto",
+              "detail": "Con un detalle debajo"
+            },
+            {
+              "text": "Segundo punto"
+            },
+            {
+              "text": "Tercer punto con icono",
+              "icon": "info"
+            }
+          ]
+        },
+        {
+          "kind": "note",
+          "text": "Una nota al pie, en mono y con filete."
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "03",
+        "text": "stack · modo y lista mediana",
+        "minutes": 11,
+        "mode": "decide"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Modo decidir"
+          ],
+          "subtitle": "La etiqueta del modo (Informar, Conversar, Decidir) se ve en la línea superior; un tema puede ocultarla con eyebrow-mode-display: none.",
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "list",
+          "items": [
+            {
+              "text": "Propuesta escrita",
+              "detail": "Qué, quién la presenta"
+            },
+            {
+              "text": "Se discute"
+            },
+            {
+              "text": "Se decide"
+            }
+          ],
+          "ordered": true,
+          "size": "md"
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "04",
+        "text": "split · qr y cuenta regresiva"
+      },
+      "columns": 2,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Hola",
+            "equipo"
+          ],
+          "titleSize": "xl",
+          "subtitle": "Regístrate desde tu celular.",
+          "col": 1,
+          "row": 1,
+          "span": 1
+        },
+        {
+          "kind": "countdown",
+          "target": "2026-11-22T10:00:00-05:00",
+          "label": "Empezamos en",
+          "col": 1,
+          "row": 2
+        },
+        {
+          "kind": "qr",
+          "src": "assets/qr-registro.svg",
+          "alt": "QR",
+          "link": "ejemplo.org/registro",
+          "col": 2,
+          "row": 1
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "05",
+        "text": "stack · agenda en dos columnas"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Programa del día"
+          ],
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "agenda",
+          "columns": 2,
+          "split": 3,
+          "items": [
+            {
+              "time": "10:00",
+              "minutes": 10,
+              "title": "Bienvenida",
+              "speaker": {
+                "name": "Ana Pérez",
+                "role": "Norte"
+              },
+              "icon": "mic"
+            },
+            {
+              "time": "10:10",
+              "minutes": 15,
+              "title": "Ronda de municipios"
+            },
+            {
+              "time": "10:25",
+              "minutes": 25,
+              "title": "Qué es el encuentro",
+              "detail": "Origen y propósito"
+            },
+            {
+              "time": "11:00",
+              "minutes": 40,
+              "title": "Mesas por eje, ronda 1"
+            },
+            {
+              "type": "highlight",
+              "time": "11:40",
+              "minutes": 15,
+              "title": "Descanso y refrigerio",
+              "icon": "fork"
+            },
+            {
+              "time": "11:55",
+              "minutes": 40,
+              "title": "Mesas por eje, ronda 2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "06",
+        "text": "grid · tarjetas (probar densidad y columnas)"
+      },
+      "columns": 3,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Tres tarjetas"
+          ],
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "card",
+          "kicker": "01",
+          "title": "Tarjeta simple",
+          "text": "Un texto corto que la explica.",
+          "icon": "info"
+        },
+        {
+          "kind": "card",
+          "kicker": "02",
+          "title": "Con fuentes",
+          "text": "Cita sus fuentes.",
+          "sources": [
+            {
+              "label": "Ley",
+              "text": "Art. 19 de los estatutos"
+            },
+            {
+              "label": "Dato",
+              "text": "Acta del 16 de octubre"
+            }
+          ],
+          "icon": "clock"
+        },
+        {
+          "kind": "card",
+          "kicker": "03",
+          "title": "Sobre el acento",
+          "tone": "accent",
+          "text": "Superficie de acento con su texto.",
+          "icon": "mic"
+        },
+        {
+          "kind": "notice",
+          "text": "Un aviso al pie de la cuadrícula.",
+          "icon": "info"
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "07",
+        "text": "split · cifra y personas"
+      },
+      "speaker": {
+        "name": "Marta Ruiz",
+        "role": "Centro"
+      },
+      "columns": 2,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Cifras y personas"
+          ],
+          "col": 1,
+          "row": 1,
+          "span": 1
+        },
+        {
+          "kind": "figure",
+          "value": "29",
+          "unit": "nov",
+          "caption": "Consulta del Zona urbana",
+          "col": 1,
+          "row": 2
+        },
+        {
+          "kind": "person",
+          "person": {
+            "name": "Marta Ruiz",
+            "role": "Moderación general · Centro"
+          },
+          "col": 2,
+          "row": 1
+        },
+        {
+          "kind": "person",
+          "person": {
+            "name": "Pablo Soto",
+            "role": "Control del tiempo · Este"
+          },
+          "col": 2,
+          "row": 2
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "08",
+        "text": "stack · línea de tiempo y fecha"
+      },
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Lo que se viene"
+          ],
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "date-box",
+          "day": "29",
+          "month": "Nov"
+        },
+        {
+          "kind": "timeline",
+          "events": [
+            {
+              "date": "19 nov",
+              "title": "Paro nacional",
+              "detail": "Movilizarnos"
+            },
+            {
+              "date": "22 nov",
+              "title": "Encuentro regional",
+              "detail": "Norte"
+            },
+            {
+              "date": "29 nov",
+              "title": "Consulta",
+              "hollow": true,
+              "detail": "Zona urbana"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "09",
+        "text": "grid · seis categorías"
+      },
+      "columns": 3,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Los seis ejes"
+          ],
+          "col": 1,
+          "row": 1
+        },
+        {
+          "kind": "card",
+          "kicker": "01",
+          "title": "Ambiente, agua y minería",
+          "icon": "info",
+          "category": 0,
+          "footer": "Luis Gómez"
+        },
+        {
+          "kind": "card",
+          "kicker": "02",
+          "title": "Tierra, vivienda y economías locales",
+          "icon": "info",
+          "category": 1,
+          "footer": "Eva Torres"
+        },
+        {
+          "kind": "card",
+          "kicker": "03",
+          "title": "Memoria y seguridad",
+          "icon": "info",
+          "category": 2,
+          "footer": "Iván Rojas"
+        },
+        {
+          "kind": "card",
+          "kicker": "04",
+          "title": "Formación política",
+          "icon": "info",
+          "category": 3,
+          "footer": "Mario Vega"
+        },
+        {
+          "kind": "card",
+          "kicker": "05",
+          "title": "Comunicación y tecnología",
+          "icon": "info",
+          "category": 4,
+          "footer": "Raúl Díaz"
+        },
+        {
+          "kind": "card",
+          "kicker": "06",
+          "title": "Estrategia electoral",
+          "icon": "info",
+          "category": 5,
+          "footer": "Carlos Mora y Elena Paz"
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "category": 0,
+      "eyebrow": {
+        "index": "10",
+        "text": "Eje 1",
+        "minutes": 5
+      },
+      "speaker": {
+        "name": "Luis Gómez",
+        "role": "Sur"
+      },
+      "columns": 2,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "Ambiente,",
+            "agua y minería"
+          ],
+          "subtitle": "Cuidar el agua, los ríos, los bosques y la biodiversidad de la región.",
+          "col": 1,
+          "row": 1,
+          "span": 1
+        },
+        {
+          "kind": "person",
+          "person": {
+            "name": "Luis Gómez",
+            "role": "Representación provisional · Sur"
+          },
+          "col": 1,
+          "row": 2
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "eyebrow": {
+        "index": "11",
+        "text": "split · componente registrado (hand-raise)"
+      },
+      "columns": 2,
+      "body": [
+        {
+          "kind": "heading",
+          "title": [
+            "¿Tienes dudas",
+            "hasta acá?"
+          ],
+          "subtitle": "Levanta la mano.",
+          "col": 1,
+          "row": 1,
+          "span": 1
+        },
+        {
+          "kind": "custom",
+          "component": "hand-raise",
+          "props": {
+            "text": "Levanta la mano y te damos el micrófono"
+          },
+          "col": 1,
+          "row": 2
+        }
+      ]
+    }
+  ]
+}

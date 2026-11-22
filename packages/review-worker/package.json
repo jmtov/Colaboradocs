@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "pins": "tsx scripts/pins.ts",
     "setup": "tsx scripts/setup.ts",
-    "documents": "tsx scripts/documents.ts"
+    "documents": "tsx scripts/documents.ts",
+    "decks": "tsx scripts/decks.ts"
   },
   "dependencies": {
     "@colaboradocs/deck-core": "*",

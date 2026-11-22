@@ -25,7 +25,7 @@ const putFile = (
   token: string,
   path: string,
   type: string,
-  bytes: Uint8Array,
+  bytes: Uint8Array<ArrayBuffer>,
 ) =>
   authed(token, path, {
     method: 'PUT',
