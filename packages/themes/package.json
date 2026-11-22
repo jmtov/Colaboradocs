@@ -1,0 +1,20 @@
+{
+  "name": "@colaboradocs/themes",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@colaboradocs/deck-core": "*",
+    "@colaboradocs/deck-render": "*"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.0"
+  }
+}
