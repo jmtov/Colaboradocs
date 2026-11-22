@@ -13,7 +13,9 @@
     "documents": "tsx scripts/documents.ts"
   },
   "dependencies": {
+    "@colaboradocs/deck-core": "*",
     "@colaboradocs/review-core": "*",
+    "@colaboradocs/themes": "*",
     "hono": "^4.6.0"
   },
   "devDependencies": {

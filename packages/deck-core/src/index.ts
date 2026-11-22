@@ -1,6 +1,7 @@
 export * from './schema/deck.constants';
 export * from './schema/deck.types';
 export * from './schema/deck.utils';
+export * from './schema/deck-api.types';
 export * from './schema/fields.constants';
 export * from './schema/fields.types';
 export * from './schema/fields.utils';
