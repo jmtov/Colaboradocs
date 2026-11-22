@@ -25,7 +25,7 @@ function personHtml(person: Person): string {
   const role = person.role
     ? `<span class="mono">${esc(person.role)}</span>`
     : '';
-  return `<span><b>${esc(person.name)}</b>${role}</span>`;
+  return `<span class="p"><b>${esc(person.name)}</b>${role}</span>`;
 }
 
 function agendaRow(

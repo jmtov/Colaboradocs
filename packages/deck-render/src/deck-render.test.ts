@@ -12,6 +12,7 @@ import {
 } from '@colaboradocs/deck-core';
 import { describe, expect, it } from 'vitest';
 import { mergeRegistries, renderDeck, renderSlides } from './index';
+import { BASE_CSS } from './styles/base.constants';
 
 const theme: Theme = {
   id: 'demo',
@@ -714,5 +715,26 @@ describe('fondo de la slide', () => {
     )[0];
     expect(out).toContain('heading-badge');
     expect(out).toContain('m3 11 18-5v12L3 14v-3z');
+  });
+});
+
+describe('personas en una tarjeta', () => {
+  it('el nombre y el rol van en una fila con separación (no pegados)', () => {
+    const out = renderSlides(
+      deck({
+        kind: 'content',
+        body: [
+          {
+            kind: 'card',
+            title: 'Equipo',
+            people: [{ name: 'Ana', role: 'Norte' }],
+          },
+        ],
+      }),
+    )[0];
+    expect(out).toContain(
+      '<span class="p"><b>Ana</b><span class="mono">Norte</span></span>',
+    );
+    expect(BASE_CSS).toMatch(/\.card \.people \.p \{[^}]*column-gap/);
   });
 });

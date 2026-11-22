@@ -118,6 +118,7 @@ h1, h2, h3, p { margin: 0; }
 .card p { font-size: var(--text-card-text); line-height: 1.4; color: var(--muted); }
 .card .who { margin-top: auto; padding-top: .8rem; border-top: var(--line-w) var(--line-style) var(--line-strong); font: 500 var(--text-card-footer)/1.3 var(--font-mono); color: var(--ink); }
 .card .people { display: grid; gap: .6rem; }
+.card .people .p { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: .7rem; }
 .card.has-category { --accent: var(--c); border-top: 5px solid var(--c); }
 .card.tone-accent { border-color: transparent; }
 .srcs { list-style: none; margin: auto 0 0; padding: .9rem 0 0; border-top: var(--line-w) solid var(--line-strong); display: grid; gap: .6rem; font-size: var(--text-source); line-height: 1.35; color: var(--muted); }
