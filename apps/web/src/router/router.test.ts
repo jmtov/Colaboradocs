@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   adminPath,
+  deckPath,
   documentPath,
   editPath,
   navigate,
@@ -10,6 +11,13 @@ import {
 } from './router';
 
 describe('resolveRoute', () => {
+  it('/p/<id> abre una presentación', () => {
+    expect(resolveRoute('/p/charla')).toEqual({ kind: 'deck', id: 'charla' });
+    expect(resolveRoute('/p/charla/')).toEqual({ kind: 'deck', id: 'charla' });
+    expect(resolveRoute('/p/a/b')).toEqual({ kind: 'missing' });
+    expect(deckPath('mi charla')).toBe('/p/mi%20charla');
+  });
+
   it('/ es la home', () => {
     expect(resolveRoute('/')).toEqual({ kind: 'home' });
     expect(resolveRoute('')).toEqual({ kind: 'home' });

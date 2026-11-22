@@ -15,11 +15,12 @@ export type Route =
   | { kind: 'home' }
   | { kind: 'document'; id: string }
   | { kind: 'edit'; id: string }
+  | { kind: 'deck'; id: string }
   | { kind: 'tasks' }
   | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor y `/tareas` las tareas de quien entró, y `/documentos` y `/accesos` la administración. Lo demás no existe. */
+/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor, `/p/<id>` una presentación y `/tareas` las tareas de quien entró, y `/documentos` y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };
@@ -27,6 +28,14 @@ export function resolveRoute(pathname: string): Route {
   for (const [page, adminPath] of Object.entries(ADMIN_PATHS)) {
     if (path === adminPath)
       return { kind: 'admin', page: page as AdminPageName };
+  }
+  const deck = /^\/p\/([^/]+)$/.exec(path);
+  if (deck) {
+    try {
+      return { kind: 'deck', id: decodeURIComponent(deck[1] ?? '') };
+    } catch {
+      return { kind: 'missing' };
+    }
   }
   const match = /^\/d\/([^/]+)(\/editar)?$/.exec(path);
   if (!match) return { kind: 'missing' };
@@ -44,6 +53,11 @@ export function adminPath(page: AdminPageName): string {
 
 export function documentPath(id: string): string {
   return `/d/${encodeURIComponent(id)}`;
+}
+
+/** Una presentación. */
+export function deckPath(id: string): string {
+  return `/p/${encodeURIComponent(id)}`;
 }
 
 /** El editor de un documento (solo admins). */

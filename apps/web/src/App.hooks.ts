@@ -48,16 +48,18 @@ export function useDocumentRoute(id: () => string) {
 /** La home. Con un solo documento no hay nada que elegir: va directo a él. */
 export function useHomeRoute() {
   const review = useReview();
+  // Sin presentaciones que mostrar; si falla la lista (un servidor sin decks), es como no tener.
+  const [decks] = createResource(() => review.fetchDecks().catch(() => []));
   const single = () => {
     const list = review.documents();
-    return list?.length === 1 ? list[0] : undefined;
+    return list?.length === 1 && decks()?.length === 0 ? list[0] : undefined;
   };
   createEffect(() => {
     const only = single();
     if (only) navigate(documentPath(only.id), { replace: true });
   });
 
-  return { documents: () => review.documents(), single };
+  return { documents: () => review.documents(), decks, single };
 }
 
 /** Estado de la app: espacio, título del documento, transición de páginas y ruta. */
@@ -95,6 +97,11 @@ export function useApp() {
     return current.kind === 'edit' ? current.id : undefined;
   };
 
+  const deckId = () => {
+    const current = route();
+    return current.kind === 'deck' ? current.id : undefined;
+  };
+
   const adminPage = () => {
     const current = route();
     return current.kind === 'admin' ? current.page : undefined;
@@ -109,6 +116,7 @@ export function useApp() {
     documentId,
     viewId,
     editId,
+    deckId,
     adminPage,
   };
 }

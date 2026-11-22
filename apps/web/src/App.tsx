@@ -1,6 +1,7 @@
 import { Button, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 import { lazy, Match, Show, Suspense, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
+import DeckPage from '@/DeckPage/DeckPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
 import HomePage from '@/HomePage/HomePage';
 import RefreshIcon from '@/icons/RefreshIcon';
@@ -61,13 +62,14 @@ function HomeRoute(props: { name: string; description?: string }) {
 
   return (
     <Show
-      when={home.documents() && !home.single()}
+      when={home.documents() && home.decks() && !home.single()}
       fallback={<Loading>Cargando…</Loading>}
     >
       <HomePage
         name={props.name}
         description={props.description}
         documents={home.documents() ?? []}
+        decks={home.decks() ?? []}
       />
     </Show>
   );
@@ -103,6 +105,9 @@ export default function App() {
                   <EditorPage id={id} name={app.name()} />
                 </Suspense>
               )}
+            </Match>
+            <Match when={app.deckId()} keyed>
+              {(id) => <DeckPage id={id} name={app.name()} />}
             </Match>
             <Match when={app.viewId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}

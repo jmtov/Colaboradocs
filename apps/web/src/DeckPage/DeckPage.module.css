@@ -1,0 +1,20 @@
+/* Barra arriba, la presentación ocupa el resto de la pantalla. */
+.page {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100dvh;
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--bg);
+}
+
+.status {
+  display: grid;
+  place-items: center;
+  font: var(--font-size-sm) var(--font-mono);
+  color: var(--muted);
+}

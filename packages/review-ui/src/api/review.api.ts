@@ -1,3 +1,4 @@
+import type { DeckBundle, DeckListItem } from '@colaboradocs/deck-core';
 import type {
   ApiError,
   ApiErrorCode,
@@ -124,6 +125,19 @@ export function createReviewApi(options: ApiOptions) {
     async fetchContent(id: string): Promise<DocumentContent> {
       const response = await request(`/${id}/content`, {}, '/documents');
       return (await response.json()) as DocumentContent;
+    },
+    async fetchDecks(): Promise<DeckListItem[]> {
+      const response = await request('', {}, '/decks');
+      return (await response.json()) as DeckListItem[];
+    },
+    async fetchDeck(id: string): Promise<DeckBundle> {
+      const response = await request(`/${id}`, {}, '/decks');
+      return (await response.json()) as DeckBundle;
+    },
+    /** Un archivo de un tema (`/themes/<id>/files/<file>`) o de un deck (`/decks/<id>/files/<ruta>`). */
+    async fetchFile(path: string): Promise<Blob> {
+      const response = await request('', {}, path);
+      return await response.blob();
     },
     async fetchVersions(id: string): Promise<DocumentVersionItem[]> {
       const response = await request(`/${id}/versions`, {}, '/documents');

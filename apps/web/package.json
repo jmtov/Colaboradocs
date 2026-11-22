@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@colaboradocs/deck-core": "*",
+    "@colaboradocs/deck-render": "*",
     "@colaboradocs/doc-import": "*",
     "@colaboradocs/review-core": "*",
     "@colaboradocs/review-ui": "*",
@@ -29,6 +31,7 @@
     "solid-js": "^1.9.3"
   },
   "devDependencies": {
+    "@colaboradocs/themes": "*",
     "happy-dom": "^21.0.4",
     "vite": "^6.0.3",
     "vite-plugin-solid": "^2.11.0",

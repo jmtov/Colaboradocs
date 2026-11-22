@@ -1,8 +1,9 @@
+import type { DeckListItem } from '@colaboradocs/deck-core';
 import { For, Show } from 'solid-js';
 import type { DocumentListItem } from '@/content/content.types';
 import PlusIcon from '@/icons/PlusIcon';
 import Link from '@/router/Link';
-import { documentPath } from '@/router/router';
+import { deckPath, documentPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
 import DocumentMenu from './components/DocumentMenu/DocumentMenu';
 import { useHomePage } from './HomePage.hooks';
@@ -13,6 +14,7 @@ type Props = {
   name: string;
   description?: string;
   documents: DocumentListItem[];
+  decks: DeckListItem[];
 };
 
 export default function HomePage(props: Props) {
@@ -110,6 +112,33 @@ export default function HomePage(props: Props) {
             </li>
           </Show>
         </ul>
+        <Show when={props.decks.length > 0}>
+          <section class={styles.section}>
+            <span class={styles.eyebrow}>
+              {props.decks.length}{' '}
+              {props.decks.length === 1 ? 'presentación' : 'presentaciones'}
+            </span>
+            <ul class={styles.grid}>
+              <For each={props.decks}>
+                {(deck) => (
+                  <li class={styles.item}>
+                    <Link lift href={deckPath(deck.id)} class={styles.card}>
+                      <span class={styles.meta}>
+                        {deck.slides} {deck.slides === 1 ? 'slide' : 'slides'}
+                      </span>
+                      <span class={styles.cardTitle}>{deck.title}</span>
+                      <span class={styles.footer}>
+                        <span class={styles.last}>
+                          {timeAgo(deck.updatedAt)}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </section>
+        </Show>
       </main>
     </>
   );

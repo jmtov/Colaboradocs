@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import type { DeckListItem } from '@colaboradocs/deck-core';
 import { ReviewProvider } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -33,7 +34,7 @@ function signIn(isAdmin = false) {
   );
 }
 
-function mount(documents: DocumentListItem[]) {
+function mount(documents: DocumentListItem[], decks: DeckListItem[] = []) {
   vi.stubGlobal(
     'fetch',
     vi.fn(async () => new Response(JSON.stringify(documents), { status: 200 })),
@@ -43,7 +44,11 @@ function mount(documents: DocumentListItem[]) {
   render(
     () => (
       <ReviewProvider>
-        <HomePage name="Espacio de prueba" documents={documents} />
+        <HomePage
+          name="Espacio de prueba"
+          documents={documents}
+          decks={decks}
+        />
       </ReviewProvider>
     ),
     host,
@@ -58,6 +63,31 @@ afterEach(() => {
 });
 
 describe('HomePage', () => {
+  it('muestra las presentaciones con enlace a /p/<id>, y nada si no hay', async () => {
+    signIn();
+    const host = mount(
+      [item('a')],
+      [
+        {
+          id: 'charla',
+          title: 'Mi charla',
+          themeId: 'neutral',
+          slides: 3,
+          updatedAt: new Date().toISOString(),
+        },
+      ],
+    );
+    await wait();
+    const link = host.querySelector<HTMLAnchorElement>('a[href="/p/charla"]');
+    expect(link?.textContent).toContain('Mi charla');
+    expect(link?.textContent).toContain('3 slides');
+    expect(host.textContent).toContain('1 presentación');
+    host.remove();
+    const empty = mount([item('a')]);
+    await wait();
+    expect(empty.querySelector('a[href^="/p/"]')).toBeNull();
+  });
+
   it('muestra una tarjeta por documento, con su actividad', async () => {
     signIn();
     const host = mount([

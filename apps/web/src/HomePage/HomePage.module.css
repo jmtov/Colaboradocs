@@ -215,3 +215,9 @@
 .item:hover {
   z-index: var(--z-raised);
 }
+
+.section {
+  display: grid;
+  gap: 1rem;
+  padding-top: 2.5rem;
+}
