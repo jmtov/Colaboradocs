@@ -1,0 +1,57 @@
+/* Globales del editor a propósito (se usan como texto en sus componentes), limitadas a su raíz. */
+[data-deck-editor] {
+  --surface: var(--bg);
+  --panel-width: 400px;
+  --sheet-top-gap: 100px;
+}
+
+[data-deck-editor] .input {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+[data-deck-editor] .input:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -1px;
+}
+
+[data-deck-editor] textarea.input {
+  resize: vertical;
+  min-height: 3.2rem;
+}
+
+[data-deck-editor] .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+[data-deck-editor] .btn:hover:not(:disabled) {
+  border-color: var(--fg);
+}
+
+[data-deck-editor] .btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+[data-deck-editor] .btn.on {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+[data-deck-editor] .btn.danger {
+  color: var(--danger);
+}
+
+[data-deck-editor] .muted {
+  color: var(--muted);
+}

@@ -14,10 +14,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Título de portada",
-            "en dos líneas"
-          ],
+          "title": ["Título de portada", "en dos líneas"],
           "titleSize": "xl",
           "subtitle": "Una frase que explica de qué va, con máximo un par de líneas.",
           "col": 1,
@@ -50,9 +47,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Cambio de sección"
-          ],
+          "title": ["Cambio de sección"],
           "titleSize": "xl",
           "col": 1,
           "row": 1
@@ -70,9 +65,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Lista numerada"
-          ],
+          "title": ["Lista numerada"],
           "col": 1,
           "row": 1
         },
@@ -110,9 +103,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Modo decidir"
-          ],
+          "title": ["Modo decidir"],
           "subtitle": "La etiqueta del modo (Informar, Conversar, Decidir) se ve en la línea superior; un tema puede ocultarla con eyebrow-mode-display: none.",
           "col": 1,
           "row": 1
@@ -146,10 +137,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Hola",
-            "equipo"
-          ],
+          "title": ["Hola", "equipo"],
           "titleSize": "xl",
           "subtitle": "Regístrate desde tu celular.",
           "col": 1,
@@ -182,9 +170,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Programa del día"
-          ],
+          "title": ["Programa del día"],
           "col": 1,
           "row": 1
         },
@@ -245,9 +231,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Tres tarjetas"
-          ],
+          "title": ["Tres tarjetas"],
           "col": 1,
           "row": 1
         },
@@ -304,9 +288,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Cifras y personas"
-          ],
+          "title": ["Cifras y personas"],
           "col": 1,
           "row": 1,
           "span": 1
@@ -348,9 +330,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Lo que se viene"
-          ],
+          "title": ["Lo que se viene"],
           "col": 1,
           "row": 1
         },
@@ -392,9 +372,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Los seis ejes"
-          ],
+          "title": ["Los seis ejes"],
           "col": 1,
           "row": 1
         },
@@ -464,10 +442,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "Ambiente,",
-            "agua y minería"
-          ],
+          "title": ["Ambiente,", "agua y minería"],
           "subtitle": "Cuidar el agua, los ríos, los bosques y la biodiversidad de la región.",
           "col": 1,
           "row": 1,
@@ -494,10 +469,7 @@
       "body": [
         {
           "kind": "heading",
-          "title": [
-            "¿Tienes dudas",
-            "hasta acá?"
-          ],
+          "title": ["¿Tienes dudas", "hasta acá?"],
           "subtitle": "Levanta la mano.",
           "col": 1,
           "row": 1,

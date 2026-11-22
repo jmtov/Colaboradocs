@@ -14,6 +14,10 @@ describe('resolveRoute', () => {
   it('/p/<id> abre una presentación', () => {
     expect(resolveRoute('/p/charla')).toEqual({ kind: 'deck', id: 'charla' });
     expect(resolveRoute('/p/charla/')).toEqual({ kind: 'deck', id: 'charla' });
+    expect(resolveRoute('/p/charla/editar')).toEqual({
+      kind: 'deck-edit',
+      id: 'charla',
+    });
     expect(resolveRoute('/p/a/b')).toEqual({ kind: 'missing' });
     expect(deckPath('mi charla')).toBe('/p/mi%20charla');
   });

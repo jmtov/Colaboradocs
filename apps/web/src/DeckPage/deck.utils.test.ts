@@ -23,7 +23,7 @@ const bundle: DeckBundle = {
 
 describe('themeFontFiles', () => {
   it('lista las fuentes del tema sin repetir', () => {
-    expect(themeFontFiles(bundle)).toEqual([
+    expect(themeFontFiles(bundle.theme)).toEqual([
       'geist-400.woff2',
       'geist-500.woff2',
       'geist-600.woff2',

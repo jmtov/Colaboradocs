@@ -13,6 +13,7 @@ import styles from './App.module.css';
 
 // Tiptap/ProseMirror (~350 kB) solo se descarga al abrir el editor.
 const EditorPage = lazy(() => import('@/EditorPage/EditorPage'));
+const DeckEditorPage = lazy(() => import('@/DeckEditor/DeckEditorPage'));
 
 /** Un documento: pide su contenido a la API al abrirlo. */
 function DocumentRoute(props: { id: string }) {
@@ -70,6 +71,7 @@ function HomeRoute(props: { name: string; description?: string }) {
         description={props.description}
         documents={home.documents() ?? []}
         decks={home.decks() ?? []}
+        onDecksChange={() => void home.refetchDecks()}
       />
     </Show>
   );
@@ -103,6 +105,13 @@ export default function App() {
               {(id) => (
                 <Suspense fallback={<Loading>Cargando el editor…</Loading>}>
                   <EditorPage id={id} name={app.name()} />
+                </Suspense>
+              )}
+            </Match>
+            <Match when={app.deckEditId()} keyed>
+              {(id) => (
+                <Suspense fallback={<Loading>Cargando el editor…</Loading>}>
+                  <DeckEditorPage id={id} />
                 </Suspense>
               )}
             </Match>

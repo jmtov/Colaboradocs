@@ -5,6 +5,7 @@ import PlusIcon from '@/icons/PlusIcon';
 import Link from '@/router/Link';
 import { deckPath, documentPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
+import DeckMenu from './components/DeckMenu/DeckMenu';
 import DocumentMenu from './components/DocumentMenu/DocumentMenu';
 import { useHomePage } from './HomePage.hooks';
 import styles from './HomePage.module.css';
@@ -15,6 +16,8 @@ type Props = {
   description?: string;
   documents: DocumentListItem[];
   decks: DeckListItem[];
+  /** Tras archivar una presentación: volver a pedir la lista. */
+  onDecksChange?: () => void;
 };
 
 export default function HomePage(props: Props) {
@@ -112,7 +115,7 @@ export default function HomePage(props: Props) {
             </li>
           </Show>
         </ul>
-        <Show when={props.decks.length > 0}>
+        <Show when={props.decks.length > 0 || home.isAdmin()}>
           <section class={styles.section}>
             <span class={styles.eyebrow}>
               {props.decks.length}{' '}
@@ -122,9 +125,20 @@ export default function HomePage(props: Props) {
               <For each={props.decks}>
                 {(deck) => (
                   <li class={styles.item}>
-                    <Link lift href={deckPath(deck.id)} class={styles.card}>
+                    <Link
+                      lift
+                      href={deckPath(deck.id)}
+                      class={
+                        home.isAdmin()
+                          ? `${styles.card} ${styles.withMenu}`
+                          : styles.card
+                      }
+                    >
                       <span class={styles.meta}>
                         {deck.slides} {deck.slides === 1 ? 'slide' : 'slides'}
+                        <Show when={home.isAdmin() && deck.hasDraft}>
+                          {' · borrador sin publicar'}
+                        </Show>
                       </span>
                       <span class={styles.cardTitle}>{deck.title}</span>
                       <span class={styles.footer}>
@@ -133,9 +147,31 @@ export default function HomePage(props: Props) {
                         </span>
                       </span>
                     </Link>
+                    <Show when={home.isAdmin()}>
+                      <div class={styles.menu}>
+                        <DeckMenu
+                          id={deck.id}
+                          title={deck.title}
+                          onChange={() => props.onDecksChange?.()}
+                        />
+                      </div>
+                    </Show>
                   </li>
                 )}
               </For>
+              <Show when={home.isAdmin()}>
+                <li class={styles.item}>
+                  <button
+                    type="button"
+                    class={`${styles.card} ${styles.add}`}
+                    onClick={home.openNewDeck}
+                  >
+                    <PlusIcon class={styles.addIcon} />
+                    <span class={styles.addLabel}>Nueva presentación</span>
+                    <span class={styles.addHint}>Desde cero o un JSON</span>
+                  </button>
+                </li>
+              </Show>
             </ul>
           </section>
         </Show>

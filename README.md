@@ -13,6 +13,7 @@ Pensado para cualquier documento con secciones que un equipo tenga que revisar.
 | `packages/review-core` | TypeScript puro, sin dependencias: tipos del API y del documento, **validación y limpieza de documentos**, ids estables de bloque, hilos, OK y PIN. Con tests. |
 | `packages/review-worker` | API en Cloudflare Worker (Hono) + D1: login por PIN, **documentos**, comentarios, OK, accesos. También sirve la página estática. CLI de PIN y de documentos. |
 | `packages/review-ui` | Componentes Solid reusables: `ReviewProvider`, `PinGate`, `BlockLayer`, `AccessPanel`, `BottomSheet`, `OverlayProvider`, y el estado (sesión, documentos, accesos). El contenido solo tiene que marcar sus bloques con `data-block-id` (ver `assignBlockIds` en `review-core`). |
+| `packages/deck-core`, `deck-render`, `themes` | Presentaciones como datos: esquema, validación y descriptores de campos (`deck-core`), datos → HTML autocontenido (`deck-render`) y el tema neutro (`themes`). Los temas de cada organización son JSON en la base. Ver [`ESQUEMA.md`](packages/deck-core/ESQUEMA.md). |
 | `packages/doc-import` | Convierte Word (.docx), Markdown y JSON a un documento válido. Lo usan el CLI y la pantalla de subida (en el navegador). |
 | `apps/web` | La página (Vite + Solid): home, documentos y pantallas de administración. **No trae documentos**: los pide a la API. |
 | `documents/` | Documentos de ejemplo/origen para importar por CLI. El de ejemplo se versiona; los propios no (están en `.gitignore`). |

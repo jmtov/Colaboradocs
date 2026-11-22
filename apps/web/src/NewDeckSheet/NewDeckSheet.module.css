@@ -1,0 +1,49 @@
+.content {
+  display: grid;
+  gap: 1rem;
+}
+
+.label {
+  display: grid;
+  gap: 0.375rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.field {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  font-size: var(--font-size-md);
+  font-weight: 400;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.problem,
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.problem {
+  padding: 0.75rem 0.875rem;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.hint {
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

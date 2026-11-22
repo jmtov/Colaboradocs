@@ -16,11 +16,12 @@ export type Route =
   | { kind: 'document'; id: string }
   | { kind: 'edit'; id: string }
   | { kind: 'deck'; id: string }
+  | { kind: 'deck-edit'; id: string }
   | { kind: 'tasks' }
   | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor, `/p/<id>` una presentación y `/tareas` las tareas de quien entró, y `/documentos` y `/accesos` la administración. Lo demás no existe. */
+/** `/` es la home, `/d/<id>` un documento, `/d/<id>/editar` su editor, `/p/<id>` una presentación y `/p/<id>/editar` su editor y `/tareas` las tareas de quien entró, y `/documentos` y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };
@@ -29,10 +30,11 @@ export function resolveRoute(pathname: string): Route {
     if (path === adminPath)
       return { kind: 'admin', page: page as AdminPageName };
   }
-  const deck = /^\/p\/([^/]+)$/.exec(path);
+  const deck = /^\/p\/([^/]+)(\/editar)?$/.exec(path);
   if (deck) {
     try {
-      return { kind: 'deck', id: decodeURIComponent(deck[1] ?? '') };
+      const id = decodeURIComponent(deck[1] ?? '');
+      return deck[2] ? { kind: 'deck-edit', id } : { kind: 'deck', id };
     } catch {
       return { kind: 'missing' };
     }
@@ -58,6 +60,11 @@ export function documentPath(id: string): string {
 /** Una presentación. */
 export function deckPath(id: string): string {
   return `/p/${encodeURIComponent(id)}`;
+}
+
+/** El editor de una presentación (solo admins). */
+export function deckEditPath(id: string): string {
+  return `${deckPath(id)}/editar`;
 }
 
 /** El editor de un documento (solo admins). */

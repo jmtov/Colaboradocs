@@ -49,7 +49,9 @@ export function useDocumentRoute(id: () => string) {
 export function useHomeRoute() {
   const review = useReview();
   // Sin presentaciones que mostrar; si falla la lista (un servidor sin decks), es como no tener.
-  const [decks] = createResource(() => review.fetchDecks().catch(() => []));
+  const [decks, { refetch: refetchDecks }] = createResource(() =>
+    review.fetchDecks().catch(() => []),
+  );
   const single = () => {
     const list = review.documents();
     return list?.length === 1 && decks()?.length === 0 ? list[0] : undefined;
@@ -59,7 +61,7 @@ export function useHomeRoute() {
     if (only) navigate(documentPath(only.id), { replace: true });
   });
 
-  return { documents: () => review.documents(), decks, single };
+  return { documents: () => review.documents(), decks, refetchDecks, single };
 }
 
 /** Estado de la app: espacio, título del documento, transición de páginas y ruta. */
@@ -102,6 +104,11 @@ export function useApp() {
     return current.kind === 'deck' ? current.id : undefined;
   };
 
+  const deckEditId = () => {
+    const current = route();
+    return current.kind === 'deck-edit' ? current.id : undefined;
+  };
+
   const adminPage = () => {
     const current = route();
     return current.kind === 'admin' ? current.page : undefined;
@@ -117,6 +124,7 @@ export function useApp() {
     viewId,
     editId,
     deckId,
+    deckEditId,
     adminPage,
   };
 }

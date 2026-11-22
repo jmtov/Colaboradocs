@@ -1,0 +1,27 @@
+.grid {
+  min-width: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.cell {
+  all: unset;
+  box-sizing: border-box;
+  height: 1.8rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+}
+.on {
+  border-color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 22%, var(--surface));
+}
+.help {
+  margin: 0.4rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--muted);
+}

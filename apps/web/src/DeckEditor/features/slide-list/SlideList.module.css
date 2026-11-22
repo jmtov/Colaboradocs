@@ -1,0 +1,85 @@
+.wrapper {
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.row {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid transparent;
+}
+.row:hover {
+  border-color: var(--line-strong);
+}
+.on {
+  background: var(--fg);
+  color: var(--bg);
+}
+.item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.number {
+  font: var(--font-size-xs) var(--font-mono);
+  opacity: 0.6;
+}
+.text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-sm);
+}
+.kind {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-xs);
+  opacity: 0.6;
+}
+/* El botón de acciones aparece al pasar el cursor, al enfocar o en la slide elegida. */
+.more {
+  align-self: center;
+  opacity: 0;
+}
+.row:hover .more,
+.row:focus-within .more,
+.on .more {
+  opacity: 1;
+}
+.on .more:hover,
+.on .more:focus-visible {
+  border-color: var(--bg);
+}
+.add {
+  padding: 0 0.1rem;
+}
+.addButton {
+  width: 100%;
+  justify-content: flex-start;
+  border-color: var(--line-strong);
+  font-size: var(--font-size-sm);
+}

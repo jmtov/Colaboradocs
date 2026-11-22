@@ -1,0 +1,37 @@
+.grid {
+  display: grid;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  touch-action: none;
+  user-select: none;
+}
+.cell {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  min-height: 2.2rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+.cell:hover {
+  border-color: var(--fg);
+}
+.other {
+  background: color-mix(in srgb, var(--fg) 8%, var(--surface));
+}
+.mine {
+  border-color: var(--fg);
+  background: var(--fg);
+  color: var(--surface);
+}
+.help {
+  margin: 0.4rem 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--muted);
+}

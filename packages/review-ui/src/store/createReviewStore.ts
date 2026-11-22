@@ -1,3 +1,4 @@
+import type { Deck } from '@colaboradocs/deck-core';
 import type {
   DocumentContent,
   DocumentListItem,
@@ -325,6 +326,13 @@ export function createReviewStore(options: ReviewStoreOptions) {
     fetchDecks: () => api.fetchDecks(),
     fetchDeck: (id: string) => api.fetchDeck(id),
     fetchFile: (path: string) => api.fetchFile(path),
+    fetchThemes: () => api.fetchThemes(),
+    putDeck: (deck: Deck) => api.putDeck(deck),
+    archiveDeck: (id: string) => api.archiveDeck(id),
+    fetchDeckDraft: (id: string) => api.fetchDeckDraft(id),
+    saveDeckDraft: (deck: Deck) => api.saveDeckDraft(deck),
+    discardDeckDraft: (id: string) => api.discardDeckDraft(id),
+    publishDeckDraft: (id: string) => api.publishDeckDraft(id),
     /** Versiones del documento: la actual y las que se reemplazaron. */
     fetchVersions: (id: string) => api.fetchVersions(id),
     loadDocuments,

@@ -1,0 +1,93 @@
+.blocks {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.6rem;
+}
+.row + .row {
+  border-top: 1px solid var(--line);
+}
+.active {
+  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+}
+.label {
+  all: unset;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+.name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+.summary {
+  overflow: hidden;
+  font-size: var(--font-size-xs);
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.55rem;
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+.addButton:hover {
+  border-style: solid;
+  border-color: var(--fg);
+}
+
+.kinds {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line-strong);
+}
+.kinds li + li {
+  border-top: 1px solid var(--line);
+}
+.kind {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  font-size: var(--font-size-md);
+  cursor: pointer;
+}
+.kind:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+}
+.kind:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+.kind small {
+  font-size: var(--font-size-xs);
+}

@@ -1,0 +1,10 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--line-strong);
+  background: var(--line);
+}
+.card > * {
+  background: var(--surface);
+}

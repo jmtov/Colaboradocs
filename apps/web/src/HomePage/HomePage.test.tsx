@@ -73,6 +73,7 @@ describe('HomePage', () => {
           title: 'Mi charla',
           themeId: 'neutral',
           slides: 3,
+          hasDraft: false,
           updatedAt: new Date().toISOString(),
         },
       ],
@@ -132,9 +133,24 @@ describe('HomePage', () => {
     expect(
       admin.querySelector('button[aria-label="Acciones de «Documento a»"]'),
     ).not.toBeNull();
-    const cells = admin.querySelectorAll('ul > li');
+    // la primera grilla es la de documentos
+    const cells = admin.querySelector('ul')?.querySelectorAll(':scope > li');
     expect(cells).toHaveLength(3);
-    expect(cells[2]?.textContent).toContain('Subir documento');
+    expect(cells?.[2]?.textContent).toContain('Subir documento');
+  });
+
+  it('el admin ve la sección de presentaciones con «Nueva presentación» aunque no haya ninguna; los demás no', async () => {
+    signIn(true);
+    const admin = mount([item('a')]);
+    await wait();
+    expect(admin.textContent).toContain('0 presentaciones');
+    expect(admin.textContent).toContain('Nueva presentación');
+    document.body.innerHTML = '';
+    signIn(false);
+    const member = mount([item('a')]);
+    await wait();
+    expect(member.textContent).not.toContain('presentaciones');
+    expect(member.textContent).not.toContain('Nueva presentación');
   });
 
   it('el menú no queda dentro del enlace de la tarjeta', async () => {

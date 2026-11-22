@@ -1,4 +1,10 @@
-import type { DeckBundle, DeckListItem } from '@colaboradocs/deck-core';
+import type {
+  Deck,
+  DeckBundle,
+  DeckDraft,
+  DeckListItem,
+  Theme,
+} from '@colaboradocs/deck-core';
 import type {
   ApiError,
   ApiErrorCode,
@@ -133,6 +139,47 @@ export function createReviewApi(options: ApiOptions) {
     async fetchDeck(id: string): Promise<DeckBundle> {
       const response = await request(`/${id}`, {}, '/decks');
       return (await response.json()) as DeckBundle;
+    },
+    async fetchThemes(): Promise<Theme[]> {
+      const response = await request('', {}, '/themes');
+      return (await response.json()) as Theme[];
+    },
+    /** Crea o reemplaza una presentación publicada (admins); se valida en el servidor. */
+    async putDeck(deck: Deck): Promise<{ created: boolean }> {
+      const response = await request(
+        `/decks/${deck.id}`,
+        { method: 'PUT', body: JSON.stringify(deck) },
+        '/admin',
+      );
+      return (await response.json()) as { created: boolean };
+    },
+    async archiveDeck(id: string): Promise<void> {
+      await request(`/decks/${id}`, { method: 'DELETE' }, '/admin');
+    },
+    /** El borrador del editor, o null si no hay (admins). */
+    async fetchDeckDraft(id: string): Promise<DeckDraft | null> {
+      try {
+        const response = await request(`/decks/${id}/draft`, {}, '/admin');
+        return (await response.json()) as DeckDraft;
+      } catch (error) {
+        if (error instanceof ApiRequestError && error.code === 'not_found') {
+          return null;
+        }
+        throw error;
+      }
+    },
+    async saveDeckDraft(deck: Deck): Promise<void> {
+      await request(
+        `/decks/${deck.id}/draft`,
+        { method: 'PUT', body: JSON.stringify(deck) },
+        '/admin',
+      );
+    },
+    async discardDeckDraft(id: string): Promise<void> {
+      await request(`/decks/${id}/draft`, { method: 'DELETE' }, '/admin');
+    },
+    async publishDeckDraft(id: string): Promise<void> {
+      await request(`/decks/${id}/publish`, { method: 'POST' }, '/admin');
     },
     /** Un archivo de un tema (`/themes/<id>/files/<file>`) o de un deck (`/decks/<id>/files/<ruta>`). */
     async fetchFile(path: string): Promise<Blob> {

@@ -1,0 +1,39 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.8rem;
+  flex-wrap: wrap;
+}
+.title {
+  margin-right: 0.5rem;
+}
+.field {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+.field :global(.input) {
+  width: auto;
+  min-width: 10rem;
+  color: var(--fg);
+}
+.spacer {
+  flex: 1;
+}
+.issues {
+  color: var(--danger);
+  font-size: var(--font-size-sm);
+  cursor: help;
+}
+.message {
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.on {
+  border-color: rgb(220 38 38 / 0.7);
+  background: rgb(220 38 38 / 0.08);
+}

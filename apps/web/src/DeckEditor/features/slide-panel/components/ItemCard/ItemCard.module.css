@@ -1,0 +1,28 @@
+.item {
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  list-style: none;
+  background: color-mix(in srgb, var(--fg) 4%, var(--surface));
+}
+.bar::-webkit-details-marker {
+  display: none;
+}
+.name {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 0.7rem;
+  border-top: 1px solid var(--line-strong);
+}

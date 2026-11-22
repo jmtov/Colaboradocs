@@ -1,0 +1,40 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem 1rem;
+  min-height: 2.7rem;
+  padding: 0.2rem 0.8rem;
+  font-size: var(--font-size-sm);
+}
+.row:focus-within {
+  background: color-mix(in srgb, var(--fg) 4%, var(--surface));
+}
+.tall {
+  align-items: flex-start;
+  padding-top: 0.55rem;
+  padding-bottom: 0.3rem;
+}
+.label {
+  flex: 0 0 7.5rem;
+  color: var(--fg);
+}
+.required {
+  color: var(--danger);
+}
+.value {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.tall .value {
+  align-items: flex-start;
+  justify-content: stretch;
+}
+.help {
+  flex: 1 1 100%;
+  color: var(--muted);
+  font-size: var(--font-size-xs);
+}
