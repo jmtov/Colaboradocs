@@ -186,3 +186,53 @@ describe('validateDeck', () => {
     expect(paths).toContain('slides[0].eyebrow.minutes');
   });
 });
+
+describe('validateDeck · fondo de la slide', () => {
+  const layer = {
+    src: 'assets/fondo.webp',
+    ratio: '1000 / 1063',
+    width: 90,
+    x: 86,
+    y: 80,
+  };
+  const paths = (background: unknown[]) =>
+    validateDeck(
+      deckWith({
+        kind: 'content',
+        body: [],
+        background,
+      } as unknown as Slide),
+      theme,
+    ).map((i) => i.path);
+
+  it('una capa completa es válida', () => {
+    expect(
+      paths([layer, { ...layer, mode: 'silhouette', tint: 'bg', opacity: 70 }]),
+    ).toEqual([]);
+  });
+
+  it('señala cada campo malo con su ruta', () => {
+    expect(
+      paths([
+        {
+          src: 'assets/mi fondo (1).png',
+          ratio: '1;color:red',
+          width: 0,
+          x: '50',
+          y: 1,
+          mode: 'otro',
+          tint: 'rojo',
+          opacity: 120,
+        },
+      ]),
+    ).toEqual([
+      'slides[0].background[0].src',
+      'slides[0].background[0].ratio',
+      'slides[0].background[0].width',
+      'slides[0].background[0].x',
+      'slides[0].background[0].mode',
+      'slides[0].background[0].tint',
+      'slides[0].background[0].opacity',
+    ]);
+  });
+});

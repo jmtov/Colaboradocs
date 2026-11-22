@@ -141,6 +141,7 @@ describe('partes del panel', () => {
     const [general, content, other] = partsOf(SLIDE_DESCRIPTORS.content.fields);
     expect(general?.fields.every((f) => f.group === STYLE_GROUP)).toBe(true);
     expect(content?.fields.map((f) => f.key)).toEqual([
+      'background',
       'eyebrow',
       'body',
       'speaker',

@@ -1,11 +1,13 @@
 import { Button, useReview } from '@colaboradocs/review-ui';
 import { Match, Show, Switch } from 'solid-js';
+import ChevronDownIcon from '@/icons/ChevronDownIcon';
+import ChevronUpIcon from '@/icons/ChevronUpIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import PageBar from '@/PageBar/PageBar';
 import { deckEditPath, navigate } from '@/router/router';
-import { useDeckPage } from './DeckPage.hooks';
+import { useBarHidden, useDeckPage } from './DeckPage.hooks';
 import styles from './DeckPage.module.css';
 
 type Props = { id: string; name: string };
@@ -13,6 +15,7 @@ type Props = { id: string; name: string };
 /** Una presentación: se dibuja en un iframe aislado (solo scripts, sin acceso a la sesión). */
 export default function DeckPage(props: Props) {
   const page = useDeckPage(() => props.id);
+  const bar = useBarHidden();
   const review = useReview();
   const isAdmin = () => review.session()?.reviewer.isAdmin === true;
 
@@ -35,18 +38,27 @@ export default function DeckPage(props: Props) {
       </Match>
       <Match when={page.deck()} keyed>
         {(deck) => (
-          <div class={styles.page}>
-            <PageBar backLabel="Inicio" backHref="/" name={props.name}>
-              <Show when={isAdmin()}>
+          <div class={styles.page} classList={{ [styles.full]: bar.hidden() }}>
+            <Show when={!bar.hidden()}>
+              <PageBar backLabel="Inicio" backHref="/" name={props.name}>
+                <Show when={isAdmin()}>
+                  <Button
+                    icon={PencilIcon}
+                    size="sm"
+                    onClick={() => navigate(deckEditPath(props.id))}
+                  >
+                    Editar
+                  </Button>
+                </Show>
                 <Button
-                  icon={PencilIcon}
+                  icon={ChevronUpIcon}
                   size="sm"
-                  onClick={() => navigate(deckEditPath(props.id))}
-                >
-                  Editar
-                </Button>
-              </Show>
-            </PageBar>
+                  aria-label="Ocultar la barra"
+                  title="Ocultar la barra"
+                  onClick={bar.hide}
+                />
+              </PageBar>
+            </Show>
             <iframe
               class={styles.frame}
               title={deck.title}
@@ -54,6 +66,17 @@ export default function DeckPage(props: Props) {
               allow="fullscreen"
               srcdoc={deck.html}
             />
+            <Show when={bar.hidden()}>
+              <div class={styles.reveal}>
+                <Button
+                  icon={ChevronDownIcon}
+                  size="sm"
+                  aria-label="Mostrar la barra"
+                  title="Mostrar la barra"
+                  onClick={bar.show}
+                />
+              </div>
+            </Show>
           </div>
         )}
       </Match>

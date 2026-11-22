@@ -1,4 +1,9 @@
-import type { Eyebrow, Person, Slide } from '@colaboradocs/deck-core';
+import type {
+  BackgroundLayer,
+  Eyebrow,
+  Person,
+  Slide,
+} from '@colaboradocs/deck-core';
 import {
   type Block,
   type ContentSlide,
@@ -36,6 +41,31 @@ function decorHtml(slide: Slide, ctx: SlideContext): string {
   if (!component)
     throw new Error(`Componente no registrado: «${slide.decor.component}».`);
   return component(slide.decor.props ?? {}, ctx);
+}
+
+const num = (value: number | undefined, fallback: number) =>
+  Number.isFinite(value) ? (value as number) : fallback;
+
+/** Una capa: la posición y el tamaño van en variables; el archivo, en `--src` (se reemplaza con la ruta real al servir). */
+function layerHtml(layer: BackgroundLayer): string {
+  const silhouette = layer.mode === 'silhouette';
+  const vars = [
+    `--src:url(${layer.src})`,
+    `--x:${num(layer.x, 50)}`,
+    `--y:${num(layer.y, 50)}`,
+    `--w:${num(layer.width, 50)}`,
+    `--ax:${num(layer.anchorX, 50)}`,
+    `--ay:${num(layer.anchorY, 50)}`,
+    `--o:${num(layer.opacity, 100) / 100}`,
+    `--ratio:${layer.ratio}`,
+    silhouette && `--tint:var(--${layer.tint ?? 'ink'})`,
+  ].filter(Boolean);
+  return `<div class="${cx('bg-layer', silhouette && 'is-silhouette')}" style="${esc(vars.join(';'))}"></div>`;
+}
+
+function backgroundHtml(slide: Slide): string {
+  if (!slide.background?.length) return '';
+  return `<div class="bg" aria-hidden="true">${slide.background.map(layerHtml).join('')}</div>`;
 }
 
 const cell = (place: Placement) =>
@@ -113,7 +143,7 @@ export function renderSlide(
     slide.category !== undefined && 'has-category',
   );
   const pg = `<div class="pg" aria-hidden="true">${String(page).padStart(2, '0')} / ${String(total).padStart(2, '0')}</div>`;
-  const inner = `${decorHtml(slide, ctx)}${eyebrowHtml(slide.eyebrow, ctx)}${contentHtml(slide, ctx)}${speakerHtml(slide.speaker, ctx)}${pg}`;
+  const inner = `${backgroundHtml(slide)}${decorHtml(slide, ctx)}${eyebrowHtml(slide.eyebrow, ctx)}${contentHtml(slide, ctx)}${speakerHtml(slide.speaker, ctx)}${pg}`;
   return `<section${style ? ` style="${esc(style)}"` : ''} class="${classes}"${slide.id ? ` id="${esc(slide.id)}"` : ''}>${inner}</section>`;
 }
 

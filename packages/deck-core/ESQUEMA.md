@@ -42,13 +42,15 @@ Una `content` es un **encabezado** y unos **bloques** en una **cuadrícula** de 
 
 **Plantillas** (`SLIDE_TEMPLATES`): puntos de partida al agregar una slide —portada o cierre, sección, una columna, dos columnas, cuadrícula—. Fijan `columns` y el título (tamaño, ancho…) y después todo se edita igual: no hay un tipo que limite.
 
+**Fondo de la slide** (`background`): una lista de capas, de atrás hacia adelante, detrás de todo el contenido. Cada capa es un archivo del deck (`src: 'assets/…'`) con su proporción (`ratio: '1000 / 1063'`), su `width` (% del ancho de la slide) y el punto donde cae: `x` e `y` (% de la slide) para el punto de la imagen que marcan `anchorX` y `anchorY` (% de la imagen, por omisión el centro). Con `mode: 'image'` se dibuja tal cual; con `mode: 'silhouette'` la imagen es una máscara y se pinta con un color del tema (`tint`: `ink`, `bg` o `accent`), así sigue el claro y el oscuro. `opacity` va de 0 a 100. Una capa puede pasarse del borde de la slide: se recorta.
+
 Campos de la slide: `speaker` (una persona: nombre y rol), `tone` (`default`, `accent`, `inverse`), `category`, `density` (`normal`, `compact`), `decor` (componente registrado, p. ej. el croquis), `style`, `notes`.
 
 Los decks guardados con los tipos anteriores (`cover`, `section`, `stack`, `split`, `grid`) con `flow` o `newColumn`, con `title`/`subtitle`/`headerSpan` en la slide o con la slide `custom` se pasan con `migrateSlide`.
 
 ## Bloques
 
-`heading`, `note`, `list` (numerada o con viñetas, `size` `lg`/`md`, con icono y detalle), `card` (con `category`, `tone`, `people`, `sources`), `person`, `figure`, `image`, `qr`, `countdown` (fecha **con zona horaria**), `notice`, `agenda` (ítems con `time`, `minutes`, `mode`, `speaker`; `type: 'break'` para descansos), `timeline`, `date-box`, `chips`, `custom`.
+`heading` (con `icon` opcional: un cuadro con el icono, del color de la categoría, sobre el título), `note`, `list` (numerada o con viñetas, `size` `lg`/`md`, con icono y detalle), `card` (con `category`, `tone`, `people`, `sources`), `person`, `figure`, `image`, `qr`, `countdown` (fecha **con zona horaria**), `notice`, `agenda` (ítems con `time`, `minutes`, `mode`, `speaker`; `type: 'break'` para descansos), `timeline`, `date-box`, `chips`, `custom`.
 
 ## Lo que decide el tema y no el contenido
 Cómo se ve el modo de una slide (etiqueta Informar/Conversar/Decidir o solo reloj), si los títulos van en mayúsculas, el grosor de las líneas, si las formas son rectas o redondeadas, el estilo de las tarjetas. El contenido solo dice el dato (`mode: 'inform'`, `minutes: 10`).

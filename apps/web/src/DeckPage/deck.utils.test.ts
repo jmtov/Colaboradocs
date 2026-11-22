@@ -42,6 +42,36 @@ describe('buildDeckHtml', () => {
     expect(html).not.toContain('"assets/qr.svg"');
   });
 
+  it('incrusta también el archivo de una capa de fondo (variable CSS)', () => {
+    const withBackground: DeckBundle = {
+      ...bundle,
+      deck: {
+        ...bundle.deck,
+        slides: [
+          {
+            kind: 'content',
+            background: [
+              {
+                src: 'assets/fondo.webp',
+                ratio: '1 / 1',
+                width: 50,
+                x: 50,
+                y: 50,
+              },
+            ],
+            body: [],
+          },
+        ],
+      },
+    };
+    const html = buildDeckHtml(withBackground, {
+      fonts: {},
+      files: { 'fondo.webp': 'data:image/webp;base64,CCC' },
+    });
+    expect(html).toContain('--src:url(data:image/webp;base64,CCC)');
+    expect(html).not.toContain('url(assets/fondo.webp)');
+  });
+
   it('lo que no se bajó queda con su ruta (no rompe)', () => {
     const html = buildDeckHtml(bundle, { fonts: {}, files: {} });
     expect(html).toContain('"assets/qr.svg"');

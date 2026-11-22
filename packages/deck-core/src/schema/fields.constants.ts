@@ -1,5 +1,7 @@
 import {
   AGENDA_MODES,
+  BACKGROUND_MODES,
+  BACKGROUND_TINTS,
   DENSITIES,
   SLIDE_TONES,
   TITLE_SIZES,
@@ -62,6 +64,76 @@ const EYEBROW: Field = {
   ],
 };
 
+const BACKGROUND_LAYER: Field[] = [
+  {
+    key: 'src',
+    label: 'Archivo',
+    type: 'asset',
+    required: true,
+    sample: 'assets/fondo.webp',
+  },
+  {
+    key: 'mode',
+    label: 'Cómo se pinta',
+    type: 'select',
+    options: options(BACKGROUND_MODES, {
+      image: 'Imagen',
+      silhouette: 'Silueta (color del tema)',
+    }),
+    help: 'La silueta usa la forma de la imagen y la pinta con un color del tema, claro y oscuro.',
+    sample: 'image',
+  },
+  {
+    key: 'tint',
+    label: 'Color de la silueta',
+    type: 'select',
+    options: options(BACKGROUND_TINTS, {
+      ink: 'Texto',
+      bg: 'Fondo',
+      accent: 'Acento',
+    }),
+    sample: 'ink',
+  },
+  {
+    key: 'ratio',
+    label: 'Proporción (ancho / alto)',
+    type: 'text',
+    required: true,
+    keep: true,
+    sample: '4 / 3',
+  },
+  {
+    key: 'width',
+    label: 'Ancho (% de la slide)',
+    type: 'number',
+    min: 1,
+    required: true,
+    sample: 60,
+  },
+  { key: 'x', label: 'Posición horizontal (%)', type: 'number', sample: 50 },
+  { key: 'y', label: 'Posición vertical (%)', type: 'number', sample: 50 },
+  {
+    key: 'anchorX',
+    label: 'Punto de la imagen en x (%)',
+    type: 'number',
+    help: 'Qué punto de la imagen cae en la posición: 50 es el centro.',
+    sample: 50,
+  },
+  {
+    key: 'anchorY',
+    label: 'Punto de la imagen en y (%)',
+    type: 'number',
+    sample: 50,
+  },
+  {
+    key: 'opacity',
+    label: 'Opacidad (0 a 100)',
+    type: 'number',
+    min: 0,
+    sample: 100,
+  },
+];
+
 /** Grupos de campos de una slide: cada uno es una tarjeta de filas con su título. */
 export const STYLE_GROUP = 'Estilo de la diapositiva';
 export const NOTES_GROUP = 'Notas';
@@ -120,6 +192,16 @@ export const SLIDE_DESCRIPTORS: Record<SlideKind, Descriptor> = {
     fields: [
       ...SLIDE_STYLE,
       { key: 'gridSize', label: 'Cuadrícula', type: 'gridsize', group: STYLE },
+      {
+        key: 'background',
+        label: 'Fondo de la diapositiva',
+        type: 'list',
+        itemLabel: 'Capa',
+        fields: BACKGROUND_LAYER,
+        sample: [
+          { src: 'assets/fondo.webp', ratio: '4 / 3', width: 60, x: 50, y: 50 },
+        ],
+      },
       EYEBROW,
       { key: 'body', label: 'Bloques', type: 'blocks', required: true },
       ...SLIDE_END,
@@ -168,6 +250,7 @@ export const BLOCK_DESCRIPTORS: Record<BlockKind, Descriptor> = {
         type: 'longtext',
         sample: 'Una frase que explica de qué va.',
       },
+      { key: 'icon', label: 'Icono', type: 'icon', sample: 'info' },
     ],
   },
   note: {

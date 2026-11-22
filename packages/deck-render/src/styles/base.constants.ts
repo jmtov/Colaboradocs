@@ -21,6 +21,16 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 .slide.is-active { opacity: 1; visibility: visible; transform: none; transition: transform var(--dur-slide) var(--ease), opacity .5s ease, visibility 0s, var(--vary); z-index: 2; }
 .slide.is-past { transform: translateX(calc(var(--slide-shift) * -1)); }
 
+/* Fondo de la slide: capas detrás de todo el contenido, sin bloquear clics. Cada capa se coloca con variables (% de la slide). */
+.bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.bg-layer {
+  position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--w) * 1%); aspect-ratio: var(--ratio);
+  transform: translate(calc(var(--ax) * -1%), calc(var(--ay) * -1%)); opacity: var(--o);
+  background: var(--src) center / 100% 100% no-repeat;
+}
+.bg-layer.is-silhouette { background: var(--tint); -webkit-mask: var(--src) center / 100% 100% no-repeat; mask: var(--src) center / 100% 100% no-repeat; }
+.heading-badge { margin-bottom: clamp(.6rem, 1.6vh, 1.2rem); }
+
 /* Tono de la slide: el relleno de acento o la inversión de claro/oscuro. Se vuelven a declarar los derivados para que se recalculen aquí. */
 .tone-accent, .tone-inverse {
   --muted: color-mix(in srgb, var(--ink) 62%, var(--bg));

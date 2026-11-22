@@ -669,3 +669,50 @@ describe('renderSlides y reemplazo en vivo', () => {
     expect(on).toContain("fresh.classList.add('is-active')");
   });
 });
+
+describe('fondo de la slide', () => {
+  const layer = {
+    src: 'assets/fondo.webp',
+    ratio: '1000 / 1063',
+    width: 90,
+    x: 86,
+    y: 80,
+    anchorX: 62.5,
+    anchorY: 85.5,
+    opacity: 70,
+  };
+  const html = (background: object[]) =>
+    renderSlides(deck({ kind: 'content', background, body: [] }))[0] ?? '';
+
+  it('dibuja cada capa detrás del contenido, con su posición en variables', () => {
+    const out = html([layer]);
+    expect(out).toContain('<div class="bg" aria-hidden="true">');
+    expect(out).toContain('--src:url(assets/fondo.webp)');
+    expect(out).toContain('--x:86;--y:80;--w:90;--ax:62.5;--ay:85.5;--o:0.7');
+    expect(out).toContain('--ratio:1000 / 1063');
+    expect(out.indexOf('class="bg"')).toBeLessThan(
+      out.indexOf('class="content'),
+    );
+  });
+
+  it('una silueta lleva su color del tema; una imagen no', () => {
+    const out = html([layer, { ...layer, mode: 'silhouette', tint: 'bg' }]);
+    expect(out.match(/is-silhouette/g)).toHaveLength(1);
+    expect(out).toContain('--tint:var(--bg)');
+  });
+
+  it('sin capas no deja nada', () => {
+    expect(html([])).not.toContain('class="bg"');
+  });
+
+  it('el titular admite un icono en su cuadro', () => {
+    const out = renderSlides(
+      deck({
+        kind: 'content',
+        body: [{ kind: 'heading', title: ['A'], icon: 'megaphone' }],
+      }),
+    )[0];
+    expect(out).toContain('heading-badge');
+    expect(out).toContain('m3 11 18-5v12L3 14v-3z');
+  });
+});

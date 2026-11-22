@@ -45,6 +45,8 @@ export function inlineFiles(html: string, loaded: DeckFiles): string {
   }
   for (const [path, url] of Object.entries(loaded.files)) {
     out = out.replaceAll(`"assets/${path}"`, `"${url}"`);
+    // las capas de fondo piden su archivo en una variable CSS: `--src:url(assets/…)`
+    out = out.replaceAll(`url(assets/${path})`, `url(${url})`);
   }
   return out;
 }

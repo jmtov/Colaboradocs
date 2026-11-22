@@ -1,6 +1,8 @@
 import type { SlideStyle, StyleLayer } from '../theme/theme.types';
 import type {
   AGENDA_MODES,
+  BACKGROUND_MODES,
+  BACKGROUND_TINTS,
   BLOCK_KINDS,
   COLUMN_COUNTS,
   DENSITIES,
@@ -41,6 +43,36 @@ export interface Eyebrow {
 export interface Decor {
   component: string;
   props?: Record<string, unknown>;
+}
+
+/** Cómo se pinta una capa de fondo: la imagen tal cual, o su silueta con un color del tema (sigue el claro y el oscuro). */
+export type BackgroundMode = (typeof BACKGROUND_MODES)[number];
+
+/** Colores del tema con los que se pinta una silueta. */
+export type BackgroundTint = (typeof BACKGROUND_TINTS)[number];
+
+/**
+ * Una capa del fondo de la slide, detrás de todo el contenido. Se coloca con porcentajes de la
+ * slide: `x` e `y` dicen dónde cae el punto de la imagen que marcan `anchorX` y `anchorY`.
+ */
+export interface BackgroundLayer {
+  /** Archivo del deck (`assets/…`). */
+  src: string;
+  mode?: BackgroundMode;
+  /** Proporción ancho / alto de la imagen, p. ej. `1000 / 1063`. */
+  ratio: string;
+  /** Ancho, en % del ancho de la slide (puede pasarse de 100). */
+  width: number;
+  /** Dónde cae el punto de anclaje, en % del ancho y del alto de la slide. */
+  x: number;
+  y: number;
+  /** Qué punto de la imagen va en (`x`, `y`), en % de la imagen; por omisión, el centro. */
+  anchorX?: number;
+  anchorY?: number;
+  /** Opacidad, de 0 a 100 (por omisión, 100). */
+  opacity?: number;
+  /** Solo en `silhouette`: con qué color del tema se pinta (por omisión, `ink`). */
+  tint?: BackgroundTint;
 }
 
 // ---------- Bloques ----------
@@ -84,6 +116,8 @@ type BlockShape =
       titleSize?: TitleSize;
       /** Frase de apoyo bajo el filete. */
       subtitle?: string;
+      /** Un icono en su cuadro (del color de la categoría), sobre el título. */
+      icon?: IconName;
     }
   | { kind: 'note'; text: string }
   | {
@@ -153,6 +187,8 @@ interface SlideBase {
   category?: number;
   density?: Density;
   decor?: Decor;
+  /** Capas de fondo, de atrás hacia adelante. */
+  background?: BackgroundLayer[];
   style?: SlideStyle;
   /** Notas para quien presenta; no se dibujan. */
   notes?: string;

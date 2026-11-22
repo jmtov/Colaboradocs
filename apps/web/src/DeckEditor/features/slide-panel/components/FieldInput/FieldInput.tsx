@@ -47,6 +47,7 @@ export default function FieldInput(props: FieldInputProps) {
         <input
           class={styles.input}
           type="number"
+          step="any"
           min={props.field.type === 'number' ? props.field.min : undefined}
           value={display()}
           onInput={(e) => save(e.currentTarget.value)}

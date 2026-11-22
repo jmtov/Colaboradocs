@@ -83,7 +83,14 @@ const RENDERERS: Renderers = {
           esc(b.subtitle),
         )
       : '';
-    return `${titleHtml(b.title, b.titleSize ?? 'sm')}<div class="rule"></div>${subtitle}`;
+    const badge = b.icon
+      ? el(
+          'span',
+          { class: 'badge heading-badge', 'data-r': true },
+          icon(b.icon),
+        )
+      : '';
+    return `${badge}${titleHtml(b.title, b.titleSize ?? 'sm')}<div class="rule"></div>${subtitle}`;
   },
   note: (b, ctx) => el('p', { class: 'note', ...reveal(ctx) }, esc(b.text)),
   list: (b, ctx) => {

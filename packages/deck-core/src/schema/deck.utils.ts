@@ -2,6 +2,8 @@ import type { Issue, Theme } from '../theme/theme.types';
 import { resolveStyle } from '../theme/theme.utils';
 import {
   AGENDA_MODES,
+  BACKGROUND_MODES,
+  BACKGROUND_TINTS,
   BLOCK_KINDS,
   BLOCK_SPAN,
   DECK_VERSION,
@@ -11,7 +13,13 @@ import {
   SLIDE_KINDS,
   TITLE_SIZES,
 } from './deck.constants';
-import type { Block, ContentSlide, Deck, Slide } from './deck.types';
+import type {
+  BackgroundLayer,
+  Block,
+  ContentSlide,
+  Deck,
+  Slide,
+} from './deck.types';
 import { columnsOf, layoutContent } from './layout.utils';
 
 const isBlockKind = (kind: unknown): kind is Block['kind'] =>
@@ -144,6 +152,47 @@ function checkContent(slide: ContentSlide, path: string, ctx: Ctx) {
   }
 }
 
+/** Lo que va dentro de `url(…)` y de `aspect-ratio`: nada que rompa el CSS (comillas, paréntesis, llaves, `;`, espacios en la ruta). */
+const BACKGROUND_SRC = /^[^\s()'"\\;{}<>]+$/;
+const BACKGROUND_RATIO = /^[^;{}"'<>\\]+$/;
+
+function checkBackground(layers: BackgroundLayer[], path: string, ctx: Ctx) {
+  layers.forEach((layer, i) => {
+    const at = `${path}[${i}]`;
+    const issue = (field: string, message: string) =>
+      ctx.issues.push({ path: `${at}.${field}`, message });
+    if (!BACKGROUND_SRC.test(layer.src ?? ''))
+      issue(
+        'src',
+        'Debe ser la ruta de un archivo, sin espacios ni paréntesis (assets/nombre.ext).',
+      );
+    if (!BACKGROUND_RATIO.test(layer.ratio ?? ''))
+      issue(
+        'ratio',
+        'Debe ser ancho / alto, p. ej. 1000 / 1063, sin comillas ni llaves.',
+      );
+    if (!(layer.width > 0)) issue('width', 'El ancho debe ser mayor que 0.');
+    for (const key of ['x', 'y'] as const)
+      if (typeof layer[key] !== 'number')
+        issue(key, 'Debe ser un número (% de la slide).');
+    if (
+      layer.mode !== undefined &&
+      !(BACKGROUND_MODES as readonly string[]).includes(layer.mode)
+    )
+      issue('mode', `Modo desconocido: ${layer.mode}.`);
+    if (
+      layer.tint !== undefined &&
+      !(BACKGROUND_TINTS as readonly string[]).includes(layer.tint)
+    )
+      issue('tint', `Color desconocido: ${layer.tint}.`);
+    if (
+      layer.opacity !== undefined &&
+      !(layer.opacity >= 0 && layer.opacity <= 100)
+    )
+      issue('opacity', 'La opacidad va de 0 a 100.');
+  });
+}
+
 function checkSlide(slide: Slide, path: string, ctx: Ctx) {
   if (!isSlideKind(slide.kind)) {
     ctx.issues.push({
@@ -168,6 +217,8 @@ function checkSlide(slide: Slide, path: string, ctx: Ctx) {
       message: `Modo desconocido: ${slide.eyebrow.mode}.`,
     });
   }
+  if (slide.background)
+    checkBackground(slide.background, `${path}.background`, ctx);
   checkBlocks(slide.body, `${path}.body`, ctx);
   checkContent(slide, path, ctx);
 }
