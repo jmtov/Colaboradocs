@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 644" role="img" aria-labelledby="datos-title datos-desc">
+<title id="datos-title">Qué guarda D1</title><desc id="datos-desc">Siete grupos de tablas: accesos, documentos, revisión, tareas, presentaciones, temas y ajustes del espacio.</desc>
+<style>
+.paper{fill:#f5f5f5}.title{font:400 26px Georgia,'Times New Roman',serif;fill:#2d3142}
+.eyebrow{font:500 10px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;fill:#5a6580}
+.name{font:600 14px system-ui,-apple-system,'Segoe UI',sans-serif;fill:#2d3142}
+.sub{font:400 11px ui-monospace,Menlo,Consolas,monospace;fill:#4f5d75}
+.lbl{font:500 10px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;fill:#4f5d75}
+.note{font:italic 400 14px Georgia,'Times New Roman',serif;fill:#4f5d75}
+.mask{fill:#f5f5f5}
+.n-ext{fill:rgba(45,49,66,.03);stroke:rgba(45,49,66,.45);stroke-width:1}
+.n-back{fill:#fff;stroke:#2d3142;stroke-width:1}
+.n-store{fill:rgba(45,49,66,.06);stroke:#4f5d75;stroke-width:1}
+.n-focal{fill:rgba(191,69,32,.08);stroke:#bf4520;stroke-width:1.2}
+.n-scope{fill:none;stroke:#5a6580;stroke-width:1;stroke-dasharray:4 3}
+.e{fill:none;stroke:#4f5d75;stroke-width:1}.e-link{fill:none;stroke:#2e5aa8;stroke-width:1}
+.e-acc{fill:none;stroke:#bf4520;stroke-width:1.2}.dash{stroke-dasharray:5 4}
+.life{stroke:#bfc0c0;stroke-width:1;stroke-dasharray:3 4}.rule{stroke:rgba(45,49,66,.15);stroke-width:1}
+.mk{fill:#4f5d75}.mk-link{fill:#2e5aa8}.mk-acc{fill:#bf4520}
+@media (prefers-color-scheme:dark){
+.paper{fill:#2d3142}.title,.name{fill:#f5f5f5}.eyebrow,.sub,.lbl,.note{fill:#bfc0c0}.mask{fill:#2d3142}
+.n-ext{fill:rgba(245,245,245,.04);stroke:rgba(245,245,245,.4)}.n-back{fill:#393e53;stroke:#f5f5f5}
+.n-store{fill:rgba(245,245,245,.07);stroke:#bfc0c0}.n-focal{fill:rgba(240,138,89,.12);stroke:#f08a59}
+.n-scope{stroke:#949eb2}.e{stroke:#bfc0c0}.e-link{stroke:#739fdf}.e-acc{stroke:#f08a59}
+.life{stroke:rgba(191,192,192,.3)}.rule{stroke:rgba(245,245,245,.15)}
+.mk{fill:#bfc0c0}.mk-link{fill:#739fdf}.mk-acc{fill:#f08a59}}
+</style><defs><marker id="datos-mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk" d="M0 1L10 5L0 9z"/></marker><marker id="datos-mk-link" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk-link" d="M0 1L10 5L0 9z"/></marker><marker id="datos-mk-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk-acc" d="M0 1L10 5L0 9z"/></marker></defs>
+<rect class="paper" width="960" height="644"/>
+<text class="eyebrow" x="40" y="30">COLABORADOCS · DATOS</text><text class="title" x="40" y="62">Qué guarda D1</text>
+<g transform="translate(0,24)"><path class="e" d="M360 120 L260 120" marker-end="url(#datos-mk)"/><path class="e" d="M580 120 L680 120" marker-end="url(#datos-mk)"/><path class="e" d="M150 280 L150 168" marker-end="url(#datos-mk)"/><path class="e dash" d="M470 168 L470 280" marker-end="url(#datos-mk)"/><path class="e" d="M580 316 L680 316" marker-end="url(#datos-mk)"/><rect class="mask" x="272" y="99" width="76" height="16"/><text class="lbl" x="310" y="110" text-anchor="middle">AUTOR · OK</text><rect class="mask" x="589" y="99" width="83" height="16"/><text class="lbl" x="630" y="110" text-anchor="middle">DOCUMENT_ID</text><rect class="mask" x="156" y="219" width="76" height="16"/><text class="lbl" x="161" y="230" text-anchor="start">ASIGNADA A</text><rect class="mask" x="476" y="219" width="83" height="16"/><text class="lbl" x="481" y="230" text-anchor="start">&#x27;deck:&lt;ID&gt;&#x27;</text><rect class="mask" x="599" y="295" width="63" height="16"/><text class="lbl" x="630" y="306" text-anchor="middle">THEME_ID</text><rect class="n-store" x="40" y="72" width="220" height="96" rx="6"/><text class="name" x="54" y="104">Accesos</text><text class="sub" x="54" y="122">reviewers</text><text class="sub" x="54" y="136">devices</text><text class="sub" x="54" y="150">login_failures</text><rect class="n-focal" x="360" y="72" width="220" height="96" rx="6"/><text class="name" x="374" y="111">Revisión</text><text class="sub" x="374" y="129">comments (borrado suave)</text><text class="sub" x="374" y="143">approvals</text><rect class="n-store" x="680" y="72" width="220" height="96" rx="6"/><text class="name" x="694" y="104">Documentos</text><text class="sub" x="694" y="122">documents</text><text class="sub" x="694" y="136">document_versions</text><text class="sub" x="694" y="150">document_drafts</text><rect class="n-store" x="40" y="280" width="220" height="72" rx="6"/><text class="name" x="54" y="314">Tareas</text><text class="sub" x="54" y="332">tasks (fecha, bloque)</text><rect class="n-store" x="360" y="280" width="220" height="96" rx="6"/><text class="name" x="374" y="312">Presentaciones</text><text class="sub" x="374" y="330">decks (+ borrador)</text><text class="sub" x="374" y="344">deck_versions</text><text class="sub" x="374" y="358">deck_files</text><rect class="n-store" x="680" y="280" width="220" height="72" rx="6"/><text class="name" x="694" y="307">Temas</text><text class="sub" x="694" y="325">themes</text><text class="sub" x="694" y="339">theme_files (fuentes)</text><rect class="n-store" x="40" y="440" width="220" height="72" rx="6"/><text class="name" x="54" y="474">Espacio</text><text class="sub" x="54" y="492">settings: nombre, rol</text><text class="note" x="360" y="440">Sin claves foráneas hacia bloques: cambian con cada versión.</text><text class="note" x="360" y="464">El PIN no se guarda: solo su HMAC con TOKEN_SECRET.</text>
+<line class="rule" x1="40" x2="920" y1="568" y2="568"/><rect class="n-store" x="40" y="584" width="20" height="12" rx="3"/><text class="lbl" x="68" y="594">ALMACÉN (D1)</text><rect class="n-focal" x="175.2" y="584" width="20" height="12" rx="3"/><text class="lbl" x="203.2" y="594">FOCO</text></g>
+</svg>

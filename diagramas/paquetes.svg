@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 604" role="img" aria-labelledby="paquetes-title paquetes-desc">
+<title id="paquetes-title">Qué depende de qué</title><desc id="paquetes-desc">Monorepo: la app web usa paquetes de UI, importación y render; todos descansan en un núcleo de TypeScript puro.</desc>
+<style>
+.paper{fill:#f5f5f5}.title{font:400 26px Georgia,'Times New Roman',serif;fill:#2d3142}
+.eyebrow{font:500 10px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.12em;fill:#5a6580}
+.name{font:600 14px system-ui,-apple-system,'Segoe UI',sans-serif;fill:#2d3142}
+.sub{font:400 11px ui-monospace,Menlo,Consolas,monospace;fill:#4f5d75}
+.lbl{font:500 10px ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;fill:#4f5d75}
+.note{font:italic 400 14px Georgia,'Times New Roman',serif;fill:#4f5d75}
+.mask{fill:#f5f5f5}
+.n-ext{fill:rgba(45,49,66,.03);stroke:rgba(45,49,66,.45);stroke-width:1}
+.n-back{fill:#fff;stroke:#2d3142;stroke-width:1}
+.n-store{fill:rgba(45,49,66,.06);stroke:#4f5d75;stroke-width:1}
+.n-focal{fill:rgba(191,69,32,.08);stroke:#bf4520;stroke-width:1.2}
+.n-scope{fill:none;stroke:#5a6580;stroke-width:1;stroke-dasharray:4 3}
+.e{fill:none;stroke:#4f5d75;stroke-width:1}.e-link{fill:none;stroke:#2e5aa8;stroke-width:1}
+.e-acc{fill:none;stroke:#bf4520;stroke-width:1.2}.dash{stroke-dasharray:5 4}
+.life{stroke:#bfc0c0;stroke-width:1;stroke-dasharray:3 4}.rule{stroke:rgba(45,49,66,.15);stroke-width:1}
+.mk{fill:#4f5d75}.mk-link{fill:#2e5aa8}.mk-acc{fill:#bf4520}
+@media (prefers-color-scheme:dark){
+.paper{fill:#2d3142}.title,.name{fill:#f5f5f5}.eyebrow,.sub,.lbl,.note{fill:#bfc0c0}.mask{fill:#2d3142}
+.n-ext{fill:rgba(245,245,245,.04);stroke:rgba(245,245,245,.4)}.n-back{fill:#393e53;stroke:#f5f5f5}
+.n-store{fill:rgba(245,245,245,.07);stroke:#bfc0c0}.n-focal{fill:rgba(240,138,89,.12);stroke:#f08a59}
+.n-scope{stroke:#949eb2}.e{stroke:#bfc0c0}.e-link{stroke:#739fdf}.e-acc{stroke:#f08a59}
+.life{stroke:rgba(191,192,192,.3)}.rule{stroke:rgba(245,245,245,.15)}
+.mk{fill:#bfc0c0}.mk-link{fill:#739fdf}.mk-acc{fill:#f08a59}}
+</style><defs><marker id="paquetes-mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk" d="M0 1L10 5L0 9z"/></marker><marker id="paquetes-mk-link" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk-link" d="M0 1L10 5L0 9z"/></marker><marker id="paquetes-mk-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="mk-acc" d="M0 1L10 5L0 9z"/></marker></defs>
+<rect class="paper" width="960" height="604"/>
+<text class="eyebrow" x="40" y="30">COLABORADOCS · PAQUETES</text><text class="title" x="40" y="62">Qué depende de qué</text>
+<g transform="translate(0,24)"><rect class="n-scope" x="40" y="344" width="880" height="132" rx="8"/><text class="eyebrow" x="56" y="364">NÚCLEO · SIN DOM NI CLOUDFLARE</text><path class="e" d="M140 136 L140 200" marker-end="url(#paquetes-mk)"/><path class="e" d="M364 136 L364 200" marker-end="url(#paquetes-mk)"/><path class="e" d="M588 136 L588 200" marker-end="url(#paquetes-mk)"/><path class="e-link dash" d="M816 136 L816 200" marker-end="url(#paquetes-mk-link)"/><path class="e" d="M140 288 L140 344" marker-end="url(#paquetes-mk)"/><path class="e" d="M364 288 L364 344" marker-end="url(#paquetes-mk)"/><path class="e" d="M588 288 L588 344" marker-end="url(#paquetes-mk)"/><path class="e" d="M816 288 L816 344" marker-end="url(#paquetes-mk)"/><rect class="mask" x="822" y="161" width="69" height="16"/><text class="lbl" x="827" y="172" text-anchor="start">HTTP /API</text><rect class="n-focal" x="40" y="72" width="880" height="64" rx="6"/><text class="name" x="54" y="102">apps/web</text><text class="sub" x="54" y="120">Vite + Solid: home, documentos, editores, presentaciones, tareas, accesos</text><rect class="n-back" x="40" y="200" width="200" height="88" rx="6"/><text class="name" x="54" y="228">review-ui</text><text class="sub" x="54" y="246">Componentes Solid:</text><text class="sub" x="54" y="260">PIN, hilos, OK,</text><text class="sub" x="54" y="274">accesos</text><rect class="n-back" x="264" y="200" width="200" height="88" rx="6"/><text class="name" x="278" y="235">doc-import</text><text class="sub" x="278" y="253">Word · Markdown · JSON</text><text class="sub" x="278" y="267">→ documento válido</text><rect class="n-back" x="488" y="200" width="200" height="88" rx="6"/><text class="name" x="502" y="235">deck-render</text><text class="sub" x="502" y="253">deck + tema →</text><text class="sub" x="502" y="267">HTML autocontenido</text><rect class="n-back" x="712" y="200" width="208" height="88" rx="6"/><text class="name" x="726" y="235">review-worker</text><text class="sub" x="726" y="253">API Hono + D1 + CLI</text><text class="sub" x="726" y="267">sirve también la página</text><rect class="n-back" x="56" y="380" width="400" height="76" rx="6"/><text class="name" x="70" y="409">review-core</text><text class="sub" x="70" y="427">tipos del API y del documento, validación,</text><text class="sub" x="70" y="441">ids de bloque, hilos, OK, PIN</text><rect class="n-back" x="480" y="380" width="200" height="76" rx="6"/><text class="name" x="494" y="409">deck-core</text><text class="sub" x="494" y="427">esquema y validación</text><text class="sub" x="494" y="441">de decks y temas</text><rect class="n-back" x="704" y="380" width="200" height="76" rx="6"/><text class="name" x="718" y="409">themes</text><text class="sub" x="718" y="427">tema neutro; los de</text><text class="sub" x="718" y="441">cada org son JSON</text><text class="note" x="40" y="508">Cada flecha continua es «depende de». La punteada es la única que cruza la red.</text>
+<line class="rule" x1="40" x2="920" y1="528" y2="528"/><rect class="n-scope" x="40" y="544" width="20" height="12" rx="3"/><text class="lbl" x="68" y="554">ÁMBITO</text><rect class="n-focal" x="135.6" y="544" width="20" height="12" rx="3"/><text class="lbl" x="163.6" y="554">FOCO</text><rect class="n-back" x="218.0" y="544" width="20" height="12" rx="3"/><text class="lbl" x="246.0" y="554">COMPONENTE</text></g>
+</svg>

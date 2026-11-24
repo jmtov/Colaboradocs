@@ -1,8 +1,20 @@
 # Colaboradocs
 
-Revisión de un documento por un equipo: acceso con PIN, comentarios por bloque con respuestas y OK por bloque. Un solo Worker de Cloudflare (API + D1) sirve la página. Pensado para borradores internos que un grupo revisa desde el celular.
+Un espacio de trabajo para que un equipo **revise documentos y presentaciones** antes de darlos por buenos. Acceso con PIN, comentarios por bloque con respuestas, OK por bloque y tareas con fecha. Un solo Worker de Cloudflare (API + D1) sirve la página. Pensado para borradores internos que un grupo revisa desde el celular.
 
-Pensado para cualquier documento con secciones que un equipo tenga que revisar.
+## Qué incluye
+
+| Área | Qué hace | Ruta |
+|---|---|---|
+| **Documentos** | Texto con secciones que el equipo revisa: comentarios e hilos por bloque, OK por bloque, glosario, fuentes. Se suben (Word, Markdown, JSON) o se editan en la web, con **borrador, publicar y versiones**. | `/d/<id>`, `/d/<id>/editar` |
+| **Presentaciones** | Decks como datos (JSON + tema), con editor web, vista previa en vivo, borrador y publicación. Se ven como un HTML autocontenido (teclas, táctil, PDF) y se comentan igual que un documento. | `/p/<id>`, `/p/<id>/editar` |
+| **Temas** | Colores claro y oscuro, categorías, tokens y fuentes por organización o evento. Son datos en la base, no código. | (API y CLI) |
+| **Tareas** | Algo que una persona hace para una fecha; puede colgar de un documento o bloque. «Mis tareas» y sección Tareas en el editor. | `/tareas` |
+| **Accesos** | Una persona = un PIN (máx. 2 dispositivos). Los admins crean, reemisan, revocan y resetean desde la app. Hay tres niveles: persona, **agente** y admin. | `/accesos` (admin) |
+| **Espacio** | Nombre y descripción de la home y cómo se llama el rol de cada persona. | home |
+| **Home** | Una tarjeta por documento o presentación, con su actividad. | `/` |
+
+![Arquitectura: navegador, Worker con assets, auth y API Hono, D1 y CLI](diagramas/arquitectura.svg)
 
 > **Para agentes y contribuciones:** cada módulo tiene su README con mapa, contrato y reglas → [`review-core`](packages/review-core/README.md) · [`review-worker`](packages/review-worker/README.md) · [`review-ui`](packages/review-ui/README.md) · [`doc-import`](packages/doc-import/README.md) · [`web`](apps/web/README.md).
 
@@ -16,14 +28,34 @@ Pensado para cualquier documento con secciones que un equipo tenga que revisar.
 | `packages/deck-core`, `deck-render`, `themes` | Presentaciones como datos: esquema, validación y descriptores de campos (`deck-core`), datos → HTML autocontenido (`deck-render`) y el tema neutro (`themes`). Los temas de cada organización son JSON en la base. Ver [`ESQUEMA.md`](packages/deck-core/ESQUEMA.md). |
 | `packages/doc-import` | Convierte Word (.docx), Markdown y JSON a un documento válido. Lo usan el CLI y la pantalla de subida (en el navegador). |
 | `apps/web` | La página (Vite + Solid): home, documentos y pantallas de administración. **No trae documentos**: los pide a la API. |
+| `diagramas/` | Los SVG de este README. Se regeneran con `python3 diagramas/generar.py`. |
 | `documents/` | Documentos de ejemplo/origen para importar por CLI. El de ejemplo se versiona; los propios no (están en `.gitignore`). |
+
+![Paquetes: apps/web usa review-ui, doc-import, deck-render y review-worker; todos descansan en review-core, deck-core y themes](diagramas/paquetes.svg)
 
 ## Cómo funciona
 
-Los documentos, comentarios, OK y personas viven en **D1**. El Worker no guarda archivos y la página tampoco: pide el contenido a la API **después** de ingresar el PIN, así que el texto no es público.
+Los documentos, presentaciones, temas, comentarios, OK, tareas y personas viven en **D1**. El Worker no guarda archivos y la página tampoco: pide el contenido a la API **después** de ingresar el PIN, así que el texto no es público.
 
-- `/` es la home (una tarjeta por documento) y `/d/<id>` abre uno. Con un solo documento, `/` redirige a él.
-- Un admin sube documentos desde el menú ⋮ → «Documentos» (Word, Markdown o JSON), con vista previa y avisos de lo que no se pudo conservar. Reemplazar un documento guarda la versión anterior; «archivar» lo oculta sin borrar sus comentarios.
+![Tablas de D1 agrupadas: accesos, revisión, documentos, tareas, presentaciones, temas y espacio](diagramas/datos.svg)
+
+### Documentos
+
+- `/` es la home y `/d/<id>` abre un documento. Con un solo documento, `/` redirige a él.
+- Un admin sube documentos desde el menú ⋮ → «Documentos» (Word, Markdown o JSON), con vista previa y avisos de lo que no se pudo conservar, o los escribe en el editor (`/d/<id>/editar`).
+- Hay **un borrador por documento**, compartido por los admins y con control de revisión para que nadie pise a otro. Publicar lo convierte en la versión vigente; la anterior pasa a las versiones. «Archivar» oculta un documento sin borrar sus comentarios.
+
+![Del archivo o el editor, al borrador, a publicar, a la revisión y a las tareas](diagramas/documento.svg)
+
+### Presentaciones
+
+Un deck es un JSON (una cuadrícula de hasta 4×4 con bloques) que se dibuja con un tema. El editor (`/p/<id>/editar`) guarda un borrador, muestra la vista previa en vivo y publica; lo publicado se ve en `/p/<id>` como un HTML autocontenido. Sus comentarios y OK usan las mismas tablas que los de un documento (`document_id = 'deck:<id>'`). Esquema completo en [`ESQUEMA.md`](packages/deck-core/ESQUEMA.md).
+
+![Editor, borrador, deck publicado, tema y deck-render producen el HTML](diagramas/presentaciones.svg)
+
+### Tareas
+
+Una tarea es un título, una persona y una fecha (`AAAA-MM-DD`), y puede colgar de un documento y de un bloque. Cualquiera se las asigna a sí misma; asignar a otra persona es de admins. `/tareas` muestra las de quien entró; `GET /api/tasks?scope=all` (admins) trae todas.
 
 ## Montar tu propia copia
 
@@ -131,6 +163,18 @@ Con recarga en caliente: `npm run dev` levanta los dos (Ctrl+C los cierra) → h
 - Máximo 10 PIN fallidos por IP cada 15 minutos.
 - **Barrera suave, no seguridad real.** Alcanza para un documento de revisión interna; no pongas nada sensible.
 
+![Alta de la persona, login con PIN y verificación en cada petición](diagramas/acceso.svg)
+
+### Rol «agente»
+
+Para un asistente automático (p. ej. Claude). **No es admin**: puede leer todo, crear tareas y asignarlas a cualquiera, ver las de todos y **guardar borradores** de documentos y presentaciones (`GET`/`PUT …/draft`). No puede publicar, descartar borradores, subir ni archivar, gestionar accesos, ni cambiar el espacio, los temas o los archivos de un deck: eso sigue siendo de un admin, que revisa el borrador y publica. Un admin tampoco puede ascenderlo a admin. La regla vive en `canUseAdminRoute` (`review-core`) y la aplica el Worker, no la interfaz.
+
+Se crea solo por CLI (`--agent` no se combina con `--admin`) y necesita la migración `0009_agent.sql` **antes** del deploy:
+
+```
+npm run pins -- add "Claude" --agent --municipality="Agente" --remote
+```
+
 Operaciones (con `--remote` actúan sobre producción):
 
 ```
@@ -150,6 +194,10 @@ Los PIN en claro quedan en `packages/review-worker/pins.private.txt` (gitignored
 - **Borrado suave:** un comentario borrado queda con texto `null` para no romper el hilo.
 - **Imports relativos en `packages/*`:** el alias `@/` rompe cuando otro paquete consume el código fuente. En las apps sí se usa `@/`.
 - `@cloudflare/vitest-pool-workers` está deprecado; se usa `@cloudflare/vitest-plugin`.
+
+## Hoja de ruta
+
+Qué viene y qué dispara cada paso: [`ROADMAP.md`](ROADMAP.md).
 
 ## Licencia
 
