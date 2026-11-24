@@ -42,6 +42,18 @@ const SELECT_DRAFT = `
   LEFT JOIN documents d ON d.id = g.document_id
   WHERE g.document_id = ?`;
 
+/** Quién guardó por última vez el borrador (su id); null si no hay borrador o esa persona ya no existe. */
+export async function findDraftAuthorId(
+  db: D1Database,
+  documentId: string,
+): Promise<string | null> {
+  const row = await db
+    .prepare('SELECT updated_by FROM document_drafts WHERE document_id = ?')
+    .bind(documentId)
+    .first<{ updated_by: string | null }>();
+  return row?.updated_by ?? null;
+}
+
 /** El borrador de un documento, o null si no hay. */
 export async function findDraft(
   db: D1Database,

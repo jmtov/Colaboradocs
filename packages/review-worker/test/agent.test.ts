@@ -74,7 +74,7 @@ describe('agente: lo que no puede', () => {
     await saveDraft(adminToken);
   });
 
-  it('no publica', async () => {
+  it('no publica el borrador que dejó un admin', async () => {
     const response = await authed(
       agentToken,
       '/admin/documents/mi-doc/publish',
@@ -157,5 +157,164 @@ describe('agente: tareas', () => {
   it('una persona normal sigue sin poder', async () => {
     expect((await create(anaToken, admin.id)).status).toBe(403);
     expect((await authed(anaToken, '/tasks?scope=all')).status).toBe(403);
+  });
+});
+
+describe('agente: publicar', () => {
+  const publish = (token: string, id: string, body: object) =>
+    authed(token, `/admin/documents/${id}/publish`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  const put = (token: string, document: DocumentContent) =>
+    authed(token, `/admin/documents/${document.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(document),
+    });
+  const withHtml = (id: string, html: string): DocumentContent => {
+    const document = sample(id);
+    const [first] = document.sections;
+    if (first) first.html = html;
+    return document;
+  };
+  const draftAs = (
+    token: string,
+    document: DocumentContent,
+    revision: number,
+  ) =>
+    authed(token, `/admin/documents/${document.id}/draft`, {
+      method: 'PUT',
+      body: JSON.stringify({ content: document, expectedRevision: revision }),
+    });
+
+  it('publica un documento nuevo desde su propio borrador', async () => {
+    await saveDraft(agentToken, 'nuevo');
+    expect(
+      (await publish(agentToken, 'nuevo', { expectedRevision: 1 })).status,
+    ).toBe(201);
+    expect((await authed(anaToken, '/documents/nuevo/content')).status).toBe(
+      200,
+    );
+  });
+
+  it('también reemplaza uno ya publicado, y la versión anterior queda', async () => {
+    await put(adminToken, sample('guia'));
+    await draftAs(agentToken, withHtml('guia', '<p>Nueva</p>'), 0);
+    expect(
+      (await publish(agentToken, 'guia', { expectedRevision: 1 })).status,
+    ).toBe(200);
+    const versions = (await (
+      await authed(adminToken, '/documents/guia/versions')
+    ).json()) as unknown[];
+    expect(versions.length).toBe(2);
+  });
+
+  it('no publica si un admin tocó el borrador después', async () => {
+    await saveDraft(agentToken, 'nuevo');
+    await draftAs(adminToken, withHtml('nuevo', '<p>Retoque</p>'), 1);
+    expect(
+      (await publish(agentToken, 'nuevo', { expectedRevision: 2 })).status,
+    ).toBe(403);
+    expect(
+      (await publish(adminToken, 'nuevo', { expectedRevision: 2 })).status,
+    ).toBe(201);
+  });
+
+  it('no puede forzar: si el documento cambió, decide un admin', async () => {
+    await put(adminToken, sample('guia'));
+    await draftAs(agentToken, withHtml('guia', '<p>Mía</p>'), 0);
+    await put(adminToken, withHtml('guia', '<p>Del admin</p>'));
+    expect(
+      (await publish(agentToken, 'guia', { expectedRevision: 1 })).status,
+    ).toBe(409);
+    expect(
+      (await publish(agentToken, 'guia', { expectedRevision: 1, force: true }))
+        .status,
+    ).toBe(403);
+  });
+
+  it('no publica presentaciones', async () => {
+    const response = await authed(agentToken, '/admin/decks/charla/publish', {
+      method: 'POST',
+      body: JSON.stringify({ expectedRevision: 1 }),
+    });
+    expect(response.status).toBe(403);
+  });
+});
+
+describe('tareas: asociar un documento después', () => {
+  const create = async (token: string, body: object = {}) =>
+    (await (
+      await authed(token, '/tasks', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: 'Revisar',
+          dueDate: '2026-12-01',
+          ...body,
+        }),
+      })
+    ).json()) as Task;
+  const patch = (token: string, id: string, body: object) =>
+    authed(token, `/tasks/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    });
+
+  beforeEach(async () => {
+    await authed(adminToken, '/admin/documents/guia', {
+      method: 'PUT',
+      body: JSON.stringify(sample('guia')),
+    });
+  });
+
+  it('se crea sin documento y se asocia luego; un bloque necesita documento', async () => {
+    const task = await create(agentToken, { assigneeId: ana.id });
+    expect(task.documentId).toBeNull();
+
+    expect(
+      (await patch(agentToken, task.id, { blockId: 'a-1234' })).status,
+    ).toBe(400);
+    const linked = await patch(agentToken, task.id, {
+      documentId: 'guia',
+      blockId: 'a-1234',
+    });
+    expect(linked.status).toBe(200);
+    expect(((await linked.json()) as Task).blockId).toBe('a-1234');
+  });
+
+  it('cambiar de documento suelta el bloque; null suelta el documento', async () => {
+    await authed(adminToken, '/admin/documents/otro', {
+      method: 'PUT',
+      body: JSON.stringify(sample('otro')),
+    });
+    const task = await create(agentToken, {
+      documentId: 'guia',
+      blockId: 'a-1234',
+    });
+    const moved = (await (
+      await patch(agentToken, task.id, { documentId: 'otro' })
+    ).json()) as Task;
+    expect([moved.documentId, moved.blockId]).toEqual(['otro', null]);
+    const freed = (await (
+      await patch(agentToken, task.id, { documentId: null })
+    ).json()) as Task;
+    expect(freed.documentId).toBeNull();
+  });
+
+  it('un documento que no existe se rechaza', async () => {
+    const task = await create(agentToken);
+    expect(
+      (await patch(agentToken, task.id, { documentId: 'nada' })).status,
+    ).toBe(400);
+  });
+
+  it('solo la crea quien la creó o un admin; quien la tiene no puede', async () => {
+    const task = await create(agentToken, { assigneeId: ana.id });
+    expect(
+      (await patch(anaToken, task.id, { documentId: 'guia' })).status,
+    ).toBe(403);
+    expect(
+      (await patch(adminToken, task.id, { documentId: 'guia' })).status,
+    ).toBe(200);
   });
 });

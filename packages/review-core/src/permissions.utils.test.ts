@@ -15,6 +15,12 @@ describe('canUseAdminRoute', () => {
     );
   });
 
+  it('el agente publica un documento', () => {
+    expect(
+      canUseAdminRoute(agent, 'POST', '/api/admin/documents/mi-doc/publish'),
+    ).toBe(true);
+  });
+
   it('el agente lee y guarda borradores de documentos y presentaciones', () => {
     expect(
       canUseAdminRoute(agent, 'GET', '/api/admin/documents/mi-doc/draft'),
@@ -27,9 +33,9 @@ describe('canUseAdminRoute', () => {
     ).toBe(true);
   });
 
-  it('el agente no publica, no descarta borradores ni toca accesos o el espacio', () => {
+  it('el agente publica documentos, pero no presentaciones, ni descarta borradores, ni toca accesos o el espacio', () => {
     expect(
-      canUseAdminRoute(agent, 'POST', '/api/admin/documents/mi-doc/publish'),
+      canUseAdminRoute(agent, 'POST', '/api/admin/decks/mi-deck/publish'),
     ).toBe(false);
     expect(
       canUseAdminRoute(agent, 'DELETE', '/api/admin/documents/mi-doc/draft'),

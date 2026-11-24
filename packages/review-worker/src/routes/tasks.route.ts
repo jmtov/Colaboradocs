@@ -2,6 +2,7 @@ import {
   canManageTasks,
   type NewTask,
   type Task,
+  type TaskPatch,
   validateNewTask,
   validateTaskPatch,
 } from '@colaboradocs/review-core';
@@ -83,7 +84,7 @@ export const tasksRoute = new Hono<AppEnv>()
     return c.json(await findTask(c.env.DB, id), 201);
   })
 
-  // Marcar hecha: quien la tiene o un admin. Título y fecha: quien la creó o un admin.
+  // Marcar hecha: quien la tiene o un admin. Título, fecha y documento: quien la creó o un admin.
   // Pasarla a otra persona: solo admins.
   .patch('/tasks/:id', async (c) => {
     const reviewer = c.get('reviewer');
@@ -100,6 +101,19 @@ export const tasksRoute = new Hono<AppEnv>()
       return errorResponse(c, 'invalid_request', [
         'Esa persona no existe o ya no tiene acceso.',
       ]);
+    }
+    const documentId =
+      patch.documentId !== undefined ? patch.documentId : task.documentId;
+    if (patch.blockId && !documentId) {
+      return errorResponse(c, 'invalid_request', [
+        'Un bloque necesita su documento.',
+      ]);
+    }
+    if (
+      patch.documentId &&
+      !(await documentExists(c.env.DB, patch.documentId))
+    ) {
+      return errorResponse(c, 'invalid_request', ['Ese documento no existe.']);
     }
     await updateTask(c.env.DB, task.id, patch, new Date().toISOString());
     return c.json(await findTask(c.env.DB, task.id));
@@ -119,12 +133,7 @@ export const tasksRoute = new Hono<AppEnv>()
 /** Quién puede cambiar qué: ver los comentarios de la ruta. */
 function canChange(
   task: Task,
-  patch: {
-    done?: boolean;
-    title?: string;
-    dueDate?: string;
-    assigneeId?: string;
-  },
+  patch: TaskPatch,
   reviewer: { id: string; isAdmin: boolean },
 ): boolean {
   if (reviewer.isAdmin) return true;
@@ -132,6 +141,10 @@ function canChange(
   if (patch.done !== undefined && task.assigneeId !== reviewer.id) {
     return false;
   }
-  const editsDetails = patch.title !== undefined || patch.dueDate !== undefined;
+  const editsDetails =
+    patch.title !== undefined ||
+    patch.dueDate !== undefined ||
+    patch.documentId !== undefined ||
+    patch.blockId !== undefined;
   return !editsDetails || task.createdById === reviewer.id;
 }

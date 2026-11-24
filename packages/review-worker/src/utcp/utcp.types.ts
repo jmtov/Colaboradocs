@@ -1,6 +1,8 @@
+type JsonType = 'object' | 'string' | 'integer' | 'boolean' | 'array' | 'null';
+
 /** Un esquema JSON mínimo: lo que usan las entradas y salidas de las herramientas. */
 export type JsonSchema = {
-  type: 'object' | 'string' | 'integer' | 'boolean' | 'array';
+  type: JsonType | JsonType[];
   description?: string;
   properties?: Record<string, JsonSchema>;
   required?: string[];

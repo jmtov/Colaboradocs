@@ -167,7 +167,7 @@ Con recarga en caliente: `npm run dev` levanta los dos (Ctrl+C los cierra) → h
 
 ### Rol «agente»
 
-Para un asistente automático (p. ej. Claude). **No es admin**: puede leer todo, crear tareas y asignarlas a cualquiera, ver las de todos y **guardar borradores** de documentos y presentaciones (`GET`/`PUT …/draft`). No puede publicar, descartar borradores, subir ni archivar, gestionar accesos, ni cambiar el espacio, los temas o los archivos de un deck: eso sigue siendo de un admin, que revisa el borrador y publica. Un admin tampoco puede ascenderlo a admin. La regla vive en `canUseAdminRoute` (`review-core`) y la aplica el Worker, no la interfaz.
+Para un asistente automático (p. ej. Claude). **No es admin**: puede leer todo, crear y editar tareas (asignarlas a cualquiera, verlas todas, asociarlas a un documento), **guardar borradores** de documentos y presentaciones y **publicar documentos**. Publicar tiene condiciones, y las aplica el Worker: solo si el **último guardado del borrador fue suyo** (si un admin lo tocó después, publica un admin) y **nunca con `force`** (si el documento publicado cambió desde que se creó el borrador, falla con `draft_stale` y decide un admin). Puede reemplazar un documento ya publicado: la versión anterior queda en las versiones, pero los comentarios y OK de los párrafos que cambien dejan de aplicar. No puede publicar presentaciones, descartar borradores, archivar, gestionar accesos, ni cambiar el espacio, los temas o los archivos de un deck. Un admin tampoco puede ascenderlo a admin. La regla vive en `canUseAdminRoute` (`review-core`) y la aplica el Worker, no la interfaz.
 
 Se crea solo por CLI (`--agent` no se combina con `--admin`) y necesita la migración `0009_agent.sql` **antes** del deploy:
 
@@ -177,7 +177,7 @@ npm run pins -- add "Claude" --agent --municipality="Agente" --remote
 
 ### Manual UTCP para agentes
 
-`GET /api/utcp` (público, sin secretos) devuelve un manual [UTCP](https://www.utcp.io) con lo que el agente puede hacer: `login`, `list_people`, `list_tasks`, `create_task`, `update_task`, `list_documents`, `read_document`, `get_document_draft` y `save_document_draft`. Un cliente UTCP lo descubre apuntando a esa URL; llama `login` con el PIN del agente y guarda el token en la variable `COLABORADOCS_TOKEN`, que usan las demás herramientas. Presentaciones y publicar no están (aún). Una prueba (`test/utcp.test.ts`) ejecuta cada herramienta tal como la describe el manual contra el API real, para que no se desincronicen.
+`GET /api/utcp` (público, sin secretos) devuelve un manual [UTCP](https://www.utcp.io) con lo que el agente puede hacer: `login`, `list_people`, `list_tasks`, `create_task`, `update_task`, `list_documents`, `read_document`, `get_document_draft`, `save_document_draft` y `publish_document`. Un cliente UTCP lo descubre apuntando a esa URL; llama `login` con el PIN del agente y guarda el token en la variable `COLABORADOCS_TOKEN`, que usan las demás herramientas. Las presentaciones no están (aún). Una tarea puede crearse sin documento y asociarse después con `update_task` (`documentId`, `blockId`). Una prueba (`test/utcp.test.ts`) ejecuta cada herramienta tal como la describe el manual contra el API real, para que no se desincronicen.
 
 Operaciones (con `--remote` actúan sobre producción):
 

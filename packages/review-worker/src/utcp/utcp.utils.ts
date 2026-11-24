@@ -148,7 +148,7 @@ export function buildTools(origin: string): UtcpTool[] {
     ),
     tool(
       'update_task',
-      'Cambia el título o la fecha de una tarea que creó el agente, o marca hecha una que tiene asignada (`done` solo lo puede quien la tiene). Pasarla a otra persona es de admins.',
+      'Cambia el título, la fecha o el documento de una tarea que creó el agente, o marca hecha una que tiene asignada (`done` solo lo puede quien la tiene). Pasarla a otra persona es de admins.',
       ['tareas'],
       {
         inputs: inputs(
@@ -164,6 +164,15 @@ export function buildTools(origin: string): UtcpTool[] {
                 },
                 title: taskFields.title,
                 dueDate: taskFields.dueDate,
+                documentId: {
+                  type: ['string', 'null'],
+                  description:
+                    'Asociarla a un documento publicado, o null para soltarla. Al cambiar de documento se suelta el bloque.',
+                },
+                blockId: {
+                  type: ['string', 'null'],
+                  description: 'Bloque del documento (opcional), o null.',
+                },
               },
             },
           },
@@ -211,7 +220,7 @@ export function buildTools(origin: string): UtcpTool[] {
     ),
     tool(
       'save_document_draft',
-      'Guarda el borrador de un documento (nuevo o existente). NO publica: un admin lo revisa y publica. Falla con 409 si el borrador cambió desde la `revision` que se pasa.',
+      'Guarda el borrador de un documento (nuevo o existente). No lo publica (ver publish_document). Falla con 409 si el borrador cambió desde la `revision` que se pasa.',
       ['documentos', 'borradores'],
       {
         inputs: inputs(
@@ -247,6 +256,37 @@ export function buildTools(origin: string): UtcpTool[] {
         body_field: 'draft',
       },
     ),
+    tool(
+      'publish_document',
+      'Publica el borrador de un documento: pasa a ser la versión vigente que ve el equipo. Si el documento ya existía, REEMPLAZA su versión (la anterior queda en versiones) y los comentarios y OK de los párrafos que cambien dejan de aplicar. Solo funciona si el último guardado del borrador fue del agente (si un admin lo tocó después, lo publica un admin) y no admite forzar: si el documento cambió desde que se creó el borrador, falla con 409 `draft_stale` y decide un admin. Presentaciones no se publican por aquí.',
+      ['documentos', 'borradores'],
+      {
+        inputs: inputs(
+          {
+            documentId: string('Id del documento.'),
+            publish: {
+              type: 'object',
+              properties: {
+                expectedRevision: {
+                  type: 'integer',
+                  description:
+                    'La `revision` del borrador que se quiere publicar (get_document_draft).',
+                },
+              },
+              required: ['expectedRevision'],
+            },
+          },
+          ['documentId', 'publish'],
+        ),
+        outputs: inputs({ created: { type: 'boolean' } }),
+      },
+      {
+        url: `${api}/admin/documents/{documentId}/publish`,
+        http_method: 'POST',
+        content_type: 'application/json',
+        body_field: 'publish',
+      },
+    ),
   ];
 }
 
@@ -258,7 +298,7 @@ export function buildManual(origin: string): UtcpManual {
       title: 'Colaboradocs',
       version: MANUAL_VERSION,
       description:
-        'Revisión de documentos y presentaciones. Un agente entra con su PIN (login), guarda el token en COLABORADOCS_TOKEN y puede leer, crear tareas y guardar borradores; no publica.',
+        'Revisión de documentos y presentaciones. Un agente entra con su PIN (login), guarda el token en COLABORADOCS_TOKEN y puede leer, crear y editar tareas, guardar borradores y publicar documentos; no archiva ni gestiona accesos.',
     },
     tools: buildTools(origin),
   };

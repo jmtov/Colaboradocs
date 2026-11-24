@@ -34,6 +34,10 @@ export type TaskPatch = {
   title?: string;
   dueDate?: string;
   assigneeId?: string;
+  /** Asociarla a un documento, o `null` para soltarla. Al cambiar de documento se suelta el bloque. */
+  documentId?: string | null;
+  /** Colgarla de un bloque del documento (el de la tarea o el que viene en el mismo cambio), o `null`. */
+  blockId?: string | null;
 };
 
 /** Una persona a quien se puede asignar una tarea. */

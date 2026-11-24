@@ -127,6 +127,20 @@ export function validateTaskPatch(input: unknown): TaskValidation<TaskPatch> {
       errors.push('«assigneeId» no es válido.');
     }
   }
+  for (const [key, pattern, label] of [
+    ['documentId', DOCUMENT_ID_PATTERN, 'documentId'],
+    ['blockId', BLOCK_ID_PATTERN, 'blockId'],
+  ] as const) {
+    const value = raw[key];
+    if (value === undefined) continue;
+    if (value === null) patch[key] = null;
+    else if (typeof value === 'string' && pattern.test(value))
+      patch[key] = value;
+    else errors.push(`«${label}» no es válido.`);
+  }
+  if (patch.documentId === null && typeof patch.blockId === 'string') {
+    errors.push('Un bloque necesita su documento.');
+  }
   if (errors.length === 0 && Object.keys(patch).length === 0) {
     errors.push('No hay nada que cambiar.');
   }

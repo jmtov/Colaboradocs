@@ -8,11 +8,15 @@ Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo p
 
 ## Hecho
 
-- **Rol «agente»** (migración `0009_agent.sql`): no es admin; lee, crea y asigna tareas, y guarda borradores. No publica, archiva ni gestiona accesos. Ver «Rol agente» en el README.
+- **Rol «agente»** (migración `0009_agent.sql`): no es admin; lee, crea y asigna tareas (y las asocia a un documento después), guarda borradores y **publica documentos** si el último guardado del borrador fue suyo y sin `force`. No archiva, no gestiona accesos ni publica presentaciones. Ver «Rol agente» en el README.
 
 ## Hecho también
 
 - **Manual UTCP** (`GET /api/utcp`, `packages/review-worker/src/utcp/`): tareas, lectura de documentos y borradores de documentos. Una prueba de contrato lo ejecuta contra el API real. Falta que se **genere** desde la tabla de permisos (punto 2 de abajo) y sumar las presentaciones.
+
+## Riesgo aceptado
+
+El agente puede reemplazar un documento publicado. Se decidió así para poder delegar. Lo que lo acota: solo publica lo que él guardó por última vez, nunca fuerza, la versión anterior queda en las versiones y no puede archivar. Lo que **no** evita: los comentarios y OK de los párrafos cambiados dejan de aplicar. *Disparador para apretarlo* (p. ej. solo documentos nuevos, o pedir aprobación): un reemplazo que pierda revisión del equipo, o contenido de terceros que el agente lea y le haga publicar algo indebido.
 
 ## Siguiente (van juntos)
 

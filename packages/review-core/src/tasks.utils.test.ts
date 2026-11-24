@@ -95,6 +95,27 @@ describe('validateNewTask', () => {
 });
 
 describe('validateTaskPatch', () => {
+  it('acepta asociar a un documento, un bloque o soltarlos con null', () => {
+    expect(
+      validateTaskPatch({ documentId: 'guia', blockId: 'intro-ab12' }),
+    ).toEqual({
+      ok: true,
+      value: { documentId: 'guia', blockId: 'intro-ab12' },
+    });
+    expect(validateTaskPatch({ documentId: null })).toEqual({
+      ok: true,
+      value: { documentId: null },
+    });
+  });
+
+  it('rechaza ids inválidos y un bloque con el documento en null', () => {
+    expect(validateTaskPatch({ documentId: 'No Válido' }).ok).toBe(false);
+    expect(validateTaskPatch({ blockId: 'Mal Id' }).ok).toBe(false);
+    expect(
+      validateTaskPatch({ documentId: null, blockId: 'intro-ab12' }).ok,
+    ).toBe(false);
+  });
+
   it('acepta cada campo y exige al menos uno', () => {
     expect(validateTaskPatch({ done: true })).toEqual({
       ok: true,

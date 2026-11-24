@@ -36,6 +36,7 @@ import {
   deleteDraft,
   deleteDraftAtRevision,
   findDraft,
+  findDraftAuthorId,
   saveDraft,
 } from '@/db/drafts.queries';
 import type { AppEnv } from '@/env.types';
@@ -261,8 +262,20 @@ export const adminRoute = new Hono<AppEnv>()
         '«expectedRevision» tiene que ser un entero desde 1.',
       ]);
     }
+    const caller = c.get('reviewer');
+    // El agente publica solo lo que él mismo dejó como último guardado y sin forzar:
+    // si un admin tocó el borrador después, o el documento cambió, decide un admin.
+    if (!caller.isAdmin && body.force === true) {
+      return errorResponse(c, 'forbidden');
+    }
     const draft = await findDraft(c.env.DB, id);
     if (!draft) return errorResponse(c, 'not_found');
+    if (
+      !caller.isAdmin &&
+      (await findDraftAuthorId(c.env.DB, id)) !== caller.id
+    ) {
+      return errorResponse(c, 'forbidden');
+    }
     if (draft.revision !== body.expectedRevision) {
       return errorResponse(c, 'conflict');
     }

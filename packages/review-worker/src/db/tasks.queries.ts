@@ -159,6 +159,17 @@ export async function updateTask(
     sets.push('assignee_id = ?');
     values.push(patch.assigneeId);
   }
+  if (patch.documentId !== undefined) {
+    // Cambiar de documento suelta el bloque, que era del anterior, salvo que venga uno nuevo.
+    sets.push('document_id = ?', 'block_id = ?');
+    values.push(
+      patch.documentId,
+      patch.documentId ? (patch.blockId ?? null) : null,
+    );
+  } else if (patch.blockId !== undefined) {
+    sets.push('block_id = ?');
+    values.push(patch.blockId);
+  }
   if (patch.done !== undefined) {
     sets.push('done_at = ?');
     values.push(patch.done ? nowIso : null);

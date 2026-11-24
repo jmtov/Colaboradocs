@@ -1,13 +1,22 @@
 import type { Reviewer } from './review.types';
 
-/** Rutas de administración que también puede usar el agente: leer y guardar el borrador. */
-const AGENT_ADMIN_ROUTE = /\/admin\/(documents|decks)\/[^/]+\/draft$/;
-const AGENT_ADMIN_METHODS = new Set(['GET', 'PUT']);
+/**
+ * Rutas de administración que también puede usar el agente: leer y guardar el
+ * borrador de un documento o una presentación, y publicar un documento (la ruta
+ * pone además sus condiciones: solo un borrador cuyo último guardado fue suyo).
+ */
+const AGENT_ADMIN_ROUTES: { methods: string[]; pattern: RegExp }[] = [
+  {
+    methods: ['GET', 'PUT'],
+    pattern: /\/admin\/(documents|decks)\/[^/]+\/draft$/,
+  },
+  { methods: ['POST'], pattern: /\/admin\/documents\/[^/]+\/publish$/ },
+];
 
 /**
  * Si `reviewer` puede llamar a esa ruta `/admin/*`. Un admin, a todas. El agente,
- * solo a leer (`GET`) y guardar (`PUT`) el borrador de un documento o una
- * presentación: no publica, no descarta borradores, no archiva ni toca accesos.
+ * solo a leer y guardar borradores y a publicar un documento: no publica
+ * presentaciones, no descarta borradores, no archiva ni toca accesos.
  */
 export function canUseAdminRoute(
   reviewer: Pick<Reviewer, 'isAdmin' | 'isAgent'>,
@@ -17,8 +26,11 @@ export function canUseAdminRoute(
   if (reviewer.isAdmin) return true;
   return (
     reviewer.isAgent &&
-    AGENT_ADMIN_METHODS.has(method.toUpperCase()) &&
-    AGENT_ADMIN_ROUTE.test(path)
+    AGENT_ADMIN_ROUTES.some(
+      (route) =>
+        route.methods.includes(method.toUpperCase()) &&
+        route.pattern.test(path),
+    )
   );
 }
 

@@ -107,14 +107,15 @@ describe('manual UTCP: forma', () => {
     expect(open.map((t) => t.name)).toEqual(['login']);
   });
 
-  it('no anuncia nada que el agente no pueda hacer: ni publicar ni accesos ni archivar', async () => {
+  it('no anuncia nada que el agente no pueda hacer: ni presentaciones, ni accesos, ni archivar', async () => {
     const m = await manual();
     for (const item of m.tools) {
       const { url, http_method: method } = item.tool_call_template;
-      expect(url).not.toMatch(/publish|reviewers|space|themes|files/);
+      expect(url).not.toMatch(/decks|reviewers|space|themes|files/);
       if (url.includes('/admin/')) {
-        expect(url).toMatch(/\/draft$/);
-        expect(['GET', 'PUT']).toContain(method);
+        expect(url).toMatch(/\/draft$|\/publish$/);
+        expect(['GET', 'PUT', 'POST']).toContain(method);
+        if (url.endsWith('/publish')) expect(method).toBe('POST');
       }
     }
   });
@@ -169,7 +170,7 @@ describe('manual UTCP: un agente que lo sigue', () => {
     expect((await update({ done: true })).status).toBe(403);
   });
 
-  it('lee documentos y guarda un borrador, pero no puede publicarlo', async () => {
+  it('lee documentos, guarda un borrador, lo publica y cuelga tareas de él', async () => {
     const admin = await createReviewer('Admin', { isAdmin: true });
     const adminToken = await tokenFor(admin);
     await authed(adminToken, '/admin/documents/guia', {
@@ -216,18 +217,41 @@ describe('manual UTCP: un agente que lo sigue', () => {
       ).status,
     ).toBe(200);
 
-    const publish = await SELF.fetch(
-      `${ORIGIN}/api/admin/documents/nuevo/publish`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ expectedRevision: 1 }),
-      },
+    const published = await call(
+      find(m, 'publish_document'),
+      { documentId: 'nuevo', publish: { expectedRevision: 1 } },
+      token,
     );
-    expect(publish.status).toBe(403);
+    expect(published.status).toBe(201);
+
+    // Con el documento publicado, las tareas pueden colgar de él desde el inicio...
+    const created = await call(
+      find(m, 'create_task'),
+      {
+        task: {
+          title: 'Revisar la guía',
+          dueDate: '2026-12-01',
+          documentId: 'nuevo',
+        },
+      },
+      token,
+    );
+    expect(created.status).toBe(201);
+    // ...o crearse sin documento y asociarse después.
+    const loose = (await (
+      await call(
+        find(m, 'create_task'),
+        { task: { title: 'Suelta', dueDate: '2026-12-01' } },
+        token,
+      )
+    ).json()) as Task;
+    expect(loose.documentId).toBeNull();
+    const linked = await call(
+      find(m, 'update_task'),
+      { id: loose.id, changes: { documentId: 'nuevo' } },
+      token,
+    );
+    expect(((await linked.json()) as Task).documentId).toBe('nuevo');
   });
 
   it('sin token, las herramientas con auth responden 401', async () => {
