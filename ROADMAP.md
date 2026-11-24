@@ -10,6 +10,10 @@ Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo p
 
 - **Rol «agente»** (migración `0009_agent.sql`): no es admin; lee, crea y asigna tareas, y guarda borradores. No publica, archiva ni gestiona accesos. Ver «Rol agente» en el README.
 
+## Hecho también
+
+- **Manual UTCP** (`GET /api/utcp`, `packages/review-worker/src/utcp/`): tareas, lectura de documentos y borradores de documentos. Una prueba de contrato lo ejecuta contra el API real. Falta que se **genere** desde la tabla de permisos (punto 2 de abajo) y sumar las presentaciones.
+
 ## Siguiente (van juntos)
 
 1. **Permisos con nombre, en código.** Acciones como `documents:read`, `documents:draft`, `documents:publish`, `documents:archive`, `tasks:assign`, `access:manage`. Cada nivel (persona, agente, admin) mapea a un conjunto de permisos en `permissions.utils.ts`; las rutas piden un permiso (`requirePermission(...)`) en vez de preguntar por el nivel. Sin migración. Las reglas que dependen del recurso («borra su autor o un admin», «marca la tarea quien la tiene») siguen como están: no son permisos puros.

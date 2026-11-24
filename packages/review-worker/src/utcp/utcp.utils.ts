@@ -1,0 +1,265 @@
+import { MAX_TASK_TITLE_LENGTH } from '@colaboradocs/review-core';
+import { MANUAL_VERSION, TOKEN_AUTH, UTCP_VERSION } from './utcp.constants';
+import type {
+  JsonSchema,
+  UtcpHttpCallTemplate,
+  UtcpManual,
+  UtcpTool,
+} from './utcp.types';
+
+const DATE = 'AAAA-MM-DD, un día sin hora ni zona.';
+const OBJECT: JsonSchema = { type: 'object' };
+
+function string(description: string): JsonSchema {
+  return { type: 'string', description };
+}
+
+function inputs(
+  properties: Record<string, JsonSchema>,
+  required: string[] = [],
+): JsonSchema {
+  return { type: 'object', properties, required };
+}
+
+function tool(
+  name: string,
+  description: string,
+  tags: string[],
+  io: { inputs: JsonSchema; outputs: JsonSchema },
+  call: Omit<UtcpHttpCallTemplate, 'call_template_type' | 'auth'> & {
+    authenticated?: boolean;
+  },
+): UtcpTool {
+  const { authenticated = true, ...template } = call;
+  return {
+    name,
+    description,
+    tags,
+    ...io,
+    tool_call_template: {
+      call_template_type: 'http',
+      ...template,
+      ...(authenticated ? { auth: TOKEN_AUTH } : {}),
+    },
+  };
+}
+
+/**
+ * Las herramientas que un agente puede usar. Es exactamente lo que el rol «agente»
+ * puede hacer en el API (ver `canUseAdminRoute` y `canManageTasks` en review-core);
+ * una prueba lo comprueba contra las rutas reales.
+ */
+export function buildTools(origin: string): UtcpTool[] {
+  const api = `${origin}/api`;
+  const taskFields = {
+    title: string(
+      `Qué hay que hacer (máx. ${MAX_TASK_TITLE_LENGTH} caracteres).`,
+    ),
+    dueDate: string(`Fecha límite. ${DATE}`),
+    assigneeId: string(
+      'Id de la persona a quien se asigna (ver list_people). Sin esto, queda para el agente.',
+    ),
+    documentId: string('Id del documento del que cuelga (opcional).'),
+    blockId: string('Id del bloque; solo con documentId (opcional).'),
+  };
+  return [
+    tool(
+      'login',
+      'Canjea el PIN del agente por un token (dura 30 días). Guárdalo en la variable COLABORADOCS_TOKEN.',
+      ['acceso'],
+      {
+        inputs: inputs(
+          {
+            login: {
+              type: 'object',
+              properties: {
+                pin: string('PIN de 8 caracteres, con o sin guion.'),
+                deviceId: string(
+                  'Identificador estable de este agente (16 a 64 letras, números o guiones).',
+                ),
+              },
+              required: ['pin', 'deviceId'],
+            },
+          },
+          ['login'],
+        ),
+        outputs: inputs({ token: string('El token.'), reviewer: OBJECT }),
+      },
+      {
+        url: `${api}/login`,
+        http_method: 'POST',
+        content_type: 'application/json',
+        body_field: 'login',
+        authenticated: false,
+      },
+    ),
+    tool(
+      'list_people',
+      'Personas a quienes se puede asignar una tarea.',
+      ['tareas'],
+      {
+        inputs: inputs({}),
+        outputs: { type: 'array', items: OBJECT },
+      },
+      { url: `${api}/tasks/people`, http_method: 'GET' },
+    ),
+    tool(
+      'list_tasks',
+      'Lista tareas. Con `scope: all`, las de todos; con `document`, las de ese documento.',
+      ['tareas'],
+      {
+        inputs: inputs({
+          scope: {
+            type: 'string',
+            enum: ['mine', 'all'],
+            description: 'Por omisión, las del agente.',
+          },
+          document: string(
+            'Id de un documento: sus tareas, de todas las personas.',
+          ),
+        }),
+        outputs: { type: 'array', items: OBJECT },
+      },
+      { url: `${api}/tasks`, http_method: 'GET' },
+    ),
+    tool(
+      'create_task',
+      'Crea una tarea con fecha límite y la asigna a una persona.',
+      ['tareas'],
+      {
+        inputs: inputs(
+          {
+            task: {
+              type: 'object',
+              properties: taskFields,
+              required: ['title', 'dueDate'],
+            },
+          },
+          ['task'],
+        ),
+        outputs: OBJECT,
+      },
+      {
+        url: `${api}/tasks`,
+        http_method: 'POST',
+        content_type: 'application/json',
+        body_field: 'task',
+      },
+    ),
+    tool(
+      'update_task',
+      'Cambia el título o la fecha de una tarea que creó el agente, o marca hecha una que tiene asignada (`done` solo lo puede quien la tiene). Pasarla a otra persona es de admins.',
+      ['tareas'],
+      {
+        inputs: inputs(
+          {
+            id: string('Id de la tarea.'),
+            changes: {
+              type: 'object',
+              properties: {
+                done: {
+                  type: 'boolean',
+                  description:
+                    'Marcar hecha o pendiente; solo si la tarea es del agente.',
+                },
+                title: taskFields.title,
+                dueDate: taskFields.dueDate,
+              },
+            },
+          },
+          ['id', 'changes'],
+        ),
+        outputs: OBJECT,
+      },
+      {
+        url: `${api}/tasks/{id}`,
+        http_method: 'PATCH',
+        content_type: 'application/json',
+        body_field: 'changes',
+      },
+    ),
+    tool(
+      'list_documents',
+      'Documentos de revisión (no archivados), con su actividad.',
+      ['documentos'],
+      { inputs: inputs({}), outputs: { type: 'array', items: OBJECT } },
+      { url: `${api}/documents`, http_method: 'GET' },
+    ),
+    tool(
+      'read_document',
+      'El contenido completo de un documento publicado.',
+      ['documentos'],
+      {
+        inputs: inputs({ documentId: string('Id del documento.') }, [
+          'documentId',
+        ]),
+        outputs: OBJECT,
+      },
+      { url: `${api}/documents/{documentId}/content`, http_method: 'GET' },
+    ),
+    tool(
+      'get_document_draft',
+      'El borrador de un documento (404 si no hay). Trae `revision`, que hay que devolver al guardar.',
+      ['documentos', 'borradores'],
+      {
+        inputs: inputs({ documentId: string('Id del documento.') }, [
+          'documentId',
+        ]),
+        outputs: OBJECT,
+      },
+      { url: `${api}/admin/documents/{documentId}/draft`, http_method: 'GET' },
+    ),
+    tool(
+      'save_document_draft',
+      'Guarda el borrador de un documento (nuevo o existente). NO publica: un admin lo revisa y publica. Falla con 409 si el borrador cambió desde la `revision` que se pasa.',
+      ['documentos', 'borradores'],
+      {
+        inputs: inputs(
+          {
+            documentId: string(
+              'Id del documento (igual al `id` del contenido).',
+            ),
+            draft: {
+              type: 'object',
+              properties: {
+                content: {
+                  type: 'object',
+                  description:
+                    'El documento completo (id, title, version, updated, sections…). Formato en README.',
+                },
+                expectedRevision: {
+                  type: 'integer',
+                  description:
+                    'La `revision` del borrador actual; 0 si no hay.',
+                },
+              },
+              required: ['content', 'expectedRevision'],
+            },
+          },
+          ['documentId', 'draft'],
+        ),
+        outputs: OBJECT,
+      },
+      {
+        url: `${api}/admin/documents/{documentId}/draft`,
+        http_method: 'PUT',
+        content_type: 'application/json',
+        body_field: 'draft',
+      },
+    ),
+  ];
+}
+
+export function buildManual(origin: string): UtcpManual {
+  return {
+    utcp_version: UTCP_VERSION,
+    manual_version: MANUAL_VERSION,
+    info: {
+      title: 'Colaboradocs',
+      version: MANUAL_VERSION,
+      description:
+        'Revisión de documentos y presentaciones. Un agente entra con su PIN (login), guarda el token en COLABORADOCS_TOKEN y puede leer, crear tareas y guardar borradores; no publica.',
+    },
+    tools: buildTools(origin),
+  };
+}

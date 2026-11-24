@@ -175,6 +175,10 @@ Se crea solo por CLI (`--agent` no se combina con `--admin`) y necesita la migra
 npm run pins -- add "Claude" --agent --municipality="Agente" --remote
 ```
 
+### Manual UTCP para agentes
+
+`GET /api/utcp` (público, sin secretos) devuelve un manual [UTCP](https://www.utcp.io) con lo que el agente puede hacer: `login`, `list_people`, `list_tasks`, `create_task`, `update_task`, `list_documents`, `read_document`, `get_document_draft` y `save_document_draft`. Un cliente UTCP lo descubre apuntando a esa URL; llama `login` con el PIN del agente y guarda el token en la variable `COLABORADOCS_TOKEN`, que usan las demás herramientas. Presentaciones y publicar no están (aún). Una prueba (`test/utcp.test.ts`) ejecuta cada herramienta tal como la describe el manual contra el API real, para que no se desincronicen.
+
 Operaciones (con `--remote` actúan sobre producción):
 
 ```
