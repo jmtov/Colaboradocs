@@ -11,7 +11,7 @@ import {
   validateSpace,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
-import { requireAdmin, requireReviewer } from '@/auth/auth.middleware';
+import { requireAdminAccess, requireReviewer } from '@/auth/auth.middleware';
 import {
   findStoredReviewer,
   findStoredReviewerByName,
@@ -53,7 +53,7 @@ function cleanText(value: unknown, max: number): string | null {
 
 /** Pantalla de accesos: solo admins. Las reglas de la cadena se validan aquí, no en la UI. */
 export const adminRoute = new Hono<AppEnv>()
-  .use('/admin/*', requireReviewer, requireAdmin)
+  .use('/admin/*', requireReviewer, requireAdminAccess)
 
   .get('/admin/reviewers', async (c) => {
     const people = await listStoredReviewers(c.env.DB);
@@ -127,6 +127,10 @@ export const adminRoute = new Hono<AppEnv>()
     if (hasRole && !municipality) return errorResponse(c, 'invalid_request');
     if (hasAdmin && typeof body?.isAdmin !== 'boolean') {
       return errorResponse(c, 'invalid_request');
+    }
+    // Un agente no se asciende a admin: es un rol aparte, con permisos acotados.
+    if (hasAdmin && body?.isAdmin === true && person.isAgent) {
+      return errorResponse(c, 'forbidden');
     }
     // Cambiar el nivel de acceso de alguien bloqueado queda fuera; el rol es solo una etiqueta.
     if (hasAdmin && body?.isAdmin !== person.isAdmin && locked) {

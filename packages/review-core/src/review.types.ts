@@ -2,6 +2,8 @@ export type Reviewer = {
   id: string;
   name: string;
   isAdmin: boolean;
+  /** Asistente automático: permisos acotados (ver `permissions.utils.ts`); nunca es admin. */
+  isAgent: boolean;
   /** Municipio de la persona; null si no se registró. */
   municipality: string | null;
 };

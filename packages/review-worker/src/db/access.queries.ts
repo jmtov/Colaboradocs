@@ -5,6 +5,7 @@ type Row = {
   name: string;
   municipality: string | null;
   is_admin: number;
+  is_agent: number;
   max_devices: number;
   promoted_by: string | null;
   revoked_at: string | null;
@@ -12,7 +13,7 @@ type Row = {
 };
 
 const SELECT = `
-  SELECT r.id, r.name, r.municipality, r.is_admin, r.max_devices, r.promoted_by, r.revoked_at,
+  SELECT r.id, r.name, r.municipality, r.is_admin, r.is_agent, r.max_devices, r.promoted_by, r.revoked_at,
          (SELECT COUNT(*) FROM devices d WHERE d.reviewer_id = r.id) AS devices
   FROM reviewers r`;
 
@@ -21,6 +22,7 @@ export type StoredReviewer = {
   name: string;
   municipality: string | null;
   isAdmin: boolean;
+  isAgent: boolean;
   maxDevices: number;
   promotedBy: string | null;
   revoked: boolean;
@@ -33,6 +35,7 @@ function toStored(row: Row): StoredReviewer {
     name: row.name,
     municipality: row.municipality,
     isAdmin: row.is_admin === 1,
+    isAgent: row.is_agent === 1,
     maxDevices: row.max_devices,
     promotedBy: row.promoted_by,
     revoked: row.revoked_at !== null,

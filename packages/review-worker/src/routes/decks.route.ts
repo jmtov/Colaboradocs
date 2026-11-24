@@ -6,7 +6,11 @@ import {
   validateTheme,
 } from '@colaboradocs/deck-core';
 import { Hono } from 'hono';
-import { requireAdmin, requireReviewer } from '@/auth/auth.middleware';
+import {
+  requireAdmin,
+  requireAdminAccess,
+  requireReviewer,
+} from '@/auth/auth.middleware';
 import {
   archiveDeck,
   base64ToBytes,
@@ -112,7 +116,7 @@ export const decksRoute = new Hono<AppEnv>()
   })
 
   .use('/admin/themes/*', requireReviewer, requireAdmin)
-  .use('/admin/decks/*', requireReviewer, requireAdmin)
+  .use('/admin/decks/*', requireReviewer, requireAdminAccess)
 
   .get('/admin/themes', requireReviewer, requireAdmin, async (c) =>
     c.json(await listThemes(c.env.DB)),

@@ -19,6 +19,7 @@ const reviewer = {
   id: 'r1',
   name: 'Ana',
   isAdmin: false,
+  isAgent: false,
   municipality: 'La Ceja',
 };
 
@@ -41,7 +42,7 @@ describe('createSessionStorage', () => {
       'doc:session',
       JSON.stringify({
         token: 't',
-        reviewer: { id: 'r1', name: 'Ana', isAdmin: false },
+        reviewer: { id: 'r1', name: 'Ana', isAdmin: false, isAgent: false },
       }),
     );
     const session = createSessionStorage(storage, 'doc').loadSession();

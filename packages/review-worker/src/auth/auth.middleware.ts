@@ -1,3 +1,4 @@
+import { canUseAdminRoute } from '@colaboradocs/review-core';
 import { createMiddleware } from 'hono/factory';
 import { findReviewerForDevice } from '@/db/reviewers.queries';
 import type { AppEnv } from '@/env.types';
@@ -7,6 +8,17 @@ import { verifyToken } from './token.utils';
 /** Además de la sesión, exige que la persona sea admin. */
 export const requireAdmin = createMiddleware<AppEnv>(async (c, next) => {
   if (!c.get('reviewer').isAdmin) return errorResponse(c, 'forbidden');
+  await next();
+});
+
+/**
+ * Como `requireAdmin`, pero deja pasar al agente por las rutas de borrador que le
+ * corresponden (ver `canUseAdminRoute`). Va después de `requireReviewer`.
+ */
+export const requireAdminAccess = createMiddleware<AppEnv>(async (c, next) => {
+  if (!canUseAdminRoute(c.get('reviewer'), c.req.method, c.req.path)) {
+    return errorResponse(c, 'forbidden');
+  }
   await next();
 });
 

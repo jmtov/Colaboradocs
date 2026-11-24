@@ -8,6 +8,7 @@ type ReviewerRow = {
   id: string;
   name: string;
   is_admin: number;
+  is_agent: number;
   municipality: string | null;
 };
 
@@ -21,6 +22,7 @@ function toReviewer(row: ReviewerRow): Reviewer {
     id: row.id,
     name: row.name,
     isAdmin: row.is_admin === 1,
+    isAgent: row.is_agent === 1,
     municipality: row.municipality,
   };
 }
@@ -37,7 +39,7 @@ export async function findReviewerByPinHash(
 ): Promise<PinMatch | null> {
   const row = await db
     .prepare(
-      'SELECT id, name, is_admin, municipality, max_devices, revoked_at FROM reviewers WHERE pin_hash = ?',
+      'SELECT id, name, is_admin, is_agent, municipality, max_devices, revoked_at FROM reviewers WHERE pin_hash = ?',
     )
     .bind(pinHash)
     .first<PinRow>();
@@ -56,7 +58,7 @@ export async function findReviewerForDevice(
 ): Promise<Reviewer | null> {
   const row = await db
     .prepare(
-      `SELECT r.id, r.name, r.is_admin, r.municipality
+      `SELECT r.id, r.name, r.is_admin, r.is_agent, r.municipality
        FROM reviewers r
        JOIN devices d ON d.reviewer_id = r.id
        WHERE r.id = ? AND d.device_id = ? AND r.revoked_at IS NULL`,

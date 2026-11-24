@@ -16,6 +16,7 @@ export async function createReviewer(
   name: string,
   options: {
     isAdmin?: boolean;
+    isAgent?: boolean;
     maxDevices?: number;
     municipality?: string;
     promotedBy?: string;
@@ -24,14 +25,15 @@ export async function createReviewer(
   const pin = generatePin();
   const id = crypto.randomUUID();
   await env.DB.prepare(
-    `INSERT INTO reviewers (id, name, pin_hash, is_admin, max_devices, municipality, promoted_by, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO reviewers (id, name, pin_hash, is_admin, is_agent, max_devices, municipality, promoted_by, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       id,
       name,
       await hashPin(pin, env.TOKEN_SECRET),
       options.isAdmin ? 1 : 0,
+      options.isAgent ? 1 : 0,
       options.maxDevices ?? 2,
       options.municipality ?? null,
       options.promotedBy ?? null,

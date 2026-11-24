@@ -142,6 +142,7 @@ function parseArgs(argv: string[]) {
     names,
     remote: flags.includes('--remote'),
     isAdmin: flags.includes('--admin'),
+    isAgent: flags.includes('--agent'),
     municipality: municipalityFlag
       ? municipalityFlag.slice('--municipality='.length)
       : null,
@@ -156,12 +157,17 @@ async function addReviewer(
   options: ReturnType<typeof parseArgs>,
   secret: string,
 ) {
+  if (options.isAdmin && options.isAgent) {
+    throw new Error(
+      '--admin y --agent no se combinan: el agente nunca es admin.',
+    );
+  }
   const pin = generatePin();
   const hash = await hashPin(pin, secret);
   runSql(
-    `INSERT INTO reviewers (id, name, pin_hash, is_admin, max_devices, municipality, created_at)
+    `INSERT INTO reviewers (id, name, pin_hash, is_admin, is_agent, max_devices, municipality, created_at)
      VALUES (${quote(crypto.randomUUID())}, ${quote(name)}, ${quote(hash)},
-             ${options.isAdmin ? 1 : 0}, ${options.maxDevices},
+             ${options.isAdmin ? 1 : 0}, ${options.isAgent ? 1 : 0}, ${options.maxDevices},
              ${options.municipality ? quote(options.municipality) : 'NULL'}, ${quote(new Date().toISOString())})`,
     options.remote,
   );
