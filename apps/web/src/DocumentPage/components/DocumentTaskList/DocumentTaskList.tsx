@@ -1,9 +1,10 @@
-import { Button } from '@colaboradocs/review-ui';
-import { For, Show } from 'solid-js';
-import PlusIcon from '@/icons/PlusIcon';
-import TaskRow from '@/TaskRow/TaskRow';
-import { useDocumentTaskList } from './DocumentTaskList.hooks';
-import styles from './DocumentTaskList.module.css';
+import { Button } from "@colaboradocs/review-ui";
+import { For, Show } from "solid-js";
+import ChevronDownIcon from "@/icons/ChevronDownIcon";
+import PlusIcon from "@/icons/PlusIcon";
+import TaskRow from "@/TaskRow/TaskRow";
+import { useDocumentTaskList } from "./DocumentTaskList.hooks";
+import styles from "./DocumentTaskList.module.css";
 
 type Props = {
   documentId: string;
@@ -21,29 +22,50 @@ export default function DocumentTaskList(props: Props) {
         persona marca las suyas.
       </p>
       <Show when={list.tasks().length > 0}>
-        <ul class={styles.list}>
-          <For each={list.tasks()}>
-            {(task) => (
-              <TaskRow
-                task={task}
-                today={list.today()}
-                assignee={
-                  task.assigneeMunicipality
-                    ? `${task.assigneeName} (${task.assigneeMunicipality})`
-                    : task.assigneeName
-                }
-                canToggle={list.canToggle(task)}
-                onToggle={(done) => list.toggle(task, done)}
-                onEdit={
-                  list.canChange(task) ? () => list.edit(task) : undefined
-                }
-                onDelete={
-                  list.canChange(task) ? () => list.remove(task) : undefined
-                }
-              />
-            )}
-          </For>
-        </ul>
+        <For each={list.groups()}>
+          {(group) => (
+            <div class={styles.group}>
+              <h3 class={styles.groupTitle}>
+                <button
+                  type="button"
+                  class={styles.groupToggle}
+                  aria-expanded={!list.isCollapsed(group.id)}
+                  onClick={() => list.toggleGroup(group.id)}
+                >
+                  <ChevronDownIcon
+                    class={`${styles.chevron} ${list.isCollapsed(group.id) ? styles.chevronClosed : ""}`}
+                  />
+                  {list.isMe(group.id) ? `${group.name} (tú)` : group.name}
+                  <span class={styles.count}>{group.tasks.length}</span>
+                </button>
+              </h3>
+              <Show when={!list.isCollapsed(group.id)}>
+                <ul class={styles.list}>
+                  <For each={group.tasks}>
+                    {(task) => (
+                      <TaskRow
+                        task={task}
+                        today={list.today()}
+                        canToggle={list.canToggle(task)}
+                        onToggle={(done) => list.toggle(task, done)}
+                        onEdit={
+                          list.canChange(task)
+                            ? () => list.edit(task)
+                            : undefined
+                        }
+                        onDelete={
+                          list.canChange(task)
+                            ? () => list.remove(task)
+                            : undefined
+                        }
+                      />
+                    )}
+                  </For>
+                </ul>
+              </Show>
+            </div>
+          )}
+        </For>
       </Show>
       <Button icon={PlusIcon} class={styles.add} onClick={list.add}>
         Nueva tarea

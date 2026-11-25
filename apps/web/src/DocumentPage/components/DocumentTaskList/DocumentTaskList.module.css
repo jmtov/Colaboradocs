@@ -23,6 +23,53 @@
   color: var(--muted);
 }
 
+.group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.groupTitle {
+  margin: 0.5rem 0 0;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.groupToggle {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.groupToggle:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.chevron {
+  width: 1em;
+  height: 1em;
+  transition: transform 0.15s;
+}
+
+.chevronClosed {
+  transform: rotate(-90deg);
+}
+
+.count {
+  font-weight: 600;
+  color: var(--fg);
+}
+
 .list {
   display: grid;
   gap: 0.5rem;
