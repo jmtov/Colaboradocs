@@ -15,7 +15,7 @@ export function getIn(root: unknown, path: Path): unknown {
 /** Cambia un valor dentro de `root` (modifica el objeto; pensado para un borrador de `produce`). */
 export function setIn(root: unknown, path: Path, value: unknown): void {
   const parent = getIn(root, path.slice(0, -1));
-  const key = path.at(-1);
+  const key = path[path.length - 1];
   if (key === undefined || parent === null || typeof parent !== 'object') {
     throw new Error(`Ruta inválida: ${path.join('.')}`);
   }
@@ -25,7 +25,7 @@ export function setIn(root: unknown, path: Path, value: unknown): void {
 /** Quita una clave de un objeto o un elemento de una lista. */
 export function deleteIn(root: unknown, path: Path): void {
   const parent = getIn(root, path.slice(0, -1));
-  const key = path.at(-1);
+  const key = path[path.length - 1];
   if (key === undefined || parent === null || typeof parent !== 'object')
     return;
   if (Array.isArray(parent)) parent.splice(Number(key), 1);

@@ -11,6 +11,7 @@ import {
 import { unwrap } from 'solid-js/store';
 import { loadDeckFiles } from '@/DeckPage/DeckPage.hooks';
 import { deckPath, navigate } from '@/router/router';
+import { cloneJson } from './features/deck/clone.utils';
 import { deckStore } from './features/deck/deck.store';
 import { migrateDeck, serializeDeck } from './features/deck/storage.utils';
 
@@ -92,9 +93,7 @@ export function useDeckEditorPage(id: () => string) {
     if (text === baseline) return;
     setSaveState('saving');
     try {
-      await review.saveDeckDraft(
-        structuredClone(unwrap(deckStore.deck)) as Deck,
-      );
+      await review.saveDeckDraft(cloneJson(unwrap(deckStore.deck)) as Deck);
       baseline = text;
       setError(undefined);
       setSaveState('saved');

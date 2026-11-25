@@ -1,5 +1,6 @@
 import { defaultValue, type Field } from '@colaboradocs/deck-core';
 import { For } from 'solid-js';
+import { cloneJson } from '@/DeckEditor/features/deck/clone.utils';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import type { Path } from '@/DeckEditor/features/deck/deck.utils';
 import FieldForm from '../FieldForm/FieldForm';
@@ -19,8 +20,8 @@ export default function ListField(props: ListFieldProps) {
   const add = () => {
     const first = props.field.sample[0] ?? defaultValue(props.field.fields);
     if (props.value)
-      deckStore.insert(props.path, items().length, structuredClone(first));
-    else deckStore.set(props.path, [structuredClone(first)]);
+      deckStore.insert(props.path, items().length, cloneJson(first));
+    else deckStore.set(props.path, [cloneJson(first)]);
   };
   const canRemove = () => !props.field.required || items().length > 1;
   return (

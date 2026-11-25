@@ -114,6 +114,7 @@
 
 .defTerm[data-flash],
 .definition[data-flash] {
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 7%, var(--bg));
 }
 

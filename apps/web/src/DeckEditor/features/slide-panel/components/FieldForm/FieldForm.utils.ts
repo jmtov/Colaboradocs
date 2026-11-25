@@ -64,7 +64,7 @@ export function groupFields(fields: Field[]): FieldGroup[] {
       groups.push({ kind: 'section', field });
       continue;
     }
-    const last = groups.at(-1);
+    const last = groups[groups.length - 1];
     if (last?.kind === 'rows' && last.title === field.group)
       last.fields.push(field);
     else groups.push({ kind: 'rows', title: field.group, fields: [field] });

@@ -13,6 +13,7 @@ import {
 import { createMemo, createRoot, createSignal } from 'solid-js';
 import { createStore, produce, reconcile, unwrap } from 'solid-js/store';
 import type { DeckFiles } from '@/DeckPage/deck.utils';
+import { cloneJson } from './clone.utils';
 import { deleteIn, insertAt, moveAt, type Path, setIn } from './deck.utils';
 import {
   emptyHistory,
@@ -24,7 +25,7 @@ import {
 
 const COALESCE_MS = 1000;
 
-const copy = <T>(value: T): T => structuredClone(value);
+const copy = <T>(value: T): T => cloneJson(value);
 
 const emptyDeck = (): Deck => ({
   version: 1,

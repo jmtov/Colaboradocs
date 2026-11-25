@@ -53,6 +53,38 @@
   }
 }
 
+/* Safari < 16.2 no entiende color-mix(): los tokens quedarían inválidos (texto sin atenuar,
+   fondos y líneas sin pintar). Aquí van sus equivalentes ya calculados. */
+@supports not (color: color-mix(in srgb, red, blue)) {
+  :root {
+    --muted: #656565;
+    --faint: #8f8f8f;
+    --tint: #f3f3f3;
+    --line: #e1e1e1;
+    --line-strong: #bababa;
+  }
+
+  :root[data-theme="dark"] {
+    --muted: #9b9b9b;
+    --faint: #727272;
+    --tint: #131313;
+    --line: #242424;
+    --line-strong: #4a4a4a;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  @supports not (color: color-mix(in srgb, red, blue)) {
+    :root:not([data-theme="light"]) {
+      --muted: #9b9b9b;
+      --faint: #727272;
+      --tint: #131313;
+      --line: #242424;
+      --line-strong: #4a4a4a;
+    }
+  }
+}
+
 /* Sin bordes redondeados en ningún elemento: esquinas rectas en toda la interfaz.
    Se reinicia aquí (y no en cada componente) para que también valga para los
    estilos nativos del navegador (campos, botones, diálogos) y lo que se añada después. */

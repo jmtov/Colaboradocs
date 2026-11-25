@@ -23,6 +23,7 @@
   border-color: var(--fg);
 }
 .other {
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 8%, var(--surface));
 }
 .mine {

@@ -11,6 +11,7 @@
   font: inherit;
   font-weight: 600;
   color: var(--fg);
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 8%, var(--bg));
   border: 0;
   border-bottom: 1px solid var(--line-strong);

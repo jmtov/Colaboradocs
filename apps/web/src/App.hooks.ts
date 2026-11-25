@@ -61,7 +61,14 @@ export function useHomeRoute() {
     if (only) navigate(documentPath(only.id), { replace: true });
   });
 
-  return { documents: () => review.documents(), decks, refetchDecks, single };
+  return {
+    documents: () => review.documents(),
+    failed: () => review.status() === 'error' && !review.documents(),
+    retry: () => void review.refresh(),
+    decks,
+    refetchDecks,
+    single,
+  };
 }
 
 /** Estado de la app: espacio, título del documento, transición de páginas y ruta. */

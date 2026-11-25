@@ -1,6 +1,7 @@
 export { default as AccessPanel } from './AccessPanel/AccessPanel';
 export { default as ActionMenu } from './ActionMenu/ActionMenu';
 export type { ActionMenuItem } from './ActionMenu/ActionMenu.types';
+export { installPopoverPolyfill } from './ActionMenu/popover.polyfill';
 export {
   openAfterMenuCloses,
   toggleMenuBelow,

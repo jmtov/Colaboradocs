@@ -41,12 +41,12 @@ export function buildDeckHtml(
 export function inlineFiles(html: string, loaded: DeckFiles): string {
   let out = html;
   for (const [file, url] of Object.entries(loaded.fonts)) {
-    out = out.replaceAll(`"${FONTS_PATH}/${file}"`, `"${url}"`);
+    out = out.split(`"${FONTS_PATH}/${file}"`).join(`"${url}"`);
   }
   for (const [path, url] of Object.entries(loaded.files)) {
-    out = out.replaceAll(`"assets/${path}"`, `"${url}"`);
+    out = out.split(`"assets/${path}"`).join(`"${url}"`);
     // las capas de fondo piden su archivo en una variable CSS: `--src:url(assets/…)`
-    out = out.replaceAll(`url(assets/${path})`, `url(${url})`);
+    out = out.split(`url(assets/${path})`).join(`url(${url})`);
   }
   return out;
 }

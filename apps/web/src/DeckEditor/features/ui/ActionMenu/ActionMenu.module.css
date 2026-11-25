@@ -63,6 +63,7 @@
 }
 .item:hover:not(:disabled),
 .item:focus-visible {
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 7%, var(--surface));
   outline: none;
 }

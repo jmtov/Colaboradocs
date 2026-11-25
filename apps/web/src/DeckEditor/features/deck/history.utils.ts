@@ -18,7 +18,7 @@ export function undo<T>(
   history: History<T>,
   present: T,
 ): { history: History<T>; value: T } | null {
-  const value = history.past.at(-1);
+  const value = history.past[history.past.length - 1];
   if (value === undefined) return null;
   return {
     value,

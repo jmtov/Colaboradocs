@@ -8,6 +8,7 @@
   font-size: var(--font-size-sm);
 }
 .row:focus-within {
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 4%, var(--surface));
 }
 .tall {

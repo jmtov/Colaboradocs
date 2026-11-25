@@ -37,6 +37,16 @@
   },
   "overrides": [
     {
+      "includes": ["**/*.css"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noDuplicateProperties": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.svg"],
       "linter": {
         "rules": {

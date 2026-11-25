@@ -9,6 +9,7 @@
   padding: 0.4rem 0.6rem;
   cursor: pointer;
   list-style: none;
+  background: var(--tint);
   background: color-mix(in srgb, var(--fg) 4%, var(--surface));
 }
 .bar::-webkit-details-marker {

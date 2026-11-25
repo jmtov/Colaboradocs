@@ -61,6 +61,7 @@
 }
 
 .status[data-status="borrador"] {
+  background: var(--line-strong);
   background: color-mix(in srgb, var(--muted) 40%, var(--bg));
 }
 

@@ -64,7 +64,18 @@ function HomeRoute(props: { name: string; description?: string }) {
   return (
     <Show
       when={home.documents() && home.decks() && !home.single()}
-      fallback={<Loading>Cargando…</Loading>}
+      fallback={
+        <Show when={home.failed()} fallback={<Loading>Cargando…</Loading>}>
+          <Loading>
+            <h1>No se pudo cargar la lista</h1>
+            <p>
+              <Button icon={RefreshIcon} onClick={home.retry}>
+                Reintentar
+              </Button>
+            </p>
+          </Loading>
+        </Show>
+      }
     >
       <HomePage
         name={props.name}

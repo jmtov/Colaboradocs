@@ -1,4 +1,5 @@
 import { type Deck, migrateSlide } from '@colaboradocs/deck-core';
+import { cloneJson } from './clone.utils';
 
 /** Un deck leído de texto (un archivo importado), o `null` si no tiene la forma de un deck. */
 /**
@@ -37,7 +38,7 @@ export function migrateDeck(deck: Deck): Deck {
       delete obj.role;
     }
   };
-  const copy = structuredClone(deck);
+  const copy = cloneJson(deck);
   visit(copy);
   copy.slides = copy.slides.map(
     (slide) =>

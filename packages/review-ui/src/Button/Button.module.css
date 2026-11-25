@@ -26,6 +26,7 @@
 
 /* Encendido: se hunde como al presionar (index.css, aria-pressed) y además va más oscuro. */
 .button[aria-pressed="true"] {
+  background: var(--line);
   background: color-mix(in srgb, var(--fg) 14%, var(--bg));
 }
 
@@ -108,10 +109,12 @@
 }
 
 .ok[aria-pressed="true"] {
+  background: var(--line);
   background: color-mix(in srgb, var(--ok) 22%, var(--ok-bg));
 }
 
 .ok:hover:not(:disabled) {
+  background: var(--line);
   background: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
 }
 

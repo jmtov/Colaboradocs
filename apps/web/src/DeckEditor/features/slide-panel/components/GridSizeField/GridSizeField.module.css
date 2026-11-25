@@ -18,6 +18,7 @@
 }
 .on {
   border-color: var(--fg);
+  background: var(--line);
   background: color-mix(in srgb, var(--fg) 22%, var(--surface));
 }
 .help {
