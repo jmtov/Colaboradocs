@@ -22,36 +22,6 @@
   min-height: 3.2rem;
 }
 
-[data-deck-editor] .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-}
-
-[data-deck-editor] .btn:hover:not(:disabled) {
-  border-color: var(--fg);
-}
-
-[data-deck-editor] .btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-[data-deck-editor] .btn.on {
-  background: var(--fg);
-  color: var(--bg);
-  border-color: var(--fg);
-}
-
-[data-deck-editor] .btn.danger {
-  color: var(--danger);
-}
-
 [data-deck-editor] .muted {
   color: var(--muted);
 }

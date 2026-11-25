@@ -3,9 +3,11 @@ import {
   layoutContent,
   tidyGrid,
 } from '@colaboradocs/deck-core';
+import { Button } from '@colaboradocs/review-ui';
 import { createSignal, For } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import type { Path } from '@/DeckEditor/features/deck/deck.utils';
+import ArrowDownToLineIcon from '@/icons/ArrowDownToLineIcon';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './GridSizeField.module.css';
 import { describeGrid, GRID_SIDE, isShaded } from './GridSizeField.utils';
@@ -53,15 +55,15 @@ export default function GridSizeField(props: GridSizeFieldProps) {
     <FieldSection
       title="Cuadrícula"
       actions={
-        <button
-          type="button"
-          class="btn"
+        <Button
+          icon={ArrowDownToLineIcon}
+          size="sm"
           disabled={tidy() === null}
           onClick={compact}
           title="Quita las columnas y filas que no tienen ningún bloque"
         >
           Compactar
-        </button>
+        </Button>
       }
     >
       <fieldset

@@ -1,6 +1,5 @@
-import { Button } from '@colaboradocs/review-ui';
+import { Button, MenuItem, MenuPanel } from '@colaboradocs/review-ui';
 import { type Component, For, Show } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
 import { howToAvailable } from '@/HowToReview/howto.state';
 import CalendarCheckIcon from '@/icons/CalendarCheckIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
@@ -15,6 +14,8 @@ import styles from './UserMenu.module.css';
 /** Una acción propia de la página (imprimir, editar…), que va en su propia sección del menú. */
 export type UserMenuAction = {
   label: string;
+  /** Una línea que explica qué hace, debajo de la etiqueta. */
+  description?: string;
   icon: Component<{ class?: string }>;
   onSelect: () => void;
 };
@@ -42,11 +43,12 @@ export default function UserMenu(props: Props) {
         aria-expanded={userMenu.open()}
         onClick={userMenu.toggle}
       />
-      <div
-        ref={userMenu.refs.menu}
-        popover
-        class={styles.menu}
-        on:toggle={userMenu.onToggle}
+      <MenuPanel
+        ref={(element) => {
+          userMenu.refs.menu = element;
+        }}
+        onToggle={userMenu.onToggle}
+        wide
       >
         <Show when={userMenu.me()}>
           {(reviewer) => (
@@ -64,66 +66,47 @@ export default function UserMenu(props: Props) {
           )}
         </Show>
         <div class={styles.group}>
-          <button
-            type="button"
-            class={styles.item}
-            data-flat
+          <MenuItem
+            icon={CalendarCheckIcon}
+            label="Mis tareas"
             onClick={userMenu.goToTasks}
-          >
-            <CalendarCheckIcon class={styles.icon} />
-            Mis tareas
-          </button>
+          />
         </div>
         <Show when={howToAvailable()}>
           <div class={styles.group}>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
+            <MenuItem
+              icon={ListChecksIcon}
+              label="Cómo revisar"
               onClick={userMenu.openHowTo}
-            >
-              <ListChecksIcon class={styles.icon} />
-              Cómo revisar
-            </button>
+            />
           </div>
         </Show>
         <Show when={(props.actions ?? []).length > 0}>
           <div class={styles.group}>
             <For each={props.actions}>
               {(action) => (
-                <button
-                  type="button"
-                  class={styles.item}
-                  data-flat
+                <MenuItem
+                  icon={action.icon}
+                  label={action.label}
+                  description={action.description}
                   onClick={() => userMenu.run(action.onSelect)}
-                >
-                  <Dynamic component={action.icon} class={styles.icon} />
-                  {action.label}
-                </button>
+                />
               )}
             </For>
           </div>
         </Show>
         <Show when={userMenu.me()?.isAdmin}>
           <div class={styles.group}>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
+            <MenuItem
+              icon={FileTextIcon}
+              label="Documentos"
               onClick={() => userMenu.goToAdmin('documents')}
-            >
-              <FileTextIcon class={styles.icon} />
-              Documentos
-            </button>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
+            />
+            <MenuItem
+              icon={UsersIcon}
+              label="Accesos"
               onClick={() => userMenu.goToAdmin('access')}
-            >
-              <UsersIcon class={styles.icon} />
-              Accesos
-            </button>
+            />
           </div>
         </Show>
         <div class={styles.theme}>
@@ -131,17 +114,9 @@ export default function UserMenu(props: Props) {
           <ThemeSwitch fill />
         </div>
         <div class={styles.group}>
-          <button
-            type="button"
-            class={styles.item}
-            data-flat
-            onClick={userMenu.logout}
-          >
-            <LogOutIcon class={styles.icon} />
-            Salir
-          </button>
+          <MenuItem icon={LogOutIcon} label="Salir" onClick={userMenu.logout} />
         </div>
-      </div>
+      </MenuPanel>
     </>
   );
 }

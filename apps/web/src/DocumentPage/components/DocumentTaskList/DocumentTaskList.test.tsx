@@ -242,7 +242,7 @@ describe('Tareas al pie del documento', () => {
 function item(host: HTMLElement, label: string) {
   const found = [
     ...host.querySelectorAll<HTMLButtonElement>('#tareas [popover] button'),
-  ].find((element) => element.textContent?.trim() === label);
+  ].find((element) => element.textContent?.trim().startsWith(label));
   if (!found) throw new Error(`no hay «${label}»`);
   return found;
 }

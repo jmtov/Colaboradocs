@@ -4,9 +4,11 @@ import {
   type ContentSlide,
   layoutContent,
 } from '@colaboradocs/deck-core';
+import { Button } from '@colaboradocs/review-ui';
 import { createSignal, For, onCleanup, Show } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import type { Path } from '@/DeckEditor/features/deck/deck.utils';
+import RefreshIcon from '@/icons/RefreshIcon';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './PositionField.module.css';
 import {
@@ -90,9 +92,9 @@ export default function PositionField(props: PositionFieldProps) {
         <FieldSection
           title="Posición"
           actions={
-            <button
-              type="button"
-              class="btn"
+            <Button
+              icon={RefreshIcon}
+              size="sm"
               disabled={
                 !pinned() &&
                 props.value.span === undefined &&
@@ -108,7 +110,7 @@ export default function PositionField(props: PositionFieldProps) {
               }
             >
               Automática
-            </button>
+            </Button>
           }
         >
           <div

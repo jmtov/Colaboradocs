@@ -1,0 +1,12 @@
+.message {
+  margin: 0.25rem 0.375rem 0.625rem;
+  font-size: var(--font-size-sm);
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 0.375rem 0.25rem;
+}

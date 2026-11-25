@@ -1,10 +1,14 @@
-import { Button } from '@colaboradocs/review-ui';
+import {
+  Button,
+  MenuConfirm,
+  MenuItem,
+  MenuPanel,
+} from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArchiveIcon from '@/icons/ArchiveIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import { useDeckMenu } from './DeckMenu.hooks';
-import styles from './DeckMenu.module.css';
 
 type Props = {
   id: string;
@@ -30,61 +34,41 @@ export default function DeckMenu(props: Props) {
         aria-expanded={menu.open()}
         onClick={menu.toggle}
       />
-      <div
-        ref={menu.refs.menu}
-        popover
-        class={styles.menu}
-        on:toggle={menu.onToggle}
+      <MenuPanel
+        ref={(element) => {
+          menu.refs.menu = element;
+        }}
+        onToggle={menu.onToggle}
       >
         <Show
           when={menu.confirming()}
           fallback={
             <>
-              <button
-                type="button"
-                class={styles.item}
-                data-flat
+              <MenuItem
+                icon={PencilIcon}
+                label="Editar"
+                description="Abre el editor de la presentación"
                 onClick={menu.edit}
-              >
-                <PencilIcon class={styles.itemIcon} />
-                Editar
-              </button>
-              <button
-                type="button"
-                class={`${styles.item} ${styles.danger}`}
-                data-flat
+              />
+              <MenuItem
+                icon={ArchiveIcon}
+                label="Archivar"
+                danger
                 onClick={menu.askArchive}
-              >
-                <ArchiveIcon class={styles.itemIcon} />
-                Archivar
-              </button>
+              />
             </>
           }
         >
-          <p class={styles.confirm}>
-            Se oculta de la home. Sus comentarios se conservan.
-          </p>
-          <div class={styles.row}>
-            <button
-              type="button"
-              class={`${styles.item} ${styles.dangerSolid}`}
-              data-flat
-              disabled={menu.busy()}
-              onClick={() => void menu.archive()}
-            >
-              Archivar
-            </button>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
-              onClick={menu.cancelArchive}
-            >
-              Cancelar
-            </button>
-          </div>
+          <MenuConfirm
+            message="Se oculta de la home. Sus comentarios se conservan."
+            confirmLabel="Archivar"
+            confirmIcon={ArchiveIcon}
+            busy={menu.busy()}
+            onConfirm={() => void menu.archive()}
+            onCancel={menu.cancelArchive}
+          />
         </Show>
-      </div>
+      </MenuPanel>
     </>
   );
 }

@@ -62,6 +62,7 @@
 }
 /* El botón de acciones aparece al pasar el cursor, al enfocar o en la slide elegida. */
 .more {
+  display: inline-flex;
   align-self: center;
   opacity: 0;
 }
@@ -70,16 +71,6 @@
 .on .more {
   opacity: 1;
 }
-.on .more:hover,
-.on .more:focus-visible {
-  border-color: var(--bg);
-}
 .add {
   padding: 0 0.1rem;
-}
-.addButton {
-  width: 100%;
-  justify-content: flex-start;
-  border-color: var(--line);
-  font-size: var(--font-size-sm);
 }

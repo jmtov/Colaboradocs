@@ -1,7 +1,10 @@
 import { defaultValue, type Field } from '@colaboradocs/deck-core';
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import type { Path } from '@/DeckEditor/features/deck/deck.utils';
+import CloseIcon from '@/icons/CloseIcon';
+import PlusIcon from '@/icons/PlusIcon';
 import FieldForm from '../FieldForm/FieldForm';
 import FieldSection from '../FieldSection/FieldSection';
 
@@ -16,24 +19,24 @@ export default function ObjectField(props: ObjectFieldProps) {
   const action = () =>
     props.value ? (
       <Show when={!props.field.required}>
-        <button
-          type="button"
-          class="btn"
+        <Button
+          icon={CloseIcon}
+          size="sm"
           onClick={() => deckStore.remove(props.path)}
         >
           Quitar
-        </button>
+        </Button>
       </Show>
     ) : (
-      <button
-        type="button"
-        class="btn"
+      <Button
+        icon={PlusIcon}
+        size="sm"
         onClick={() =>
           deckStore.set(props.path, defaultValue(props.field.fields))
         }
       >
         Agregar
-      </button>
+      </Button>
     );
   return (
     <FieldSection title={props.field.label} actions={action()}>

@@ -1,10 +1,14 @@
-import { Button } from '@colaboradocs/review-ui';
+import {
+  Button,
+  MenuConfirm,
+  MenuItem,
+  MenuPanel,
+} from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import TrashIcon from '@/icons/TrashIcon';
 import { useTaskMenu } from './TaskMenu.hooks';
-import styles from './TaskMenu.module.css';
 
 type Props = {
   /** Nombre de la tarea, para la etiqueta del botón. */
@@ -30,64 +34,44 @@ export default function TaskMenu(props: Props) {
         aria-expanded={menu.open()}
         onClick={menu.toggle}
       />
-      <div
-        ref={menu.refs.menu}
-        popover
-        class={styles.menu}
-        on:toggle={menu.onToggle}
+      <MenuPanel
+        ref={(element) => {
+          menu.refs.menu = element;
+        }}
+        onToggle={menu.onToggle}
       >
         <Show
           when={menu.confirming()}
           fallback={
             <>
               <Show when={props.onEdit}>
-                <button
-                  type="button"
-                  class={styles.item}
-                  data-flat
+                <MenuItem
+                  icon={PencilIcon}
+                  label="Editar"
+                  description="Cambia el título, la fecha o la persona"
                   onClick={menu.edit}
-                >
-                  <PencilIcon class={styles.itemIcon} />
-                  Editar
-                </button>
+                />
               </Show>
               <Show when={props.onDelete}>
-                <button
-                  type="button"
-                  class={`${styles.item} ${styles.danger}`}
-                  data-flat
+                <MenuItem
+                  icon={TrashIcon}
+                  label="Eliminar"
+                  danger
                   onClick={menu.askRemove}
-                >
-                  <TrashIcon class={styles.itemIcon} />
-                  Eliminar
-                </button>
+                />
               </Show>
             </>
           }
         >
-          <p class={styles.confirm}>
-            La tarea se elimina para todas las personas.
-          </p>
-          <div class={styles.row}>
-            <button
-              type="button"
-              class={`${styles.item} ${styles.dangerSolid}`}
-              data-flat
-              onClick={menu.remove}
-            >
-              Eliminar
-            </button>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
-              onClick={menu.cancelRemove}
-            >
-              Cancelar
-            </button>
-          </div>
+          <MenuConfirm
+            message="La tarea se elimina para todas las personas."
+            confirmLabel="Eliminar"
+            confirmIcon={TrashIcon}
+            onConfirm={menu.remove}
+            onCancel={menu.cancelRemove}
+          />
         </Show>
-      </div>
+      </MenuPanel>
     </>
   );
 }

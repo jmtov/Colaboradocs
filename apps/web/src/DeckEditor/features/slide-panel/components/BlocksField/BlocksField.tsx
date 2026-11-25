@@ -7,6 +7,12 @@ import {
   type Field,
   SINGLE_BLOCK_KINDS,
 } from '@colaboradocs/deck-core';
+import {
+  ActionMenu,
+  type ActionMenuGroup,
+  BottomSheet,
+  Button,
+} from '@colaboradocs/review-ui';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import {
@@ -14,13 +20,10 @@ import {
   type Path,
 } from '@/DeckEditor/features/deck/deck.utils';
 import { viewStore } from '@/DeckEditor/features/preview/view.store';
-import ActionMenu from '@/DeckEditor/features/ui/ActionMenu/ActionMenu';
-import type { MenuGroup } from '@/DeckEditor/features/ui/ActionMenu/ActionMenu.types';
-import BottomSheet from '@/DeckEditor/features/ui/BottomSheet/BottomSheet';
-import EditIcon from '@/DeckEditor/features/ui/icons/EditIcon';
-import PlusIcon from '@/DeckEditor/features/ui/icons/PlusIcon';
-import TrashIcon from '@/DeckEditor/features/ui/icons/TrashIcon';
 import WarningDot from '@/DeckEditor/features/ui/WarningDot/WarningDot';
+import PencilIcon from '@/icons/PencilIcon';
+import PlusIcon from '@/icons/PlusIcon';
+import TrashIcon from '@/icons/TrashIcon';
 import FieldForm from '../FieldForm/FieldForm';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './BlocksField.module.css';
@@ -128,11 +131,11 @@ export default function BlocksField(props: BlocksFieldProps) {
     else if (at !== null && at > index) setEditing(at - 1);
   };
 
-  const addMenu = (): MenuGroup[] => [
+  const addMenu = (): ActionMenuGroup[] => [
     {
       items: BLOCK_KINDS.map((kind) => ({
         label: BLOCK_DESCRIPTORS[kind].label,
-        help: taken(kind) ? 'Ya está en la slide' : undefined,
+        description: taken(kind) ? 'Ya está en la slide' : undefined,
         disabled: taken(kind),
         onSelect: () => add(kind),
       })),
@@ -176,41 +179,37 @@ export default function BlocksField(props: BlocksFieldProps) {
                 </span>
                 <span class={styles.summary}>{blockSummary(block)}</span>
               </button>
-              <button
-                type="button"
-                class="btn"
-                onClick={() => setEditing(i())}
+              <Button
+                icon={PencilIcon}
+                size="sm"
                 title="Editar"
                 aria-label="Editar"
-              >
-                <EditIcon />
-              </button>
-              <button
-                type="button"
-                class="btn danger"
-                onClick={() => remove(i())}
+                onClick={() => setEditing(i())}
+              />
+              <Button
+                icon={TrashIcon}
+                size="sm"
+                variant="danger"
                 title="Eliminar"
                 aria-label="Eliminar"
-              >
-                <TrashIcon />
-              </button>
+                onClick={() => remove(i())}
+              />
             </li>
           )}
         </For>
       </ul>
       <ActionMenu
-        class={styles.addButton}
+        size="sm"
         label="Agregar bloque"
-        trigger={
-          <>
-            <PlusIcon /> Agregar bloque
-          </>
-        }
+        triggerIcon={PlusIcon}
+        triggerLabel="Agregar bloque"
         groups={addMenu()}
       />
       <BottomSheet
         open={adding() !== null}
+        kicker="Bloques"
         title={`Agregar bloque en C${adding()?.col ?? ''}·F${adding()?.row ?? ''}`}
+        compact
         onClose={() => setAdding(null)}
       >
         <ul class={styles.kinds}>
@@ -235,33 +234,37 @@ export default function BlocksField(props: BlocksFieldProps) {
       </BottomSheet>
       <BottomSheet
         open={editing() !== null}
+        kicker="Bloque"
         title={current() ? nameOf(current() as Record<string, unknown>) : ''}
+        compact
         onClose={() => setEditing(null)}
-        actions={
-          <button
-            type="button"
-            class="btn danger"
-            onClick={() => {
-              const at = editing();
-              if (at !== null) remove(at);
-            }}
-            title="Eliminar este bloque"
-          >
-            <TrashIcon /> Eliminar
-          </button>
-        }
       >
         {(() => {
           const at = shownAt();
           const block = current();
           if (!block) return null;
           return (
-            <FieldForm
-              fields={descriptor(block)?.fields ?? []}
-              value={block}
-              path={[...props.path, at]}
-              untitled={`Opciones de ${nameOf(block)}`}
-            />
+            <>
+              <FieldForm
+                fields={descriptor(block)?.fields ?? []}
+                value={block}
+                path={[...props.path, at]}
+                untitled={`Opciones de ${nameOf(block)}`}
+              />
+              <div class={styles.sheetActions}>
+                <Button
+                  icon={TrashIcon}
+                  variant="danger"
+                  title="Eliminar este bloque"
+                  onClick={() => {
+                    const index = editing();
+                    if (index !== null) remove(index);
+                  }}
+                >
+                  Eliminar bloque
+                </Button>
+              </div>
+            </>
           );
         })()}
       </BottomSheet>

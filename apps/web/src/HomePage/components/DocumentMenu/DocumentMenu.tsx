@@ -1,11 +1,15 @@
-import { Button } from '@colaboradocs/review-ui';
+import {
+  Button,
+  MenuConfirm,
+  MenuItem,
+  MenuPanel,
+} from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArchiveIcon from '@/icons/ArchiveIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import { useDocumentMenu } from './DocumentMenu.hooks';
-import styles from './DocumentMenu.module.css';
 
 type Props = {
   id: string;
@@ -26,71 +30,47 @@ export default function DocumentMenu(props: Props) {
         aria-expanded={documentMenu.open()}
         onClick={documentMenu.toggle}
       />
-      <div
-        ref={documentMenu.refs.menu}
-        popover
-        class={styles.menu}
-        on:toggle={documentMenu.onToggle}
+      <MenuPanel
+        ref={(element) => {
+          documentMenu.refs.menu = element;
+        }}
+        onToggle={documentMenu.onToggle}
       >
         <Show
           when={documentMenu.confirming()}
           fallback={
             <>
-              <button
-                type="button"
-                class={styles.item}
-                data-flat
+              <MenuItem
+                icon={PencilIcon}
+                label="Editar"
+                description="Abre el editor con el borrador"
                 onClick={documentMenu.edit}
-              >
-                <PencilIcon class={styles.itemIcon} />
-                Editar
-              </button>
-              <button
-                type="button"
-                class={styles.item}
-                data-flat
+              />
+              <MenuItem
+                icon={UploadIcon}
+                label="Reemplazar documento"
+                description="Sube otro archivo con el mismo id"
                 onClick={documentMenu.replace}
-              >
-                <UploadIcon class={styles.itemIcon} />
-                Reemplazar documento
-              </button>
-              <button
-                type="button"
-                class={`${styles.item} ${styles.danger}`}
-                data-flat
+              />
+              <MenuItem
+                icon={ArchiveIcon}
+                label="Archivar"
+                danger
                 onClick={documentMenu.askArchive}
-              >
-                <ArchiveIcon class={styles.itemIcon} />
-                Archivar
-              </button>
+              />
             </>
           }
         >
-          <p class={styles.confirm}>
-            Se oculta de la home. Sus comentarios se conservan y reaparecen si
-            lo vuelves a subir.
-          </p>
-          <div class={styles.row}>
-            <button
-              type="button"
-              class={`${styles.item} ${styles.dangerSolid}`}
-              data-flat
-              disabled={documentMenu.busy()}
-              onClick={() => void documentMenu.archive()}
-            >
-              Archivar
-            </button>
-            <button
-              type="button"
-              class={styles.item}
-              data-flat
-              onClick={documentMenu.cancelArchive}
-            >
-              Cancelar
-            </button>
-          </div>
+          <MenuConfirm
+            message="Se oculta de la home. Sus comentarios se conservan y reaparecen si lo vuelves a subir."
+            confirmLabel="Archivar"
+            confirmIcon={ArchiveIcon}
+            busy={documentMenu.busy()}
+            onConfirm={() => void documentMenu.archive()}
+            onCancel={documentMenu.cancelArchive}
+          />
         </Show>
-      </div>
+      </MenuPanel>
     </>
   );
 }

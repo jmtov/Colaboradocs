@@ -1,8 +1,10 @@
 import { defaultValue, type Field } from '@colaboradocs/deck-core';
+import { Button } from '@colaboradocs/review-ui';
 import { For } from 'solid-js';
 import { cloneJson } from '@/DeckEditor/features/deck/clone.utils';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import type { Path } from '@/DeckEditor/features/deck/deck.utils';
+import PlusIcon from '@/icons/PlusIcon';
 import FieldForm from '../FieldForm/FieldForm';
 import FieldSection from '../FieldSection/FieldSection';
 import ItemCard from '../ItemCard/ItemCard';
@@ -28,9 +30,9 @@ export default function ListField(props: ListFieldProps) {
     <FieldSection
       title={props.field.label}
       actions={
-        <button type="button" class="btn" onClick={add}>
-          + {props.field.itemLabel}
-        </button>
+        <Button icon={PlusIcon} size="sm" onClick={add}>
+          {props.field.itemLabel}
+        </Button>
       }
     >
       <div class={styles.items}>

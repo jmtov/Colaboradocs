@@ -1,15 +1,3 @@
-/* Popover nativo: capa superior, cierre al tocar fuera y con Escape. */
-.menu {
-  inset: auto;
-  min-width: 18rem;
-  padding: 0.5rem;
-  margin: 0;
-  color: var(--fg);
-  background: var(--bg);
-  border: 1px solid var(--line);
-  box-shadow: 0 8px 28px rgb(0 0 0 / 22%);
-}
-
 .who {
   display: grid;
   gap: 0.125rem;
@@ -42,30 +30,6 @@
 .group:last-child {
   border-bottom: 0;
   padding-bottom: 0;
-}
-
-.item {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  width: 100%;
-  padding: 0.625rem;
-  font-size: var(--font-size-sm);
-  color: var(--fg);
-  text-align: left;
-  background: none;
-  border: 0;
-}
-
-.item:hover,
-.item:focus-visible {
-  background: var(--tint);
-}
-
-.icon {
-  flex: none;
-  width: 1.125em;
-  height: 1.125em;
 }
 
 .theme {

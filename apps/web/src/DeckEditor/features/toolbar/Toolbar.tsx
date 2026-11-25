@@ -1,7 +1,17 @@
-import { For, Show } from 'solid-js';
+import { ActionMenu, Button, useOverlay } from '@colaboradocs/review-ui';
+import { Show } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import { viewStore } from '@/DeckEditor/features/preview/view.store';
+import ArrowDownIcon from '@/icons/ArrowDownIcon';
+import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
+import MonitorIcon from '@/icons/MonitorIcon';
+import RedoIcon from '@/icons/RedoIcon';
+import SlidersIcon from '@/icons/SlidersIcon';
+import TrashIcon from '@/icons/TrashIcon';
+import UndoIcon from '@/icons/UndoIcon';
+import UploadIcon from '@/icons/UploadIcon';
 import type { EditorActions } from '../../DeckEditorPage.hooks';
+import DeckSettingsSheet from './components/DeckSettingsSheet/DeckSettingsSheet';
 import { useDeckFiles } from './Toolbar.hooks';
 import styles from './Toolbar.module.css';
 
@@ -16,56 +26,26 @@ const SAVE_LABELS = {
 
 export default function Toolbar(props: Props) {
   const files = useDeckFiles();
-  const theme = () => deckStore.theme();
-  const variants = () => Object.entries(theme()?.variants ?? {});
+  const overlay = useOverlay();
   return (
     <div class={styles.bar}>
-      <button
-        type="button"
-        class="btn"
-        onClick={props.actions.back}
+      <Button
+        icon={ArrowLeftIcon}
+        size="sm"
         title="Volver al inicio"
+        onClick={props.actions.back}
       >
-        ← Inicio
-      </button>
+        Inicio
+      </Button>
+      <Button
+        icon={MonitorIcon}
+        size="sm"
+        title="Salir del editor y ver la presentación, en esta slide"
+        onClick={props.actions.view}
+      >
+        Ver presentación
+      </Button>
       <strong class={styles.title}>{deckStore.deck.title}</strong>
-      <label class={styles.field}>
-        Tema
-        <select
-          class="input"
-          value={deckStore.deck.theme}
-          onChange={(e) => deckStore.setTheme(e.currentTarget.value)}
-        >
-          <For each={deckStore.themes()}>
-            {(t) => <option value={t.id}>{t.name}</option>}
-          </For>
-        </select>
-      </label>
-      <label class={styles.field}>
-        Variante
-        <select
-          class="input"
-          value={deckStore.deck.variant ?? ''}
-          onChange={(e) =>
-            deckStore.setVariant(e.currentTarget.value || undefined)
-          }
-        >
-          <option value="">Sin variante</option>
-          <For each={variants()}>
-            {([id, v]) => <option value={id}>{v.name}</option>}
-          </For>
-        </select>
-      </label>
-      <button
-        type="button"
-        class="btn"
-        classList={{ [styles.on]: viewStore.showCells() }}
-        aria-pressed={viewStore.showCells()}
-        onClick={() => viewStore.toggleCells()}
-        title="Dibuja columnas, filas y celdas en la vista previa"
-      >
-        Ver celdas
-      </button>
       <span class={styles.spacer} />
       <Show when={deckStore.issues().length > 0}>
         <span
@@ -82,50 +62,88 @@ export default function Toolbar(props: Props) {
       <span class={styles.message} role="status">
         {props.actions.error() ?? SAVE_LABELS[props.actions.saveState()]}
       </span>
-      <button
-        type="button"
-        class="btn"
+      <Button
+        icon={UndoIcon}
+        size="sm"
         disabled={deckStore.history().past.length === 0}
-        onClick={() => deckStore.undo()}
         title="Deshacer (Cmd+Z)"
+        onClick={() => deckStore.undo()}
       >
         Deshacer
-      </button>
-      <button
-        type="button"
-        class="btn"
+      </Button>
+      <Button
+        icon={RedoIcon}
+        size="sm"
         disabled={deckStore.history().future.length === 0}
-        onClick={() => deckStore.redo()}
         title="Rehacer (Cmd+Mayús+Z)"
+        onClick={() => deckStore.redo()}
       >
         Rehacer
-      </button>
-      <button
-        type="button"
-        class="btn"
-        onClick={() => files.importInput()?.click()}
-      >
-        Importar
-      </button>
-      <button type="button" class="btn" onClick={files.exportDeck}>
-        Exportar
-      </button>
-      <button
-        type="button"
-        class="btn danger"
-        onClick={props.actions.discard}
-        title="Vuelve a lo último publicado"
-      >
-        Descartar cambios
-      </button>
-      <button
-        type="button"
-        class="btn on"
+      </Button>
+      <ActionMenu
+        size="sm"
+        label="Opciones"
+        triggerLabel="Opciones"
+        groups={[
+          {
+            items: [
+              {
+                label: 'Configuración de la presentación',
+                description: 'Tema y variante',
+                icon: SlidersIcon,
+                onSelect: () => void overlay.sheet(DeckSettingsSheet, {}),
+              },
+            ],
+          },
+          {
+            title: 'Vista',
+            items: [
+              {
+                label: 'Ver celdas',
+                description:
+                  'Dibuja columnas, filas y celdas en la vista previa',
+                checked: viewStore.showCells(),
+                onSelect: () => viewStore.toggleCells(),
+              },
+            ],
+          },
+          {
+            title: 'Archivo',
+            items: [
+              {
+                label: 'Importar JSON…',
+                icon: UploadIcon,
+                onSelect: () => files.importInput()?.click(),
+              },
+              {
+                label: 'Exportar JSON',
+                icon: ArrowDownIcon,
+                onSelect: files.exportDeck,
+              },
+            ],
+          },
+          {
+            items: [
+              {
+                label: 'Descartar cambios',
+                description: 'Vuelve a lo último publicado',
+                icon: TrashIcon,
+                danger: true,
+                onSelect: props.actions.discard,
+              },
+            ],
+          },
+        ]}
+      />
+      <Button
+        icon={UploadIcon}
+        size="sm"
+        variant="primary"
         disabled={props.actions.publishing()}
         onClick={props.actions.publish}
       >
         Publicar
-      </button>
+      </Button>
       <input
         ref={files.setImportInput}
         type="file"

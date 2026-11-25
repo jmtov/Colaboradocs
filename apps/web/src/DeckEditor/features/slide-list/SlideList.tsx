@@ -1,49 +1,47 @@
 import { SLIDE_TEMPLATES } from '@colaboradocs/deck-core';
+import { ActionMenu, type ActionMenuGroup } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
 import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import { issuesOfSlide } from '@/DeckEditor/features/deck/deck.utils';
-import ActionMenu from '@/DeckEditor/features/ui/ActionMenu/ActionMenu';
-import type { MenuGroup } from '@/DeckEditor/features/ui/ActionMenu/ActionMenu.types';
-import ArrowDownIcon from '@/DeckEditor/features/ui/icons/ArrowDownIcon';
-import ArrowUpIcon from '@/DeckEditor/features/ui/icons/ArrowUpIcon';
-import CopyIcon from '@/DeckEditor/features/ui/icons/CopyIcon';
-import MoreIcon from '@/DeckEditor/features/ui/icons/MoreIcon';
-import PlusIcon from '@/DeckEditor/features/ui/icons/PlusIcon';
-import TrashIcon from '@/DeckEditor/features/ui/icons/TrashIcon';
 import WarningDot from '@/DeckEditor/features/ui/WarningDot/WarningDot';
+import ArrowDownIcon from '@/icons/ArrowDownIcon';
+import ArrowUpIcon from '@/icons/ArrowUpIcon';
+import CopyIcon from '@/icons/CopyIcon';
+import PlusIcon from '@/icons/PlusIcon';
+import TrashIcon from '@/icons/TrashIcon';
 import styles from './SlideList.module.css';
 import { slideLabel, slideSummary } from './SlideList.utils';
 
 const addItems = (after: number) => [
   ...SLIDE_TEMPLATES.map((template) => ({
     label: template.label,
-    help: template.help,
-    icon: <PlusIcon />,
+    description: template.help,
+    icon: PlusIcon,
     onSelect: () => deckStore.addSlide(template.id, after),
   })),
 ];
 
 /** Las acciones de una slide de la lista: moverla, duplicarla, agregar otra después y eliminarla. */
-function rowMenu(index: number): MenuGroup[] {
+function rowMenu(index: number): ActionMenuGroup[] {
   const last = deckStore.deck.slides.length - 1;
   return [
     {
       items: [
         {
           label: 'Subir',
-          icon: <ArrowUpIcon />,
+          icon: ArrowUpIcon,
           disabled: index === 0,
           onSelect: () => deckStore.moveSlide(index, index - 1),
         },
         {
           label: 'Bajar',
-          icon: <ArrowDownIcon />,
+          icon: ArrowDownIcon,
           disabled: index === last,
           onSelect: () => deckStore.moveSlide(index, index + 1),
         },
         {
           label: 'Duplicar',
-          icon: <CopyIcon />,
+          icon: CopyIcon,
           onSelect: () => deckStore.duplicateSlide(index),
         },
       ],
@@ -53,7 +51,7 @@ function rowMenu(index: number): MenuGroup[] {
       items: [
         {
           label: 'Eliminar',
-          icon: <TrashIcon />,
+          icon: TrashIcon,
           danger: true,
           disabled: last === 0,
           onSelect: () => {
@@ -102,25 +100,23 @@ export default function SlideList() {
                   />
                 </Show>
               </button>
-              <ActionMenu
-                class={styles.more}
-                label="Acciones de la slide"
-                trigger={<MoreIcon />}
-                groups={rowMenu(i())}
-              />
+              <span class={styles.more}>
+                <ActionMenu
+                  size="xs"
+                  label="Acciones de la slide"
+                  groups={rowMenu(i())}
+                />
+              </span>
             </li>
           )}
         </For>
       </ol>
       <div class={styles.add}>
         <ActionMenu
-          class={styles.addButton}
+          size="sm"
           label="Agregar slide al final"
-          trigger={
-            <>
-              <PlusIcon /> Agregar slide
-            </>
-          }
+          triggerIcon={PlusIcon}
+          triggerLabel="Agregar slide"
           groups={[
             {
               title: 'Agregar al final',

@@ -41,7 +41,7 @@ const menus = (host: HTMLElement) =>
 
 const menuItem = (host: HTMLElement, label: string) =>
   [...host.querySelectorAll<HTMLButtonElement>('[popover] button')].find(
-    (item) => item.textContent?.trim() === label,
+    (item) => item.textContent?.trim().startsWith(label),
   );
 
 function fakeApi(initial: object[]) {
@@ -196,7 +196,7 @@ describe('Tareas', () => {
     expect(calls.deletes).toEqual([]);
     const confirm = [
       ...host.querySelectorAll<HTMLButtonElement>('[popover] button'),
-    ].find((item) => item.textContent?.trim() === 'Eliminar');
+    ].find((item) => item.textContent?.trim().startsWith('Eliminar'));
     confirm?.click();
     await wait(200);
     expect(calls.deletes).toEqual(['/api/tasks/a']);
