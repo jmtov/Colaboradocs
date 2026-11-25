@@ -1,0 +1,81 @@
+/* Bordes colapsados: cada celda tiene su borde completo y se monta 1px sobre la
+   vecina (margen negativo); el padding de la grilla compensa la última columna y fila. */
+.item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+}
+
+/* La celda bajo el cursor queda por encima de las vecinas: así se ve su sombra. */
+.item:hover {
+  z-index: var(--z-raised);
+}
+
+.card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 11.5rem;
+  padding: 1.25rem;
+  color: var(--fg);
+  text-decoration: none;
+  border: 1px solid var(--line);
+}
+
+.card:hover {
+  background: var(--tint);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.meta {
+  font: 500 var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  align-items: center;
+  padding-top: 0.75rem;
+  margin-top: auto;
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+.time {
+  margin-left: auto;
+}
+
+/* El menú de la tarjeta (admins): en la esquina, fuera del enlace. */
+.menu {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.withMenu .title,
+.withMenu .meta {
+  padding-right: 2.5rem;
+}

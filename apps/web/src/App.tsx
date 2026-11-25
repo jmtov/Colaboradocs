@@ -7,7 +7,7 @@ import HomePage from '@/HomePage/HomePage';
 import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import Link from '@/router/Link';
-import TasksPage from '@/TasksPage/TasksPage';
+import type { HomeTab } from '@/router/router';
 import { useApp, useDocumentRoute, useHomeRoute } from './App.hooks';
 import styles from './App.module.css';
 
@@ -57,9 +57,9 @@ function NotFound() {
   );
 }
 
-/** La home. Con un solo documento no hay nada que elegir: va directo a él. */
-function HomeRoute(props: { name: string; description?: string }) {
-  const home = useHomeRoute();
+/** La home (documentos, presentaciones o tareas, según el tab). Con un solo documento no hay nada que elegir: `/` va directo a él. */
+function HomeRoute(props: { name: string; tab: HomeTab }) {
+  const home = useHomeRoute(() => props.tab);
 
   return (
     <Show
@@ -79,7 +79,7 @@ function HomeRoute(props: { name: string; description?: string }) {
     >
       <HomePage
         name={props.name}
-        description={props.description}
+        tab={props.tab}
         documents={home.documents() ?? []}
         decks={home.decks() ?? []}
         onDecksChange={() => void home.refetchDecks()}
@@ -99,14 +99,9 @@ export default function App() {
       <PinGate title={app.name()}>
         <div ref={app.refs.page} class={styles.page} data-phase={app.phase()}>
           <Switch>
-            <Match when={app.route().kind === 'home'}>
-              <HomeRoute
-                name={app.name()}
-                description={app.space()?.description}
-              />
-            </Match>
-            <Match when={app.route().kind === 'tasks'}>
-              <TasksPage name={app.name()} />
+            <Match when={app.homeTab()}>
+              {/* Sin `keyed`: cambiar de tab no vuelve a armar el marco, solo cambia el contenido. */}
+              {(tab) => <HomeRoute name={app.name()} tab={tab()} />}
             </Match>
             <Match when={app.adminPage()} keyed>
               {(page) => <AdminPage name={app.name()} page={page} />}

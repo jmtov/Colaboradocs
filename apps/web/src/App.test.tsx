@@ -113,8 +113,40 @@ describe('App', () => {
     expect(window.location.pathname).toBe('/');
     expect(host.querySelector('h1')?.textContent).toBe('Mi espacio');
     expect(
-      [...host.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+      [...host.querySelectorAll('a[href^="/d/"]')].map((a) =>
+        a.getAttribute('href'),
+      ),
     ).toEqual(['/d/uno', '/d/dos']);
+  });
+
+  it('con un solo documento, /tareas y /presentaciones no redirigen: solo / va directo a él', async () => {
+    fakeApi(['uno']);
+    go('/tareas');
+    const host = mount();
+    await wait(120);
+    expect(window.location.pathname).toBe('/tareas');
+    expect(
+      host.querySelector('nav a[aria-current="page"]')?.textContent,
+    ).toContain('Tareas');
+  });
+
+  it('cambiar de tab no vuelve a armar el marco ni anima la página', async () => {
+    fakeApi(['uno', 'dos']);
+    const host = mount();
+    await wait(80);
+    const header = host.querySelector('header');
+    expect(header).not.toBeNull();
+    host.querySelector<HTMLAnchorElement>('nav a[href="/tareas"]')?.click();
+    // Justo después del clic: la página no está «saliendo» (eso es lo que hace una navegación normal).
+    expect(host.querySelector('[data-phase]')?.getAttribute('data-phase')).toBe(
+      'idle',
+    );
+    await wait(80);
+    expect(window.location.pathname).toBe('/tareas');
+    expect(host.querySelector('header')).toBe(header);
+    expect(
+      host.querySelector('nav a[aria-current="page"]')?.textContent,
+    ).toContain('Tareas');
   });
 
   it('un documento que no existe muestra «no encontramos»', async () => {

@@ -91,9 +91,8 @@ describe('index.css', () => {
     const containers = [
       './TopBar/TopBar.module.css',
       './PageBar/PageBar.module.css',
-      './HomePage/HomePage.module.css',
+      './HomeShell/HomeShell.module.css',
       './DocumentPage/DocumentPage.module.css',
-      './TasksPage/TasksPage.module.css',
       './EditorPage/EditorPage.module.css',
       './AdminPage/AdminPage.module.css',
       './Loading/Loading.module.css',

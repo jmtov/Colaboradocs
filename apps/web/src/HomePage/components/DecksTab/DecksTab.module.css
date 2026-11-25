@@ -1,0 +1,14 @@
+.section {
+  display: grid;
+  gap: 1rem;
+}
+
+.clearFilter {
+  padding: 0;
+  font: inherit;
+  color: var(--fg);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}

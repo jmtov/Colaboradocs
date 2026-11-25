@@ -8,10 +8,12 @@ import type { SpaceInfo } from '@/content/content.types';
 import { createPageTransition } from '@/router/pageTransition';
 import {
   documentPath,
+  type HomeTab,
   navigate,
   navigationKind,
   pathname,
   resolveRoute,
+  skipsPageTransition,
 } from '@/router/router';
 
 const DEFAULT_SPACE: SpaceInfo = { name: 'Documentos' };
@@ -46,7 +48,8 @@ export function useDocumentRoute(id: () => string) {
 }
 
 /** La home. Con un solo documento no hay nada que elegir: va directo a él. */
-export function useHomeRoute() {
+/** La lista de la home. Con un solo documento (y sin presentaciones) la ruta `/` va directo a él; los otros tabs no. */
+export function useHomeRoute(tab: () => HomeTab) {
   const review = useReview();
   // Sin presentaciones que mostrar; si falla la lista (un servidor sin decks), es como no tener.
   const [decks, { refetch: refetchDecks }] = createResource(() =>
@@ -54,7 +57,9 @@ export function useHomeRoute() {
   );
   const single = () => {
     const list = review.documents();
-    return list?.length === 1 && decks()?.length === 0 ? list[0] : undefined;
+    return tab() === 'documents' && list?.length === 1 && decks()?.length === 0
+      ? list[0]
+      : undefined;
   };
   createEffect(() => {
     const only = single();
@@ -86,7 +91,7 @@ export function useApp() {
     path: pathname,
     duration: () => transitionMs(refs.page),
     // Las redirecciones (p. ej. `/` al único documento) no se animan: serían espera de más.
-    instant: () => navigationKind() === 'replace',
+    instant: () => skipsPageTransition(navigationKind()),
     onSwap: () => window.scrollTo(0, 0),
   });
   const route = createMemo(() => resolveRoute(displayed()));
@@ -104,6 +109,20 @@ export function useApp() {
   const editId = () => {
     const current = route();
     return current.kind === 'edit' ? current.id : undefined;
+  };
+
+  /** Qué tab de la home se muestra (documentos, presentaciones o tareas), si la ruta es una de ellas. */
+  const homeTab = (): HomeTab | undefined => {
+    switch (route().kind) {
+      case 'home':
+        return 'documents';
+      case 'decks':
+        return 'decks';
+      case 'tasks':
+        return 'tasks';
+      default:
+        return undefined;
+    }
   };
 
   const deckId = () => {
@@ -133,5 +152,6 @@ export function useApp() {
     deckId,
     deckEditId,
     adminPage,
+    homeTab,
   };
 }

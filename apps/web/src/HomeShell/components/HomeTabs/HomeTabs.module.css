@@ -1,0 +1,58 @@
+/* Una raya bajo todos los tabs; el actual la cubre con una más gruesa. */
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.tab {
+  display: inline-flex;
+  flex: none;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.75rem 1rem;
+  margin-bottom: -1px;
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:first-child {
+  padding-left: 0;
+}
+
+.tab:hover {
+  color: var(--fg);
+}
+
+.tab[aria-current="page"] {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.count {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}
+
+/* En el celular, menos aire entre tabs para que quepan los tres sin scroll. */
+@media (width <= 480px) {
+  .tabs {
+    gap: 0;
+  }
+
+  .tab {
+    gap: 0.375rem;
+    padding-inline: 0.625rem;
+    font-size: var(--font-size-sm);
+  }
+}

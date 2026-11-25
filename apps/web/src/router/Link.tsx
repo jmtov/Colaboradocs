@@ -6,6 +6,9 @@ type Props = {
   class?: string;
   /** Se levanta al pasar el cursor (tarjetas y botones hechos con enlace). */
   lift?: boolean;
+  /** Cambia de tab dentro de la misma página: sin la transición de página. */
+  tab?: boolean;
+  'aria-current'?: 'page';
   children: JSX.Element;
 };
 
@@ -23,12 +26,13 @@ export default function Link(props: Props) {
       return;
     }
     event.preventDefault();
-    navigate(props.href);
+    navigate(props.href, { tab: props.tab });
   }
   return (
     <a
       href={props.href}
       class={props.class}
+      aria-current={props['aria-current']}
       data-lift={props.lift ? '' : undefined}
       onClick={onClick}
     >

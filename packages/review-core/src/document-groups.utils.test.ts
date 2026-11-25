@@ -5,6 +5,7 @@ import {
   documentDate,
   filterDocuments,
   kindOf,
+  matchesQuery,
   sortDocuments,
   summarizePeople,
 } from './document-groups.utils';
@@ -178,5 +179,20 @@ describe('summarizePeople', () => {
       shown: ['A', 'B'],
       more: 0,
     });
+  });
+});
+
+describe('matchesQuery', () => {
+  it('todas las palabras en alguno de los campos, sin tildes ni mayúsculas', () => {
+    expect(
+      matchesQuery('plan ORIENTE', ['Plan de acción', null, 'Oriente']),
+    ).toBe(true);
+    expect(matchesQuery('accion', ['Plan de acción'])).toBe(true);
+    expect(matchesQuery('plan sur', ['Plan de acción', 'Oriente'])).toBe(false);
+  });
+
+  it('una búsqueda vacía o de espacios coincide con todo', () => {
+    expect(matchesQuery('', ['x'])).toBe(true);
+    expect(matchesQuery('   ', [])).toBe(true);
   });
 });

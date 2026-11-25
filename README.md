@@ -9,10 +9,10 @@ Un espacio de trabajo para que un equipo **revise documentos y presentaciones** 
 | **Documentos** | Texto con secciones que el equipo revisa: comentarios e hilos por bloque, OK por bloque, glosario, fuentes. Se suben (Word, Markdown, JSON) o se editan en la web, con **borrador, publicar y versiones**. | `/d/<id>`, `/d/<id>/editar` |
 | **Presentaciones** | Decks como datos (JSON + tema), con editor web, vista previa en vivo, borrador y publicación. Se ven como un HTML autocontenido (teclas, táctil, PDF) y se comentan igual que un documento. | `/p/<id>`, `/p/<id>/editar` |
 | **Temas** | Colores claro y oscuro, categorías, tokens y fuentes por organización o evento. Son datos en la base, no código. | (API y CLI) |
-| **Tareas** | Algo que una persona hace para una fecha; puede colgar de un documento o bloque. «Mis tareas» y sección Tareas en el editor. | `/tareas` |
+| **Tareas** | Algo que una persona hace para una fecha; puede colgar de un documento o bloque. El tab «Tareas» de la home y la sección Tareas en el editor. | `/tareas` |
 | **Accesos** | Una persona = un PIN (máx. 3 dispositivos, configurable por persona). Los admins crean, reemisan, revocan y resetean desde la app. Hay tres niveles: persona, **agente** y admin. | `/accesos` (admin) |
 | **Espacio** | Nombre y descripción de la home y cómo se llama el rol de cada persona. | home |
-| **Home** | Una tarjeta por documento o presentación, con su actividad. Los documentos van en una sola lista, con su tipo y fecha, y se filtran por tipo o texto; los admins ven al final los archivados. | `/` |
+| **Home** | Tres tabs: **Documentos** (una lista con su tipo y fecha, con buscador y filtro por tipo; los admins ven al final los archivados), **Presentaciones** (con buscador) y **Tareas** (las de quien entró). Cada tab es una ruta, así que atrás, recargar y compartir el enlace funcionan; el de Presentaciones solo aparece si hay alguna o si eres admin. | `/`, `/presentaciones`, `/tareas` |
 
 ![Arquitectura: navegador, Worker con assets, auth y API Hono, D1 y CLI](diagramas/arquitectura.svg)
 

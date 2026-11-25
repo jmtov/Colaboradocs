@@ -113,7 +113,7 @@ const titles = (host: HTMLElement) =>
 const groupTitles = (host: HTMLElement) =>
   [...host.querySelectorAll('h2')].map((item) => item.textContent);
 
-describe('Mis tareas', () => {
+describe('Tareas', () => {
   it('muestra las tareas por grupo: vencidas, esta semana, más adelante y hechas', async () => {
     const today = new Date();
     const iso = (days: number) => {
@@ -129,7 +129,9 @@ describe('Mis tareas', () => {
     ]);
     const host = mount();
     await wait(200);
-    expect(host.querySelector('h1')?.textContent).toBe('Mis tareas');
+    expect(
+      host.querySelector('nav [aria-current="page"]')?.textContent,
+    ).toContain('Tareas');
     expect(groupTitles(host).map((t) => t?.replace(/\d+$/, ''))).toEqual([
       'Vencidas',
       'Esta semana',
@@ -228,5 +230,105 @@ describe('Mis tareas', () => {
       body: { title: 'Mía, ajustada' },
     });
     expect(titles(host)).toContain('Mía, ajustada');
+  });
+
+  describe('buscar y filtrar', () => {
+    const buttonByText = (root: ParentNode, text: string) =>
+      [...root.querySelectorAll('button')].find((item) =>
+        item.textContent?.trim().startsWith(text),
+      );
+
+    const withDocuments = () =>
+      fakeApi([
+        task('a', 'Llamar a Juan', '2099-01-01', {
+          documentId: 'amo',
+          documentTitle: 'Votación AMO',
+        }),
+        task('b', 'Escribir el acta', '2099-01-02', {
+          documentId: 'comms',
+          documentTitle: 'Comunicaciones',
+        }),
+        task('c', 'Revisar la agenda', '2099-01-03', {
+          documentId: 'ejes',
+          documentTitle: 'Ejes 2027',
+        }),
+        task('d', 'Suelta', '2099-01-04'),
+      ]);
+
+    it('el buscador filtra por el título de la tarea o el de su documento, sin tildes', async () => {
+      withDocuments();
+      const host = mount();
+      await wait(200);
+      const input = host.querySelector<HTMLInputElement>(
+        'input[type="search"]',
+      );
+      if (!input) throw new Error('falta el buscador');
+      input.value = 'votacion';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await wait();
+      expect(titles(host)).toEqual(['Llamar a Juan']);
+      input.value = 'ACTA';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await wait();
+      expect(titles(host)).toEqual(['Escribir el acta']);
+    });
+
+    it('los documentos se eligen en una hoja aparte, con buscador y casillas, y el botón de la barra los quita', async () => {
+      withDocuments();
+      const host = mount();
+      await wait(200);
+      expect(titles(host)).toHaveLength(4);
+      const last = (text: string) =>
+        [...document.querySelectorAll('button')]
+          .filter((item) => item.textContent?.trim().startsWith(text))
+          .at(-1);
+      buttonByText(host, 'Filtros')?.click();
+      await wait(80);
+      // La hoja de filtros solo muestra una fila; los documentos están en otra hoja.
+      expect(document.querySelectorAll('input[type="checkbox"]')).toHaveLength(
+        0,
+      );
+      last('Todos')?.click();
+      await wait(80);
+      const checkboxes = () => [
+        ...document.querySelectorAll<HTMLInputElement>(
+          'input[type="checkbox"]',
+        ),
+      ];
+      expect(checkboxes()).toHaveLength(3);
+      // El buscador de la hoja reduce la lista.
+      const search = [
+        ...document.querySelectorAll<HTMLInputElement>('input[type="search"]'),
+      ].at(-1);
+      if (!search) throw new Error('falta el buscador de la hoja');
+      search.value = 'votacion';
+      search.dispatchEvent(new Event('input', { bubbles: true }));
+      await wait();
+      expect(checkboxes()).toHaveLength(1);
+      search.value = '';
+      search.dispatchEvent(new Event('input', { bubbles: true }));
+      await wait();
+      checkboxes()[0]?.click();
+      checkboxes()[2]?.click();
+      last('Aplicar')?.click();
+      await wait(80);
+      // De vuelta en la hoja de filtros, la fila dice cuántos hay.
+      expect(document.body.textContent).toContain('2 documentos');
+      last('Aplicar')?.click();
+      await wait(80);
+      expect(titles(host)).toHaveLength(2);
+      const chip = host.querySelector('[aria-label^="Quitar el filtro"]');
+      expect(chip?.textContent).toContain('2 documentos');
+      (chip as HTMLElement).click();
+      await wait();
+      expect(titles(host)).toHaveLength(4);
+    });
+
+    it('ya no hay selector de documento en la barra', async () => {
+      withDocuments();
+      const host = mount();
+      await wait(200);
+      expect(host.querySelector('select')).toBeNull();
+    });
   });
 });

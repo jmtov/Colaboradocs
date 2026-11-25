@@ -16,7 +16,9 @@ describe('grillas de celdas con bordes colapsados', () => {
   const grids = [
     {
       name: 'home',
-      css: read('./HomePage/HomePage.module.css'),
+      css:
+        read('./HomePage/components/CardGrid/CardGrid.module.css') +
+        read('./HomePage/components/Card/Card.module.css'),
       grid: '.grid',
       cell: '.item',
       box: '.card',

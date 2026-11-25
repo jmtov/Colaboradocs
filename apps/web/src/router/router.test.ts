@@ -8,6 +8,7 @@ import {
   navigate,
   pathname,
   resolveRoute,
+  skipsPageTransition,
 } from './router';
 
 describe('resolveRoute', () => {
@@ -97,5 +98,22 @@ describe('navigate', () => {
     navigate('/d/dos', { replace: true });
     expect(pathname()).toBe('/d/dos');
     expect(window.history.length).toBe(before + 1);
+  });
+});
+
+describe('skipsPageTransition', () => {
+  it('las redirecciones y el cambio de tab no se animan; navegar y volver sí', () => {
+    expect(skipsPageTransition('replace')).toBe(true);
+    expect(skipsPageTransition('tab')).toBe(true);
+    expect(skipsPageTransition('push')).toBe(false);
+    expect(skipsPageTransition('pop')).toBe(false);
+  });
+});
+
+describe('rutas de los tabs de la home', () => {
+  it('/presentaciones y /tareas son tabs, con o sin barra final', () => {
+    expect(resolveRoute('/presentaciones')).toEqual({ kind: 'decks' });
+    expect(resolveRoute('/presentaciones/')).toEqual({ kind: 'decks' });
+    expect(resolveRoute('/tareas')).toEqual({ kind: 'tasks' });
   });
 });

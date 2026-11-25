@@ -1,0 +1,58 @@
+.item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+}
+
+.item:hover {
+  z-index: var(--z-raised);
+}
+
+.add {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 11.5rem;
+  padding: 1.25rem;
+  font: inherit;
+  color: var(--fg);
+  text-align: center;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--line);
+}
+
+.add:hover {
+  background: var(--tint);
+}
+
+.add:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--muted);
+}
+
+.add:hover .icon {
+  color: var(--fg);
+}
+
+.label {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.hint {
+  font: var(--font-size-xs) var(--font-mono);
+  color: var(--muted);
+}

@@ -69,6 +69,20 @@ function fold(text: string): string {
 }
 
 /**
+ * Si todas las palabras de `query` están en alguno de los `fields` (sin importar tildes ni
+ * mayúsculas). Una búsqueda vacía coincide con todo. Sirve para cualquier lista de la home.
+ */
+export function matchesQuery(
+  query: string,
+  fields: (string | null | undefined)[],
+): boolean {
+  const words = fold(query).split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
+  const haystack = fold(fields.filter(Boolean).join(' '));
+  return words.every((word) => haystack.includes(word));
+}
+
+/**
  * Los documentos que cumplen el filtro: `kind` (si se da) y todas las palabras de `query`
  * en el título, la descripción, las personas o el nombre del tipo.
  */
@@ -76,23 +90,17 @@ export function filterDocuments(
   items: DocumentListItem[],
   filter: { query: string; kind: DocumentKind | null },
 ): DocumentListItem[] {
-  const words = fold(filter.query).split(/\s+/).filter(Boolean);
-  return items.filter((item) => {
-    if (filter.kind && kindOf(item) !== filter.kind) return false;
-    if (words.length === 0) return true;
-    const haystack = fold(
-      [
+  return items.filter(
+    (item) =>
+      (!filter.kind || kindOf(item) === filter.kind) &&
+      matchesQuery(filter.query, [
         item.title,
         item.description,
         item.owner,
         item.attendees,
         kindLabel(item),
-      ]
-        .filter(Boolean)
-        .join(' '),
-    );
-    return words.every((word) => haystack.includes(word));
-  });
+      ]),
+  );
 }
 
 /** «Ana, Luis, Eva, Sol» → los primeros `max` nombres y cuántos quedan fuera. */

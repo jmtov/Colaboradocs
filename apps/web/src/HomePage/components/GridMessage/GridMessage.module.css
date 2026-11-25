@@ -1,0 +1,7 @@
+.message {
+  grid-column: 1 / -1;
+  padding: 2rem 1.25rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  margin: 0 -1px -1px 0;
+}

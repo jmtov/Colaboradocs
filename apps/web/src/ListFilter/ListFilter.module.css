@@ -1,5 +1,22 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.summary {
+  margin: 0;
+  font: 500 var(--font-size-xs) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .filter {
   display: flex;
+  margin-left: auto;
   flex-wrap: wrap;
   gap: 0.75rem;
   /* Misma altura para el campo y los botones, aunque una difiera. */

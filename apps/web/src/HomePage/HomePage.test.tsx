@@ -5,6 +5,7 @@ import { createSignal } from 'solid-js';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentListItem } from '@/content/content.types';
+import { type HomeTab, navigationKind } from '@/router/router';
 import HomePage from './HomePage';
 
 const item = (
@@ -27,6 +28,12 @@ const item = (
   ...extra,
 });
 
+/** Los tabs como texto: «Documentos3Presentaciones0Tareas». */
+const tabLabels = (host: HTMLElement) =>
+  [...host.querySelectorAll('nav[aria-label="Secciones"] a')]
+    .map((a) => a.textContent)
+    .join('');
+
 const wait = (ms = 30) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function signIn(isAdmin = false) {
@@ -39,7 +46,11 @@ function signIn(isAdmin = false) {
   );
 }
 
-function mount(documents: DocumentListItem[], decks: DeckListItem[] = []) {
+function mount(
+  documents: DocumentListItem[],
+  decks: DeckListItem[] = [],
+  tab: HomeTab = 'documents',
+) {
   vi.stubGlobal(
     'fetch',
     vi.fn(
@@ -57,6 +68,7 @@ function mount(documents: DocumentListItem[], decks: DeckListItem[] = []) {
       <ReviewProvider>
         <HomePage
           name="Espacio de prueba"
+          tab={tab}
           documents={documents}
           decks={decks}
         />
@@ -90,14 +102,33 @@ describe('HomePage', () => {
       ],
     );
     await wait();
-    const link = host.querySelector<HTMLAnchorElement>('a[href="/p/charla"]');
+    host.remove();
+    const decksTab = mount(
+      [item('a')],
+      [
+        {
+          id: 'charla',
+          title: 'Mi charla',
+          themeId: 'neutral',
+          slides: 3,
+          hasDraft: false,
+          updatedAt: new Date().toISOString(),
+        },
+      ],
+      'decks',
+    );
+    await wait();
+    const link = decksTab.querySelector<HTMLAnchorElement>(
+      'a[href="/p/charla"]',
+    );
     expect(link?.textContent).toContain('Mi charla');
     expect(link?.textContent).toContain('3 slides');
-    expect(host.textContent).toContain('1 presentación');
-    host.remove();
+    // Sin presentaciones (y sin ser admin), el tab ni aparece.
+    decksTab.remove();
     const empty = mount([item('a')]);
     await wait();
     expect(empty.querySelector('a[href^="/p/"]')).toBeNull();
+    expect(empty.querySelector('nav a[href="/presentaciones"]')).toBeNull();
   });
 
   it('muestra una tarjeta por documento, con su actividad', async () => {
@@ -113,7 +144,7 @@ describe('HomePage', () => {
     await wait();
 
     expect(host.querySelector('h1')?.textContent).toBe('Espacio de prueba');
-    const cards = [...host.querySelectorAll('a')];
+    const cards = [...host.querySelectorAll('a[href^="/d/"]')];
     expect(cards.map((card) => card.getAttribute('href'))).toEqual([
       '/d/a',
       '/d/b',
@@ -135,10 +166,8 @@ describe('HomePage', () => {
       item('ini', { type: 'initiative', owner: 'Ana' }),
     ]);
     await wait();
-    expect(
-      [...host.querySelectorAll('h2')].map((h) => h.textContent?.trim()),
-    ).toEqual(['3 documentos']);
-    const cards = [...host.querySelectorAll('a')];
+    expect(tabLabels(host)).toContain('Documentos3');
+    const cards = [...host.querySelectorAll('a[href^="/d/"]')];
     expect(cards.map((a) => a.getAttribute('href'))).toEqual([
       '/d/ini',
       '/d/acta-nueva',
@@ -149,16 +178,57 @@ describe('HomePage', () => {
     expect(host.textContent).toContain('Responsable: Ana');
   });
 
-  it('el título va antes que el contador de documentos', async () => {
+  it('el título va antes que los tabs, y los tabs antes que la lista', async () => {
     signIn();
     const host = mount([item('a')]);
     await wait();
     const heading = host.querySelector('h1');
-    const count = host.querySelector('h2');
-    if (!heading || !count) throw new Error('faltan los títulos');
+    const tabs = host.querySelector('nav[aria-label="Secciones"]');
+    const card = host.querySelector('a[href="/d/a"]');
+    if (!heading || !tabs || !card) throw new Error('falta el marco');
+    const follows = (a: Node, b: Node) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(follows(heading, tabs)).toBe(true);
+    expect(follows(tabs, card)).toBe(true);
+  });
+
+  it('los tabs son enlaces a /, /presentaciones y /tareas, con el actual marcado y su cuenta', async () => {
+    signIn(true);
+    const host = mount([item('a'), item('b')], [], 'documents');
+    await wait();
+    const links = [...host.querySelectorAll('nav[aria-label="Secciones"] a')];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual([
+      '/',
+      '/presentaciones',
+      '/tareas',
+    ]);
+    expect(links.map((a) => a.getAttribute('aria-current'))).toEqual([
+      'page',
+      null,
+      null,
+    ]);
+    expect(links[0]?.textContent).toBe('Documentos2');
+    expect(links[1]?.textContent).toBe('Presentaciones0');
+    host.remove();
+    const decks = mount([item('a')], [], 'decks');
+    await wait();
     expect(
-      heading.compareDocumentPosition(count) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+      decks.querySelector('nav a[aria-current="page"]')?.textContent,
+    ).toContain('Presentaciones');
+  });
+
+  it('cambiar de tab no anima la página (tab) pero sí deja entrada en el historial', async () => {
+    signIn(true);
+    window.history.replaceState(null, '', '/');
+    const host = mount([item('a')]);
+    await wait();
+    const before = window.history.length;
+    host
+      .querySelector<HTMLAnchorElement>('nav a[href="/presentaciones"]')
+      ?.click();
+    expect(window.location.pathname).toBe('/presentaciones');
+    expect(navigationKind()).toBe('tab');
+    expect(window.history.length).toBe(before + 1);
   });
 
   it('muestra tres nombres y cuántos más', async () => {
@@ -182,7 +252,9 @@ describe('HomePage', () => {
     ]);
     await wait();
     const hrefs = () =>
-      [...host.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+      [...host.querySelectorAll('a[href^="/d/"]')].map((a) =>
+        a.getAttribute('href'),
+      );
     expect(hrefs()).toEqual(['/d/a', '/d/b']);
 
     const input = host.querySelector<HTMLInputElement>('input[type="search"]');
@@ -245,7 +317,12 @@ describe('HomePage', () => {
     render(
       () => (
         <ReviewProvider>
-          <HomePage name="Espacio de prueba" documents={list()} decks={[]} />
+          <HomePage
+            name="Espacio de prueba"
+            tab="documents"
+            documents={list()}
+            decks={[]}
+          />
         </ReviewProvider>
       ),
       host,
@@ -264,11 +341,11 @@ describe('HomePage', () => {
       .find((button) => button.textContent?.trim() === 'Aplicar')
       ?.click();
     await wait(80);
-    expect(host.querySelectorAll('a')).toHaveLength(1);
+    expect(host.querySelectorAll('a[href^="/d/"]')).toHaveLength(1);
     setList([documents[0] as DocumentListItem]);
     await wait();
     expect(host.textContent).not.toContain('Ningún documento coincide');
-    expect(host.querySelectorAll('a')).toHaveLength(1);
+    expect(host.querySelectorAll('a[href^="/d/"]')).toHaveLength(1);
   });
 
   it('la tarjeta lleva el tipo y la fecha (la de elaboración, o updated), sin la versión', async () => {
@@ -313,15 +390,15 @@ describe('HomePage', () => {
 
   it('el admin ve la sección de presentaciones con «Nueva presentación» aunque no haya ninguna; los demás no', async () => {
     signIn(true);
-    const admin = mount([item('a')]);
+    const admin = mount([item('a')], [], 'decks');
     await wait();
-    expect(admin.textContent).toContain('0 presentaciones');
+    expect(admin.querySelector('nav a[href="/presentaciones"]')).not.toBeNull();
     expect(admin.textContent).toContain('Nueva presentación');
     document.body.innerHTML = '';
     signIn(false);
     const member = mount([item('a')]);
     await wait();
-    expect(member.textContent).not.toContain('presentaciones');
+    expect(member.querySelector('nav a[href="/presentaciones"]')).toBeNull();
     expect(member.textContent).not.toContain('Nueva presentación');
   });
 

@@ -32,7 +32,8 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 |---|---|
 | `App.tsx`, `main.tsx` | Providers (`ReviewProvider` → `PinGate`) y rutas: `HomeRoute` (home o redirección), `DocumentRoute` (pide el contenido), `AdminPage` (administración) y «no encontrado». |
 | `router/` | Router mínimo con History API (`resolveRoute`, `navigate`, `Link`). |
-| `HomePage/` | La home: una tarjeta por documento, con su actividad. |
+| `HomeShell/` | El marco de la home: barra con la cuenta, título del espacio y los tabs (Documentos, Presentaciones, Tareas), que son enlaces a `/`, `/presentaciones` y `/tareas`. |
+| `HomePage/` | La home: el marco y, debajo, el tab que toca (`components/DocumentsTab`, `DecksTab`; el de tareas es `TasksTab/`). Las tarjetas son `Card`, `CardGrid` y `AddCard`. |
 | `AdminPage/` | Marco de `/documentos` y `/accesos` (solo admins; a los demás les dice «Solo para administradores»): encabezado, «← Inicio», título y el contenido de la página. |
 | `DocumentsPage/` | Contenido de `/documentos`: lista, subir, reemplazar y archivar. `UploadSheet` (subir y reemplazar con vista previa) es una hoja que se abre con `useOverlay().sheet`, igual desde la home y desde el menú de cada tarjeta: no hay estado global. Sirve para espacios de un solo documento, donde `/` redirige y no hay home. |
 | `FieldGroup/` | Grupos de filas «etiqueta … valor» (`FieldGroup`, `FieldRow`, `FieldTitle`, y el input sin borde de `FieldInput.module.css`): caja con líneas finas, valor a la derecha, «—» si está vacío. Es el formato de lo que no es texto libre (título y descripción de una sección, enlaces del glosario). Esquinas rectas, como todo. |
