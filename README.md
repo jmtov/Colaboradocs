@@ -88,7 +88,7 @@ NODE_DIR=/ruta/al/nodo npm run pins -w @colaboradocs/review-worker -- list --rem
 NODE_DIR=/ruta/al/nodo npm run documents -w @colaboradocs/review-worker -- list --remote
 ```
 
-Con `NODE_DIR` el CLI toma la cuenta de Cloudflare del `wrangler.jsonc` del nodo (sin tener que fijar `CLOUDFLARE_ACCOUNT_ID`). El `wrangler.jsonc` del nodo apunta al código con rutas relativas a su carpeta (`setup` las escribe solo cuando se le pasa `NODE_DIR`); se despliega con `wrangler deploy --config <nodo>/wrangler.jsonc`. Una trampa: `apps/web/public/documentos/` se copia al build y se sirve **sin PIN**, así que cada instancia necesita su propio build. Un build hecho para otra publicaría sus archivos. Sin `NODE_DIR`, todo funciona como antes, desde `packages/review-worker`.
+Con `NODE_DIR` el CLI toma la cuenta de Cloudflare del `wrangler.jsonc` del nodo (sin tener que fijar `CLOUDFLARE_ACCOUNT_ID`). El `wrangler.jsonc` del nodo apunta al código con rutas relativas a su carpeta (`setup` las escribe solo cuando se le pasa `NODE_DIR`); se despliega con `wrangler deploy --config <nodo>/wrangler.jsonc`. Una trampa: `apps/web/public/documentos/` se copia al build y se sirve **sin PIN**, así que cada instancia necesita su propio build (`NODE_DIR=/ruta/al/nodo npm run build -w @colaboradocs/web`, que deja la página en `<nodo>/dist`). Un build hecho para otra publicaría sus archivos. Sin `NODE_DIR`, todo funciona como antes, desde `packages/review-worker`.
 
 ## Documentos
 
