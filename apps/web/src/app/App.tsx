@@ -1,4 +1,5 @@
 import { Button, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
 import { lazy, Match, Show, Suspense, Switch } from 'solid-js';
 import AdminPage from '@/admin/AdminPage/AdminPage';
 import DeckEditorSkeleton from '@/deck/DeckEditorPage/DeckEditorSkeleton/DeckEditorSkeleton';
@@ -8,7 +9,6 @@ import DocumentSkeleton from '@/document/DocumentPage/DocumentSkeleton/DocumentS
 import EditorSkeleton from '@/document/EditorPage/EditorSkeleton/EditorSkeleton';
 import HomeSkeleton from '@/home/HomePage/components/HomeSkeleton/HomeSkeleton';
 import HomePage from '@/home/HomePage/HomePage';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
 import Link from '@/shared/router/Link';
 import type { HomeTab } from '@/shared/router/router';
 import Loading from '@/shared/ui/Loading/Loading';

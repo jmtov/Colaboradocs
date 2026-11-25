@@ -1,9 +1,9 @@
 import { Button, useReview } from '@colaboradocs/review-ui';
+import ArrowLeftIcon from 'lucide-solid/icons/arrow-left';
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import PrinterIcon from 'lucide-solid/icons/printer';
 import { Show } from 'solid-js';
-import ArrowLeftIcon from '@/shared/icons/ArrowLeftIcon';
-import ChevronDownIcon from '@/shared/icons/ChevronDownIcon';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import PrinterIcon from '@/shared/icons/PrinterIcon';
 import { editPath, navigate } from '@/shared/router/router';
 import UserMenu, { type UserMenuAction } from '@/shared/ui/UserMenu/UserMenu';
 import styles from './TopBar.module.css';

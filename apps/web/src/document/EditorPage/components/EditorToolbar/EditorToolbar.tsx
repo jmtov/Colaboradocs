@@ -1,10 +1,10 @@
 import type { Editor } from '@tiptap/core';
+import AtSignIcon from 'lucide-solid/icons/at-sign';
+import LinkIcon from 'lucide-solid/icons/link';
+import QuoteIcon from 'lucide-solid/icons/quote';
+import RedoIcon from 'lucide-solid/icons/redo-2';
+import UndoIcon from 'lucide-solid/icons/undo-2';
 import { For, Show } from 'solid-js';
-import AtSignIcon from '@/shared/icons/AtSignIcon';
-import LinkIcon from '@/shared/icons/LinkIcon';
-import QuoteIcon from '@/shared/icons/QuoteIcon';
-import RedoIcon from '@/shared/icons/RedoIcon';
-import UndoIcon from '@/shared/icons/UndoIcon';
 import IconButton from '@/shared/ui/IconButton/IconButton';
 import { FORMAT_GROUPS, type ToolbarItem } from './EditorToolbar.constants';
 import { useEditorToolbar } from './EditorToolbar.hooks';

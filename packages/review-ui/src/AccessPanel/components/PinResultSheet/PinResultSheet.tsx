@@ -1,9 +1,9 @@
 import type { IssuedPin } from '@colaboradocs/review-core';
+import CheckIcon from 'lucide-solid/icons/check';
+import CopyIcon from 'lucide-solid/icons/copy';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
 import Button from '../../../Button/Button';
-import CheckIcon from '../../../icons/CheckIcon';
-import CopyIcon from '../../../icons/CopyIcon';
 import type { SheetLayerProps } from '../../../overlay/overlay.types';
 import { usePinResultSheet } from './PinResultSheet.hooks';
 import styles from './PinResultSheet.module.css';

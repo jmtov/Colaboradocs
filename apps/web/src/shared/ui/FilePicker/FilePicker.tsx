@@ -1,7 +1,7 @@
 import { Button } from '@colaboradocs/review-ui';
+import FileTextIcon from 'lucide-solid/icons/file-text';
+import UploadIcon from 'lucide-solid/icons/upload';
 import { Show } from 'solid-js';
-import FileTextIcon from '@/shared/icons/FileTextIcon';
-import UploadIcon from '@/shared/icons/UploadIcon';
 import { useFilePicker } from './FilePicker.hooks';
 import styles from './FilePicker.module.css';
 import type { FilePickerProps } from './FilePicker.types';

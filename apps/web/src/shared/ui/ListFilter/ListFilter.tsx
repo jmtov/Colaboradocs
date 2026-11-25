@@ -1,8 +1,8 @@
 import { Button } from '@colaboradocs/review-ui';
+import SearchIcon from 'lucide-solid/icons/search';
+import SlidersIcon from 'lucide-solid/icons/sliders-horizontal';
+import CloseIcon from 'lucide-solid/icons/x';
 import { type JSX, Show } from 'solid-js';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import SearchIcon from '@/shared/icons/SearchIcon';
-import SlidersIcon from '@/shared/icons/SlidersIcon';
 import styles from './ListFilter.module.css';
 
 type Props = {

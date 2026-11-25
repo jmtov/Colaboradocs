@@ -1,10 +1,10 @@
 import { filterPeople, type ReviewerLabel } from '@colaboradocs/review-core';
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import AtSignIcon from 'lucide-solid/icons/at-sign';
+import CheckIcon from 'lucide-solid/icons/check';
+import TrashIcon from 'lucide-solid/icons/trash';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createMemo, createSignal, For, Show } from 'solid-js';
-import AtSignIcon from '@/shared/icons/AtSignIcon';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import styles from './PersonSheet.module.css';

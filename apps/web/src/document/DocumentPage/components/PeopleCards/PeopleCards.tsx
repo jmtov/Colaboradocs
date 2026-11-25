@@ -1,6 +1,6 @@
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { For } from 'solid-js';
 import CollapsibleSection from '@/document/DocumentPage/components/CollapsibleSection/CollapsibleSection';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
 import styles from './PeopleCards.module.css';
 
 export type PersonCard = { name: string; municipality: string | null };

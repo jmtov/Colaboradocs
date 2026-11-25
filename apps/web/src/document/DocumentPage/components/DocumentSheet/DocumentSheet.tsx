@@ -5,11 +5,11 @@ import {
   PersonCard,
   type SheetLayerProps,
 } from '@colaboradocs/review-ui';
+import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
+import BookOpenIcon from 'lucide-solid/icons/book-open';
 import { Match, Switch } from 'solid-js';
 import Prose from '@/document/prose/Prose';
-import ArrowDownToLineIcon from '@/shared/icons/ArrowDownToLineIcon';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
-import BookOpenIcon from '@/shared/icons/BookOpenIcon';
 import CiteList from './components/CiteList/CiteList';
 import OutlineList from './components/OutlineList/OutlineList';
 import { useDocumentSheet } from './DocumentSheet.hooks';

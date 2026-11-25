@@ -1,8 +1,8 @@
 import { MAX_COMMENT_LENGTH } from '@colaboradocs/review-core';
+import SendIcon from 'lucide-solid/icons/send';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createSignal, Show } from 'solid-js';
 import Button from '../../../Button/Button';
-import CloseIcon from '../../../icons/CloseIcon';
-import SendIcon from '../../../icons/SendIcon';
 import MentionList from '../MentionList/MentionList';
 import { useMentionPicker } from './CommentComposer.hooks';
 import styles from './CommentComposer.module.css';

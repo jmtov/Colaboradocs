@@ -1,12 +1,12 @@
 import type { ManagedReviewer } from '@colaboradocs/review-core';
+import KeyIcon from 'lucide-solid/icons/key';
+import PencilIcon from 'lucide-solid/icons/pencil';
+import RotateCcwIcon from 'lucide-solid/icons/rotate-ccw';
+import TrashIcon from 'lucide-solid/icons/trash';
 import type { Accessor } from 'solid-js';
 import { createSignal } from 'solid-js';
 import type { ActionMenuItem } from '../../../ActionMenu/ActionMenu.types';
 import ConfirmSheet from '../../../ConfirmSheet/ConfirmSheet';
-import KeyIcon from '../../../icons/KeyIcon';
-import PencilIcon from '../../../icons/PencilIcon';
-import RotateCcwIcon from '../../../icons/RotateCcwIcon';
-import TrashIcon from '../../../icons/TrashIcon';
 import { useOverlay } from '../../../overlay/useOverlay';
 import { useReview } from '../../../ReviewProvider/review.context';
 import type { AccessOutcome } from '../../../store/createAccessStore';

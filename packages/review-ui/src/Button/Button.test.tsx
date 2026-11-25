@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import CheckIcon from 'lucide-solid/icons/check';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import CheckIcon from '../icons/CheckIcon';
 import Button from './Button';
 
 const disposers: (() => void)[] = [];

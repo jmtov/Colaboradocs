@@ -1,4 +1,5 @@
 import { Button } from '@colaboradocs/review-ui';
+import CloseIcon from 'lucide-solid/icons/x';
 import {
   createEffect,
   createSignal,
@@ -6,7 +7,6 @@ import {
   onCleanup,
   Show,
 } from 'solid-js';
-import CloseIcon from '@/shared/icons/CloseIcon';
 import { SLIDE_MS } from './PaneSheet.constants';
 import styles from './PaneSheet.module.css';
 

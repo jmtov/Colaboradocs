@@ -4,10 +4,10 @@ import {
   tidyGrid,
 } from '@colaboradocs/deck-core';
 import { Button } from '@colaboradocs/review-ui';
+import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';
 import { createSignal, For } from 'solid-js';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
 import type { Path } from '@/deck/DeckEditorPage/features/deck/deck.utils';
-import ArrowDownToLineIcon from '@/shared/icons/ArrowDownToLineIcon';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './GridSizeField.module.css';
 import { describeGrid, GRID_SIDE, isShaded } from './GridSizeField.utils';

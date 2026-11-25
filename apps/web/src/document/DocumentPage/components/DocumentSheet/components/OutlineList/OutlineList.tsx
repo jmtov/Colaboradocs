@@ -1,9 +1,9 @@
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { For } from 'solid-js';
 import {
   type OutlineItem,
   readOutline,
 } from '@/document/DocumentPage/components/DocumentSheet/outline.utils';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
 import styles from './OutlineList.module.css';
 
 const LEVEL_CLASS: Record<OutlineItem['level'], string | undefined> = {

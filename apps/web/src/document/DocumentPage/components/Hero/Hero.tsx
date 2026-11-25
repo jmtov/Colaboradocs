@@ -1,8 +1,8 @@
 import { type DocumentKind, KIND_GROUPS } from '@colaboradocs/review-core';
 import { Button } from '@colaboradocs/review-ui';
+import ArrowDownIcon from 'lucide-solid/icons/arrow-down';
+import ListChecksIcon from 'lucide-solid/icons/list-checks';
 import { Show } from 'solid-js';
-import ArrowDownIcon from '@/shared/icons/ArrowDownIcon';
-import ListChecksIcon from '@/shared/icons/ListChecksIcon';
 import styles from './Hero.module.css';
 
 type Props = {

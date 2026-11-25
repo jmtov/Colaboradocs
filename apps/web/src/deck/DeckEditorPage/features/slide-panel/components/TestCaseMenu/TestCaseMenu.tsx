@@ -1,7 +1,7 @@
 import { TEST_CASES } from '@colaboradocs/deck-core';
 import { ActionMenu, type ActionMenuGroup } from '@colaboradocs/review-ui';
+import TypeIcon from 'lucide-solid/icons/a-large-small';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
-import TypeIcon from '@/shared/icons/TypeIcon';
 
 /** «Probar con otros textos»: un menú con los casos; solo cambia la vista previa, no el deck. */
 export default function TestCaseMenu() {

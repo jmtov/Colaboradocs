@@ -1,6 +1,6 @@
 import { dueState, type Task } from '@colaboradocs/review-core';
+import CheckIcon from 'lucide-solid/icons/check';
 import { Show } from 'solid-js';
-import CheckIcon from '@/shared/icons/CheckIcon';
 import TaskMenu from '@/task/components/TaskMenu/TaskMenu';
 import styles from './TaskRow.module.css';
 import { dueLabel, formatDueDate } from './task.utils';

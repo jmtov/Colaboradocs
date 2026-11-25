@@ -1,8 +1,8 @@
 import type { DocumentSource } from '@colaboradocs/review-core';
 import { Button } from '@colaboradocs/review-ui';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import PlusIcon from 'lucide-solid/icons/plus';
 import { For, Show } from 'solid-js';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import PlusIcon from '@/shared/icons/PlusIcon';
 import styles from './SourcesEditor.module.css';
 
 type Props = {

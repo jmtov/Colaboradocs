@@ -1,6 +1,6 @@
 import { Button } from '@colaboradocs/review-ui';
+import ArrowLeftIcon from 'lucide-solid/icons/arrow-left';
 import type { JSX } from 'solid-js';
-import ArrowLeftIcon from '@/shared/icons/ArrowLeftIcon';
 import { navigate } from '@/shared/router/router';
 import UserMenu from '@/shared/ui/UserMenu/UserMenu';
 import styles from './PageBar.module.css';

@@ -1,7 +1,7 @@
 import { Button } from '@colaboradocs/review-ui';
-import ArrowLeftIcon from '@/shared/icons/ArrowLeftIcon';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
+import ArrowLeftIcon from 'lucide-solid/icons/arrow-left';
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
+import CloseIcon from 'lucide-solid/icons/x';
 import styles from './NavigationBar.module.css';
 
 type Props = {

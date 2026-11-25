@@ -1,6 +1,6 @@
 import type { DocumentSection } from '@colaboradocs/review-core';
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { For } from 'solid-js';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
 import styles from './SideNav.module.css';
 
 type Props = {

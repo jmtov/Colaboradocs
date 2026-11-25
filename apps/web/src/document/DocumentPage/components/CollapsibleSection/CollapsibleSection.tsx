@@ -1,5 +1,5 @@
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
 import { createSignal, type JSX, Show } from 'solid-js';
-import ChevronDownIcon from '@/shared/icons/ChevronDownIcon';
 import styles from './CollapsibleSection.module.css';
 
 type Props = {

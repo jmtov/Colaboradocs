@@ -1,9 +1,9 @@
 import { Button, MenuItem, MenuPanel } from '@colaboradocs/review-ui';
+import EllipsisVerticalIcon from 'lucide-solid/icons/ellipsis-vertical';
+import ListChecksIcon from 'lucide-solid/icons/list-checks';
+import LogOutIcon from 'lucide-solid/icons/log-out';
+import UsersIcon from 'lucide-solid/icons/users';
 import { type Component, For, Show } from 'solid-js';
-import EllipsisVerticalIcon from '@/shared/icons/EllipsisVerticalIcon';
-import ListChecksIcon from '@/shared/icons/ListChecksIcon';
-import LogOutIcon from '@/shared/icons/LogOutIcon';
-import UsersIcon from '@/shared/icons/UsersIcon';
 import { howToAvailable } from '@/shared/ui/HowToReview/howto.state';
 import ThemeSwitch from '@/shared/ui/ThemeSwitch/ThemeSwitch';
 import { useUserMenu } from './UserMenu.hooks';

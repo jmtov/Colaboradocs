@@ -1,14 +1,14 @@
 import { SLIDE_TEMPLATES } from '@colaboradocs/deck-core';
 import { ActionMenu, type ActionMenuGroup } from '@colaboradocs/review-ui';
+import ArrowDownIcon from 'lucide-solid/icons/arrow-down';
+import ArrowUpIcon from 'lucide-solid/icons/arrow-up';
+import CopyIcon from 'lucide-solid/icons/copy';
+import PlusIcon from 'lucide-solid/icons/plus';
+import TrashIcon from 'lucide-solid/icons/trash';
 import { For, Show } from 'solid-js';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
 import { issuesOfSlide } from '@/deck/DeckEditorPage/features/deck/deck.utils';
 import WarningDot from '@/deck/DeckEditorPage/features/ui/WarningDot/WarningDot';
-import ArrowDownIcon from '@/shared/icons/ArrowDownIcon';
-import ArrowUpIcon from '@/shared/icons/ArrowUpIcon';
-import CopyIcon from '@/shared/icons/CopyIcon';
-import PlusIcon from '@/shared/icons/PlusIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import styles from './SlideList.module.css';
 import { slideLabel, slideSummary } from './SlideList.utils';
 

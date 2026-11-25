@@ -1,7 +1,7 @@
 import { type DocumentKind, KIND_GROUPS } from '@colaboradocs/review-core';
 import { Button } from '@colaboradocs/review-ui';
+import PlusIcon from 'lucide-solid/icons/plus';
 import { For, Show } from 'solid-js';
-import PlusIcon from '@/shared/icons/PlusIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import { useNewDocumentForm } from './NewDocumentForm.hooks';

@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
+
+import BoldIcon from 'lucide-solid/icons/letter-b';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import BoldIcon from '@/shared/icons/BoldIcon';
 import IconButton from './IconButton';
 
 const disposers: (() => void)[] = [];

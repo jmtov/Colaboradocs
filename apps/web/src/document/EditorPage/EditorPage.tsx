@@ -1,10 +1,10 @@
 import { ActionMenu, Button } from '@colaboradocs/review-ui';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
+import SaveIcon from 'lucide-solid/icons/save';
+import TrashIcon from 'lucide-solid/icons/trash';
+import UploadIcon from 'lucide-solid/icons/upload';
 import { For, Match, Show, Switch } from 'solid-js';
 import DocumentEditor from '@/document/editor/DocumentEditor/DocumentEditor';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
-import SaveIcon from '@/shared/icons/SaveIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
-import UploadIcon from '@/shared/icons/UploadIcon';
 import PageBar from '@/shared/ui/PageBar/PageBar';
 import SkeletonLines from '@/shared/ui/Skeleton/SkeletonLines';
 import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';

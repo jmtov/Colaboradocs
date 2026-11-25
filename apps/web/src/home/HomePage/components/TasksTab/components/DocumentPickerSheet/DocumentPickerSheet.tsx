@@ -1,7 +1,7 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import { For } from 'solid-js';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import { useDocumentPickerSheet } from './DocumentPickerSheet.hooks';
 import styles from './DocumentPickerSheet.module.css';

@@ -1,6 +1,6 @@
 import { Button } from '@colaboradocs/review-ui';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
 import { Match, Switch } from 'solid-js';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
 import Loading from '@/shared/ui/Loading/Loading';
 import './editor.css';
 import { useDeckEditorPage } from './DeckEditorPage.hooks';

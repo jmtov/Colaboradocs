@@ -1,9 +1,9 @@
 import { Button, useReview } from '@colaboradocs/review-ui';
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
+import ChevronUpIcon from 'lucide-solid/icons/chevron-up';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
 import { Match, Show, Switch } from 'solid-js';
-import ChevronDownIcon from '@/shared/icons/ChevronDownIcon';
-import ChevronUpIcon from '@/shared/icons/ChevronUpIcon';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
 import {
   DECKS_PATH,
   deckEditPath,

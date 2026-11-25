@@ -1,6 +1,6 @@
+import CloseIcon from 'lucide-solid/icons/x';
 import type { Component } from 'solid-js';
 import Button from '../Button/Button';
-import CloseIcon from '../icons/CloseIcon';
 import styles from './MenuConfirm.module.css';
 
 type Props = {

@@ -12,6 +12,9 @@ import {
   type ActionMenuGroup,
   Button,
 } from '@colaboradocs/review-ui';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import PlusIcon from 'lucide-solid/icons/plus';
+import TrashIcon from 'lucide-solid/icons/trash';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
 import {
@@ -21,9 +24,6 @@ import {
 import { viewStore } from '@/deck/DeckEditorPage/features/preview/view.store';
 import PaneSheet from '@/deck/DeckEditorPage/features/ui/PaneSheet/PaneSheet';
 import WarningDot from '@/deck/DeckEditorPage/features/ui/WarningDot/WarningDot';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import PlusIcon from '@/shared/icons/PlusIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import FieldForm from '../FieldForm/FieldForm';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './BlocksField.module.css';

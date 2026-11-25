@@ -1,7 +1,7 @@
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import BottomSheet from '../BottomSheet/BottomSheet';
 import Button from '../Button/Button';
-import CheckIcon from '../icons/CheckIcon';
-import CloseIcon from '../icons/CloseIcon';
 import type { SheetLayerProps } from '../overlay/overlay.types';
 import styles from './ConfirmSheet.module.css';
 

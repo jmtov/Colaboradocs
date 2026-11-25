@@ -1,8 +1,8 @@
+import CheckIcon from 'lucide-solid/icons/check';
+import CommentIcon from 'lucide-solid/icons/message-circle';
+import CloseIcon from 'lucide-solid/icons/x';
 import { Show } from 'solid-js';
 import Button from '../Button/Button';
-import CheckIcon from '../icons/CheckIcon';
-import CloseIcon from '../icons/CloseIcon';
-import CommentIcon from '../icons/CommentIcon';
 import styles from './BlockActionBar.module.css';
 
 type Props = {

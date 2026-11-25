@@ -1,8 +1,8 @@
 import { Button } from '@colaboradocs/review-ui';
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
+import ChevronUpIcon from 'lucide-solid/icons/chevron-up';
+import TrashIcon from 'lucide-solid/icons/trash';
 import type { JSX } from 'solid-js';
-import ChevronDownIcon from '@/shared/icons/ChevronDownIcon';
-import ChevronUpIcon from '@/shared/icons/ChevronUpIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import styles from './ItemCard.module.css';
 
 interface ItemCardProps {

@@ -1,7 +1,7 @@
 import { Button } from '@colaboradocs/review-ui';
+import ChevronDownIcon from 'lucide-solid/icons/chevron-down';
+import PlusIcon from 'lucide-solid/icons/plus';
 import { For, Show } from 'solid-js';
-import ChevronDownIcon from '@/shared/icons/ChevronDownIcon';
-import PlusIcon from '@/shared/icons/PlusIcon';
 import TaskRow from '@/task/components/TaskRow/TaskRow';
 import { useDocumentTaskList } from './DocumentTaskList.hooks';
 import styles from './DocumentTaskList.module.css';

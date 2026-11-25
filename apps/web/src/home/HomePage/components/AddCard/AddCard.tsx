@@ -1,4 +1,4 @@
-import PlusIcon from '@/shared/icons/PlusIcon';
+import PlusIcon from 'lucide-solid/icons/plus';
 import styles from './AddCard.module.css';
 
 type Props = {

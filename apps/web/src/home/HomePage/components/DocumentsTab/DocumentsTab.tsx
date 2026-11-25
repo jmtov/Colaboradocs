@@ -1,8 +1,8 @@
 import type { DocumentListItem } from '@colaboradocs/review-core';
 import { documentDate, kindLabel } from '@colaboradocs/review-core';
+import CheckIcon from 'lucide-solid/icons/check';
+import MessageSquareIcon from 'lucide-solid/icons/message-square';
 import { For, Show } from 'solid-js';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import MessageSquareIcon from '@/shared/icons/MessageSquareIcon';
 import { documentPath } from '@/shared/router/router';
 import ListFilter from '@/shared/ui/ListFilter/ListFilter';
 import { timeAgo } from '../../time.utils';

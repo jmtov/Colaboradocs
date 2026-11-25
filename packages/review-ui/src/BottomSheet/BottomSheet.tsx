@@ -1,6 +1,6 @@
+import CloseIcon from 'lucide-solid/icons/x';
 import { type JSX, Show } from 'solid-js';
 import Button from '../Button/Button';
-import CloseIcon from '../icons/CloseIcon';
 import { useBottomSheet } from './BottomSheet.hooks';
 import styles from './BottomSheet.module.css';
 

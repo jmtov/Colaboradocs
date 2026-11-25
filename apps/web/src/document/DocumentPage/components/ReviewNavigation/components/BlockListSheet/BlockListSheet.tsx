@@ -1,11 +1,11 @@
 import { BottomSheet, type SheetLayerProps } from '@colaboradocs/review-ui';
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { For, Show } from 'solid-js';
 import { NAV_TITLES } from '@/document/DocumentPage/components/ReviewNavigation/ReviewNavigation.constants';
 import type {
   NavItem,
   NavKind,
 } from '@/document/DocumentPage/components/ReviewNavigation/ReviewNavigation.types';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
 import styles from './BlockListSheet.module.css';
 
 type Props = SheetLayerProps<string> & {

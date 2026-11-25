@@ -4,11 +4,11 @@ import {
   MenuItem,
   MenuPanel,
 } from '@colaboradocs/review-ui';
+import ArchiveIcon from 'lucide-solid/icons/archive';
+import EllipsisVerticalIcon from 'lucide-solid/icons/ellipsis-vertical';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import UploadIcon from 'lucide-solid/icons/upload';
 import { Show } from 'solid-js';
-import ArchiveIcon from '@/shared/icons/ArchiveIcon';
-import EllipsisVerticalIcon from '@/shared/icons/EllipsisVerticalIcon';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import UploadIcon from '@/shared/icons/UploadIcon';
 import { useDocumentMenu } from './DocumentMenu.hooks';
 
 type Props = {

@@ -1,8 +1,8 @@
+import MonitorIcon from 'lucide-solid/icons/monitor';
+import MoonIcon from 'lucide-solid/icons/moon';
+import SunIcon from 'lucide-solid/icons/sun';
 import { type Component, createSignal, For } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
-import MonitorIcon from '@/shared/icons/MonitorIcon';
-import MoonIcon from '@/shared/icons/MoonIcon';
-import SunIcon from '@/shared/icons/SunIcon';
 import styles from './ThemeSwitch.module.css';
 import { applyTheme, readTheme, type Theme } from './theme.utils';
 

@@ -1,6 +1,6 @@
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { type JSX, Show } from 'solid-js';
 import Button from '../Button/Button';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
 import { usePinGate } from './PinGate.hooks';
 import styles from './PinGate.module.css';
 

@@ -1,8 +1,8 @@
 import type { ManagedReviewer } from '@colaboradocs/review-core';
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import BottomSheet from '../../../../../BottomSheet/BottomSheet';
 import Button from '../../../../../Button/Button';
-import CheckIcon from '../../../../../icons/CheckIcon';
-import CloseIcon from '../../../../../icons/CloseIcon';
 import type { SheetLayerProps } from '../../../../../overlay/overlay.types';
 import { ROLE_EDIT_MAX_LENGTH } from '../../PersonRow.constants';
 import { useEditPersonSheet } from './EditPersonSheet.hooks';

@@ -3,9 +3,9 @@ import {
   Button,
   type SheetLayerProps,
 } from '@colaboradocs/review-ui';
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import { Show } from 'solid-js';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
 import { useHowToSheet } from './HowToSheet.hooks';
 import styles from './HowToSheet.module.css';
 

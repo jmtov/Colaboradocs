@@ -1,8 +1,8 @@
 import type { DocumentKind } from '@colaboradocs/review-core';
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import ChoiceGroup from '@/home/HomePage/components/ChoiceGroup/ChoiceGroup';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
 import { useFiltersSheet } from './FiltersSheet.hooks';
 import styles from './FiltersSheet.module.css';
 import type { FiltersSheetProps } from './FiltersSheet.types';

@@ -5,10 +5,10 @@ import {
   layoutContent,
 } from '@colaboradocs/deck-core';
 import { Button } from '@colaboradocs/review-ui';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
 import { createSignal, For, onCleanup, Show } from 'solid-js';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
 import type { Path } from '@/deck/DeckEditorPage/features/deck/deck.utils';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
 import FieldSection from '../FieldSection/FieldSection';
 import styles from './PositionField.module.css';
 import {

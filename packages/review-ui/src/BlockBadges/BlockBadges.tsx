@@ -1,7 +1,7 @@
+import CheckIcon from 'lucide-solid/icons/check';
+import CommentIcon from 'lucide-solid/icons/message-circle';
 import { Show } from 'solid-js';
 import Button from '../Button/Button';
-import CheckIcon from '../icons/CheckIcon';
-import CommentIcon from '../icons/CommentIcon';
 import styles from './BlockBadges.module.css';
 
 type Props = {

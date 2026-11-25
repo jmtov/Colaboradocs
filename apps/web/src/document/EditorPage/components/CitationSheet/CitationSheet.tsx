@@ -1,7 +1,7 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import QuoteIcon from 'lucide-solid/icons/quote';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createSignal, For, Show } from 'solid-js';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import QuoteIcon from '@/shared/icons/QuoteIcon';
 import styles from './CitationSheet.module.css';
 import type { CitationSheetProps } from './CitationSheet.types';
 

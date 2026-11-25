@@ -1,10 +1,10 @@
 import type { DocumentSection } from '@colaboradocs/review-core';
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import CheckIcon from 'lucide-solid/icons/check';
+import TrashIcon from 'lucide-solid/icons/trash';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createSignal, For } from 'solid-js';
 import { sectionKicker } from '@/document/content/content.utils';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import styles from './SectionSheet.module.css';

@@ -1,6 +1,6 @@
 import { Button } from '@colaboradocs/review-ui';
+import TrashIcon from 'lucide-solid/icons/trash';
 import { createMemo, For, Show } from 'solid-js';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import {
   type GlossaryLinks as Links,

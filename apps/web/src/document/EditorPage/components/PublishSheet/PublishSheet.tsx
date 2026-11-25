@@ -1,7 +1,7 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import UploadIcon from 'lucide-solid/icons/upload';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createSignal, For, Show } from 'solid-js';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import UploadIcon from '@/shared/icons/UploadIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import { isLaterVersion } from '../../version.utils';

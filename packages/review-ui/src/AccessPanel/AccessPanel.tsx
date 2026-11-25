@@ -1,7 +1,7 @@
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
+import UserPlusIcon from 'lucide-solid/icons/user-plus';
 import { For, Show } from 'solid-js';
 import Button from '../Button/Button';
-import RefreshIcon from '../icons/RefreshIcon';
-import UserPlusIcon from '../icons/UserPlusIcon';
 import { useAccessPanel } from './AccessPanel.hooks';
 import styles from './AccessPanel.module.css';
 import PersonRow from './components/PersonRow/PersonRow';

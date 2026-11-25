@@ -1,15 +1,15 @@
 import type { ChainedCommands, Editor } from '@tiptap/core';
+import Heading1Icon from 'lucide-solid/icons/heading-1';
+import Heading2Icon from 'lucide-solid/icons/heading-2';
+import Heading3Icon from 'lucide-solid/icons/heading-3';
+import ItalicIcon from 'lucide-solid/icons/italic';
+import BoldIcon from 'lucide-solid/icons/letter-b';
+import ListIcon from 'lucide-solid/icons/list';
+import ListOrderedIcon from 'lucide-solid/icons/list-ordered';
+import SectionIcon from 'lucide-solid/icons/separator-horizontal';
+import NoteIcon from 'lucide-solid/icons/sticky-note';
 import type { Component } from 'solid-js';
 import { addNote, inNote } from '@/document/editor/section.commands';
-import BoldIcon from '@/shared/icons/BoldIcon';
-import Heading1Icon from '@/shared/icons/Heading1Icon';
-import Heading2Icon from '@/shared/icons/Heading2Icon';
-import Heading3Icon from '@/shared/icons/Heading3Icon';
-import ItalicIcon from '@/shared/icons/ItalicIcon';
-import ListIcon from '@/shared/icons/ListIcon';
-import ListOrderedIcon from '@/shared/icons/ListOrderedIcon';
-import NoteIcon from '@/shared/icons/NoteIcon';
-import SectionIcon from '@/shared/icons/SectionIcon';
 
 export type ToolbarItem = {
   /** El nombre del botón (lo lee el lector de pantalla). */

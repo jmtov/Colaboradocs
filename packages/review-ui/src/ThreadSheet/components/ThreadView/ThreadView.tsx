@@ -1,10 +1,10 @@
 import type { ReviewComment, Thread } from '@colaboradocs/review-core';
+import CircleCheckIcon from 'lucide-solid/icons/circle-check';
+import ReplyIcon from 'lucide-solid/icons/reply';
+import RotateCcwIcon from 'lucide-solid/icons/rotate-ccw';
+import TrashIcon from 'lucide-solid/icons/trash';
 import { createSignal, For, Show } from 'solid-js';
 import Button from '../../../Button/Button';
-import CircleCheckIcon from '../../../icons/CircleCheckIcon';
-import ReplyIcon from '../../../icons/ReplyIcon';
-import RotateCcwIcon from '../../../icons/RotateCcwIcon';
-import TrashIcon from '../../../icons/TrashIcon';
 import { useReview } from '../../../ReviewProvider/review.context';
 import { formatRelativeTime } from '../../../time/time.utils';
 import CommentComposer from '../CommentComposer/CommentComposer';

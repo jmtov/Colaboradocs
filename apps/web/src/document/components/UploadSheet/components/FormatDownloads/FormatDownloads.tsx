@@ -1,5 +1,5 @@
 import { Button } from '@colaboradocs/review-ui';
-import ArrowDownToLineIcon from '@/shared/icons/ArrowDownToLineIcon';
+import ArrowDownToLineIcon from 'lucide-solid/icons/arrow-down-to-line';
 import { useFormatDownloads } from './FormatDownloads.hooks';
 import styles from './FormatDownloads.module.css';
 

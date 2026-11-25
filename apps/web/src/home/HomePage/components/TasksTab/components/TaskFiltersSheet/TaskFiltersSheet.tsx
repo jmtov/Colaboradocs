@@ -1,6 +1,6 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
+import CheckIcon from 'lucide-solid/icons/check';
+import CloseIcon from 'lucide-solid/icons/x';
 import { useTaskFiltersSheet } from './TaskFiltersSheet.hooks';
 import styles from './TaskFiltersSheet.module.css';
 import type { TaskFiltersSheetProps } from './TaskFiltersSheet.types';

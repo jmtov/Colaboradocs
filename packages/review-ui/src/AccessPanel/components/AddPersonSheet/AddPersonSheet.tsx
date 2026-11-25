@@ -1,9 +1,9 @@
 import { MAX_NAME_LENGTH, MAX_ROLE_LENGTH } from '@colaboradocs/review-core';
+import UserPlusIcon from 'lucide-solid/icons/user-plus';
+import CloseIcon from 'lucide-solid/icons/x';
 import { Show } from 'solid-js';
 import BottomSheet from '../../../BottomSheet/BottomSheet';
 import Button from '../../../Button/Button';
-import CloseIcon from '../../../icons/CloseIcon';
-import UserPlusIcon from '../../../icons/UserPlusIcon';
 // '../../../icons/CloseIcon';
 import type { SheetLayerProps } from '../../../overlay/overlay.types';
 import { useAddPersonSheet } from './AddPersonSheet.hooks';

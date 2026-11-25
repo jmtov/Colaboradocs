@@ -1,7 +1,7 @@
 import type { DocumentSection } from '@colaboradocs/review-core';
+import ArrowRightIcon from 'lucide-solid/icons/arrow-right';
 import { For, Show } from 'solid-js';
 import CollapsibleSection from '@/document/DocumentPage/components/CollapsibleSection/CollapsibleSection';
-import ArrowRightIcon from '@/shared/icons/ArrowRightIcon';
 import styles from './SectionCards.module.css';
 
 type Props = {

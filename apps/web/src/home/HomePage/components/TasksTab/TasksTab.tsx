@@ -1,7 +1,7 @@
 import { Button } from '@colaboradocs/review-ui';
+import PlusIcon from 'lucide-solid/icons/plus';
+import RefreshIcon from 'lucide-solid/icons/rotate-cw';
 import { For, Match, Show, Switch } from 'solid-js';
-import PlusIcon from '@/shared/icons/PlusIcon';
-import RefreshIcon from '@/shared/icons/RefreshIcon';
 import ListFilter from '@/shared/ui/ListFilter/ListFilter';
 import TaskRow from '@/task/components/TaskRow/TaskRow';
 import TasksSkeleton from './components/TasksSkeleton/TasksSkeleton';

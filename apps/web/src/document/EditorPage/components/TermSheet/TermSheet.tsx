@@ -1,8 +1,8 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
+import CheckIcon from 'lucide-solid/icons/check';
+import TrashIcon from 'lucide-solid/icons/trash';
+import CloseIcon from 'lucide-solid/icons/x';
 import { createSignal, Show } from 'solid-js';
-import CheckIcon from '@/shared/icons/CheckIcon';
-import CloseIcon from '@/shared/icons/CloseIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import styles from './TermSheet.module.css';

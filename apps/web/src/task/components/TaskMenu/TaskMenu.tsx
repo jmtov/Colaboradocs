@@ -4,10 +4,10 @@ import {
   MenuItem,
   MenuPanel,
 } from '@colaboradocs/review-ui';
+import EllipsisVerticalIcon from 'lucide-solid/icons/ellipsis-vertical';
+import PencilIcon from 'lucide-solid/icons/pencil-line';
+import TrashIcon from 'lucide-solid/icons/trash';
 import { Show } from 'solid-js';
-import EllipsisVerticalIcon from '@/shared/icons/EllipsisVerticalIcon';
-import PencilIcon from '@/shared/icons/PencilIcon';
-import TrashIcon from '@/shared/icons/TrashIcon';
 import { useTaskMenu } from './TaskMenu.hooks';
 
 type Props = {

@@ -1,6 +1,6 @@
+import EllipsisVerticalIcon from 'lucide-solid/icons/ellipsis-vertical';
 import { type Component, For, Show } from 'solid-js';
 import Button from '../Button/Button';
-import EllipsisVerticalIcon from '../icons/EllipsisVerticalIcon';
 import MenuItem from '../MenuItem/MenuItem';
 import MenuPanel from '../MenuPanel/MenuPanel';
 import { useActionMenu } from './ActionMenu.hooks';

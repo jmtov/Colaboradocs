@@ -1,10 +1,10 @@
 import { defaultValue, type Field } from '@colaboradocs/deck-core';
 import { Button } from '@colaboradocs/review-ui';
+import PlusIcon from 'lucide-solid/icons/plus';
 import { For } from 'solid-js';
 import { cloneJson } from '@/deck/DeckEditorPage/features/deck/clone.utils';
 import { deckStore } from '@/deck/DeckEditorPage/features/deck/deck.store';
 import type { Path } from '@/deck/DeckEditorPage/features/deck/deck.utils';
-import PlusIcon from '@/shared/icons/PlusIcon';
 import FieldForm from '../FieldForm/FieldForm';
 import FieldSection from '../FieldSection/FieldSection';
 import ItemCard from '../ItemCard/ItemCard';
