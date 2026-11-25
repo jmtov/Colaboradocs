@@ -51,8 +51,8 @@ describe('index.css', () => {
     expect(css).toMatch(/--d:\s*max\(calc\(var\(--t\) \* -1\), 0px\)/);
   });
 
-  it('la sombra es del color del borde: --line-strong por defecto, y cada botón con otro borde lo declara', () => {
-    expect(css).toMatch(/--lift-color:\s*var\(--line-strong\);/);
+  it('la sombra es del color del borde: --line por defecto, y cada elemento con otro borde lo declara en --edge', () => {
+    expect(css).toMatch(/--lift-color:\s*var\(--edge, var\(--line\)\);/);
     expect(css).toMatch(/background:\s*var\(--lift-color/);
     expect(css).not.toMatch(/background:\s*var\(--lift-color,\s*currentColor/);
   });

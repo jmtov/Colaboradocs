@@ -10,7 +10,7 @@
   align-items: baseline;
   padding-bottom: 0.75rem;
   margin-bottom: 1.375rem;
-  border-bottom: 1px dashed var(--line-strong);
+  border-bottom: 1px dashed var(--line);
 }
 
 .number {

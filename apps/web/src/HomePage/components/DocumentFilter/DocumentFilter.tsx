@@ -1,3 +1,4 @@
+import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import CloseIcon from '@/icons/CloseIcon';
 import SearchIcon from '@/icons/SearchIcon';
@@ -20,7 +21,6 @@ export default function DocumentFilter(props: Props) {
   return (
     <div class={styles.filter}>
       <label class={styles.search}>
-        <SearchIcon class={styles.searchIcon} />
         <input
           class={styles.input}
           type="search"
@@ -30,9 +30,11 @@ export default function DocumentFilter(props: Props) {
           value={props.query}
           onInput={(event) => props.onQuery(event.currentTarget.value)}
         />
+        <SearchIcon class={styles.searchIcon} />
         <Show when={props.query}>
           <button
             type="button"
+            data-flat
             class={styles.clear}
             aria-label="Borrar búsqueda"
             onClick={() => props.onQuery('')}
@@ -42,26 +44,20 @@ export default function DocumentFilter(props: Props) {
         </Show>
       </label>
       <Show when={props.canFilter}>
-        <button
-          type="button"
-          class={styles.filters}
-          onClick={props.onOpenFilters}
-        >
-          <SlidersIcon class={styles.filtersIcon} />
+        <Button icon={SlidersIcon} onClick={props.onOpenFilters}>
           Filtros
-        </button>
+        </Button>
       </Show>
       <Show when={props.activeKind}>
         {(title) => (
-          <button
-            type="button"
-            class={styles.active}
+          <Button
+            icon={CloseIcon}
+            variant="primary"
             aria-label={`Quitar el filtro ${title()}`}
             onClick={props.onClearKind}
           >
             {title()}
-            <CloseIcon class={styles.clearIcon} />
-          </button>
+          </Button>
         )}
       </Show>
     </div>

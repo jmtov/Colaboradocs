@@ -2,7 +2,7 @@
   display: grid;
   gap: 0.125rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .name {

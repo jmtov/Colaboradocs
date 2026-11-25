@@ -61,13 +61,13 @@
 }
 
 .status[data-status="borrador"] {
-  background: var(--line-strong);
+  background: var(--line);
   background: color-mix(in srgb, var(--muted) 40%, var(--bg));
 }
 
 .sources {
   margin-top: 0.5rem;
-  border-top: 1px dashed var(--line-strong);
+  border-top: 1px dashed var(--line);
 }
 
 @media (width <= 1000px) {

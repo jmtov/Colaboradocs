@@ -14,7 +14,7 @@
   background: var(--tint);
   background: color-mix(in srgb, var(--fg) 8%, var(--bg));
   border: 0;
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
   cursor: pointer;
 }
 

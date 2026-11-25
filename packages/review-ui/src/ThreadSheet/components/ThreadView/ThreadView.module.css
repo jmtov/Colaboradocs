@@ -16,7 +16,7 @@
 
 .reply {
   padding-left: 0.75rem;
-  border-left: 2px solid var(--line-strong);
+  border-left: 2px solid var(--line);
 }
 
 .meta {

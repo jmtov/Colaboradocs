@@ -1,5 +1,5 @@
 .item {
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   background: var(--surface);
 }
 .bar {
@@ -25,5 +25,5 @@
   flex-direction: column;
   gap: 1.2rem;
   padding: 0.7rem;
-  border-top: 1px solid var(--line-strong);
+  border-top: 1px solid var(--line);
 }

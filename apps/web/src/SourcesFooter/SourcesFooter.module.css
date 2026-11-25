@@ -59,7 +59,7 @@
 
 .flash {
   background: var(--tint);
-  outline: 1px dashed var(--line-strong);
+  outline: 1px dashed var(--line);
   outline-offset: 8px;
 }
 

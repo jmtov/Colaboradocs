@@ -16,7 +16,7 @@
   margin: 0;
   overflow: auto;
   list-style: none;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .item {

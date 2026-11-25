@@ -13,7 +13,7 @@
   font-size: var(--font-size-sm);
   color: var(--fg);
   background: none;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   margin: 0 -1px -1px 0;
 }
 

@@ -10,7 +10,7 @@
   text-align: center;
   user-select: all;
   background: var(--tint);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .warn {

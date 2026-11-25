@@ -11,7 +11,7 @@
   padding: 0;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   border-bottom: 0;
   box-shadow: 0 -10px 40px rgb(0 0 0 / 25%);
   overscroll-behavior: contain;
@@ -106,7 +106,7 @@
   font-weight: 500;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   cursor: pointer;
 }
 

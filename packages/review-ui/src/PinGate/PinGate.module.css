@@ -11,7 +11,7 @@
   width: min(420px, 100%);
   padding: 1.5rem;
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .kicker {
@@ -44,7 +44,7 @@
   text-transform: uppercase;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .input:focus-visible {

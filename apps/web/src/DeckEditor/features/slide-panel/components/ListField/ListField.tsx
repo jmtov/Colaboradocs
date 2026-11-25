@@ -14,7 +14,7 @@ interface ListFieldProps {
   path: Path;
 }
 
-/** Una lista de ítems del mismo tipo: se agregan, se reordenan y se quitan. */
+/** Una lista de ítems del mismo type: se agregan, se reordenan y se quitan. */
 export default function ListField(props: ListFieldProps) {
   const items = () => props.value ?? [];
   const add = () => {

@@ -18,7 +18,7 @@
   border: 1px solid transparent;
 }
 .row:hover {
-  border-color: var(--line-strong);
+  border-color: var(--line);
 }
 .on {
   background: var(--fg);
@@ -80,6 +80,6 @@
 .addButton {
   width: 100%;
   justify-content: flex-start;
-  border-color: var(--line-strong);
+  border-color: var(--line);
   font-size: var(--font-size-sm);
 }

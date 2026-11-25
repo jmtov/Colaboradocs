@@ -21,7 +21,7 @@
   flex-direction: column;
   height: calc(100% - var(--sheet-top-gap));
   border-top: 2px solid var(--fg);
-  border-left: 1px solid var(--line-strong);
+  border-left: 1px solid var(--line);
   background: var(--surface);
   box-shadow: 0 -8px 24px var(--line);
   box-shadow: 0 -8px 24px color-mix(in srgb, var(--fg) 14%, transparent);
@@ -42,7 +42,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
 }
 .title {
   flex: 1;

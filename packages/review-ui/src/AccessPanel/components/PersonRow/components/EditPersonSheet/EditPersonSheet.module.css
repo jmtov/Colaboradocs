@@ -16,7 +16,7 @@
   font-size: var(--font-size-md);
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 .row {

@@ -36,7 +36,7 @@ import { BlockLayer, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 
 ## Tokens CSS que la app debe definir
 
-`--bg`, `--fg`, `--muted`, `--line-strong`, `--ok`, `--ok-bg`, `--warn`, `--font-mono`, `--font-size-xs`…`--font-size-lg`, `--z-fixed`, `--danger` (acciones destructivas), `--tint`. Sin ellos los componentes se ven rotos; no hay valores por defecto. Es lo primero a revisar si «se ve raro» en una app nueva.
+`--bg`, `--fg`, `--muted`, `--line` (todos los bordes; también el color de la sombra del botón), `--ok`, `--ok-bg`, `--warn`, `--font-mono`, `--font-size-xs`…`--font-size-lg`, `--z-fixed`, `--danger` (acciones destructivas), `--tint`. Sin ellos los componentes se ven rotos; no hay valores por defecto. Es lo primero a revisar si «se ve raro» en una app nueva.
 
 ## Espacio y rol
 

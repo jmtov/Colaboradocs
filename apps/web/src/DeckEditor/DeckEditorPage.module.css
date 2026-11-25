@@ -8,7 +8,7 @@
 }
 .toolbar {
   grid-area: toolbar;
-  border-bottom: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
   background: var(--surface);
 }
 .list {
@@ -28,6 +28,6 @@
 .panel {
   grid-area: panel;
   overflow: auto;
-  border-left: 1px solid var(--line-strong);
+  border-left: 1px solid var(--line);
   background: var(--surface);
 }

@@ -68,7 +68,7 @@
   top: calc(4rem + env(safe-area-inset-top, 0px));
   z-index: 1;
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
 }
 
 @media (width <= 1000px) {

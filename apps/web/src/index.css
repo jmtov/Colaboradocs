@@ -7,7 +7,6 @@
   --faint: color-mix(in srgb, var(--fg) 45%, var(--bg));
   --tint: color-mix(in srgb, var(--fg) 5%, var(--bg));
   --line: color-mix(in srgb, var(--fg) 12%, var(--bg));
-  --line-strong: color-mix(in srgb, var(--fg) 28%, var(--bg));
   --ok: #0a6a85;
   --ok-bg: #e5f2f7;
   --warn: #92480a;
@@ -61,7 +60,6 @@
     --faint: #8f8f8f;
     --tint: #f3f3f3;
     --line: #e1e1e1;
-    --line-strong: #bababa;
   }
 
   :root[data-theme="dark"] {
@@ -69,7 +67,6 @@
     --faint: #727272;
     --tint: #131313;
     --line: #242424;
-    --line-strong: #4a4a4a;
   }
 }
 
@@ -80,7 +77,6 @@
       --faint: #727272;
       --tint: #131313;
       --line: #242424;
-      --line-strong: #4a4a4a;
     }
   }
 }
@@ -135,10 +131,10 @@
   /* Cuánto está levantado (--s) y cuánto hundido (--d); siempre >= 0, uno de los dos es 0. */
   --s: max(var(--t), 0px);
   --d: max(calc(var(--t) * -1), 0px);
-  /* La sombra es del color del borde: el habitual (--line-strong) salvo que el botón
-     tenga otro (relleno, peligro…), y entonces lo pone su propio CSS. Se fija en cada
-     elemento, igual que --t. */
-  --lift-color: var(--line-strong);
+  /* La sombra es del color del borde del elemento: el habitual (--line) salvo que declare
+     otro con `--edge` (relleno, peligro…). Todo elemento accionable con borde pone ahí su
+     color. Se fija en cada elemento, igual que --t. */
+  --lift-color: var(--edge, var(--line));
   position: relative;
   transform: translate(var(--t), calc(var(--t) * -1));
   /* El marco: siempre recorta lo que quede abajo y a la izquierda de donde está el botón en
@@ -160,7 +156,7 @@
   position: absolute;
   inset: -1px -1px calc(-1px - var(--s)) calc(-1px - var(--s));
   pointer-events: none;
-  background: var(--lift-color, var(--line-strong));
+  background: var(--lift-color, var(--line));
   clip-path: polygon(
     0 var(--s),
     var(--s) 0,
@@ -178,7 +174,7 @@
   inset: calc(-1px - var(--d)) calc(-1px - var(--d)) calc(var(--d) - 1px)
     calc(var(--d) - 1px);
   pointer-events: none;
-  background: var(--lift-color, var(--line-strong));
+  background: var(--lift-color, var(--line));
   clip-path: polygon(
     0 0,
     100% 0,

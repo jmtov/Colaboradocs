@@ -15,7 +15,7 @@
 }
 .trigger:hover,
 .trigger:focus-visible {
-  border-color: var(--line-strong);
+  border-color: var(--line);
 }
 .trigger:focus-visible {
   outline: 2px solid var(--fg);

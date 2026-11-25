@@ -10,7 +10,7 @@
   max-width: 100%;
   padding: 0.5rem;
   background: var(--bg);
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   box-shadow: 0 4px 16px rgb(0 0 0 / 14%);
 }
 

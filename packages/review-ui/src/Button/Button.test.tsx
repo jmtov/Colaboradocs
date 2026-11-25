@@ -102,10 +102,23 @@ describe('Button', () => {
     expect(rules).toMatch(/aria-pressed="true"\]\s*\{[^}]*background:/);
   });
 
+  it('con texto o solo con ícono, cada tamaño tiene el mismo alto (si no, se descuadran en una línea)', () => {
+    const heights = (size: string) => {
+      const block =
+        new RegExp(`\\.${size}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? '';
+      return /min-height:\s*([\d.]+rem)/.exec(block)?.[1];
+    };
+    expect(heights('sm')).toBe('2.125rem');
+    expect(heights('md')).toBe('2.75rem');
+    // Y el de solo ícono es un cuadrado de ese alto.
+    expect(css).toMatch(/\.sm\.iconOnly\s*\{[^}]*width:\s*2\.125rem/);
+    expect(css).toMatch(/\.md\.iconOnly\s*\{[^}]*width:\s*2\.75rem/);
+  });
+
   it('lleva borde también en reposo, y la sombra larga es de su color', () => {
     const base = /\.button\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
     expect(base).toMatch(/border:\s*1px solid var\(--edge\)/);
-    expect(base).toMatch(/--edge:\s*var\(--line-strong\)/);
+    expect(base).toMatch(/--edge:\s*var\(--line\)/);
     expect(base).toMatch(/--lift-color:\s*var\(--edge\)/);
   });
 

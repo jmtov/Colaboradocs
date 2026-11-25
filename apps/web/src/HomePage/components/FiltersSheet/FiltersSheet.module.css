@@ -31,7 +31,7 @@
   color: var(--fg);
   cursor: pointer;
   background: none;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line);
   margin: 0 -1px -1px 0;
 }
 
