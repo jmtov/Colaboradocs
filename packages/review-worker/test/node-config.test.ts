@@ -35,9 +35,7 @@ describe('rebaseConfigPaths', () => {
     expect(rebased).toContain(
       '"main": "../../../../colaboradocs/packages/review-worker/src/index.ts"',
     );
-    expect(rebased).toContain(
-      '"directory": "../../../../colaboradocs/packages/review-worker/../../apps/web/dist"',
-    );
+    expect(rebased).toContain('"directory": "./dist"');
     expect(rebased).toContain(
       '"migrations_dir": "../../../../colaboradocs/packages/review-worker/migrations"',
     );
