@@ -1,6 +1,6 @@
 .stat {
   display: inline-flex;
-  gap: 0.3125rem;
+  gap: var(--space-1);
   align-items: center;
 }
 

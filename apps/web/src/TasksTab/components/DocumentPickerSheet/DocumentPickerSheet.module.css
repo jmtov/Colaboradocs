@@ -29,7 +29,7 @@
   align-items: center;
   width: 100%;
   min-height: 2.75rem;
-  padding: 0.625rem 0.875rem;
+  padding: var(--space-3) var(--space-4);
   font: inherit;
   font-size: var(--font-size-md);
   color: var(--fg);
@@ -65,7 +65,7 @@
 }
 
 .empty {
-  padding: 0.875rem;
+  padding: var(--space-4);
   font-size: var(--font-size-sm);
   color: var(--muted);
 }

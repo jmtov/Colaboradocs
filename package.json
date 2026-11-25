@@ -7,17 +7,20 @@
     "apps/*"
   ],
   "scripts": {
-    "lint": "biome check .",
+    "lint": "biome check . && npm run lint:css",
     "lint:fix": "biome check --write .",
     "typecheck": "npm --workspaces --if-present run typecheck",
     "test": "npm --workspaces --if-present run test",
     "build": "npm --workspace=@colaboradocs/web run build",
     "dev": "npm --workspace=@colaboradocs/review-worker run dev & npm --workspace=@colaboradocs/web run dev & wait",
     "dev:api": "npm --workspace=@colaboradocs/review-worker run dev",
-    "dev:web": "npm --workspace=@colaboradocs/web run dev"
+    "dev:web": "npm --workspace=@colaboradocs/web run dev",
+    "lint:css": "stylelint --quiet \"apps/**/*.module.css\" \"packages/**/*.module.css\"",
+    "lint:css:pending": "stylelint \"apps/**/*.module.css\" \"packages/**/*.module.css\""
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
+    "stylelint": "^17.16.0",
     "typescript": "^5.6.3"
   }
 }

@@ -1,5 +1,5 @@
 .heading {
-  margin: 0 0 1.125rem;
+  margin: 0 0 var(--space-4);
   font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1.2;
@@ -49,7 +49,7 @@
     display: inline-grid;
     grid-template-columns: auto auto;
     justify-content: start;
-    row-gap: 0.125rem;
+    row-gap: var(--space-1);
   }
 
   .note {

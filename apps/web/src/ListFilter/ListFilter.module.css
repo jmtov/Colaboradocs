@@ -54,6 +54,7 @@
   width: 100%;
   min-width: 0;
   min-height: 2.75rem;
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- deja sitio a la lupa y al botón de borrar */
   padding: var(--space-2) 2.5rem;
   font: inherit;
   /* Menos de 16px y iOS hace zoom al enfocar el campo. */
@@ -90,8 +91,8 @@
   display: inline-flex;
   align-self: center;
   justify-self: end;
-  padding: 0.375rem;
-  margin-right: 0.375rem;
+  padding: var(--space-2);
+  margin-right: var(--space-1);
   color: var(--muted);
   cursor: pointer;
   background: none;

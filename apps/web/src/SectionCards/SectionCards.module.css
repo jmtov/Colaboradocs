@@ -1,5 +1,5 @@
 .contents {
-  margin: 2.75rem 0 3.5rem;
+  margin: var(--space-7) 0;
 }
 
 /* Bordes colapsados: cada tarjeta tiene su borde completo y se monta 1px sobre la
@@ -17,7 +17,7 @@
   gap: var(--space-2);
   min-width: 0;
   min-height: 10.5rem;
-  padding: 1.125rem;
+  padding: var(--space-4);
   text-align: left;
   background: none;
   border: 1px solid var(--line);

@@ -19,7 +19,7 @@
   width: 100%;
   min-width: 0;
   min-height: 11.5rem;
-  padding: 1.25rem;
+  padding: var(--space-5);
   font: inherit;
   color: var(--fg);
   text-align: center;

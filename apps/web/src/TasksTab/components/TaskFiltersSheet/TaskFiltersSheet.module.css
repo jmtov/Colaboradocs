@@ -16,7 +16,7 @@
 /* Un botón con el aspecto de un campo: abre la hoja de documentos. */
 .pick {
   min-height: 2.75rem;
-  padding: var(--space-2) 0.875rem;
+  padding: var(--space-2) var(--space-4);
   font: inherit;
   font-size: var(--font-size-md);
   color: var(--fg);

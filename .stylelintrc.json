@@ -1,0 +1,69 @@
+{
+  "rules": {
+    "declaration-property-value-disallowed-list": [
+      {
+        "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": ["/[\\d.]+rem/"]
+      },
+      {
+        "message": "El espaciado sale de la escala: var(--space-1…7) (apps/web/src/index.css). Un valor fuera de ella se justifica con un comentario stylelint-disable-next-line."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "apps/web/src/AdminPage/**/*.module.css",
+        "apps/web/src/ChoiceGroup/**/*.module.css",
+        "apps/web/src/DeckEditor/**/*.module.css",
+        "apps/web/src/DocumentPage/**/*.module.css",
+        "apps/web/src/DocumentSheet/**/*.module.css",
+        "apps/web/src/DocumentsPage/**/*.module.css",
+        "apps/web/src/Editor/**/*.module.css",
+        "apps/web/src/EditorPage/**/*.module.css",
+        "apps/web/src/FieldGroup/**/*.module.css",
+        "apps/web/src/FilePicker/**/*.module.css",
+        "apps/web/src/Hero/**/*.module.css",
+        "apps/web/src/HowToReview/**/*.module.css",
+        "apps/web/src/Loading/**/*.module.css",
+        "apps/web/src/NewDeckSheet/**/*.module.css",
+        "apps/web/src/PageBar/**/*.module.css",
+        "apps/web/src/PeopleCards/**/*.module.css",
+        "apps/web/src/Prose/**/*.module.css",
+        "apps/web/src/ReviewNavigation/**/*.module.css",
+        "apps/web/src/ReviewSummary/**/*.module.css",
+        "apps/web/src/SectionView/**/*.module.css",
+        "apps/web/src/SideNav/**/*.module.css",
+        "apps/web/src/Skeleton/**/*.module.css",
+        "apps/web/src/SourcesFooter/**/*.module.css",
+        "apps/web/src/ThemeSwitch/**/*.module.css",
+        "apps/web/src/TopBar/**/*.module.css",
+        "apps/web/src/UserMenu/**/*.module.css",
+        "apps/web/src/VersionsSheet/**/*.module.css",
+        "packages/review-ui/src/AccessPanel/**/*.module.css",
+        "packages/review-ui/src/ActionMenu/**/*.module.css",
+        "packages/review-ui/src/ApprovalsSheet/**/*.module.css",
+        "packages/review-ui/src/BlockLayer/**/*.module.css",
+        "packages/review-ui/src/BottomSheet/**/*.module.css",
+        "packages/review-ui/src/Button/**/*.module.css",
+        "packages/review-ui/src/MenuConfirm/**/*.module.css",
+        "packages/review-ui/src/MenuItem/**/*.module.css",
+        "packages/review-ui/src/PersonCard/**/*.module.css",
+        "packages/review-ui/src/PinGate/**/*.module.css",
+        "packages/review-ui/src/ThreadSheet/**/*.module.css"
+      ],
+      "rules": {
+        "declaration-property-value-disallowed-list": [
+          {
+            "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": [
+              "/[\\d.]+rem/"
+            ]
+          },
+          {
+            "severity": "warning",
+            "message": "Pendiente de redondear a la escala de espaciado (docs/espaciado-fuera-de-escala.md). Al terminar la carpeta, quítala de «overrides» en .stylelintrc.json."
+          }
+        ]
+      }
+    }
+  ]
+}
