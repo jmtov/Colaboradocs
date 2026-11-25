@@ -12,16 +12,17 @@ Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo p
 
 ## Hecho también
 
-- **Manual UTCP** (`GET /api/utcp`, `packages/review-worker/src/utcp/`): tareas, lectura de documentos y borradores de documentos. Una prueba de contrato lo ejecuta contra el API real. Falta que se **genere** desde la tabla de permisos (punto 2 de abajo) y sumar las presentaciones.
+- **Manual UTCP** (`GET /api/utcp`, `packages/review-worker/src/utcp/`): tareas, documentos (leer, borrador, publicar) y presentaciones (leer, borrador). Una prueba de contrato lo ejecuta contra el API real.
+- **Permisos con nombre** (`review-core/src/permissions.utils.ts`): `PERMISSIONS`, `ROLE_PERMISSIONS` (persona, agente, admin) y una tabla ruta → permiso para `/admin/*`, con negación por omisión; una prueba exige que ninguna ruta real quede sin listar. El manual solo anuncia las herramientas cuyo permiso tiene el agente. Diferencia con lo planeado: las rutas no piden el permiso una a una (`requirePermission`), sino que un solo middleware consulta la tabla, para que una ruta olvidada sea de admins y no de todos.
 
 ## Riesgo aceptado
 
 El agente puede reemplazar un documento publicado. Se decidió así para poder delegar. Lo que lo acota: solo publica lo que él guardó por última vez, nunca fuerza, la versión anterior queda en las versiones y no puede archivar. Lo que **no** evita: los comentarios y OK de los párrafos cambiados dejan de aplicar. *Disparador para apretarlo* (p. ej. solo documentos nuevos, o pedir aprobación): un reemplazo que pierda revisión del equipo, o contenido de terceros que el agente lea y le haga publicar algo indebido.
 
-## Siguiente (van juntos)
+## Siguiente
 
-1. **Permisos con nombre, en código.** Acciones como `documents:read`, `documents:draft`, `documents:publish`, `documents:archive`, `tasks:assign`, `access:manage`. Cada nivel (persona, agente, admin) mapea a un conjunto de permisos en `permissions.utils.ts`; las rutas piden un permiso (`requirePermission(...)`) en vez de preguntar por el nivel. Sin migración. Las reglas que dependen del recurso («borra su autor o un admin», «marca la tarea quien la tiene») siguen como están: no son permisos puros.
-2. **Manual UTCP del API** (`GET /api/utcp`), para que un agente descubra y llame las herramientas. Se **genera desde la tabla de permisos**, así que no se desincroniza y solo anuncia lo que el rol puede hacer. Alcance inicial: leer documentos y presentaciones, crear y consultar tareas, guardar borradores. La auth sigue siendo PIN → token (30 días); el agente es una persona más, con su PIN.
+- **Que el manual se genere por completo.** Hoy cada herramienta se escribe a mano y solo se filtra por permiso; el esquema de entradas y la URL siguen a mano y los vigila la prueba de contrato. *Disparador:* más de ~15 herramientas o un segundo manual para otro rol.
+- **Borradores de presentaciones con autor y revisión**, como los de documentos. Sin eso el agente solo guarda sobre un deck existente y puede pisar un borrador ajeno, y no se le puede dejar publicar decks. *Disparador:* querer que el agente publique presentaciones.
 
 ## Cuando haya un disparador
 

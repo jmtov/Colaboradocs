@@ -1,5 +1,5 @@
 import {
-  canManageTasks,
+  can,
   type NewTask,
   type Task,
   type TaskPatch,
@@ -45,7 +45,7 @@ export const tasksRoute = new Hono<AppEnv>()
     }
     const scope = c.req.query('scope') ?? 'mine';
     if (scope === 'all') {
-      if (!canManageTasks(reviewer)) return errorResponse(c, 'forbidden');
+      if (!can(reviewer, 'tasks:assign')) return errorResponse(c, 'forbidden');
       return c.json(await listTasks(c.env.DB, {}));
     }
     if (scope !== 'mine') return errorResponse(c, 'invalid_request');
@@ -59,7 +59,7 @@ export const tasksRoute = new Hono<AppEnv>()
     const input: NewTask = checked.value;
     const assigneeId = input.assigneeId ?? reviewer.id;
     // Cualquiera se asigna a sí misma; asignar a otra persona es de admins y del agente.
-    if (assigneeId !== reviewer.id && !canManageTasks(reviewer)) {
+    if (assigneeId !== reviewer.id && !can(reviewer, 'tasks:assign')) {
       return errorResponse(c, 'forbidden');
     }
     if (!(await isActiveReviewer(c.env.DB, assigneeId))) {

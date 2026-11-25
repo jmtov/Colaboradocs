@@ -1,5 +1,11 @@
 import { SELF } from 'cloudflare:test';
-import type { DocumentContent, Task } from '@colaboradocs/review-core';
+import {
+  type DocumentContent,
+  permissionForAdminRoute,
+  ROLE_PERMISSIONS,
+  type Task,
+} from '@colaboradocs/review-core';
+import { neutralTheme } from '@colaboradocs/themes';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { UtcpManual, UtcpTool } from '../src/utcp/utcp.types';
 import {
@@ -101,6 +107,22 @@ describe('manual UTCP: forma', () => {
     }
   });
 
+  it('cada herramienta de administración exige el permiso que dice la tabla, y el agente lo tiene', async () => {
+    const m = await manual();
+    const agentPermissions: readonly string[] = ROLE_PERMISSIONS.agent;
+    for (const item of m.tools) {
+      const { url, http_method: method } = item.tool_call_template;
+      const permission = item.tags.find((tag) => tag.includes(':'));
+      if (permission) expect(agentPermissions).toContain(permission);
+      if (url.includes('/admin/')) {
+        const path = new URL(url).pathname;
+        expect(permissionForAdminRoute(method, path), item.name).toBe(
+          permission,
+        );
+      }
+    }
+  });
+
   it('solo login va sin token', async () => {
     const m = await manual();
     const open = m.tools.filter((t) => !t.tool_call_template.auth);
@@ -111,7 +133,8 @@ describe('manual UTCP: forma', () => {
     const m = await manual();
     for (const item of m.tools) {
       const { url, http_method: method } = item.tool_call_template;
-      expect(url).not.toMatch(/decks|reviewers|space|themes|files/);
+      expect(url).not.toMatch(/reviewers|space|\/admin\/themes|files/);
+      expect(url).not.toMatch(/decks\/.*publish/);
       if (url.includes('/admin/')) {
         expect(url).toMatch(/\/draft$|\/publish$/);
         expect(['GET', 'PUT', 'POST']).toContain(method);
@@ -252,6 +275,72 @@ describe('manual UTCP: un agente que lo sigue', () => {
       token,
     );
     expect(((await linked.json()) as Task).documentId).toBe('nuevo');
+  });
+
+  it('lee presentaciones y guarda el borrador de una existente, pero no la publica', async () => {
+    const admin = await createReviewer('Admin', { isAdmin: true });
+    const adminToken = await tokenFor(admin);
+    await authed(adminToken, '/admin/themes/neutral', {
+      method: 'PUT',
+      body: JSON.stringify(neutralTheme),
+    });
+    const deck = {
+      version: 1,
+      id: 'charla',
+      title: 'Charla',
+      lang: 'es',
+      theme: 'neutral',
+      slides: [{ kind: 'content', body: [] }],
+    };
+    await authed(adminToken, '/admin/decks/charla', {
+      method: 'PUT',
+      body: JSON.stringify(deck),
+    });
+
+    const list = await call(find(m, 'list_decks'), {}, token);
+    expect(((await list.json()) as { id: string }[]).map((d) => d.id)).toEqual([
+      'charla',
+    ]);
+    expect(
+      (await call(find(m, 'read_deck'), { deckId: 'charla' }, token)).status,
+    ).toBe(200);
+    expect((await call(find(m, 'list_themes'), {}, token)).status).toBe(200);
+
+    expect(
+      (await call(find(m, 'get_deck_draft'), { deckId: 'charla' }, token))
+        .status,
+    ).toBe(404);
+    const saved = await call(
+      find(m, 'save_deck_draft'),
+      { deckId: 'charla', deck: { ...deck, title: 'Charla v2' } },
+      token,
+    );
+    expect(saved.status).toBe(204);
+    const draft = await call(
+      find(m, 'get_deck_draft'),
+      { deckId: 'charla' },
+      token,
+    );
+    expect(
+      ((await draft.json()) as { content: { title: string } }).content.title,
+    ).toBe('Charla v2');
+
+    // Un deck que no existe no se crea por aquí.
+    const missing = await call(
+      find(m, 'save_deck_draft'),
+      { deckId: 'otro', deck: { ...deck, id: 'otro' } },
+      token,
+    );
+    expect(missing.status).toBe(404);
+
+    const publish = await SELF.fetch(
+      `${ORIGIN}/api/admin/decks/charla/publish`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    expect(publish.status).toBe(403);
   });
 
   it('sin token, las herramientas con auth responden 401', async () => {
