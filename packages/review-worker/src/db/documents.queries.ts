@@ -1,9 +1,9 @@
 import {
-  DOCUMENT_KINDS,
   type DocumentContent,
-  type DocumentKind,
   type DocumentListItem,
   type DocumentVersionItem,
+  kindFromStored,
+  migrateLegacyKeys,
   type SpaceInfo,
 } from '@colaboradocs/review-core';
 
@@ -13,10 +13,10 @@ type ListRow = {
   description: string | null;
   version: string;
   updated: string;
-  tipo: string | null;
+  type: string | null;
   date: string | null;
-  responsable: string | null;
-  participantes: string | null;
+  owner: string | null;
+  attendees: string | null;
   open_threads: number | null;
   comments: number | null;
   approvals: number | null;
@@ -30,10 +30,11 @@ function later(a: string | null, b: string | null): string | null {
   return a > b ? a : b;
 }
 
-function kindOf(value: string | null): DocumentKind {
-  return DOCUMENT_KINDS.includes(value as DocumentKind)
-    ? (value as DocumentKind)
-    : 'otro';
+/** Un documento guardado, con los nombres actuales aunque se haya guardado antes de la migración 0011. */
+export function readStoredDocument(json: string): DocumentContent {
+  return migrateLegacyKeys(
+    JSON.parse(json) as Record<string, unknown>,
+  ) as unknown as DocumentContent;
 }
 
 /**
@@ -47,10 +48,10 @@ export async function listDocuments(
   const { results } = await db
     .prepare(
       `SELECT d.id, d.title, d.description, d.version, d.updated,
-              json_extract(d.content, '$.tipo') AS tipo,
+              COALESCE(json_extract(d.content, '$.type'), json_extract(d.content, '$.tipo')) AS type,
               json_extract(d.content, '$.date') AS date,
-              json_extract(d.content, '$.responsable') AS responsable,
-              json_extract(d.content, '$.participantes') AS participantes,
+              COALESCE(json_extract(d.content, '$.owner'), json_extract(d.content, '$.responsable')) AS owner,
+              COALESCE(json_extract(d.content, '$.attendees'), json_extract(d.content, '$.participantes')) AS attendees,
               c.open_threads, c.total AS comments, a.total AS approvals,
               c.last_at AS comment_last, a.last_at AS approval_last
        FROM documents d
@@ -75,10 +76,10 @@ export async function listDocuments(
     description: row.description,
     version: row.version,
     updated: row.updated,
-    tipo: kindOf(row.tipo),
+    type: kindFromStored(row.type),
     date: row.date,
-    responsable: row.responsable,
-    participantes: row.participantes,
+    owner: row.owner,
+    attendees: row.attendees,
     openThreads: row.open_threads ?? 0,
     comments: row.comments ?? 0,
     approvals: row.approvals ?? 0,
@@ -97,7 +98,7 @@ export async function findDocument(
     )
     .bind(id)
     .first<{ content: string }>();
-  return row ? (JSON.parse(row.content) as DocumentContent) : null;
+  return row ? readStoredDocument(row.content) : null;
 }
 
 /**

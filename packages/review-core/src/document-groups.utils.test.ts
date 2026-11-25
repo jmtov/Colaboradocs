@@ -11,7 +11,7 @@ import {
 
 const item = (
   id: string,
-  tipo: DocumentKind,
+  type: DocumentKind,
   updated = '2026-11-01',
 ): DocumentListItem => ({
   id,
@@ -19,10 +19,10 @@ const item = (
   description: null,
   version: '0.1',
   updated,
-  tipo,
+  type,
   date: null,
-  responsable: null,
-  participantes: null,
+  owner: null,
+  attendees: null,
   openThreads: 0,
   comments: 0,
   approvals: 0,
@@ -31,19 +31,19 @@ const item = (
 
 const doc = (
   id: string,
-  tipo: DocumentKind,
+  type: DocumentKind,
   extra: Partial<DocumentListItem> = {},
-): DocumentListItem => ({ ...item(id, tipo), ...extra });
+): DocumentListItem => ({ ...item(id, type), ...extra });
 
 describe('sortDocuments', () => {
   it('iniciativas primero (por título), actas después (la más reciente primero), luego guías y otros', () => {
     const sorted = sortDocuments([
-      item('otro-1', 'otro'),
-      item('acta-vieja', 'acta', '2026-10-01'),
-      item('ini-b', 'iniciativa'),
-      item('guia-1', 'guia'),
-      item('acta-nueva', 'acta', '2026-11-20'),
-      item('ini-a', 'iniciativa'),
+      item('otro-1', 'other'),
+      item('acta-vieja', 'minutes', '2026-10-01'),
+      item('ini-b', 'initiative'),
+      item('guia-1', 'guide'),
+      item('acta-nueva', 'minutes', '2026-11-20'),
+      item('ini-a', 'initiative'),
     ]);
     expect(sorted.map((i) => i.id)).toEqual([
       'ini-a',
@@ -57,22 +57,22 @@ describe('sortDocuments', () => {
 
   it('un tipo desconocido o ausente cae en «otro»', () => {
     const odd = {
-      ...item('x', 'otro'),
-      tipo: undefined,
+      ...item('x', 'other'),
+      type: undefined,
     } as unknown as DocumentListItem;
-    expect(kindOf(odd)).toBe('otro');
+    expect(kindOf(odd)).toBe('other');
   });
 });
 
 describe('sortDocuments con fecha', () => {
   it('las actas van por la fecha de la reunión; sin ella, por `updated`', () => {
     const sorted = sortDocuments([
-      doc('vieja-publicada-ayer', 'acta', {
+      doc('vieja-publicada-ayer', 'minutes', {
         date: '2026-10-01',
         updated: '2026-11-24',
       }),
-      doc('sin-fecha', 'acta', { updated: '2026-11-10' }),
-      doc('nueva', 'acta', { date: '2026-11-20', updated: '2026-11-21' }),
+      doc('sin-fecha', 'minutes', { updated: '2026-11-10' }),
+      doc('nueva', 'minutes', { date: '2026-11-20', updated: '2026-11-21' }),
     ]);
     expect(sorted.map((i) => i.id)).toEqual([
       'nueva',
@@ -82,10 +82,10 @@ describe('sortDocuments con fecha', () => {
   });
 
   it('documentDate usa la fecha y, sin ella, updated', () => {
-    expect(documentDate(doc('a', 'acta', { date: '2026-01-02' }))).toBe(
+    expect(documentDate(doc('a', 'minutes', { date: '2026-01-02' }))).toBe(
       '2026-01-02',
     );
-    expect(documentDate(doc('b', 'acta', { updated: '2026-03-04' }))).toBe(
+    expect(documentDate(doc('b', 'minutes', { updated: '2026-03-04' }))).toBe(
       '2026-03-04',
     );
   });
@@ -94,25 +94,25 @@ describe('sortDocuments con fecha', () => {
 describe('countKinds', () => {
   it('cuenta por tipo y omite los vacíos', () => {
     const counts = countKinds([
-      item('a', 'acta'),
-      item('b', 'acta'),
-      item('c', 'iniciativa'),
+      item('a', 'minutes'),
+      item('b', 'minutes'),
+      item('c', 'initiative'),
     ]);
     expect(counts.map((c) => [c.kind, c.count])).toEqual([
-      ['iniciativa', 1],
-      ['acta', 2],
+      ['initiative', 1],
+      ['minutes', 2],
     ]);
   });
 });
 
 describe('filterDocuments', () => {
   const items = [
-    doc('1', 'iniciativa', { title: 'Ejes y participación 2027' }),
-    doc('2', 'acta', {
+    doc('1', 'initiative', { title: 'Ejes y participación 2027' }),
+    doc('2', 'minutes', {
       title: 'Reunión de comunicaciones',
-      participantes: 'Quique, Daniela Montañez',
+      attendees: 'Quique, Daniela Montañez',
     }),
-    doc('3', 'guia', { title: 'Cómo votar', description: 'Paso a paso' }),
+    doc('3', 'guide', { title: 'Cómo votar', description: 'Paso a paso' }),
   ];
   const ids = (list: DocumentListItem[]) => list.map((i) => i.id);
 
@@ -125,9 +125,9 @@ describe('filterDocuments', () => {
   });
 
   it('filtra por tipo', () => {
-    expect(ids(filterDocuments(items, { query: '', kind: 'acta' }))).toEqual([
-      '2',
-    ]);
+    expect(ids(filterDocuments(items, { query: '', kind: 'minutes' }))).toEqual(
+      ['2'],
+    );
   });
 
   it('busca sin importar tildes ni mayúsculas, en título, descripción y personas', () => {
@@ -153,7 +153,7 @@ describe('filterDocuments', () => {
 
   it('combina tipo y texto', () => {
     expect(
-      ids(filterDocuments(items, { query: 'reunion', kind: 'guia' })),
+      ids(filterDocuments(items, { query: 'reunion', kind: 'guide' })),
     ).toEqual([]);
   });
 });

@@ -279,8 +279,8 @@ describe('manual UTCP: un agente que lo sigue', () => {
         draft: {
           content: {
             ...sampleDocument('acta-1'),
-            tipo: 'acta',
-            participantes: 'Ana, Luis',
+            type: 'minutes',
+            attendees: 'Ana, Luis',
           },
           expectedRevision: 0,
         },
@@ -294,10 +294,10 @@ describe('manual UTCP: un agente que lo sigue', () => {
     );
     const typed = (await (
       await call(find(m, 'list_documents'), {}, token)
-    ).json()) as { id: string; tipo: string; participantes: string }[];
+    ).json()) as { id: string; type: string; attendees: string }[];
     expect(typed.find((d) => d.id === 'acta-1')).toMatchObject({
-      tipo: 'acta',
-      participantes: 'Ana, Luis',
+      type: 'minutes',
+      attendees: 'Ana, Luis',
     });
 
     // Con el documento publicado, las tareas pueden colgar de él desde el inicio...

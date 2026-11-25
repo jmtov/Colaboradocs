@@ -93,20 +93,41 @@ describe('validateDocument', () => {
   it('acepta tipo, responsable y participantes, y rechaza un tipo que no existe', () => {
     const ok = validateDocument({
       ...valid(),
-      tipo: 'iniciativa',
-      responsable: ' Ana ',
-      participantes: 'Ana, Luis',
+      type: 'initiative',
+      owner: ' Ana ',
+      attendees: 'Ana, Luis',
     });
     expect(ok.ok && ok.value).toMatchObject({
-      tipo: 'iniciativa',
+      type: 'initiative',
+      owner: 'Ana',
+      attendees: 'Ana, Luis',
+    });
+    const bad = validateDocument({ ...valid(), type: 'memorando' });
+    expect(bad.ok).toBe(false);
+    // Sin tipo (o vacío), el documento queda como estaba: no se inventa uno.
+    const none = validateDocument({ ...valid(), type: '' });
+    expect(none.ok && 'type' in none.value).toBe(false);
+  });
+
+  it('lee como los nombres actuales los campos escritos en español (tipo, responsable, participantes)', () => {
+    const old = validateDocument({
+      ...valid(),
+      tipo: 'acta',
       responsable: 'Ana',
       participantes: 'Ana, Luis',
     });
-    const bad = validateDocument({ ...valid(), tipo: 'memorando' });
-    expect(bad.ok).toBe(false);
-    // Sin tipo (o vacío), el documento queda como estaba: no se inventa uno.
-    const none = validateDocument({ ...valid(), tipo: '' });
-    expect(none.ok && 'tipo' in none.value).toBe(false);
+    expect(old.ok && old.value).toMatchObject({
+      type: 'minutes',
+      owner: 'Ana',
+      attendees: 'Ana, Luis',
+    });
+    // Si vienen los dos, vale el actual; y un valor viejo desconocido sigue siendo un error.
+    const both = validateDocument({ ...valid(), tipo: 'acta', type: 'guide' });
+    expect(both.ok && both.value.type).toBe('guide');
+    expect(validateDocument({ ...valid(), tipo: 'memorando' }).ok).toBe(false);
+    expect(validateDocument({ ...valid(), type: 'constructor' }).ok).toBe(
+      false,
+    );
   });
 
   it('acepta la fecha AAAA-MM-DD y rechaza una que no existe o con otro formato', () => {

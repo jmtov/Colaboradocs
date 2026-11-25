@@ -4,3 +4,8 @@ declare namespace Cloudflare {
     TOKEN_SECRET: string;
   }
 }
+
+declare module '*.sql?raw' {
+  const sql: string;
+  export default sql;
+}

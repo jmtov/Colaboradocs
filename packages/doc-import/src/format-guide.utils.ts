@@ -47,10 +47,10 @@ Un objeto JSON con estos campos.
 - \`shortName\`: nombre corto para el encabezado (máx. 80). Por defecto, el título.
 - \`eyebrow\`: línea sobre el título del inicio (máx. 200). \`{version}\` se reemplaza por la versión.
 - \`lead\`: párrafo bajo el título del inicio (máx. 600).
-- \`tipo\`: qué clase de documento es; la home los filtra y rotula así. Uno de \`${DOCUMENT_KINDS.join('`, `')}\` (sin él, \`otro\`). Usa \`acta\` para una reunión (el día en que fue va en \`date\`), \`iniciativa\` para un proyecto del que cuelgan tareas y \`guia\` para una guía.
+- \`type\`: qué clase de documento es; la home los filtra y rotula así. Uno de \`${DOCUMENT_KINDS.join('`, `')}\` (sin él, \`other\`). Usa \`minutes\` para un acta de reunión (el día en que fue va en \`date\`), \`initiative\` para un proyecto del que cuelgan tareas y \`guide\` para una guía.
 - \`date\`: cuándo se elaboró el documento, \`AAAA-MM-DD\` y un día que exista; en un acta, el día de la reunión. Sale en la tarjeta de la home y ordena los documentos (el más reciente primero, salvo las iniciativas, que van por título). Sin ella vale \`updated\`.
-- \`responsable\`: quién responde por una iniciativa; sale en su tarjeta (máx. 200).
-- \`participantes\`: quiénes estuvieron en un acta, en texto libre (máx. 500).
+- \`owner\`: quién responde por una iniciativa; sale en su tarjeta (máx. 200).
+- \`attendees\`: quiénes estuvieron en un acta, en texto libre (máx. 500).
 - \`highlightSection\`: \`{ "id": "<id de una sección>", "label": "Texto del botón" }\`. Segundo botón del inicio que salta a una sección; el id tiene que existir.
 - \`sources\`: lista de fuentes del pie, cada una \`{ "label": "…", "url": "…" }\` (hasta 100; \`label\` máx. 300). Con \`url\` vacío (\`""\`) es solo texto; si no, tiene que empezar con \`https://\`, \`http://\` o \`/\`.
 - \`glossaryTerms\`: objeto \`{ "cómo aparece el término en el texto, en minúsculas": "Término tal como está en el glosario" }\` (hasta 500). Sirve para que esas palabras se enlacen solas con su definición.

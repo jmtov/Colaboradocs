@@ -38,23 +38,23 @@ export default function DocumentPage(props: {
           title={props.content.title}
           version={props.content.version}
           firstSectionId={page.firstSectionId}
-          tipo={props.content.tipo}
+          type={props.content.type}
           eyebrow={props.content.eyebrow}
           lead={props.content.lead}
           highlight={page.highlight}
           onGo={page.goTo}
         />
-        <Show when={page.peopleOf(props.content.responsable).length > 0}>
+        <Show when={page.peopleOf(props.content.owner).length > 0}>
           <PeopleCards
             title="Responsable"
-            people={page.peopleOf(props.content.responsable)}
+            people={page.peopleOf(props.content.owner)}
             onOpen={page.openPerson}
           />
         </Show>
-        <Show when={page.peopleOf(props.content.participantes).length > 0}>
+        <Show when={page.peopleOf(props.content.attendees).length > 0}>
           <PeopleCards
             title="Participantes"
-            people={page.peopleOf(props.content.participantes)}
+            people={page.peopleOf(props.content.attendees)}
             onOpen={page.openPerson}
           />
         </Show>

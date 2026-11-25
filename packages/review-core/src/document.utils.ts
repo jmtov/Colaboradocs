@@ -120,6 +120,51 @@ function isSafeUrl(url: string): boolean {
   return url === '' || /^https?:\/\//i.test(url) || /^\/(?!\/)/.test(url);
 }
 
+/** Los nombres que tuvieron en español los campos del tipo, el responsable y los participantes. */
+const LEGACY_KEYS = {
+  tipo: 'type',
+  responsable: 'owner',
+  participantes: 'attendees',
+} as const;
+const LEGACY_KINDS = new Map<string, DocumentKind>([
+  ['acta', 'minutes'],
+  ['iniciativa', 'initiative'],
+  ['guia', 'guide'],
+  ['otro', 'other'],
+]);
+
+/** El tipo que corresponde a un valor guardado: el actual o el de antes (`acta`…); otro valor es `other`. */
+export function kindFromStored(value: unknown): DocumentKind {
+  if (typeof value !== 'string') return 'other';
+  if (DOCUMENT_KINDS.includes(value as DocumentKind)) {
+    return value as DocumentKind;
+  }
+  return LEGACY_KINDS.get(value) ?? 'other';
+}
+
+/**
+ * Los documentos escritos antes del cambio de nombres (un JSON importado, un agente con el manual
+ * viejo, lo guardado antes de la migración 0011) traen `tipo`, `responsable` y `participantes`, y
+ * `tipo` con `acta`, `iniciativa`, `guia` u `otro`. Se leen como los nombres actuales; si vienen
+ * los dos, vale el actual. Un valor de tipo que no se conoce se deja tal cual (la validación lo rechaza).
+ */
+export function migrateLegacyKeys(
+  raw: Record<string, unknown>,
+): Record<string, unknown> {
+  const migrated = { ...raw };
+  for (const [legacy, current] of Object.entries(LEGACY_KEYS)) {
+    if (legacy in migrated && !(current in migrated)) {
+      migrated[current] = migrated[legacy];
+    }
+  }
+  const kind =
+    typeof migrated.type === 'string'
+      ? LEGACY_KINDS.get(migrated.type)
+      : undefined;
+  if (kind) migrated.type = kind;
+  return migrated;
+}
+
 /**
  * Valida y normaliza un documento recibido (de un archivo o de la API): solo
  * quedan los campos conocidos, el HTML de cada sección se limpia y se revisan
@@ -135,7 +180,7 @@ export function validateDocument(
       errors: ['El documento tiene que ser un objeto JSON.'],
     };
   }
-  const raw = input as Record<string, unknown>;
+  const raw = migrateLegacyKeys(input as Record<string, unknown>);
 
   const id = text(raw.id, 'id', 64, errors, { required: true });
   if (id !== undefined && !DOCUMENT_ID_PATTERN.test(id)) {
@@ -151,18 +196,18 @@ export function validateDocument(
     ['shortName', 80],
     ['eyebrow', 200],
     ['lead', 600],
-    ['responsable', 200],
-    ['participantes', 500],
+    ['owner', 200],
+    ['attendees', 500],
   ] as const) {
     const value = text(raw[field], field, max, errors);
     if (value !== undefined) document[field] = value;
   }
 
-  if (raw.tipo !== undefined && raw.tipo !== null && raw.tipo !== '') {
-    if (DOCUMENT_KINDS.includes(raw.tipo as DocumentKind)) {
-      document.tipo = raw.tipo as DocumentKind;
+  if (raw.type !== undefined && raw.type !== null && raw.type !== '') {
+    if (DOCUMENT_KINDS.includes(raw.type as DocumentKind)) {
+      document.type = raw.type as DocumentKind;
     } else {
-      errors.push(`«tipo» tiene que ser ${DOCUMENT_KINDS.join(', ')}.`);
+      errors.push(`«type» tiene que ser ${DOCUMENT_KINDS.join(', ')}.`);
     }
   }
 

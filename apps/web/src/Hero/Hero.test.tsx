@@ -18,9 +18,9 @@ afterEach(() => {
 
 describe('Hero', () => {
   it('el tipo va como texto al comienzo de la línea de arriba; «otro» no se rotula', () => {
-    expect(mount({ tipo: 'acta' }).textContent).toContain(
+    expect(mount({ type: 'minutes' }).textContent).toContain(
       'Acta · Borrador · versión 0.3',
     );
-    expect(mount({ tipo: 'otro' }).textContent).not.toContain('Otro');
+    expect(mount({ type: 'other' }).textContent).not.toContain('Otro');
   });
 });

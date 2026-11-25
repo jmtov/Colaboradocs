@@ -38,9 +38,9 @@ export default function EditorDetails(props: EditorDetailsProps) {
       <FieldRow label="Tipo">
         <select
           class={fieldStyles.input}
-          value={props.details.tipo}
+          value={props.details.type}
           onChange={(event) =>
-            set('tipo', event.currentTarget.value as DocumentKind)
+            set('type', event.currentTarget.value as DocumentKind)
           }
         >
           <For each={KIND_GROUPS}>
@@ -56,27 +56,27 @@ export default function EditorDetails(props: EditorDetailsProps) {
           onInput={(event) => set('date', event.currentTarget.value)}
         />
       </FieldRow>
-      <Show when={props.details.tipo === 'iniciativa'}>
+      <Show when={props.details.type === 'initiative'}>
         <FieldRow label="Responsable">
           <button
             type="button"
             data-flat
             class={`${fieldStyles.input} ${styles.pick}`}
-            onClick={() => props.onPickPeople('responsable')}
+            onClick={() => props.onPickPeople('owner')}
           >
-            {props.details.responsable || 'Elegir…'}
+            {props.details.owner || 'Elegir…'}
           </button>
         </FieldRow>
       </Show>
-      <Show when={props.details.tipo === 'acta'}>
+      <Show when={props.details.type === 'minutes'}>
         <FieldRow label="Participantes">
           <button
             type="button"
             data-flat
             class={`${fieldStyles.input} ${styles.pick}`}
-            onClick={() => props.onPickPeople('participantes')}
+            onClick={() => props.onPickPeople('attendees')}
           >
-            {props.details.participantes || 'Elegir…'}
+            {props.details.attendees || 'Elegir…'}
           </button>
         </FieldRow>
       </Show>

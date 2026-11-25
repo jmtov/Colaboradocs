@@ -477,7 +477,7 @@ describe('EditorPage', () => {
     const select = host.querySelector(
       'select[class*="input"]',
     ) as HTMLSelectElement;
-    select.value = 'iniciativa';
+    select.value = 'initiative';
     select.dispatchEvent(new Event('change', { bubbles: true }));
     await wait(100);
     // El responsable es una sola persona, elegida en una hoja: la segunda reemplaza a la primera.
@@ -502,8 +502,8 @@ describe('EditorPage', () => {
     expect(calls.puts[0]?.content).toMatchObject({
       title: 'Otro título',
       description: 'Una línea',
-      tipo: 'iniciativa',
-      responsable: 'Ana',
+      type: 'initiative',
+      owner: 'Ana',
     });
   });
 
@@ -519,7 +519,7 @@ describe('EditorPage', () => {
     const select = host.querySelector(
       'select[class*="input"]',
     ) as HTMLSelectElement;
-    select.value = 'acta';
+    select.value = 'minutes';
     select.dispatchEvent(new Event('change', { bubbles: true }));
     await wait(100);
     button(host, 'Elegir…').click();
@@ -535,8 +535,8 @@ describe('EditorPage', () => {
     button(host, 'Guardar borrador').click();
     await wait();
     const saved = calls.puts[0]?.content;
-    expect(saved?.tipo).toBe('acta');
-    expect(saved?.participantes).toBe('Luis');
+    expect(saved?.type).toBe('minutes');
+    expect(saved?.attendees).toBe('Luis');
   });
 
   it('en la hoja de participantes parten elegidas las personas de las que habla el documento', async () => {
@@ -552,7 +552,7 @@ describe('EditorPage', () => {
     const select = host.querySelector(
       'select[class*="input"]',
     ) as HTMLSelectElement;
-    select.value = 'acta';
+    select.value = 'minutes';
     select.dispatchEvent(new Event('change', { bubbles: true }));
     await wait(100);
     button(host, 'Elegir…').click();
@@ -567,7 +567,7 @@ describe('EditorPage', () => {
     await wait(300);
     button(host, 'Guardar borrador').click();
     await wait();
-    expect(calls.puts[0]?.content.participantes).toBe('Ana');
+    expect(calls.puts[0]?.content.attendees).toBe('Ana');
   });
 
   it('los detalles quedan antes del contenido del documento', async () => {

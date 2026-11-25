@@ -16,10 +16,10 @@ const item = (
   description: `Descripción de ${id}`,
   version: '0.2',
   updated: '2026-11-09',
-  tipo: 'otro',
+  type: 'other',
   date: null,
-  responsable: null,
-  participantes: null,
+  owner: null,
+  attendees: null,
   openThreads: 0,
   comments: 0,
   approvals: 0,
@@ -130,9 +130,9 @@ describe('HomePage', () => {
   it('una sola lista, sin grupos: iniciativas primero, actas por fecha, con el tipo en cada tarjeta', async () => {
     signIn();
     const host = mount([
-      item('acta-vieja', { tipo: 'acta', updated: '2026-10-01' }),
-      item('acta-nueva', { tipo: 'acta', updated: '2026-11-20' }),
-      item('ini', { tipo: 'iniciativa', responsable: 'Ana' }),
+      item('acta-vieja', { type: 'minutes', updated: '2026-10-01' }),
+      item('acta-nueva', { type: 'minutes', updated: '2026-11-20' }),
+      item('ini', { type: 'initiative', owner: 'Ana' }),
     ]);
     await wait();
     expect(
@@ -165,8 +165,8 @@ describe('HomePage', () => {
     signIn();
     const host = mount([
       item('a', {
-        tipo: 'acta',
-        participantes: 'Ana, Luis, Eva, Sol, Ivo',
+        type: 'minutes',
+        attendees: 'Ana, Luis, Eva, Sol, Ivo',
       }),
     ]);
     await wait();
@@ -177,8 +177,8 @@ describe('HomePage', () => {
   it('filtra por texto y por tipo, y se puede quitar el filtro', async () => {
     signIn();
     const host = mount([
-      item('a', { title: 'Ejes', tipo: 'iniciativa' }),
-      item('b', { title: 'Reunión', tipo: 'acta' }),
+      item('a', { title: 'Ejes', type: 'initiative' }),
+      item('b', { title: 'Reunión', type: 'minutes' }),
     ]);
     await wait();
     const hrefs = () =>
@@ -232,8 +232,8 @@ describe('HomePage', () => {
   it('si desaparece el último documento del tipo filtrado, el filtro se suelta', async () => {
     signIn();
     const documents = [
-      item('a', { title: 'Ejes', tipo: 'iniciativa' }),
-      item('b', { title: 'Reunión', tipo: 'acta' }),
+      item('a', { title: 'Ejes', type: 'initiative' }),
+      item('b', { title: 'Reunión', type: 'minutes' }),
     ];
     const [list, setList] = createSignal(documents);
     vi.stubGlobal(
@@ -274,8 +274,8 @@ describe('HomePage', () => {
   it('la tarjeta lleva el tipo y la fecha (la de elaboración, o updated), sin la versión', async () => {
     signIn();
     const host = mount([
-      item('a', { tipo: 'acta', date: '2026-11-24', updated: '2026-11-25' }),
-      item('b', { tipo: 'iniciativa', updated: '2026-11-10' }),
+      item('a', { type: 'minutes', date: '2026-11-24', updated: '2026-11-25' }),
+      item('b', { type: 'initiative', updated: '2026-11-10' }),
     ]);
     await wait();
     const text = (id: string) =>

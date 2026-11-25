@@ -10,7 +10,7 @@ type Props = {
   version: string;
   firstSectionId: string;
   /** Clase de documento; «otro» no se rotula. */
-  tipo?: DocumentKind;
+  type?: DocumentKind;
   eyebrow?: string;
   lead?: string;
   highlight?: { id: string; label: string };
@@ -20,8 +20,8 @@ type Props = {
 export default function Hero(props: Props) {
   /** El tipo como texto, antes de la línea de arriba; «otro» no se rotula. */
   const kind = () =>
-    props.tipo && props.tipo !== 'otro'
-      ? KIND_GROUPS.find((group) => group.kind === props.tipo)?.singular
+    props.type && props.type !== 'other'
+      ? KIND_GROUPS.find((group) => group.kind === props.type)?.singular
       : undefined;
 
   return (

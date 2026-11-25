@@ -3,6 +3,7 @@ import type {
   DocumentDraft,
   DraftInfo,
 } from '@colaboradocs/review-core';
+import { readStoredDocument } from './documents.queries';
 
 type DraftRow = {
   content: string;
@@ -63,7 +64,7 @@ export async function findDraft(
   if (!row) return null;
   return {
     ...toInfo(row),
-    content: JSON.parse(row.content) as DocumentContent,
+    content: readStoredDocument(row.content),
   };
 }
 

@@ -242,7 +242,7 @@ export function buildToolEntries(origin: string): ToolEntry[] {
     tool(
       'list_documents',
       'documents:read',
-      'Documentos de revisión (no archivados), con su actividad y su `tipo` (acta, iniciativa, guia u otro), `date` (de elaboración; null si no la tiene), `responsable` y `participantes`.',
+      'Documentos de revisión (no archivados), con su actividad y su `type` (minutes, initiative, guide u other), `date` (de elaboración; null si no la tiene), `owner` y `attendees`.',
       ['documentos'],
       { inputs: inputs({}), outputs: { type: 'array', items: OBJECT } },
       { url: `${api}/documents`, http_method: 'GET' },
@@ -290,7 +290,7 @@ export function buildToolEntries(origin: string): ToolEntry[] {
                 content: {
                   type: 'object',
                   description:
-                    'El documento completo (id, title, version, updated, sections…). Opcionales: `tipo` (acta, iniciativa, guia u otro; la home lo rotula y filtra por él), `date` (AAAA-MM-DD: cuándo se elaboró; en un acta, el día de la reunión), `responsable` (iniciativas) y `participantes` (actas, nombres separados por coma). Formato en README.',
+                    'El documento completo (id, title, version, updated, sections…). Opcionales: `type` (minutes, initiative, guide u other; la home lo rotula y filtra por él), `date` (AAAA-MM-DD: cuándo se elaboró; en un acta, el día de la reunión), `owner` (iniciativas) y `attendees` (actas, nombres separados por coma). Formato en README.',
                 },
                 expectedRevision: {
                   type: 'integer',

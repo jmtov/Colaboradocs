@@ -97,10 +97,10 @@ export function useEditorPage(id: () => string) {
   const [details, setDetails] = createSignal<DocumentDetails>({
     title: '',
     description: '',
-    tipo: 'otro',
+    type: 'other',
     date: '',
-    responsable: '',
-    participantes: '',
+    owner: '',
+    attendees: '',
   });
   const [revision, setRevision] = createSignal(0);
   const [stale, setStale] = createSignal(false);
@@ -122,14 +122,13 @@ export function useEditorPage(id: () => string) {
     // Sin enlaces y sin que los hubiera, el campo no existe (no se agrega un `{}` de la nada).
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
     const keepPeople = current.peopleTerms !== undefined || hasKeys(people());
-    const { title, description, tipo, date, responsable, participantes } =
-      details();
+    const { title, description, type, date, owner, attendees } = details();
     const {
       description: _description,
-      tipo: _tipo,
+      type: _type,
       date: _date,
-      responsable: _responsable,
-      participantes: _participantes,
+      owner: _owner,
+      attendees: _attendees,
       ...rest
     } = current;
     return {
@@ -137,10 +136,10 @@ export function useEditorPage(id: () => string) {
       title,
       ...(description ? { description } : {}),
       // «otro» es lo de siempre: no se escribe si no estaba.
-      ...(tipo !== 'otro' ? { tipo } : {}),
+      ...(type !== 'other' ? { type } : {}),
       ...(date ? { date } : {}),
-      ...(responsable ? { responsable } : {}),
-      ...(participantes ? { participantes } : {}),
+      ...(owner ? { owner } : {}),
+      ...(attendees ? { attendees } : {}),
       sections: saved(),
       sources: sources(),
       ...(keep ? { glossaryTerms: written } : {}),
@@ -154,10 +153,10 @@ export function useEditorPage(id: () => string) {
     return (
       details().title !== last.title ||
       details().description !== (last.description ?? '') ||
-      details().tipo !== (last.tipo ?? 'otro') ||
+      details().type !== (last.type ?? 'other') ||
       details().date !== (last.date ?? '') ||
-      details().responsable !== (last.responsable ?? '') ||
-      details().participantes !== (last.participantes ?? '') ||
+      details().owner !== (last.owner ?? '') ||
+      details().attendees !== (last.attendees ?? '') ||
       !sameSections(last.sections, saved()) ||
       !sameSources(last.sources, sources()) ||
       !sameLinks(last.glossaryTerms ?? {}, links()) ||
@@ -209,10 +208,10 @@ export function useEditorPage(id: () => string) {
     setDetails({
       title: base()?.title ?? '',
       description: base()?.description ?? '',
-      tipo: base()?.tipo ?? 'otro',
+      type: base()?.type ?? 'other',
       date: base()?.date ?? '',
-      responsable: base()?.responsable ?? '',
-      participantes: base()?.participantes ?? '',
+      owner: base()?.owner ?? '',
+      attendees: base()?.attendees ?? '',
     });
     setRevision(draft.value ? draft.value.revision : 0);
     setStale(draft.value ? draft.value.stale : false);
@@ -394,8 +393,8 @@ export function useEditorPage(id: () => string) {
    * Elegir entre las personas del espacio: quién responde por una iniciativa (una) o quiénes
    * estuvieron en un acta (varias; parten elegidas las que el texto menciona).
    */
-  async function pickPeople(field: 'responsable' | 'participantes') {
-    const single = field === 'responsable';
+  async function pickPeople(field: 'owner' | 'attendees') {
+    const single = field === 'owner';
     const result = await overlay.sheet(PeopleSheet, {
       kicker: single ? 'Iniciativa' : 'Acta',
       title: single ? 'Responsable' : 'Participantes',

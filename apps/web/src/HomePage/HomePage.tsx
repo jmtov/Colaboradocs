@@ -90,12 +90,12 @@ export default function HomePage(props: Props) {
                         {document.description}
                       </span>
                     </Show>
-                    <Show when={document.responsable}>
+                    <Show when={document.owner}>
                       {(people) => (
                         <PeopleLine label="Responsable" people={people()} />
                       )}
                     </Show>
-                    <Show when={document.participantes}>
+                    <Show when={document.attendees}>
                       {(people) => (
                         <PeopleLine label="Participantes" people={people()} />
                       )}

@@ -10,15 +10,15 @@ export const KIND_GROUPS: {
   title: string;
   singular: string;
 }[] = [
-  { kind: 'iniciativa', title: 'Iniciativas', singular: 'Iniciativa' },
-  { kind: 'acta', title: 'Actas', singular: 'Acta' },
-  { kind: 'guia', title: 'Guías', singular: 'Guía' },
-  { kind: 'otro', title: 'Otros documentos', singular: 'Documento' },
+  { kind: 'initiative', title: 'Iniciativas', singular: 'Iniciativa' },
+  { kind: 'minutes', title: 'Actas', singular: 'Acta' },
+  { kind: 'guide', title: 'Guías', singular: 'Guía' },
+  { kind: 'other', title: 'Otros documentos', singular: 'Documento' },
 ];
 
 /** El tipo de un documento de la lista; sin tipo, o uno que no se conoce, es «otro». */
 export function kindOf(item: DocumentListItem): DocumentKind {
-  return DOCUMENT_KINDS.includes(item.tipo) ? item.tipo : 'otro';
+  return DOCUMENT_KINDS.includes(item.type) ? item.type : 'other';
 }
 
 /** La fecha del documento: la de elaboración (`date`) y, sin ella, la de su última versión (`updated`). */
@@ -43,7 +43,7 @@ export function sortDocuments(items: DocumentListItem[]): DocumentListItem[] {
     KIND_GROUPS.findIndex((group) => group.kind === kindOf(item));
   return [...items].sort((a, b) => {
     if (rank(a) !== rank(b)) return rank(a) - rank(b);
-    return kindOf(a) === 'iniciativa'
+    return kindOf(a) === 'initiative'
       ? a.title.localeCompare(b.title, 'es')
       : documentDate(b).localeCompare(documentDate(a));
   });
@@ -84,8 +84,8 @@ export function filterDocuments(
       [
         item.title,
         item.description,
-        item.responsable,
-        item.participantes,
+        item.owner,
+        item.attendees,
         kindLabel(item),
       ]
         .filter(Boolean)

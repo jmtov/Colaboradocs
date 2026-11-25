@@ -35,8 +35,8 @@ describe('buildFormatGuide', () => {
     expect(sanitizeSectionHtml('<table>x</table>')).toBe('x');
   });
 
-  it('documenta tipo, responsable y participantes con los tipos reales', () => {
-    for (const word of ['tipo', 'responsable', 'participantes']) {
+  it('documenta type, owner y attendees con los tipos reales', () => {
+    for (const word of ['type', 'owner', 'attendees']) {
       expect(guide).toContain(`\`${word}\``);
     }
     for (const kind of DOCUMENT_KINDS) expect(guide).toContain(`\`${kind}\``);

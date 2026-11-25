@@ -87,10 +87,10 @@ describe('subir y leer documentos', () => {
         description: 'Para probar',
         version: '0.1',
         updated: '2026-11-10',
-        tipo: 'otro',
+        type: 'other',
         date: null,
-        responsable: null,
-        participantes: null,
+        owner: null,
+        attendees: null,
         openThreads: 0,
         comments: 0,
         approvals: 0,
@@ -156,31 +156,31 @@ describe('subir y leer documentos', () => {
 
 describe('tipo de documento', () => {
   it('la lista trae tipo, responsable y participantes; sin tipo, «otro»', async () => {
+    await put(adminToken, sample('ini', { type: 'initiative', owner: 'Ana' }));
     await put(
       adminToken,
-      sample('ini', { tipo: 'iniciativa', responsable: 'Ana' }),
-    );
-    await put(
-      adminToken,
-      sample('acta', { tipo: 'acta', participantes: 'Ana, Luis' }),
+      sample('acta', { type: 'minutes', attendees: 'Ana, Luis' }),
     );
     await put(adminToken, sample('libre'));
     const items = await list(memberToken);
     const byId = Object.fromEntries(items.map((item) => [item.id, item]));
-    expect(byId.ini).toMatchObject({ tipo: 'iniciativa', responsable: 'Ana' });
+    expect(byId.ini).toMatchObject({ type: 'initiative', owner: 'Ana' });
     expect(byId.acta).toMatchObject({
-      tipo: 'acta',
-      participantes: 'Ana, Luis',
+      type: 'minutes',
+      attendees: 'Ana, Luis',
     });
     expect(byId.libre).toMatchObject({
-      tipo: 'otro',
-      responsable: null,
-      participantes: null,
+      type: 'other',
+      owner: null,
+      attendees: null,
     });
   });
 
   it('la lista trae la fecha de elaboración; sin ella, null', async () => {
-    await put(adminToken, sample('acta', { tipo: 'acta', date: '2026-11-24' }));
+    await put(
+      adminToken,
+      sample('acta', { type: 'minutes', date: '2026-11-24' }),
+    );
     await put(adminToken, sample('libre'));
     const byId = Object.fromEntries(
       (await list(memberToken)).map((item) => [item.id, item]),
@@ -191,10 +191,37 @@ describe('tipo de documento', () => {
     expect(bad.status).toBe(400);
   });
 
+  it('lo guardado con los nombres en español (antes de la migración 0011) se lee con los nuevos', async () => {
+    const legacy = JSON.stringify({
+      ...sample('vieja'),
+      tipo: 'acta',
+      responsable: 'Ana',
+      participantes: 'Ana, Luis',
+    });
+    const now = '2026-11-25T00:00:00Z';
+    await env.DB.prepare(
+      'INSERT INTO documents (id, title, version, updated, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    )
+      .bind('vieja', 'Vieja', '0.1', '2026-11-10', legacy, now, now)
+      .run();
+    const listed = (await list(memberToken)).find((i) => i.id === 'vieja');
+    expect(listed).toMatchObject({
+      type: 'minutes',
+      owner: 'Ana',
+      attendees: 'Ana, Luis',
+    });
+    const content = await authed(memberToken, '/documents/vieja/content');
+    expect(await content.json()).toMatchObject({
+      type: 'minutes',
+      owner: 'Ana',
+      attendees: 'Ana, Luis',
+    });
+  });
+
   it('rechaza un tipo que no existe', async () => {
     const response = await put(adminToken, {
       ...sample('x'),
-      tipo: 'memorando',
+      type: 'memorando',
     });
     expect(response.status).toBe(400);
   });
