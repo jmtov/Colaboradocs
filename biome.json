@@ -55,6 +55,159 @@
           }
         }
       }
+    },
+    {
+      "includes": ["apps/web/src/shared/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/app/**",
+                      "@/home/**",
+                      "@/admin/**",
+                      "@/document/**",
+                      "@/deck/**",
+                      "@/task/**"
+                    ],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «shared» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/task/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/app/**",
+                      "@/home/**",
+                      "@/admin/**",
+                      "@/document/**",
+                      "@/deck/**"
+                    ],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «task» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/deck/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/app/**",
+                      "@/home/**",
+                      "@/admin/**",
+                      "@/document/**"
+                    ],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «deck» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/document/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/app/**",
+                      "@/home/**",
+                      "@/admin/**",
+                      "@/deck/**"
+                    ],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «document» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/home/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/admin/**"],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «home» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/admin/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@/app/**", "@/home/**"],
+                    "message": "Capas: app → home, admin → document, deck → task → shared. «admin» no importa hacia arriba ni de una feature hermana."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/src/**/*.test.ts", "apps/web/src/**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
     }
   ],
   "plugins": ["./.biome/no-inline-style.grit"]

@@ -1,9 +1,9 @@
 import { installPopoverPolyfill } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
-import App from './App';
+import App from './app/App';
 import './index.css';
-import { registerServiceWorker } from './pwa/registerServiceWorker';
-import { applyStoredTheme } from './ThemeSwitch/theme.utils';
+import { registerServiceWorker } from './app/pwa/registerServiceWorker';
+import { applyStoredTheme } from './shared/ui/ThemeSwitch/theme.utils';
 
 installPopoverPolyfill();
 applyStoredTheme();

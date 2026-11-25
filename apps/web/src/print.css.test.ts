@@ -26,12 +26,18 @@ function printBlocks(css: string): string {
 describe('vista de impresión (PDF)', () => {
   // Lo que es de pantalla (navegación, resumen, barras) no sale en papel.
   const hidden = [
-    ['./TopBar/TopBar.module.css', '.top'],
-    ['./SideNav/SideNav.module.css', '.side'],
-    ['./ReviewSummary/ReviewSummary.module.css', '.section'],
-    ['./SectionCards/SectionCards.module.css', '.contents'],
+    ['./document/DocumentPage/components/TopBar/TopBar.module.css', '.top'],
+    ['./document/DocumentPage/components/SideNav/SideNav.module.css', '.side'],
     [
-      './ReviewNavigation/components/NavigationBar/NavigationBar.module.css',
+      './document/DocumentPage/components/ReviewSummary/ReviewSummary.module.css',
+      '.section',
+    ],
+    [
+      './document/DocumentPage/components/SectionCards/SectionCards.module.css',
+      '.contents',
+    ],
+    [
+      './document/DocumentPage/components/ReviewNavigation/components/NavigationBar/NavigationBar.module.css',
       '.bar',
     ],
     [
@@ -61,10 +67,14 @@ describe('vista de impresión (PDF)', () => {
   });
 
   it('los títulos no quedan solos al final de una página', () => {
-    expect(printBlocks(read('./SectionView/SectionView.module.css'))).toMatch(
-      /break-after:\s*avoid/,
-    );
-    expect(printBlocks(read('./Prose/Prose.module.css'))).toMatch(
+    expect(
+      printBlocks(
+        read(
+          './document/DocumentPage/components/SectionView/SectionView.module.css',
+        ),
+      ),
+    ).toMatch(/break-after:\s*avoid/);
+    expect(printBlocks(read('./document/prose/Prose.module.css'))).toMatch(
       /break-after:\s*avoid/,
     );
   });

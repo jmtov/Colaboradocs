@@ -16,7 +16,7 @@ La página **no trae documentos**: los pide a la API después de ingresar el PIN
 
 ## Formato del documento
 
-Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/content/content.types.ts`), validación en `review-core`, ejemplo en `documents/example.json` y descripción campo por campo en el README de la raíz. Convenciones que el código de esta app **sí interpreta**:
+Tipos en `packages/review-core/src/document.types.ts`, validación en `review-core`, ejemplo en `documents/example.json` y descripción campo por campo en el README de la raíz. Convenciones que el código de esta app **sí interpreta**:
 
 - Sección con `id: "glosario"`: `<dl><dt><dd>`. Alimenta la hoja de definiciones; en esa sección no se enlazan términos.
 - `glossaryTerms` (cómo aparece en el texto, minúsculas → entrada del glosario): los términos se enlazan **una vez por sección**; gana el más largo; no parte palabras.
@@ -26,7 +26,31 @@ Tipos en `packages/review-core/src/document.types.ts` (re-exportados en `src/con
 - Lo que no sea una etiqueta conocida se aplana a texto (`src/Prose/buildProse.ts`); la página **nunca inyecta HTML crudo**.
 - `roleField` ya no es del documento sino del espacio (`PUT /api/admin/space`).
 
+## Estructura de `src/`
+
+Por feature, no por capa técnica. Una carpeta de feature es una zona del producto; dentro, **PascalCase es una página o componente y minúscula es soporte** (`components/`, `editor/`, `prose/`…).
+
+```
+src/
+  main.tsx  index.css            entrada y tokens globales (+ sus pruebas de CSS)
+  app/                           App, rutas, providers, service worker
+  home/       HomePage (tabs: documentos, presentaciones, tareas), HomeShell
+  admin/      AdminPage (marco de /documentos y /accesos)
+  document/   DocumentPage, EditorPage, DocumentsPage, components/ (UploadSheet),
+              editor/ (Tiptap), prose/, content/
+  deck/       DeckPage, DeckEditorPage, components/ (NewDeckSheet)
+  task/       components/ (TaskRow, TaskMenu, NewTaskSheet)
+  shared/     ui/, icons/, router/, utils/, test/
+```
+
+- **Capas, solo hacia abajo:** `app → home, admin → document, deck → task → shared`. `document` y `deck` no se importan entre sí; `shared` no importa nada de arriba. Lo hace cumplir Biome (`noRestrictedImports`, overrides por carpeta en `biome.json`); las pruebas están exentas.
+- **Dónde va una pieza:** en el componente que la usa (`<Página>/components/`). Sube a `<feature>/components/` cuando la usa una segunda página de la feature, y a `shared/` cuando la usa otra feature (a partir de dos usos; con duda, tres).
+- **Sin barrels:** se importa el archivo (`@/document/prose/buildProse`), no un `index.ts`.
+- **`@/`** apunta a `src/`; los paquetes (`review-ui`, …) no pueden usarlo.
+
 ## Mapa de `src/`
+
+Los nombres de la tabla son los de cada componente; su carpeta está en el árbol de arriba (`document/DocumentPage/components/…`, `home/HomePage/components/…`, `shared/ui/…`).
 
 | Carpeta | Qué es |
 |---|---|
@@ -80,5 +104,5 @@ npm test -w @colaboradocs/web && npm run typecheck -w @colaboradocs/web
 ## Cambiar la interfaz o el formato
 
 - **Texto fijo de la UI** (instrucciones del inicio «Cómo revisar», etiquetas): en los componentes, en español.
-- **Campo nuevo del documento:** tipo en `content.types.ts`, uso en el componente, valor en `example.json` y una línea en el README de la raíz y en la guía de `buildFormatGuide` (`doc-import`), que es lo que se descarga desde «Subir documento».
+- **Campo nuevo del documento:** tipo en `document.types.ts` de `review-core`, uso en el componente, valor en `example.json` y una línea en el README de la raíz y en la guía de `buildFormatGuide` (`doc-import`), que es lo que se descarga desde «Subir documento».
 - **Nuevo tipo de bloque revisable:** hay que tocar `buildProse.ts` (qué elementos son bloques y cuáles son notas) y mantener la regla de `review-core`: el id sale de `assignBlockIds`.

@@ -17,29 +17,33 @@ describe('grillas de celdas con bordes colapsados', () => {
     {
       name: 'home',
       css:
-        read('./HomePage/components/CardGrid/CardGrid.module.css') +
-        read('./HomePage/components/Card/Card.module.css'),
+        read('./home/HomePage/components/CardGrid/CardGrid.module.css') +
+        read('./home/HomePage/components/Card/Card.module.css'),
       grid: '.grid',
       cell: '.item',
       box: '.card',
     },
     {
       name: 'selector de tema',
-      css: read('./ThemeSwitch/ThemeSwitch.module.css'),
+      css: read('./shared/ui/ThemeSwitch/ThemeSwitch.module.css'),
       grid: '.group',
       cell: '.option',
       box: '.option',
     },
     {
       name: 'resumen de la revisión',
-      css: read('./ReviewSummary/ReviewSummary.module.css'),
+      css: read(
+        './document/DocumentPage/components/ReviewSummary/ReviewSummary.module.css',
+      ),
       grid: '.summary',
       cell: '.tile',
       box: '.tile',
     },
     {
       name: 'tarjetas de sección',
-      css: read('./SectionCards/SectionCards.module.css'),
+      css: read(
+        './document/DocumentPage/components/SectionCards/SectionCards.module.css',
+      ),
       grid: '.cards',
       cell: '.card',
       box: '.card',

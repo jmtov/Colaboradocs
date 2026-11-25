@@ -89,13 +89,13 @@ describe('index.css', () => {
 
   it('cada contenedor de página pone su propio margen lateral con la variable', () => {
     const containers = [
-      './TopBar/TopBar.module.css',
-      './PageBar/PageBar.module.css',
-      './HomeShell/HomeShell.module.css',
-      './DocumentPage/DocumentPage.module.css',
-      './EditorPage/EditorPage.module.css',
-      './AdminPage/AdminPage.module.css',
-      './Loading/Loading.module.css',
+      './document/DocumentPage/components/TopBar/TopBar.module.css',
+      './shared/ui/PageBar/PageBar.module.css',
+      './home/HomeShell/HomeShell.module.css',
+      './document/DocumentPage/DocumentPage.module.css',
+      './document/EditorPage/EditorPage.module.css',
+      './admin/AdminPage/AdminPage.module.css',
+      './shared/ui/Loading/Loading.module.css',
     ];
     for (const file of containers) {
       const source = readFileSync(new URL(file, import.meta.url), 'utf8');
