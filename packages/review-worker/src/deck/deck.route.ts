@@ -10,7 +10,7 @@ import {
   requireAdmin,
   requireAdminAccess,
   requireReviewer,
-} from '@/auth/auth.middleware';
+} from '@/access/auth.middleware';
 import {
   archiveDeck,
   base64ToBytes,
@@ -31,9 +31,9 @@ import {
   saveDeckFile,
   saveTheme,
   saveThemeFile,
-} from '@/db/decks.queries';
-import type { AppEnv } from '@/env.types';
-import { errorResponse, readJsonObject } from '@/http.utils';
+} from '@/deck/deck.queries';
+import type { AppEnv } from '@/shared/env.types';
+import { errorResponse, readJsonObject } from '@/shared/http.utils';
 
 const ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 /** Nombre de archivo de una fuente: sin carpetas. */

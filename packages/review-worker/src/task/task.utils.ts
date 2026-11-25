@@ -1,5 +1,5 @@
 import { can, type NewTask, type Reviewer } from '@colaboradocs/review-core';
-import { documentExists, isActiveReviewer } from '@/db/tasks.queries';
+import { documentExists, isActiveReviewer } from '@/task/task.queries';
 
 /** Una tarea lista para insertar, o por qué no se puede. */
 export type ResolvedTask =

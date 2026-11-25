@@ -323,6 +323,250 @@
           }
         }
       }
+    },
+    {
+      "includes": ["packages/review-worker/src/shared/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/access/**",
+                      "@/document/**",
+                      "@/review/**",
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../access/**",
+                      "../document/**",
+                      "../review/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «shared» no importa de access, document, review, task, deck, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/access/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/document/**",
+                      "@/review/**",
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../document/**",
+                      "../review/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «access» no importa de document, review, task, deck, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/document/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/review/**",
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../review/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «document» no importa de review, task, deck, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/review/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «review» no importa de task, deck, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/task/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/review/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../review/**",
+                      "../deck/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «task» no importa de review, deck, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/deck/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/review/**",
+                      "@/task/**",
+                      "@/space/**",
+                      "@/utcp/**",
+                      "../review/**",
+                      "../task/**",
+                      "../space/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «deck» no importa de review, task, space, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/space/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/review/**",
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/utcp/**",
+                      "../review/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../utcp/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «space» no importa de review, task, deck, utcp."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-worker/src/utcp/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@/review/**",
+                      "@/task/**",
+                      "@/deck/**",
+                      "@/space/**",
+                      "../review/**",
+                      "../task/**",
+                      "../deck/**",
+                      "../space/**"
+                    ],
+                    "message": "review-worker: index → utcp, deck, task, review, space → document → access → shared. «utcp» no importa de review, task, deck, space."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "plugins": ["./.biome/no-inline-style.grit"]

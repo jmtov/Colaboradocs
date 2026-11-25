@@ -7,11 +7,8 @@ import {
   MAX_NAME_LENGTH,
   MAX_ROLE_LENGTH,
   type ManagedReviewer,
-  validateDocument,
-  validateSpace,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
-import { requireAdminAccess, requireReviewer } from '@/auth/auth.middleware';
 import {
   findStoredReviewer,
   findStoredReviewerByName,
@@ -27,25 +24,9 @@ import {
   updateAdmin,
   updateMaxDevices,
   updateMunicipality,
-} from '@/db/access.queries';
-import {
-  archiveDocument,
-  saveDocument,
-  saveSpace,
-} from '@/db/documents.queries';
-import {
-  deleteDraft,
-  deleteDraftAtRevision,
-  findDraft,
-  findDraftAuthorId,
-  saveDraft,
-} from '@/db/drafts.queries';
-import type { AppEnv } from '@/env.types';
-import { errorResponse, readJsonObject } from '@/http.utils';
-
-function isRevision(value: unknown, min: number): value is number {
-  return Number.isInteger(value) && (value as number) >= min;
-}
+} from '@/access/access.queries';
+import type { AppEnv } from '@/shared/env.types';
+import { errorResponse, readJsonObject } from '@/shared/http.utils';
 
 function cleanText(value: unknown, max: number): string | null {
   if (typeof value !== 'string') return null;
@@ -53,10 +34,11 @@ function cleanText(value: unknown, max: number): string | null {
   return text && text.length <= max ? text : null;
 }
 
-/** Pantalla de accesos: solo admins. Las reglas de la cadena se validan aquí, no en la UI. */
-export const adminRoute = new Hono<AppEnv>()
-  .use('/admin/*', requireReviewer, requireAdminAccess)
-
+/**
+ * Pantalla de accesos: solo admins (el guard de `/admin/*` está en `index.ts`).
+ * Las reglas de la cadena se validan aquí, no en la UI.
+ */
+export const reviewersRoute = new Hono<AppEnv>()
   .get('/admin/reviewers', async (c) => {
     const people = await listStoredReviewers(c.env.DB);
     const locked = lockedReviewerIds(
@@ -199,123 +181,6 @@ export const adminRoute = new Hono<AppEnv>()
       pin: formatPin(pin),
     };
     return c.json(issued);
-  })
-
-  // --- Documentos y espacio ---
-
-  .put('/admin/documents/:id', async (c) => {
-    const id = c.req.param('id');
-    const body = await readJsonObject(c);
-    if (!body)
-      return errorResponse(c, 'invalid_request', ['El cuerpo no es JSON.']);
-    const result = validateDocument(body);
-    if (!result.ok) return errorResponse(c, 'invalid_request', result.errors);
-    if (result.value.id !== id) {
-      return errorResponse(c, 'invalid_request', [
-        'El id del documento no coincide con el de la ruta.',
-      ]);
-    }
-    const saved = await saveDocument(
-      c.env.DB,
-      result.value,
-      c.get('reviewer').id,
-      new Date().toISOString(),
-    );
-    return c.json(saved, saved.created ? 201 : 200);
-  })
-
-  .delete('/admin/documents/:id', async (c) => {
-    const archived = await archiveDocument(
-      c.env.DB,
-      c.req.param('id'),
-      new Date().toISOString(),
-    );
-    return archived ? c.body(null, 204) : errorResponse(c, 'not_found');
-  })
-
-  // --- Borrador y publicación ---
-
-  .get('/admin/documents/:id/draft', async (c) => {
-    const draft = await findDraft(c.env.DB, c.req.param('id'));
-    return draft ? c.json(draft) : errorResponse(c, 'not_found');
-  })
-
-  .put('/admin/documents/:id/draft', async (c) => {
-    const body = await readJsonObject(c);
-    if (!body)
-      return errorResponse(c, 'invalid_request', ['El cuerpo no es JSON.']);
-    if (!isRevision(body.expectedRevision, 0)) {
-      return errorResponse(c, 'invalid_request', [
-        '«expectedRevision» tiene que ser un entero desde 0.',
-      ]);
-    }
-    const result = validateDocument(body.content);
-    if (!result.ok) return errorResponse(c, 'invalid_request', result.errors);
-    if (result.value.id !== c.req.param('id')) {
-      return errorResponse(c, 'invalid_request', [
-        'El id del documento no coincide con el de la ruta.',
-      ]);
-    }
-    const saved = await saveDraft(
-      c.env.DB,
-      result.value,
-      body.expectedRevision,
-      c.get('reviewer').id,
-      new Date().toISOString(),
-    );
-    return saved ? c.json(saved) : errorResponse(c, 'conflict');
-  })
-
-  .delete('/admin/documents/:id/draft', async (c) => {
-    const discarded = await deleteDraft(c.env.DB, c.req.param('id'));
-    return discarded ? c.body(null, 204) : errorResponse(c, 'not_found');
-  })
-
-  .post('/admin/documents/:id/publish', async (c) => {
-    const id = c.req.param('id');
-    const body = await readJsonObject(c);
-    if (!body)
-      return errorResponse(c, 'invalid_request', ['El cuerpo no es JSON.']);
-    if (!isRevision(body.expectedRevision, 1)) {
-      return errorResponse(c, 'invalid_request', [
-        '«expectedRevision» tiene que ser un entero desde 1.',
-      ]);
-    }
-    const caller = c.get('reviewer');
-    // El agente publica solo lo que él mismo dejó como último guardado y sin forzar:
-    // si un admin tocó el borrador después, o el documento cambió, decide un admin.
-    if (!caller.isAdmin && body.force === true) {
-      return errorResponse(c, 'forbidden');
-    }
-    const draft = await findDraft(c.env.DB, id);
-    if (!draft) return errorResponse(c, 'not_found');
-    if (
-      !caller.isAdmin &&
-      (await findDraftAuthorId(c.env.DB, id)) !== caller.id
-    ) {
-      return errorResponse(c, 'forbidden');
-    }
-    if (draft.revision !== body.expectedRevision) {
-      return errorResponse(c, 'conflict');
-    }
-    if (draft.stale && body.force !== true) {
-      return errorResponse(c, 'draft_stale');
-    }
-    const saved = await saveDocument(
-      c.env.DB,
-      draft.content,
-      c.get('reviewer').id,
-      new Date().toISOString(),
-    );
-    await deleteDraftAtRevision(c.env.DB, id, draft.revision);
-    return c.json(saved, saved.created ? 201 : 200);
-  })
-
-  .put('/admin/space', async (c) => {
-    const result = validateSpace(await readJsonObject(c));
-    if (!result.ok) return errorResponse(c, 'invalid_request', result.errors);
-    await saveSpace(c.env.DB, result.value);
-    return c.json(result.value);
   })
 
   .post('/admin/reviewers/:id/devices/reset', async (c) => {

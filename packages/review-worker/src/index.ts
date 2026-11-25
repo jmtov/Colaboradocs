@@ -1,18 +1,25 @@
 import { Hono } from 'hono';
-import type { AppEnv } from './env.types';
-import { adminRoute } from './routes/admin.route';
-import { decksRoute } from './routes/decks.route';
-import { loginRoute } from './routes/login.route';
-import { reviewRoute } from './routes/review.route';
-import { spaceRoute } from './routes/space.route';
-import { tasksRoute } from './routes/tasks.route';
-import { utcpRoute } from './routes/utcp.route';
+import { requireAdminAccess, requireReviewer } from './access/auth.middleware';
+import { loginRoute } from './access/login.route';
+import { reviewersRoute } from './access/reviewers.route';
+import { decksRoute } from './deck/deck.route';
+import { documentAdminRoute } from './document/admin.route';
+import { reviewRoute } from './review/review.route';
+import type { AppEnv } from './shared/env.types';
+import { spaceRoute } from './space/space.route';
+import { tasksRoute } from './task/task.route';
+import { utcpRoute } from './utcp/utcp.route';
 
 const app = new Hono<AppEnv>().basePath('/api');
 
+// El guard de todo `/admin/*` va aquí, antes de montar cualquier ruta: así una ruta nueva en
+// cualquier carpeta queda protegida sin acordarse de declararlo (niega por omisión).
+app.use('/admin/*', requireReviewer, requireAdminAccess);
+
 app.route('/', loginRoute);
 app.route('/', reviewRoute);
-app.route('/', adminRoute);
+app.route('/', reviewersRoute);
+app.route('/', documentAdminRoute);
 app.route('/', spaceRoute);
 app.route('/', decksRoute);
 app.route('/', tasksRoute);

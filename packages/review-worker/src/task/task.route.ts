@@ -7,7 +7,9 @@ import {
   validateTaskPatch,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
-import { requireReviewer } from '@/auth/auth.middleware';
+import { requireReviewer } from '@/access/auth.middleware';
+import type { AppEnv } from '@/shared/env.types';
+import { errorResponse, readJsonObject } from '@/shared/http.utils';
 import {
   deleteTask,
   documentExists,
@@ -19,10 +21,8 @@ import {
   listAssignablePeople,
   listTasks,
   updateTask,
-} from '@/db/tasks.queries';
-import type { AppEnv } from '@/env.types';
-import { errorResponse, readJsonObject } from '@/http.utils';
-import { newTaskLookups, resolveNewTask } from './tasks.utils';
+} from '@/task/task.queries';
+import { newTaskLookups, resolveNewTask } from './task.utils';
 
 const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 

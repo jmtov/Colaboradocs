@@ -7,12 +7,15 @@ API de revisión en un Cloudflare Worker (Hono) con D1. Genérica: todo cuelga d
 | Ruta | Qué hace |
 |---|---|
 | `src/index.ts` | App Hono con `basePath('/api')`; monta `loginRoute` y `reviewRoute`. |
-| `src/routes/login.route.ts` | `POST /api/login` |
-| `src/routes/admin.route.ts` | `/api/admin/*`, solo admins: accesos, documentos y espacio (abajo). |
-| `src/routes/space.route.ts` | `GET /api/space`, público. |
-| `src/routes/review.route.ts` | Rutas de documento (abajo). Todas exigen sesión. |
-| `src/auth/` | `requireReviewer` (middleware), tokens firmados (`token.utils.ts`), constantes (TTL 30 días, 10 fallos/15 min por IP). |
-| `src/db/*.queries.ts` | Todo el SQL. Las rutas no escriben SQL. |
+| `src/index.ts` | Monta las rutas y pone **el guard de todo `/admin/*`** (sesión + `requireAdminAccess`, que niega por omisión). |
+| `src/access/` | `POST /api/login`, accesos (`/api/admin/reviewers*`), `requireReviewer` y los guards, tokens firmados (`token.utils.ts`) y constantes (TTL 30 días, 10 fallos/15 min por IP). |
+| `src/document/` | `/api/admin/documents/*`: reemplazar, archivar, borrador y publicación (abajo). |
+| `src/review/` | Rutas de documento: lectura, comentarios y OK (abajo). Todas exigen sesión. |
+| `src/task/`, `src/deck/` | Tareas y presentaciones. |
+| `src/space/` | `GET /api/space` (público) y `PUT /api/admin/space`. |
+| `src/utcp/` | El manual UTCP (`GET /api/utcp`). |
+| `src/shared/` | `env.types.ts` y `http.utils.ts`. |
+| `*.queries.ts` (en cada carpeta) | Todo el SQL. Las rutas no escriben SQL. |
 | `migrations/` | Esquema D1. Una migración nueva por cambio; nunca se edita una ya aplicada. |
 | `scripts/pins.ts` | CLI de PIN (`npm run pins -- …`). |
 | `scripts/documents.ts` | CLI de documentos y espacio (`npm run documents -- import|list|space`). Parte el contenido en trozos por el límite de ~100 KB por sentencia de D1. |
@@ -22,7 +25,7 @@ API de revisión en un Cloudflare Worker (Hono) con D1. Genérica: todo cuelga d
 
 ## API
 
-Errores: `{ "error": <ApiErrorCode> }` (ver `review-core`), con el HTTP de `src/http.utils.ts`. Auth: `Authorization: Bearer <token>`.
+Errores: `{ "error": <ApiErrorCode> }` (ver `review-core`), con el HTTP de `src/shared/http.utils.ts`. Auth: `Authorization: Bearer <token>`.
 
 | Método y ruta | Cuerpo → respuesta |
 |---|---|
@@ -92,7 +95,8 @@ El PIN no se puede volver a ver: solo se guarda el HMAC. Para entregar uno hay q
 
 ## Cómo extender
 
-- **Ruta nueva:** agrégala en `review.route.ts` (queda detrás de `requireReviewer` y de la validación de `documentId`), el SQL en `db/*.queries.ts`, el tipo de la respuesta en `review-core`, y una prueba en `test/`.
+- **Ruta nueva:** agrégala en la carpeta de su dominio (`<dominio>.route.ts`), el SQL en `<dominio>.queries.ts`, el tipo de la respuesta en `review-core` y una prueba en `test/`. Las de documento van en `review/review.route.ts` (quedan detrás de `requireReviewer` y de la validación de `documentId`). Las de `/admin/*` quedan protegidas por el guard de `index.ts`; si el agente debe usarla, agrégala a la tabla ruta → permiso de `review-core` (una prueba exige que ninguna quede sin listar).
+- **Capas** (las hace cumplir Biome): `index → utcp, deck, task, review, space → document → access → shared`. Las features de arriba no se importan entre sí.
 - **Cambio de esquema:** `migrations/000N_descripcion.sql`; aplicar con `wrangler d1 migrations apply <base> --remote` **antes** de desplegar. Las pruebas aplican las migraciones solas (`test/apply-migrations.ts`).
 - Secretos: `TOKEN_SECRET` (`.dev.vars` local, `.prod.vars` para el CLI contra producción, `wrangler secret put` en el Worker). Nunca al repo.
 

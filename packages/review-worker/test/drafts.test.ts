@@ -6,7 +6,7 @@ import type {
   DraftInfo,
 } from '@colaboradocs/review-core';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { deleteDraftAtRevision } from '../src/db/drafts.queries';
+import { deleteDraftAtRevision } from '../src/document/drafts.queries';
 import {
   authed,
   createReviewer,

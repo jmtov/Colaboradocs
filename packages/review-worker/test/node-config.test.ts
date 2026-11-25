@@ -28,7 +28,7 @@ describe('accountIdFromConfig', () => {
 describe('rebaseConfigPaths', () => {
   const rebased = rebaseConfigPaths(
     CONFIG,
-    '../../../../colaboradocs/packages/review-worker/',
+    '../../../../colaboradocs/packages/review-worker',
   );
 
   it('reescribe las tres rutas al código', () => {

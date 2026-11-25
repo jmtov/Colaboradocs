@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import { signToken, verifyToken } from '@/auth/token.utils';
+import { signToken, verifyToken } from '@/access/token.utils';
 import {
   api,
   authed,

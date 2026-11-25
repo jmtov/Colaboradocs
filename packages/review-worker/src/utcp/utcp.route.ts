@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { AppEnv } from '@/env.types';
+import type { AppEnv } from '@/shared/env.types';
 import { buildManual } from '@/utcp/utcp.utils';
 
 /**

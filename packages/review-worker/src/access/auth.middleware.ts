@@ -1,8 +1,8 @@
 import { canUseAdminRoute } from '@colaboradocs/review-core';
 import { createMiddleware } from 'hono/factory';
-import { findReviewerForDevice } from '@/db/reviewers.queries';
-import type { AppEnv } from '@/env.types';
-import { errorResponse } from '@/http.utils';
+import { findReviewerForDevice } from '@/access/reviewers.queries';
+import type { AppEnv } from '@/shared/env.types';
+import { errorResponse } from '@/shared/http.utils';
 import { verifyToken } from './token.utils';
 
 /** Además de la sesión, exige que la persona sea admin. */

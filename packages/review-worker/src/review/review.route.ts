@@ -5,12 +5,13 @@ import {
   type ReviewSnapshot,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
-import { requireReviewer } from '@/auth/auth.middleware';
+import { requireReviewer } from '@/access/auth.middleware';
+import { listReviewerLabels } from '@/access/reviewers.queries';
 import {
   findDocument,
   listDocuments,
   listDocumentVersions,
-} from '@/db/documents.queries';
+} from '@/document/document.queries';
 import {
   addApproval,
   clearCommentText,
@@ -20,10 +21,9 @@ import {
   listComments,
   removeApproval,
   setCommentResolved,
-} from '@/db/review.queries';
-import { listReviewerLabels } from '@/db/reviewers.queries';
-import type { AppEnv } from '@/env.types';
-import { errorResponse, readJsonObject } from '@/http.utils';
+} from '@/review/review.queries';
+import type { AppEnv } from '@/shared/env.types';
+import { errorResponse, readJsonObject } from '@/shared/http.utils';
 
 const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const BLOCK_ID_PATTERN = /^[a-z0-9-]{1,100}$/;

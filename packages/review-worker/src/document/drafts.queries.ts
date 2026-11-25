@@ -3,7 +3,7 @@ import type {
   DocumentDraft,
   DraftInfo,
 } from '@colaboradocs/review-core';
-import { readStoredDocument } from './documents.queries';
+import { readStoredDocument } from './document.queries';
 
 type DraftRow = {
   content: string;
