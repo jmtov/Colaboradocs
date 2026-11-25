@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const css = readFileSync(new URL('./index.css', import.meta.url), 'utf8');
@@ -33,6 +33,45 @@ describe('tokens de index.css', () => {
     ]) {
       expect(css, token).toMatch(new RegExp(`${token}:`));
     }
+  });
+
+  /** Variables que no son de :root: las define editor.css para el editor de presentaciones, o las pone el código (TSX). */
+  const PROVIDED = [
+    '--panel-width',
+    '--surface',
+    '--sheet-top-gap',
+    '--skeleton-w',
+    '--skeleton-h',
+    '--tab-w',
+    '--tab-x',
+  ];
+
+  it('todo var(--token) que usa un componente está definido en :root', () => {
+    const defined = new Set(
+      [...css.slice(0, css.indexOf('\n}\n')).matchAll(/^\s*(--[\w-]+):/gm)].map(
+        (m) => m[1],
+      ),
+    );
+    const modules = readdirSync(new URL('./', import.meta.url), {
+      recursive: true,
+    })
+      .map(String)
+      .filter((file) => file.endsWith('.module.css'));
+    const missing = new Set<string>();
+    for (const file of modules) {
+      const source = readFileSync(new URL(file, import.meta.url), 'utf8');
+      for (const m of source.matchAll(/var\((--[\w-]+)\s*[,)]/g)) {
+        const name = m[1] ?? '';
+        // las variables locales de un componente (--t, --tab-*, --sheet-*) las define el propio CSS
+        if (
+          !source.includes(`${name}:`) &&
+          !defined.has(name) &&
+          !PROVIDED.includes(name)
+        )
+          missing.add(name);
+      }
+    }
+    expect([...missing]).toEqual([]);
   });
 
   it('Safari viejo (sin color-mix): cada token que lo usa tiene su valor ya calculado', () => {

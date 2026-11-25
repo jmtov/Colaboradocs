@@ -1,126 +1,291 @@
 /* Solo lo realmente global: tokens, reset y estilos base. */
 :root {
   color-scheme: light;
-  /* Márgenes laterales: el `body` no lleva padding, cada elemento a ancho de página pone los
-     suyos con `padding-inline: var(--gutter)` (así uno a sangre, como una barra o un fondo,
-     puede salirse de ellos). Nunca menos de 1rem, y más si el equipo tiene zona segura (notch). */
+
+  /* Página: márgenes y ancho.
+     Márgenes laterales: el `body` no lleva padding, cada elemento a ancho de página pone los suyos con
+     `padding-inline: var(--gutter)` (así uno a sangre, como una barra o un fondo, puede salirse de ellos).
+     Nunca menos de 1rem, y más si el equipo tiene zona segura (notch).
+  */
   --gutter-left: max(1rem, env(safe-area-inset-left, 0px));
   --gutter-right: max(1rem, env(safe-area-inset-right, 0px));
+  /* Margen lateral de todo elemento a ancho de página: `padding-inline: var(--gutter)`. El `body` no lo
+     lleva, así un fondo o una barra a sangre puede salirse de él.
+  */
   --gutter: var(--gutter-left) var(--gutter-right);
-  /* Ancho del contenido de una página, y el máximo de su contenedor con los márgenes dentro. */
+  /* El ancho del contenido, sin márgenes. No se usa directo: para limitar un contenedor, --page-max. */
   --page-width: 1200px;
+  /* `max-width` de un contenedor de página (barra, título, contenido): ya suma los márgenes laterales. */
   --page-max: calc(
     var(--page-width) +
     var(--gutter-left) +
     var(--gutter-right)
   );
-  /* Espaciado: una escala de 4 px para márgenes, huecos y paddings. Un número suelto (0.625rem, 1.25rem…)
-     rompe el ritmo: si no hay una medida de la escala, se elige la más cercana. */
+
+  /* Espaciado: una escala de 4 px para márgenes, huecos y paddings.
+     Un número suelto (0.625rem, 1.25rem…) rompe el ritmo: si no hay una medida de la escala, se elige la
+     más cercana (stylelint lo exige). Con una duda entre dos, el padding sube y el hueco o el margen baja.
+  */
+  /* 4 px. Huecos mínimos entre cosas pegadas: un ícono y su texto, las líneas de un chip, el `row-gap` de
+     un título y su nota.
+  */
   --space-1: 0.25rem;
+  /* 8 px. El hueco por omisión entre elementos relacionados: botones de una fila, ítems de un menú, el
+     padding de un chip o de un campo compacto.
+  */
   --space-2: 0.5rem;
+  /* 12 px. Padding de filas y campos, hueco entre grupos pequeños, y entre la barra de una lista y su
+     resumen.
+  */
   --space-3: 0.75rem;
+  /* 16 px. Padding de una tarjeta compacta o de una hoja; hueco entre bloques de un formulario; el aire
+     mínimo de un bloque de lectura.
+  */
   --space-4: 1rem;
+  /* 24 px. Padding de una tarjeta de la home; separación entre secciones de una pantalla. */
   --space-5: 1.5rem;
+  /* 32 px. Separación grande: bajo el título de una página, entre bloques mayores. */
   --space-6: 2rem;
+  /* 48 px. Aire de página: encima del título, entre las secciones principales. */
   --space-7: 3rem;
-  /* El hueco de arriba y de abajo de la barra de una lista de la home (buscador y filtros): entre la línea de los tabs
-     y la barra, entre la barra y su resumen, y entre el resumen (o la barra) y la lista. Es el mismo para que respire parejo. */
+  /* El mismo hueco arriba y abajo de la barra de una lista de la home (buscador y filtros): entre la línea
+     de los tabs y la barra, entre la barra y su resumen, y entre el resumen (o la barra) y la lista.
+  */
   --list-gap: var(--space-4);
+
+  /* Color del tema.
+     Estos cambian con el tema claro y oscuro (se redefinen más abajo). Un componente no escribe un color:
+     usa uno de estos o de los de más abajo.
+  */
+  /* El fondo de la página y de toda superficie (tarjetas, hojas, menús). También es el «blanco» sobre el
+     que se calculan los lavados.
+  */
   --bg: #fff;
+  /* La letra principal y los trazos que deben verse (foco, borde de lo activo, rayas de énfasis). Base de
+     los lavados.
+  */
   --fg: #070707;
+  /* Texto secundario: descripciones, metadatos, íconos de apoyo (62 % de --fg sobre --bg). */
   --muted: color-mix(in srgb, var(--fg) 62%, var(--bg));
+  /* Lo más tenue que aún se lee (45 %): placeholders, números de índice, íconos de apoyo. No para texto que
+     haya que leer con atención.
+  */
   --faint: color-mix(in srgb, var(--fg) 45%, var(--bg));
+  /* El lavado más tenue (5 %): hover de una fila o una tarjeta, fondo de una barra de apoyo, una fila con
+     el foco dentro. Ver también --tint-strong, --fill y --fill-strong más abajo.
+  */
   --tint: color-mix(in srgb, var(--fg) 5%, var(--bg));
+  /* El trazo estándar (12 %): borde de tarjetas, separadores, líneas de tabla. Ante la duda de qué color
+     lleva un borde, este.
+  */
   --line: color-mix(in srgb, var(--fg) 12%, var(--bg));
+  /* Lo aprobado: botón OK y las insignias de «aprobado». Su fondo es --ok-bg. */
   --ok: #0a6a85;
+  /* Fondo suave de lo aprobado (insignias y avisos de OK). */
   --ok-bg: #e5f2f7;
+  /* Avisos (revisar, falta algo): el texto de una nota de aviso. Su fondo es --warn-bg. */
   --warn: #92480a;
+  /* Fondo suave de un aviso. */
   --warn-bg: #fdeedd;
+  /* Lo destructivo o con error: botón de eliminar, mensajes de error, bordes de un campo inválido. */
   --danger: #b3261e;
 
+  /* Tipografía.
+     Familia, tamaño y peso salen siempre de estas variables.
+  */
+  /* Texto corrido y títulos. */
   --font-sans:
     "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Lo «técnico»: etiquetas en mayúsculas, fechas, índices, contadores, PIN, metadatos. */
   --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* 12 px. Etiquetas en mayúsculas, metadatos y contadores. */
   --font-size-xs: 0.75rem;
+  /* 14 px. Texto de apoyo, filas de una lista, controles (botones, campos). */
   --font-size-sm: 0.875rem;
+  /* 17 px. Texto corrido: el cuerpo de la página. */
   --font-size-md: 1.0625rem;
+  /* 21 px. Títulos de sección, de tarjeta y de hoja; subtítulos del documento. */
   --font-size-lg: 1.3125rem;
+  /* 28 px. El título de una página interna (documento, administración, editor). */
   --font-size-xl: 1.75rem;
+  /* El título grande de la home y de la portada. Se adapta al ancho de la pantalla (clamp). */
   --font-size-display: clamp(2.25rem, 5.2vw, 3.9rem);
-  /* Tamaño relativo al texto que lo rodea (versos, notas al lado de una palabra). */
+  /* Tamaño relativo al texto que lo rodea (una nota pegada a una palabra, un superíndice): úsalo cuando el
+     tamaño depende de dónde está, no de una escala fija.
+  */
   --font-scale-sm: 0.75em;
+  /* Texto normal dentro de un contexto que por omisión va en negrita (la ayuda o el campo dentro de una
+     etiqueta).
+  */
   --font-weight-regular: 400;
+  /* Botones, etiquetas, enlaces y metadatos que deben destacar un poco. */
   --font-weight-medium: 500;
+  /* Títulos y nombres: el peso de un encabezado o de un nombre propio. */
   --font-weight-semibold: 600;
+  /* Solo los rótulos pequeños en mayúsculas del editor de presentaciones. */
   --font-weight-bold: 700;
-  /* Bordes: el ancho. El color es --line (u otro del tema); el radio, --radius-*. */
+
+  /* Bordes: el ancho.
+     El color de un borde es --line (u otro del tema); el radio, --radius-*.
+  */
+  /* 1 px. El ancho de casi todo borde, separador y trazo. */
   --border-w: 1px;
+  /* 2 px. El aro de foco (`outline`) y el trazo que enmarca un título o una hoja. */
   --border-w-strong: 2px;
+  /* 3 px. Una raya de énfasis a un lado: una cita o un subtítulo del documento. */
   --border-w-heavy: 3px;
 
+  /* Capas (z-index).
+     Siempre una variable, nunca un número suelto, con huecos de 10 para que algo pueda entrar en medio.
+  */
+  /* Un elemento que sube al pasar el cursor para que se vea su borde completo (tarjetas, celdas de una
+     cuadrícula).
+  */
   --z-raised: 5;
+  /* Barras que se quedan pegadas arriba al hacer scroll (la barra de página, la de un bloque). */
   --z-sticky: 10;
+  /* Capas fijas sobre la página: hojas inferiores, la barra de navegación del documento, avisos. */
   --z-fixed: 100;
-  --z-chrome: 110; /* la barra del editor: sobre lo fijo, para que ni la hoja del panel la tape */
+  /* La barra del editor de presentaciones: por encima de lo fijo, para que ni la hoja del panel la tape. */
+  --z-chrome: 110;
 
-  /* Colores que no cambian con el tema (un componente no escribe un color: usa uno de estos o del tema). */
-  --paper: #fff; /* el lienzo blanco de la vista previa de una presentación */
-  --on-danger: #fff; /* texto sobre un fondo --danger */
-  --warn-mark: #e0a100; /* la marca ámbar de un aviso */
+  /* Colores que no cambian con el tema.
+  */
+  /* Siempre blanco, sin seguir el tema: el lienzo de la vista previa de una presentación. */
+  --paper: #fff;
+  /* Texto sobre un fondo --danger (por ejemplo, el aviso de error de la vista previa). */
+  --on-danger: #fff;
+  /* La marca ámbar (el punto de aviso del editor); no cambia con el tema. */
+  --warn-mark: #e0a100;
+  /* El negro de las sombras: base de --scrim* y --shadow-*. No se usa solo. */
   --shadow-color: #000;
+  /* El velo oscuro detrás de una hoja modal. */
   --scrim: color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  /* El velo sobre el panel del editor cuando se abre una hoja: más marcado, porque solo cubre una parte de
+     la pantalla.
+  */
   --scrim-strong: color-mix(in srgb, var(--shadow-color) 55%, transparent);
 
-  /* Lavados de la letra sobre el fondo (hover, zonas, rellenos), del más tenue al más fuerte: --tint (5 %),
-     --tint-strong (8 %), --fill (14 %) y --fill-strong (22 %). Siguen al tema porque salen de --fg y --bg. */
+  /* Lavados de la letra sobre el fondo.
+     Del más tenue al más fuerte: --tint (5 %, arriba), --tint-strong (8 %), --fill (14 %) y --fill-strong
+     (22 %). Siguen al tema porque salen de --fg y --bg. Son pocos a propósito: antes había quince mezclas
+     sueltas (4, 6, 7, 8, 13, 14, 18, 22 %…) y se reunieron en estas cuatro. Una zona nueva elige la más
+     cercana en lugar de inventar otro porcentaje.
+  */
+  /* 8 %. Una zona resaltada o seleccionada: el bloque elegido, una mención, el ítem activo de una lista, el
+     destello de una definición, el brillo del skeleton.
+  */
   --tint-strong: color-mix(in srgb, var(--fg) 8%, var(--bg));
+  /* 14 %. Un relleno neutro y visible: el lienzo gris tras una vista previa, el botón activado, un
+     interruptor, el brillo del skeleton.
+  */
   --fill: color-mix(in srgb, var(--fg) 14%, var(--bg));
+  /* 22 %. Un relleno que debe destacar sobre --fill: un interruptor, la celda activa de una cuadrícula, la
+     insignia de «borrador».
+  */
   --fill-strong: color-mix(in srgb, var(--fg) 22%, var(--bg));
+  /* Botón OK al pasar el cursor. */
   --ok-hover: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
+  /* Botón OK encendido (`aria-pressed`). */
   --ok-active: color-mix(in srgb, var(--ok) 22%, var(--ok-bg));
+  /* El halo del punto de aviso del editor. */
   --warn-halo: color-mix(in srgb, var(--warn-mark) 28%, transparent);
 
-  /* Sombras con difuminado (las del efecto levantado de los botones no usan estas). */
+  /* Sombras con difuminado.
+     Las del efecto levantado de los botones no usan estas: salen del borde (ver más abajo, en «Elementos
+     accionables»).
+  */
+  /* La perilla de un interruptor. */
   --shadow-knob: 0 1px 2px
     color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  /* Una barra fija en el borde inferior que flota sobre el contenido (la navegación del documento). */
   --shadow-bar: 0 -4px 16px
     color-mix(in srgb, var(--shadow-color) 8%, transparent);
+  /* Una barra flotante sobre un bloque (las acciones de un bloque del documento). */
   --shadow-float: 0 4px 16px
     color-mix(in srgb, var(--shadow-color) 14%, transparent);
+  /* Menús desplegables (acciones, sesión). */
   --shadow-menu: 0 8px 28px
     color-mix(in srgb, var(--shadow-color) 22%, transparent);
+  /* Hojas inferiores modales. También entra en su animación de salida. */
   --shadow-sheet: 0 -10px 40px
     color-mix(in srgb, var(--shadow-color) 25%, transparent);
+  /* La hoja que cubre solo el panel del editor de presentaciones. */
+  --shadow-pane: 0 -8px 24px color-mix(in srgb, var(--fg) 14%, transparent);
 
-  /* Altura de línea y espaciado entre letras. */
+  /* Altura de línea.
+     Cuanto más grande el texto, menor la altura de línea. Seis medidas en lugar de los diez valores sueltos
+     que había (1.04 a 1.6); cada una dice qué valores absorbió.
+  */
+  /* Títulos enormes de una o dos líneas (home, portada). */
   --leading-display: 1.04;
+  /* Títulos de página y de sección. Absorbe los 1.1 y 1.15 que había sueltos. */
   --leading-tight: 1.1;
+  /* Subtítulos y títulos de tarjeta, que pueden ocupar dos líneas. Absorbe 1.2, 1.25 y 1.3. */
   --leading-snug: 1.25;
+  /* Texto de interfaz de varias líneas: campos, descripciones cortas, ítems de una lista. Absorbe 1.35 y
+     1.4.
+  */
   --leading-normal: 1.4;
+  /* Lectura breve: comentarios, descripciones de tarjeta, pasos de una guía. */
   --leading-relaxed: 1.5;
+  /* Texto largo del documento: párrafos, notas, el área del editor. */
   --leading-loose: 1.6;
+
+  /* Espaciado entre letras.
+     Cuanto más grande el título, más apretado. Seis medidas en lugar de los once valores sueltos que había;
+     cada una dice qué valores absorbió. 0 e `inherit` se escriben tal cual.
+  */
+  /* Subtítulos y nombres. Absorbe -0.01em y -0.015em. */
   --tracking-tight: -0.01em;
+  /* Títulos de tarjeta y de sección. Absorbe -0.02em y -0.025em. */
   --tracking-tighter: -0.02em;
+  /* Títulos grandes de página: cuanto mayor el tamaño, más apretado. Absorbe -0.03em y -0.035em. */
   --tracking-tightest: -0.03em;
+  /* Mayúsculas pequeñas que no son una etiqueta: insignias y tags. Absorbe 0.04em y 0.06em. */
   --tracking-wide: 0.06em;
-  --tracking-label: 0.08em; /* las etiquetas en mayúsculas */
+  /* Las etiquetas en mayúsculas: el «eyebrow» sobre un título, el resumen de una lista, el título de un
+     grupo.
+  */
+  --tracking-label: 0.08em;
+  /* Códigos que se leen carácter por carácter (el PIN). */
   --tracking-widest: 0.12em;
 
-  /* Transiciones: duraciones y curvas. 0s (sin transición, «reducir movimiento») se escribe tal cual. */
+  /* Transiciones: duración.
+     0s (sin transición, «reducir movimiento») se escribe tal cual.
+  */
+  /* Un aviso pequeño que aparece o se va (un tooltip). */
   --duration-fast: 100ms;
+  /* Microinteracciones: hover, el giro de un chevron, el color de un botón. */
   --duration-base: 150ms;
+  /* Un cambio con cuerpo: un interruptor, el contenido de un tab que entra. */
   --duration-medium: 200ms;
+  /* Un desplazamiento de panel o de la raya de los tabs. */
   --duration-slow: 260ms;
+  /* El cambio de página. */
   --duration-page: 300ms;
+  /* La entrada y la salida de una hoja inferior. */
   --duration-sheet: 500ms;
+  /* Una vuelta del brillo de un skeleton. */
   --duration-shimmer: 1400ms;
+
+  /* Transiciones: curvas.
+  */
+  /* La curva por omisión: cambios de color, opacidad y fondo. */
   --ease: ease;
+  /* La respuesta de un botón al toque: arranca rápido y frena. */
   --ease-out: ease-out;
+  /* Movimiento continuo, sin aceleración (el brillo del skeleton). */
   --ease-linear: linear;
+  /* Desplazamientos grandes: hojas, páginas, tabs (la curva de las hojas de iOS). */
   --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
 
-  /* Radios: la app es de esquinas rectas (0); estos son las excepciones (un círculo, una píldora). */
+  /* Radios.
+     La app es de esquinas rectas (0, y así se escribe). Estos son las excepciones.
+  */
+  /* Un punto o una perilla. */
   --radius-circle: 50%;
+  /* La pista de un interruptor. */
   --radius-pill: 1rem;
 }
 
