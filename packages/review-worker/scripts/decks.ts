@@ -23,6 +23,7 @@ import {
 } from '@colaboradocs/deck-core';
 import { BUILTIN_THEMES } from '@colaboradocs/themes';
 import { quote, runSql, runSqlFile, selectRows } from './d1.utils';
+import { assertNodeUsage } from './node.utils';
 
 /** Trozos por sentencia: D1 limita cada una a ~100 KB. */
 const CHUNK_CHARS = 20_000;
@@ -38,6 +39,7 @@ const TYPES: Record<string, string> = {
 
 const args = process.argv.slice(2);
 const remote = args.includes('--remote');
+assertNodeUsage(remote);
 const positional = args.filter((a) => a !== '--remote');
 
 const fail = (message: string): never => {

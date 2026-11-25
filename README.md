@@ -79,6 +79,17 @@ Luego:
 
 Para actualizar la app (no los documentos): `npm run build && npm run deploy -w @colaboradocs/review-worker`. Cambios de esquema: agregar `migrations/000N_*.sql` y `npx wrangler d1 migrations apply <base> --remote` **antes** del deploy.
 
+### Varias instancias con un solo código
+
+Si el mismo código sirve a varios despliegues (cada uno con su cuenta de Cloudflare, su base y su dominio), la configuración de cada uno vive **fuera de este repo**, en una carpeta con su `wrangler.jsonc`, `.prod.vars`, `pins.private*` y `backups/`. Los CLI (`pins`, `documents`, `decks`, `setup`) la usan con `NODE_DIR=<esa carpeta>`, **siempre con `--remote`** (la base local no es de ningún nodo):
+
+```
+NODE_DIR=/ruta/al/nodo npm run pins -w @colaboradocs/review-worker -- list --remote
+NODE_DIR=/ruta/al/nodo npm run documents -w @colaboradocs/review-worker -- list --remote
+```
+
+Con `NODE_DIR` el CLI toma la cuenta de Cloudflare del `wrangler.jsonc` del nodo (sin tener que fijar `CLOUDFLARE_ACCOUNT_ID`). El `wrangler.jsonc` del nodo apunta al código con rutas relativas a su carpeta (`setup` las escribe solo cuando se le pasa `NODE_DIR`); se despliega con `wrangler deploy --config <nodo>/wrangler.jsonc`. Una trampa: `apps/web/public/documentos/` se copia al build y se sirve **sin PIN**, así que cada instancia necesita su propio build. Un build hecho para otra publicaría sus archivos. Sin `NODE_DIR`, todo funciona como antes, desde `packages/review-worker`.
+
 ## Documentos
 
 Un documento es un JSON (ver `documents/example.json` y los tipos en `packages/review-core/src/document.types.ts`). Puedes escribirlo a mano o generarlo desde un archivo:
@@ -153,6 +164,8 @@ npx wrangler dev --ip 0.0.0.0 --port 8800     # (en packages/review-worker) API 
 ```
 
 Con recarga en caliente: `npm run dev` levanta los dos (Ctrl+C los cierra) → http://localhost:5180. También puedes correrlos por separado: `npm run dev:api` y `npm run dev:web` (también por IP de la red, para el celular). Si `wrangler dev` corre en otro puerto: `API_ORIGIN=http://localhost:PUERTO npm run dev:web`.
+
+**Cuidado con el `database_id` de tu `wrangler.jsonc` local:** los datos de la base local están atados a ese id (en `.wrangler/state`). Si lo cambias (p. ej. volviendo a copiar `wrangler.example.jsonc`), la base local parecerá vacía y todo dará «no such table». Los datos no se pierden: restaura el id.
 
 ## PIN y acceso
 

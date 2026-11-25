@@ -17,6 +17,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { validateDocument, validateSpace } from '@colaboradocs/review-core';
 import { quote, runSql, runSqlFile, selectRows } from './d1.utils';
+import { assertNodeUsage } from './node.utils';
 
 /** Trozos de contenido por sentencia: D1 limita cada una a ~100 KB. */
 const CHUNK_CHARS = 20_000;
@@ -24,6 +25,7 @@ const CHUNK_CHARS = 20_000;
 const args = process.argv.slice(2);
 const command = args[0];
 const remote = args.includes('--remote');
+assertNodeUsage(remote);
 const flag = (name: string) => {
   const index = args.indexOf(`--${name}`);
   return index >= 0 ? args[index + 1] : undefined;

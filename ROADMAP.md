@@ -19,6 +19,8 @@ Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo p
 
 El agente puede reemplazar un documento publicado. Se decidió así para poder delegar. Lo que lo acota: solo publica lo que él guardó por última vez, nunca fuerza, la versión anterior queda en las versiones y no puede archivar. Lo que **no** evita: los comentarios y OK de los párrafos cambiados dejan de aplicar. *Disparador para apretarlo* (p. ej. solo documentos nuevos, o pedir aprobación): un reemplazo que pierda revisión del equipo, o contenido de terceros que el agente lea y le haga publicar algo indebido.
 
+- **Instancias fuera del repo** (`NODE_DIR`): los CLI de PIN, documentos, presentaciones y `setup` leen la configuración, los secretos y los respaldos de una carpeta aparte. Falta el build por nodo y el comando de despliegue a todos; el plan está en el README de `telar`.
+
 ## Siguiente
 
 - **Que el manual se genere por completo.** Hoy cada herramienta se escribe a mano y solo se filtra por permiso; el esquema de entradas y la URL siguen a mano y los vigila la prueba de contrato. *Disparador:* más de ~15 herramientas o un segundo manual para otro rol.

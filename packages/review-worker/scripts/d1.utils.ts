@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { nodePath, wranglerConfigArgs, wranglerEnv } from './node.utils';
 
-/** Nombre de la base D1: el de wrangler.jsonc. */
+/** Nombre de la base D1: el del wrangler.jsonc (el del nodo, si hay NODE_DIR). */
 export const DATABASE = (() => {
-  const config = readFileSync('wrangler.jsonc', 'utf8');
+  const config = readFileSync(nodePath('wrangler.jsonc'), 'utf8');
   const found = /"database_name"\s*:\s*"([^"]+)"/.exec(config)?.[1];
   if (!found) throw new Error('No encuentro database_name en wrangler.jsonc.');
   return found;
@@ -26,8 +27,13 @@ export function runSql(sql: string, remote: boolean): unknown {
       '--json',
       '--command',
       sql,
+      ...wranglerConfigArgs(remote),
     ],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] },
+    {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'inherit'],
+      env: wranglerEnv(),
+    },
   );
   return JSON.parse(output);
 }
@@ -43,8 +49,9 @@ export function runSqlFile(path: string, remote: boolean): void {
       DATABASE,
       remote ? '--remote' : '--local',
       `--file=${path}`,
+      ...wranglerConfigArgs(remote),
     ],
-    { stdio: ['ignore', 'inherit', 'inherit'] },
+    { stdio: ['ignore', 'inherit', 'inherit'], env: wranglerEnv() },
   );
 }
 

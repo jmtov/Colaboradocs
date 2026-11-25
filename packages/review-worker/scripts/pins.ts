@@ -11,15 +11,16 @@ import {
   hashPin,
 } from '@colaboradocs/review-core';
 import { quote, runSql, selectRows } from './d1.utils';
+import { assertNodeUsage, nodePath } from './node.utils';
 
-const PRIVATE_FILE = 'pins.private.txt';
-const MAIL_FILE = 'pins.private.csv';
+const PRIVATE_FILE = nodePath('pins.private.txt');
+const MAIL_FILE = nodePath('pins.private.csv');
 
 function readSecret(remote: boolean): string {
   const fromEnv = process.env.TOKEN_SECRET;
   if (fromEnv) return fromEnv;
   // Producción tiene su propio secreto (.prod.vars); local usa .dev.vars.
-  const file = remote ? '.prod.vars' : '.dev.vars';
+  const file = remote ? nodePath('.prod.vars') : '.dev.vars';
   if (existsSync(file)) {
     const line = readFileSync(file, 'utf8')
       .split('\n')
@@ -198,6 +199,7 @@ function savePin(name: string, pin: string) {
 async function main() {
   const [command, ...rest] = process.argv.slice(2);
   const options = parseArgs(rest);
+  assertNodeUsage(options.remote);
 
   switch (command) {
     case 'add': {
