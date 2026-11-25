@@ -59,6 +59,29 @@ const patch = (token: string, id: string, body: object) =>
 const remove = (token: string, id: string) =>
   authed(token, `/admin/reviewers/${id}`, { method: 'DELETE' });
 
+describe('máximo de dispositivos', () => {
+  it('nace en 3 y un admin lo cambia por persona', async () => {
+    const root = await createReviewer('Raíz', {
+      isAdmin: true,
+      municipality: 'Rionegro',
+    });
+    const token = await tokenFor(root);
+    const issued = await addOk(token, {
+      name: 'Luis',
+      municipality: 'Guarne',
+      isAdmin: false,
+    });
+    expect(issued.reviewer.maxDevices).toBe(3);
+    const id = issued.reviewer.id;
+    expect((await patch(token, id, { maxDevices: 5 })).status).toBe(204);
+    const luis = (await list(token)).find((p) => p.id === id);
+    expect(luis?.maxDevices).toBe(5);
+    for (const bad of [0, 11, 2.5, '3', null]) {
+      expect((await patch(token, id, { maxDevices: bad })).status).toBe(400);
+    }
+  });
+});
+
 describe('acceso a la pantalla de accesos', () => {
   it('exige sesión y ser admin', async () => {
     const member = await createReviewer('Miembro');

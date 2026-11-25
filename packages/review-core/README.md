@@ -7,7 +7,7 @@ Tipos y lógica pura compartidos por el Worker y la UI. TypeScript sin dependenc
 | Archivo | Exporta | Para qué |
 |---|---|---|
 | `review.types.ts` | `Reviewer`, `ReviewComment`, `BlockApproval`, `ReviewSnapshot`, `LoginRequest/Response`, `NewComment`, `ApiError`, `ApiErrorCode` | **El contrato del API.** Worker y UI lo importan; si cambias la forma de una respuesta, cámbiala aquí primero. |
-| `review.constants.ts` | `MAX_COMMENT_LENGTH` (2000), `EXCERPT_LENGTH` (80), `PIN_ALPHABET`, `PIN_LENGTH` (8), `DEFAULT_MAX_DEVICES` (2) | Límites compartidos por cliente y servidor. |
+| `review.constants.ts` | `MAX_COMMENT_LENGTH` (2000), `EXCERPT_LENGTH` (80), `PIN_ALPHABET`, `PIN_LENGTH` (8), `DEFAULT_MAX_DEVICES` (3) | Límites compartidos por cliente y servidor. |
 | `blocks.utils.ts` | `assignBlockIds(blocks)`, `excerptOf`, `hashText`, `normalizeBlockText` | Id estable de cada bloque: `<sección>-<hash del texto>` (+ `-2`, `-3` si el texto se repite en la sección). Devuelve `null` para bloques sin texto. |
 | `threads.utils.ts` | `groupThreads(comments)` → `Map<blockId, Thread[]>`, `openThreadCount` | Agrupa comentarios en hilos (raíz + respuestas en una sola capa). |
 | `approvals.utils.ts` | `groupApprovals`, `fullyApprovedBlocks` | OK por bloque. |

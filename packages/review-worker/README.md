@@ -68,7 +68,7 @@ Un borrador por documento, compartido por los admins; los revisores no lo ven. G
 |---|---|
 | `GET /api/admin/reviewers` | Lista (sin eliminadas): `ManagedReviewer[]`, con `locked` calculado para quien consulta. |
 | `POST /api/admin/reviewers` | `{ name, municipality, isAdmin }` → `201 { reviewer, pin }`. Nombre y rol obligatorios. `409 name_taken` si ya existe activa; si fue eliminada, se **reactiva** a la misma persona con PIN nuevo. |
-| `PATCH /api/admin/reviewers/:id` | `{ municipality?, isAdmin? }` → `204`. Cambiar el rol vale para cualquiera; cambiar `isAdmin` de alguien bloqueado → `403`. |
+| `PATCH /api/admin/reviewers/:id` | `{ municipality?, isAdmin?, maxDevices? }` → `204`. `maxDevices`: entero de 1 a 10 (por defecto 3). Cambiar el rol vale para cualquiera; cambiar `isAdmin` de alguien bloqueado → `403`. |
 | `DELETE /api/admin/reviewers/:id` | `204`. Borrado suave (`revoked_at`): sus comentarios se conservan. |
 | `POST /api/admin/reviewers/:id/pin` | Regenera el PIN → `{ reviewer, pin }`. El anterior deja de servir y se sueltan los dispositivos. |
 | `POST /api/admin/reviewers/:id/devices/reset` | `204`. |

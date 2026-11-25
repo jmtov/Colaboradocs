@@ -15,7 +15,7 @@ export const PIN_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
 export const PIN_LENGTH = 8;
 
 /** Dispositivos que puede usar un mismo PIN antes de que haya que resetearlo. */
-export const DEFAULT_MAX_DEVICES = 2;
+export const DEFAULT_MAX_DEVICES = 3;
 
 /** Tamaño máximo de un documento guardado (D1 admite 2 MB por fila). */
 export const MAX_DOCUMENT_BYTES = 1_000_000;

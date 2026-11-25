@@ -25,6 +25,7 @@ import {
   toAccessNodes,
   toManaged,
   updateAdmin,
+  updateMaxDevices,
   updateMunicipality,
 } from '@/db/access.queries';
 import {
@@ -120,7 +121,22 @@ export const adminRoute = new Hono<AppEnv>()
     const body = await readJsonObject(c);
     const hasRole = body !== null && 'municipality' in body;
     const hasAdmin = body !== null && 'isAdmin' in body;
-    if (!hasRole && !hasAdmin) return errorResponse(c, 'invalid_request');
+    const hasMax = body !== null && 'maxDevices' in body;
+    if (!hasRole && !hasAdmin && !hasMax) {
+      return errorResponse(c, 'invalid_request');
+    }
+    const maxDevices = body?.maxDevices;
+    if (
+      hasMax &&
+      !(
+        typeof maxDevices === 'number' &&
+        Number.isInteger(maxDevices) &&
+        maxDevices >= 1 &&
+        maxDevices <= 10
+      )
+    ) {
+      return errorResponse(c, 'invalid_request');
+    }
 
     const municipality = hasRole
       ? cleanText(body?.municipality, MAX_ROLE_LENGTH)
@@ -140,6 +156,9 @@ export const adminRoute = new Hono<AppEnv>()
 
     if (municipality)
       await updateMunicipality(c.env.DB, person.id, municipality);
+    if (hasMax && typeof maxDevices === 'number') {
+      await updateMaxDevices(c.env.DB, person.id, maxDevices);
+    }
     if (
       hasAdmin &&
       typeof body?.isAdmin === 'boolean' &&

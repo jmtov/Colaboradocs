@@ -1,4 +1,8 @@
-import type { AccessNode, ManagedReviewer } from '@colaboradocs/review-core';
+import {
+  type AccessNode,
+  DEFAULT_MAX_DEVICES,
+  type ManagedReviewer,
+} from '@colaboradocs/review-core';
 
 type Row = {
   id: string;
@@ -115,13 +119,14 @@ export async function insertReviewer(
   await db
     .prepare(
       `INSERT INTO reviewers (id, name, pin_hash, is_admin, max_devices, municipality, promoted_by, created_at)
-       VALUES (?, ?, ?, ?, 2, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .bind(
       person.id,
       person.name,
       person.pinHash,
       person.isAdmin ? 1 : 0,
+      DEFAULT_MAX_DEVICES,
       person.municipality,
       person.promotedBy,
       person.now,
@@ -206,6 +211,17 @@ export async function replacePin(
       .bind(pinHash, id),
     db.prepare('DELETE FROM devices WHERE reviewer_id = ?').bind(id),
   ]);
+}
+
+export async function updateMaxDevices(
+  db: D1Database,
+  id: string,
+  maxDevices: number,
+): Promise<void> {
+  await db
+    .prepare('UPDATE reviewers SET max_devices = ? WHERE id = ?')
+    .bind(maxDevices, id)
+    .run();
 }
 
 export async function resetDevices(db: D1Database, id: string): Promise<void> {
