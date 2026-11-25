@@ -1,3 +1,4 @@
+import type { DocumentKind } from '@colaboradocs/review-core';
 import type { DocumentContent } from '@/content/content.types';
 
 const ID_MAX_LENGTH = 64;
@@ -24,10 +25,13 @@ export function blankDocument(
   id: string,
   title: string,
   updated: string,
+  type: DocumentKind = 'other',
 ): DocumentContent {
   return {
     id,
     title,
+    // «other» es lo de siempre: no se escribe.
+    ...(type !== 'other' ? { type } : {}),
     version: '0.1',
     updated,
     sources: [],

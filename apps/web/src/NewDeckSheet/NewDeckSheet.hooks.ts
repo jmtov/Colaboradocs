@@ -4,7 +4,7 @@ import { parseDeck } from '@/DeckEditor/features/deck/storage.utils';
 import {
   idFromTitle,
   isValidId,
-} from '@/DocumentsPage/components/NewDocumentSheet/newDocument.utils';
+} from '@/DocumentsPage/components/NewDocumentForm/newDocument.utils';
 import { deckEditPath, navigate } from '@/router/router';
 import { blankDeck } from './newDeck.utils';
 
@@ -86,6 +86,10 @@ export function useNewDeckSheet({ close }: { close: () => void }) {
     idProblem,
     imported,
     onFile,
+    clearImport: () => {
+      setImported(undefined);
+      setError('');
+    },
     error,
     busy,
     createDisabled,

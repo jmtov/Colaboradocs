@@ -6,4 +6,6 @@ export type FilePickerProps = {
   /** Se está leyendo el archivo. */
   reading: boolean;
   onFile: (file: File) => void;
+  /** Qué se puede subir, bajo «o haz clic para elegirlo». */
+  hint?: string;
 };

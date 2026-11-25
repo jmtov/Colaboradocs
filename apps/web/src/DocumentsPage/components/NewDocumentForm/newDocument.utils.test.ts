@@ -42,3 +42,15 @@ describe('blankDocument', () => {
     if (result.ok) expect(result.value.sections).toHaveLength(1);
   });
 });
+
+describe('blankDocument con tipo', () => {
+  it('escribe el tipo si no es «other», y nada si lo es', () => {
+    expect(blankDocument('a', 'A', '2026-11-25', 'minutes').type).toBe(
+      'minutes',
+    );
+    expect('type' in blankDocument('a', 'A', '2026-11-25', 'other')).toBe(
+      false,
+    );
+    expect('type' in blankDocument('a', 'A', '2026-11-25')).toBe(false);
+  });
+});

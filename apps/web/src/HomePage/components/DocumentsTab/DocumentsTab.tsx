@@ -118,8 +118,8 @@ export default function DocumentsTab(props: Props) {
           </Show>
           <Show when={props.isAdmin}>
             <AddCard
-              label="Subir documento"
-              hint="Word, Markdown o JSON"
+              label="Nuevo documento"
+              hint="Desde cero, Word, Markdown o JSON"
               onClick={tab.openUpload}
             />
           </Show>

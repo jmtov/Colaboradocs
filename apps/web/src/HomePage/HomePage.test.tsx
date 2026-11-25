@@ -366,7 +366,7 @@ describe('HomePage', () => {
     signIn(false);
     const member = mount([item('a'), item('b')]);
     await wait();
-    expect(member.textContent).not.toContain('Subir documento');
+    expect(member.textContent).not.toContain('Nuevo documento');
     expect(
       member.querySelectorAll('button[aria-label^="Acciones de"]'),
     ).toHaveLength(0);
@@ -375,7 +375,7 @@ describe('HomePage', () => {
     signIn(true);
     const admin = mount([item('a'), item('b')]);
     await wait();
-    // un menú por documento, y el bloque «Subir documento» como una celda más
+    // un menú por documento, y el bloque «Nuevo documento» como una celda más
     expect(
       admin.querySelectorAll('button[aria-label^="Acciones de"]'),
     ).toHaveLength(2);
@@ -385,7 +385,7 @@ describe('HomePage', () => {
     // la primera grilla es la de documentos
     const cells = admin.querySelector('ul')?.querySelectorAll(':scope > li');
     expect(cells).toHaveLength(3);
-    expect(cells?.[2]?.textContent).toContain('Subir documento');
+    expect(cells?.[2]?.textContent).toContain('Nuevo documento');
   });
 
   it('el admin ve la sección de presentaciones con «Nueva presentación» aunque no haya ninguna; los demás no', async () => {
@@ -424,7 +424,7 @@ describe('HomePage', () => {
     const host = mount([]);
     await wait();
     expect(host.textContent).not.toContain('Todavía no hay documentos');
-    expect(host.textContent).toContain('Subir documento');
+    expect(host.textContent).toContain('Nuevo documento');
   });
 
   it('sin documentos, los demás ven que no hay nada', async () => {
@@ -432,7 +432,7 @@ describe('HomePage', () => {
     const host = mount([]);
     await wait();
     expect(host.textContent).toContain('Todavía no hay documentos');
-    expect(host.textContent).not.toContain('Subir documento');
+    expect(host.textContent).not.toContain('Nuevo documento');
   });
 
   it('el selector de tema vive en el menú de la sesión, no en la página', async () => {

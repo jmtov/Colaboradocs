@@ -144,4 +144,65 @@ describe('UploadSheet', () => {
     expect(puts[0]?.body).toMatchObject({ id: 'mi-doc', title: 'Mi doc' });
     expect(closed).toHaveBeenCalled();
   });
+
+  describe('crear desde cero, dentro de «Subir documento»', () => {
+    it('ofrece las dos cosas en secciones: crear desde cero (con filas etiqueta … campo) y subir un archivo', async () => {
+      fakeApi();
+      const { host } = mount();
+      await wait();
+      expect(host.textContent).toContain('Crear documento');
+      expect(host.textContent).toContain('Subir documento');
+      const rows = [...host.querySelectorAll('label')].filter((row) =>
+        row.querySelector('input:not([type="file"])'),
+      );
+      expect(rows.map((row) => row.querySelector('span')?.textContent)).toEqual(
+        ['Título', 'Id (va en la URL: /d/…)'],
+      );
+    });
+
+    it('al reemplazar un documento no ofrece crear uno nuevo', async () => {
+      fakeApi();
+      const { host } = mount({ replaceId: 'ya-existe' });
+      await wait();
+      expect(host.textContent).not.toContain('Crear documento');
+    });
+
+    it('crea el borrador y abre el editor', async () => {
+      const drafts: string[] = [];
+      const bodies: { content: { type?: string } }[] = [];
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(async (url: string, init?: RequestInit) => {
+          const json = (body: unknown, status = 200) =>
+            new Response(JSON.stringify(body), { status });
+          if (init?.method === 'PUT' && url.endsWith('/draft')) {
+            drafts.push(url);
+            bodies.push(JSON.parse(String(init.body)));
+            return json({ revision: 1, updatedAt: 'ahora', stale: false });
+          }
+          if (url === '/api/documents') return json([]);
+          return json({ error: 'not_found' }, 404);
+        }),
+      );
+      const { host, closed } = mount();
+      await wait();
+      const title = host.querySelector<HTMLInputElement>(
+        'label input:not([type="file"])',
+      );
+      if (!title) throw new Error('falta el título');
+      title.value = 'Plan de trabajo';
+      title.dispatchEvent(new Event('input', { bubbles: true }));
+      const kind = host.querySelector('select');
+      if (!kind) throw new Error('falta el tipo');
+      kind.value = 'minutes';
+      kind.dispatchEvent(new Event('change', { bubbles: true }));
+      await wait(30);
+      button(host, 'Crear')?.click();
+      await wait();
+      expect(drafts).toEqual(['/api/admin/documents/plan-de-trabajo/draft']);
+      expect(bodies[0]?.content.type).toBe('minutes');
+      expect(window.location.pathname).toBe('/d/plan-de-trabajo/editar');
+      expect(closed).toHaveBeenCalled();
+    });
+  });
 });

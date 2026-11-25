@@ -1,8 +1,11 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
+import { FieldGroup, FieldRow, FieldTitle } from '@/FieldGroup/FieldGroup';
+import fieldStyles from '@/FieldGroup/FieldInput.module.css';
+import FilePicker from '@/FilePicker/FilePicker';
 import CloseIcon from '@/icons/CloseIcon';
 import UploadIcon from '@/icons/UploadIcon';
-import FilePicker from './components/FilePicker/FilePicker';
+import NewDocumentForm from '../NewDocumentForm/NewDocumentForm';
 import FormatDownloads from './components/FormatDownloads/FormatDownloads';
 import { useUploadSheet } from './UploadSheet.hooks';
 import styles from './UploadSheet.module.css';
@@ -25,12 +28,17 @@ export default function UploadSheet(props: UploadSheetProps) {
       title={
         upload.replaceId()
           ? `Reemplazar «${upload.replaceId()}»`
-          : 'Subir documento'
+          : 'Nuevo documento'
       }
       compact
       onClose={props.onClose}
     >
       <div class={styles.content}>
+        {/* Sin archivo y sin reemplazar nada, también se puede crear uno desde cero. */}
+        <Show when={!upload.replaceId() && !upload.parsed()}>
+          <NewDocumentForm onCreated={props.close} />
+          <FieldTitle>Subir documento</FieldTitle>
+        </Show>
         <FilePicker
           accept=".docx,.md,.markdown,.json"
           file={upload.fileInfo()}
@@ -58,51 +66,50 @@ export default function UploadSheet(props: UploadSheetProps) {
         <Show when={upload.parsed()}>
           {(document) => (
             <>
-              <div class={styles.form}>
-                <label class={styles.label}>
-                  Título
+              <FieldGroup
+                title="Datos del documento"
+                hint="La descripción es la línea de la tarjeta en la home."
+              >
+                <FieldRow label="Título">
                   <input
-                    class={styles.field}
+                    class={fieldStyles.input}
                     value={upload.title()}
                     maxLength={200}
                     onInput={(event) =>
                       upload.setTitle(event.currentTarget.value)
                     }
                   />
-                </label>
-                <label class={styles.label}>
-                  Id (va en la URL: /d/…)
+                </FieldRow>
+                <FieldRow label="Id (va en la URL: /d/…)">
                   <input
-                    class={styles.field}
+                    class={fieldStyles.input}
                     value={upload.id()}
                     maxLength={64}
                     disabled={upload.replaceId() !== undefined}
                     onInput={(event) => upload.setId(event.currentTarget.value)}
                   />
-                </label>
-                <label class={styles.label}>
-                  Descripción (la tarjeta de la home)
+                </FieldRow>
+                <FieldRow label="Descripción">
                   <input
-                    class={styles.field}
+                    class={fieldStyles.input}
                     value={upload.description()}
                     maxLength={500}
                     onInput={(event) =>
                       upload.setDescription(event.currentTarget.value)
                     }
                   />
-                </label>
-                <label class={styles.label}>
-                  Versión
+                </FieldRow>
+                <FieldRow label="Versión">
                   <input
-                    class={styles.field}
+                    class={fieldStyles.input}
                     value={upload.version()}
                     maxLength={40}
                     onInput={(event) =>
                       upload.setVersion(event.currentTarget.value)
                     }
                   />
-                </label>
-              </div>
+                </FieldRow>
+              </FieldGroup>
 
               <Show when={upload.exists()}>
                 {(current) => (

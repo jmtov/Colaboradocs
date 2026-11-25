@@ -1,3 +1,4 @@
+import type { DocumentKind } from '@colaboradocs/review-core';
 import { useReview } from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import { editPath, navigate } from '@/router/router';
@@ -6,12 +7,14 @@ import { blankDocument, idFromTitle, isValidId } from './newDocument.utils';
 const today = () => new Date().toISOString().slice(0, 10);
 
 /**
- * Estado de la hoja «Nuevo documento»: pide título e id, guarda un borrador con
+ * Estado del formulario «Crear desde cero»: pide título e id, guarda un borrador con
  * una sección y abre el editor. Nada se publica hasta que se publique desde el editor.
+ * `onCreated` cierra la hoja que lo contiene.
  */
-export function useNewDocumentSheet({ close }: { close: () => void }) {
+export function useNewDocumentForm({ onCreated }: { onCreated: () => void }) {
   const review = useReview();
   const [title, setTitle] = createSignal('');
+  const [type, setType] = createSignal<DocumentKind>('other');
   // Mientras no se toque el id a mano, sigue al título.
   const [typedId, setTypedId] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
@@ -34,7 +37,7 @@ export function useNewDocumentSheet({ close }: { close: () => void }) {
     setBusy(true);
     setError('');
     const result = await review.saveDraft(
-      blankDocument(id(), title().trim(), today()),
+      blankDocument(id(), title().trim(), today(), type()),
       0,
     );
     setBusy(false);
@@ -42,13 +45,15 @@ export function useNewDocumentSheet({ close }: { close: () => void }) {
       setError(result.message);
       return;
     }
-    close();
+    onCreated();
     navigate(editPath(id()));
   }
 
   return {
     title,
     setTitle,
+    type,
+    setType,
     id,
     setId: setTypedId,
     idProblem,
@@ -56,6 +61,5 @@ export function useNewDocumentSheet({ close }: { close: () => void }) {
     busy,
     createDisabled,
     create,
-    close,
   };
 }

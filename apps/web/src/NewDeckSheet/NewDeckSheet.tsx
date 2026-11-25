@@ -1,12 +1,18 @@
 import { BottomSheet, Button } from '@colaboradocs/review-ui';
 import { For, Show } from 'solid-js';
+import { FieldGroup, FieldRow, FieldTitle } from '@/FieldGroup/FieldGroup';
+import fieldStyles from '@/FieldGroup/FieldInput.module.css';
+import FilePicker from '@/FilePicker/FilePicker';
 import CloseIcon from '@/icons/CloseIcon';
 import PlusIcon from '@/icons/PlusIcon';
 import { useNewDeckSheet } from './NewDeckSheet.hooks';
 import styles from './NewDeckSheet.module.css';
 import type { NewDeckSheetProps } from './NewDeckSheet.types';
 
-/** Crear una presentación desde cero o a partir de un JSON: se abre el editor para seguir. */
+/**
+ * Una presentación nueva: crearla desde cero (título, id y tema) o subir un JSON y partir de él.
+ * En los dos casos se abre el editor para seguir; nada se ve hasta que se publique.
+ */
 export default function NewDeckSheet(props: NewDeckSheetProps) {
   const sheet = useNewDeckSheet({ close: () => props.close() });
 
@@ -25,64 +31,60 @@ export default function NewDeckSheet(props: NewDeckSheetProps) {
           void sheet.create();
         }}
       >
-        <label class={styles.label}>
-          Título
-          <input
-            class={styles.field}
-            value={sheet.title()}
-            maxLength={200}
-            onInput={(event) => sheet.setTitle(event.currentTarget.value)}
-          />
-        </label>
-        <label class={styles.label}>
-          Id (va en la URL: /p/…)
-          <input
-            class={styles.field}
-            value={sheet.id()}
-            maxLength={64}
-            aria-invalid={sheet.idProblem() ? 'true' : undefined}
-            onInput={(event) => sheet.setId(event.currentTarget.value)}
-          />
-        </label>
+        <FieldGroup
+          title={
+            sheet.imported() ? 'Datos de la presentación' : 'Crear presentación'
+          }
+          hint={
+            sheet.imported()
+              ? undefined
+              : 'Se abre el editor. Nadie ve los cambios hasta que publiques.'
+          }
+        >
+          <FieldRow label="Título">
+            <input
+              class={fieldStyles.input}
+              value={sheet.title()}
+              maxLength={200}
+              onInput={(event) => sheet.setTitle(event.currentTarget.value)}
+            />
+          </FieldRow>
+          <FieldRow label="Id (va en la URL: /p/…)">
+            <input
+              class={fieldStyles.input}
+              value={sheet.id()}
+              maxLength={64}
+              aria-invalid={sheet.idProblem() ? 'true' : undefined}
+              onInput={(event) => sheet.setId(event.currentTarget.value)}
+            />
+          </FieldRow>
+          <Show when={(sheet.themes()?.length ?? 0) > 0}>
+            <FieldRow label="Tema">
+              <select
+                class={fieldStyles.input}
+                value={sheet.themeId()}
+                onChange={(event) =>
+                  sheet.setThemeId(event.currentTarget.value)
+                }
+              >
+                <For each={sheet.themes()}>
+                  {(theme) => <option value={theme.id}>{theme.name}</option>}
+                </For>
+              </select>
+            </FieldRow>
+          </Show>
+        </FieldGroup>
         <Show when={sheet.idProblem()}>
           <p class={styles.problem} role="alert">
             {sheet.idProblem()}
           </p>
         </Show>
-        <Show
-          when={(sheet.themes()?.length ?? 0) > 0}
-          fallback={
-            <p class={styles.problem} role="alert">
-              No hay temas. Importa uno antes: npm run decks -- themes
-              import-builtin
-            </p>
-          }
-        >
-          <label class={styles.label}>
-            Tema
-            <select
-              class={styles.field}
-              value={sheet.themeId()}
-              onChange={(event) => sheet.setThemeId(event.currentTarget.value)}
-            >
-              <For each={sheet.themes()}>
-                {(theme) => <option value={theme.id}>{theme.name}</option>}
-              </For>
-            </select>
-          </label>
+        <Show when={(sheet.themes()?.length ?? 0) === 0}>
+          <p class={styles.problem} role="alert">
+            No hay temas. Importa uno antes: npm run decks -- themes
+            import-builtin
+          </p>
         </Show>
-        <label class={styles.label}>
-          O parte de un JSON (opcional)
-          <input
-            class={styles.field}
-            type="file"
-            accept="application/json,.json"
-            onChange={(event) => {
-              const file = event.currentTarget.files?.[0];
-              if (file) void sheet.onFile(file);
-            }}
-          />
-        </label>
         <Show when={sheet.imported()}>
           {(file) => (
             <p class={styles.hint}>
@@ -96,13 +98,12 @@ export default function NewDeckSheet(props: NewDeckSheetProps) {
             {sheet.error()}
           </p>
         </Show>
-        <p class={styles.hint}>
-          Se abre el editor. Nadie ve los cambios hasta que publiques.
-        </p>
         <div class={styles.row}>
-          <Button icon={CloseIcon} onClick={sheet.close}>
-            Cancelar
-          </Button>
+          <Show when={sheet.imported()}>
+            <Button icon={CloseIcon} onClick={sheet.clearImport}>
+              Quitar archivo
+            </Button>
+          </Show>
           <Button
             icon={PlusIcon}
             variant="primary"
@@ -112,6 +113,16 @@ export default function NewDeckSheet(props: NewDeckSheetProps) {
             {sheet.busy() ? 'Creando…' : 'Crear'}
           </Button>
         </div>
+        <Show when={!sheet.imported()}>
+          <FieldTitle>Subir presentación</FieldTitle>
+          <FilePicker
+            accept="application/json,.json"
+            file={null}
+            reading={false}
+            hint="JSON de una presentación"
+            onFile={(file) => void sheet.onFile(file)}
+          />
+        </Show>
       </form>
     </BottomSheet>
   );

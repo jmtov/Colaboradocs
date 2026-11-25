@@ -48,7 +48,9 @@ export default function FilePicker(props: FilePickerProps) {
               {picker.dragging() ? 'Suéltalo aquí' : 'Arrastra tu archivo aquí'}
             </span>
             <span class={styles.sub}>o haz clic para elegirlo</span>
-            <span class={styles.hint}>Word (.docx), Markdown (.md) o JSON</span>
+            <span class={styles.hint}>
+              {props.hint ?? 'Word (.docx), Markdown (.md) o JSON'}
+            </span>
           </button>
         }
       >
