@@ -1,12 +1,12 @@
 .composer {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .field {
   width: 100%;
   min-height: 4.5rem;
-  padding: 0.625rem 0.75rem;
+  padding: 0.625rem var(--space-3);
   font: inherit;
   font-size: var(--font-size-md);
   line-height: 1.5;
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .count {

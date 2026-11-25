@@ -84,5 +84,5 @@
 .sheetActions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 1rem;
+  padding-top: var(--space-4);
 }

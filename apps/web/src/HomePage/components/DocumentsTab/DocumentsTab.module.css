@@ -14,12 +14,12 @@
 }
 
 .archived {
-  margin-top: 3rem;
+  margin-top: var(--space-7);
 }
 
 .archivedSummary {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: baseline;
   cursor: pointer;
   font: 500 var(--font-size-xs) var(--font-mono);
@@ -34,7 +34,7 @@
 }
 
 .archivedHint {
-  margin: 0.75rem 0;
+  margin: var(--space-3) 0;
   font-size: var(--font-size-sm);
   color: var(--muted);
 }
@@ -50,7 +50,7 @@
 .archivedItem {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.75rem;
+  gap: var(--space-1) var(--space-3);
   align-items: baseline;
   color: var(--muted);
 }

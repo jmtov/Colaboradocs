@@ -10,9 +10,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
   max-width: var(--page-max);
-  padding-block: 0.5rem;
+  padding-block: var(--space-2);
   padding-inline: var(--gutter);
   margin: 0 auto;
 }
@@ -21,7 +21,7 @@
   display: flex;
   align-items: center;
   flex: 1 1 0;
-  gap: 0.75rem;
+  gap: var(--space-3);
   min-width: 0;
 }
 

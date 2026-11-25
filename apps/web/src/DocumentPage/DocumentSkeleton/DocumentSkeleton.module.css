@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: space-between;
   max-width: var(--page-max);
-  padding-block: 0.5rem;
+  padding-block: var(--space-2);
   padding-inline: var(--gutter);
   margin: 0 auto;
 }
@@ -22,7 +22,7 @@
   display: grid;
   gap: 0.875rem;
   justify-items: start;
-  padding: 3rem 0 2rem;
+  padding: var(--space-7) 0 var(--space-6);
 }
 
 .shell {

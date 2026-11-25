@@ -8,7 +8,7 @@
   /*flex-wrap: wrap;*/
   gap: 0.875rem;
   align-items: baseline;
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-3);
   margin-bottom: 1.375rem;
   border-bottom: 1px dashed var(--line);
 }
@@ -30,7 +30,7 @@
 /* Un título de sección no queda solo al final de una página. */
 @media print {
   .section {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-6);
   }
 
   .header {

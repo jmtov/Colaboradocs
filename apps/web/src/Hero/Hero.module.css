@@ -2,7 +2,7 @@
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 3rem;
+  gap: var(--space-7);
   align-items: end;
   padding: 4rem 0 2.75rem;
 }
@@ -44,13 +44,13 @@
   .hero {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.75rem;
-    padding: 2.75rem 0 2rem;
+    padding: 2.75rem 0 var(--space-6);
   }
 }
 
 @media print {
   .hero {
-    padding: 0 0 1.5rem;
+    padding: 0 0 var(--space-5);
   }
 
   .actions {

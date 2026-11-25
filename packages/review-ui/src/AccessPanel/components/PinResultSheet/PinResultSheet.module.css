@@ -1,10 +1,10 @@
 .content {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .pin {
-  padding: 1rem;
+  padding: var(--space-4);
   font: 600 var(--font-size-xl) var(--font-mono);
   letter-spacing: 0.12em;
   text-align: center;
@@ -21,6 +21,6 @@
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: flex-end;
 }

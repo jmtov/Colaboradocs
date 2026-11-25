@@ -1,5 +1,5 @@
 /* Solo su lugar en el texto: el aspecto es el de `Button`. */
 .pill {
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
   vertical-align: middle;
 }

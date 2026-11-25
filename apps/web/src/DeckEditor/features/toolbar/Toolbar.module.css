@@ -2,11 +2,11 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.5rem 0.8rem;
+  padding: var(--space-2) 0.8rem;
   flex-wrap: wrap;
 }
 .title {
-  margin-right: 0.5rem;
+  margin-right: var(--space-2);
 }
 .spacer {
   flex: 1;

@@ -41,7 +41,7 @@
 
 .bar {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
   padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--line);

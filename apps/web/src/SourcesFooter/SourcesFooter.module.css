@@ -1,7 +1,7 @@
 .footer {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
+  gap: var(--space-6);
   padding: 2.25rem 0 3.5rem;
   font-size: var(--font-size-sm);
   color: var(--muted);
@@ -23,7 +23,7 @@
 
 .sources {
   display: grid;
-  gap: 0.25rem;
+  gap: var(--space-1);
   padding: 0;
   margin: 0;
   list-style: none;
@@ -31,7 +31,7 @@
 
 .source {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .sourceNumber {

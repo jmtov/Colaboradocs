@@ -1,6 +1,6 @@
 .content {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .error {
@@ -10,7 +10,7 @@
 }
 
 .warn {
-  padding: 0.75rem 0.875rem;
+  padding: var(--space-3) 0.875rem;
   font-size: var(--font-size-sm);
   color: var(--warn);
   background: var(--warn-bg);
@@ -23,7 +23,7 @@
 .warn ul {
   max-height: 10rem;
   padding-left: 1.125rem;
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   overflow: auto;
 }
 
@@ -33,6 +33,6 @@
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: flex-end;
 }

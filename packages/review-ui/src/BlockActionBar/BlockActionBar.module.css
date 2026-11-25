@@ -5,10 +5,10 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   width: fit-content;
   max-width: 100%;
-  padding: 0.5rem;
+  padding: var(--space-2);
   background: var(--bg);
   border: 1px solid var(--line);
   box-shadow: 0 4px 16px rgb(0 0 0 / 14%);

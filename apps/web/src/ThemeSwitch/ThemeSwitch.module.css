@@ -46,5 +46,5 @@
   flex: 1;
   justify-content: center;
   min-height: 2.25rem;
-  padding: 0.4375rem 0.5rem;
+  padding: 0.4375rem var(--space-2);
 }

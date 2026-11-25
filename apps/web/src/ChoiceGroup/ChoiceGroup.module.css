@@ -1,6 +1,6 @@
 .group {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .label {
@@ -17,10 +17,10 @@
 
 .option {
   display: inline-flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: baseline;
   min-height: 2.75rem;
-  padding: 0.4375rem 1rem;
+  padding: 0.4375rem var(--space-4);
   font: inherit;
   font-size: var(--font-size-md);
   color: var(--fg);

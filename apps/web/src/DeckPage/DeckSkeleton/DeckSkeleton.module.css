@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-block: 0.5rem;
+  padding-block: var(--space-2);
   padding-inline: var(--gutter);
   border-bottom: 1px solid var(--line);
 }
@@ -17,12 +17,12 @@
 .stage {
   display: grid;
   place-items: center;
-  padding: 1.5rem;
+  padding: var(--space-5);
 }
 
 .slide {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
   align-content: center;
   width: min(100%, 70rem);
   aspect-ratio: 16 / 9;

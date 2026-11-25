@@ -41,7 +41,7 @@
   top: calc(4rem + env(safe-area-inset-top, 0px));
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
 .content {
@@ -75,7 +75,7 @@
 @media (width <= 1000px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: var(--space-5);
   }
 
   .side {
@@ -92,7 +92,7 @@
 .head {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem 1.5rem;
+  gap: var(--space-4) var(--space-5);
   align-items: flex-start;
   justify-content: space-between;
   justify-self: stretch;
@@ -101,7 +101,7 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
 }
 
@@ -113,9 +113,9 @@
 .warn,
 .problem {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-items: start;
-  padding: 0.75rem 0.875rem;
+  padding: var(--space-3) 0.875rem;
   margin: 0;
   font-size: var(--font-size-sm);
 }
@@ -137,5 +137,5 @@
 
 .section {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }

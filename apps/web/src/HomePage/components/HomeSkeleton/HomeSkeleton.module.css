@@ -6,9 +6,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-3);
   max-width: var(--page-max);
-  padding-block: 0.5rem;
+  padding-block: var(--space-2);
   padding-inline: var(--gutter);
   margin: 0 auto;
 }
@@ -23,12 +23,12 @@
 }
 
 .title {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-3);
 }
 
 .tabs {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .grid {
@@ -41,7 +41,7 @@
 
 .card {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-content: start;
   min-height: 11rem;
   padding: 1.25rem;

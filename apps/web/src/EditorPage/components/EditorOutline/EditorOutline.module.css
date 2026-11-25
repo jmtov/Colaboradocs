@@ -17,7 +17,7 @@
   display: flex;
   gap: 0.625rem;
   align-items: baseline;
-  padding: 0.4375rem 0.5rem;
+  padding: 0.4375rem var(--space-2);
   font-size: var(--font-size-sm);
   color: var(--muted);
   text-align: left;
@@ -66,15 +66,15 @@
 }
 
 .sources {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
   border-top: 1px dashed var(--line);
 }
 
 @media (width <= 1000px) {
   .list {
     flex-direction: row;
-    gap: 0.25rem;
-    padding-bottom: 0.25rem;
+    gap: var(--space-1);
+    padding-bottom: var(--space-1);
     overflow-x: auto;
   }
 

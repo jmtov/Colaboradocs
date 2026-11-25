@@ -16,11 +16,11 @@
 .step {
   display: grid;
   grid-template-columns: 2rem 1fr;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .number {
-  padding-top: 0.25rem;
+  padding-top: var(--space-1);
   font: 500 var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
@@ -28,6 +28,6 @@
 .row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: flex-end;
 }

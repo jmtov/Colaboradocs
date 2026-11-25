@@ -1,14 +1,14 @@
 .section {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--space-3);
   margin-top: 4rem;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
   scroll-margin-top: calc(4.5rem + env(safe-area-inset-top, 0px));
 }
 
 /* Igual que el título de una sección del documento, sin número. */
 .title {
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-3);
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: 600;
@@ -25,11 +25,11 @@
 
 .group {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .groupTitle {
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   font: 500 var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -38,7 +38,7 @@
 
 .groupToggle {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
   padding: 0;
   font: inherit;
@@ -72,7 +72,7 @@
 
 .list {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-2);
   padding: 0;
   margin: 0;
   list-style: none;

@@ -1,6 +1,6 @@
 .content {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .check {
@@ -11,7 +11,7 @@
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
 }
 

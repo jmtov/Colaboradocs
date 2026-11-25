@@ -1,6 +1,6 @@
 .content {
   display: grid;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .label {
@@ -12,7 +12,7 @@
 
 .field {
   min-height: 2.75rem;
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-md);
   color: var(--fg);
   background: var(--bg);
@@ -21,6 +21,6 @@
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: flex-end;
 }

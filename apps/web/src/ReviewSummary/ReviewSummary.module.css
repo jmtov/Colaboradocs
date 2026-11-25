@@ -35,7 +35,7 @@
 
 .value {
   display: block;
-  margin: 0.25rem 0 0;
+  margin: var(--space-1) 0 0;
   font: 500 var(--font-size-sm) var(--font-mono);
   overflow-wrap: anywhere;
 }

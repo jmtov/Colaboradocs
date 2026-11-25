@@ -29,7 +29,7 @@
   z-index: var(--z-raised);
   align-self: start;
   justify-self: end;
-  padding: 0.5rem;
+  padding: var(--space-2);
   opacity: 0.35;
 }
 

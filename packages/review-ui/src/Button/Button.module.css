@@ -1,7 +1,7 @@
 .button {
   display: inline-flex;
   flex: none;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
   justify-content: center;
   color: var(--fg);
@@ -47,7 +47,7 @@
 /* Tamaños */
 .md {
   min-height: 2.75rem;
-  padding: 0.5rem 1rem;
+  padding: var(--space-2) var(--space-4);
   font-size: var(--font-size-sm);
   font-weight: 500;
 }
@@ -75,8 +75,8 @@
 }
 
 .xs {
-  gap: 0.25rem;
-  padding: 0.0625rem 0.5rem;
+  gap: var(--space-1);
+  padding: 0.0625rem var(--space-2);
   font: 500 var(--font-size-xs) var(--font-mono);
   line-height: 1.6;
   white-space: nowrap;
