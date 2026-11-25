@@ -88,6 +88,8 @@ NODE_DIR=/ruta/al/nodo npm run pins -w @colaboradocs/review-worker -- list --rem
 NODE_DIR=/ruta/al/nodo npm run documents -w @colaboradocs/review-worker -- list --remote
 ```
 
+**App instalable (PWA).** Cada nodo es una app instalable con su nombre e ícono. La identidad vive en `<NODE_DIR>/pwa.json` (`name`, `initials` de una a tres letras y `colors`: `bg`, `face`, `ink`, `shadow`, en hexadecimal); el build (`apps/web/pwa/`) genera de ahí el manifiesto, los íconos PNG (192, 512, 512 maskable, 180 de iOS y 32 de pestaña), un service worker mínimo (sin caché) y las etiquetas del `<head>`. Sin `pwa.json` (o sin `NODE_DIR`, como en desarrollo) usa la identidad neutra de la app. Un `pwa.json` inválido detiene el build. Los íconos se dibujan con Geist Mono Bold (`apps/web/pwa/fonts/`, licencia OFL).
+
 Con `NODE_DIR` el CLI toma la cuenta de Cloudflare del `wrangler.jsonc` del nodo (sin tener que fijar `CLOUDFLARE_ACCOUNT_ID`). El `wrangler.jsonc` del nodo apunta al código con rutas relativas a su carpeta (`setup` las escribe solo cuando se le pasa `NODE_DIR`); se despliega con `wrangler deploy --config <nodo>/wrangler.jsonc`. Una trampa: `apps/web/public/documentos/` se copia al build y se sirve **sin PIN**, así que cada instancia necesita su propio build (`NODE_DIR=/ruta/al/nodo npm run build -w @colaboradocs/web`, que deja la página en `<nodo>/dist`). Un build hecho para otra publicaría sus archivos. Sin `NODE_DIR`, todo funciona como antes, desde `packages/review-worker`.
 
 ## Documentos

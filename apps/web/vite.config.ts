@@ -2,6 +2,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import solid from 'vite-plugin-solid';
 import { defineConfig } from 'vitest/config';
+import { pwaPlugin } from './pwa/pwa.plugin';
 
 // Con NODE_DIR el build es el de una instancia: toma sus archivos públicos de `<NODE_DIR>/public`
 // (p. ej. los que enlazan sus documentos, que se sirven sin PIN) y deja la página en
@@ -10,7 +11,7 @@ import { defineConfig } from 'vitest/config';
 const nodeDir = process.env.NODE_DIR ? resolve(process.env.NODE_DIR) : null;
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [solid(), pwaPlugin(nodeDir)],
   ...(nodeDir
     ? {
         publicDir: join(nodeDir, 'public'),
