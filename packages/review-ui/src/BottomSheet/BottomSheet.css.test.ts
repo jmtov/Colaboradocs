@@ -8,10 +8,8 @@ const css = readFileSync(
 
 describe('BottomSheet.module.css', () => {
   it('la hoja entra y sale deslizándose desde abajo, unos 500 ms, con la curva de las hojas de iOS', () => {
-    expect(css).toMatch(/--sheet-duration,\s*500ms/);
-    expect(css).toMatch(
-      /--sheet-ease,\s*cubic-bezier\(0\.32,\s*0\.72,\s*0,\s*1\)/,
-    );
+    expect(css).toMatch(/--sheet-duration,\s*var\(--duration-sheet\)/);
+    expect(css).toMatch(/--sheet-ease,\s*var\(--ease-smooth\)/);
     // fuera de pantalla por defecto; en su lugar solo con data-state="open"
     expect(css).toMatch(/\.sheet\s*\{[^}]*translateY\(calc\(100%/);
     expect(css).toMatch(
@@ -40,9 +38,7 @@ describe('BottomSheet.module.css', () => {
       /\.sheet\[data-state="closing"\]\s*\{[^}]*pointer-events:\s*none/,
     );
     // sin ::backdrop (ya no es modal), el fondo oscuro sale con una sombra que se desvanece
-    expect(css).toMatch(
-      /@keyframes scrim-out[\s\S]*100vmax rgb\(0 0 0 \/ 45%\)/,
-    );
+    expect(css).toMatch(/@keyframes scrim-out[\s\S]*100vmax var\(--scrim\)/);
     // el bloqueo del scroll de la página se suelta al empezar a salir
     expect(css).toMatch(
       /:root:has\(dialog\[open\]:not\(\[data-state="closing"\]\)\)/,

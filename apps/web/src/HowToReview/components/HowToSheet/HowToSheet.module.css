@@ -21,7 +21,7 @@
 
 .number {
   padding-top: var(--space-1);
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
 

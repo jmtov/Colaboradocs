@@ -11,14 +11,14 @@
   padding: 0;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   border-bottom: 0;
-  box-shadow: 0 -10px 40px rgb(0 0 0 / 25%);
+  box-shadow: var(--shadow-sheet);
   overscroll-behavior: contain;
   /* Fuera de pantalla: de aquí entra y a aquí vuelve al cerrarse. */
   transform: translateY(calc(100% + var(--sheet-shift, 0px)));
-  transition: transform var(--sheet-duration, 500ms)
-    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1));
+  transition: transform var(--sheet-duration, var(--duration-sheet))
+    var(--sheet-ease, var(--ease-smooth));
 }
 
 /* Estado abierto (lo marca BottomSheet.tsx): la hoja en su lugar. */
@@ -31,29 +31,29 @@
    enorme alrededor de la hoja, que tampoco recibe clics. */
 .sheet[data-state="closing"] {
   pointer-events: none;
-  animation: scrim-out var(--sheet-duration, 500ms)
-    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1)) both;
+  animation: scrim-out var(--sheet-duration, var(--duration-sheet))
+    var(--sheet-ease, var(--ease-smooth)) both;
 }
 
 @keyframes scrim-out {
   from {
     box-shadow:
-      0 -10px 40px rgb(0 0 0 / 25%),
-      0 0 0 100vmax rgb(0 0 0 / 45%);
+      var(--shadow-sheet),
+      0 0 0 100vmax var(--scrim);
   }
 
   to {
     box-shadow:
-      0 -10px 40px rgb(0 0 0 / 25%),
-      0 0 0 100vmax rgb(0 0 0 / 0%);
+      var(--shadow-sheet),
+      0 0 0 100vmax transparent;
   }
 }
 
 .sheet::backdrop {
-  background: rgb(0 0 0 / 45%);
+  background: var(--scrim);
   opacity: 0;
-  transition: opacity var(--sheet-duration, 500ms)
-    var(--sheet-ease, cubic-bezier(0.32, 0.72, 0, 1));
+  transition: opacity var(--sheet-duration, var(--duration-sheet))
+    var(--sheet-ease, var(--ease-smooth));
 }
 
 .sheet[data-state="open"]::backdrop {
@@ -91,7 +91,7 @@
 }
 
 .kicker {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -103,17 +103,17 @@
   gap: 0.375rem;
   padding: var(--space-2) 0.875rem;
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   cursor: pointer;
 }
 
 .title {
   margin: 0;
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.25;
   letter-spacing: -0.02em;
 }

@@ -10,7 +10,7 @@
 
 .label {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Un botón con el aspecto de un campo: abre la hoja de documentos. */
@@ -23,7 +23,7 @@
   text-align: left;
   cursor: pointer;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .pick:hover {
@@ -31,7 +31,7 @@
 }
 
 .pick:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 

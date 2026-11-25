@@ -2,7 +2,7 @@
   display: grid;
   gap: 3px;
   padding: 3px;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   background: var(--surface);
   touch-action: none;
   user-select: none;
@@ -13,7 +13,7 @@
   display: grid;
   place-items: center;
   min-height: 2.2rem;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   background: var(--surface);
   color: var(--muted);
   font-size: var(--font-size-xs);

@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .option {
@@ -29,7 +29,7 @@
 }
 
 .name {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .municipality {

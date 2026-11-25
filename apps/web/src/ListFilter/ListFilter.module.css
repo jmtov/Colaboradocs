@@ -20,7 +20,7 @@
 
 .summary {
   margin: 0;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -54,14 +54,14 @@
   width: 100%;
   min-width: 0;
   min-height: 2.75rem;
-  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- deja sitio a la lupa y al botón de borrar */
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- deja sitio a la lupa y al botón de borrar */
   padding: var(--space-2) 2.5rem;
   font: inherit;
   /* Menos de 16px y iOS hace zoom al enfocar el campo. */
   font-size: var(--font-size-md);
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   appearance: none;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .input:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 

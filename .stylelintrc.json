@@ -2,7 +2,57 @@
   "rules": {
     "declaration-property-value-disallowed-list": [
       {
-        "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": ["/[\\d.]+rem/"]
+        "/(transition|transition-duration|transition-delay|transition-timing-function|animation|animation-duration|animation-delay|animation-timing-function|--[\\w-]*(duration|ease)[\\w-]*)/": [
+          "/(?<![\\d.])(?!0m?s\\b)\\d*\\.?\\d+m?s\\b/",
+          "/(?<![\\w-])(ease|ease-in|ease-out|ease-in-out|linear)(?![\\w-])/",
+          "/cubic-bezier\\(/",
+          "/steps\\(/"
+        ]
+      },
+      {
+        "message": "Valor quemado: la duración y la curva de una transición salen de variables (--duration-*, --ease*); ver apps/web/src/index.css. Un valor fuera de ellas se justifica con un comentario stylelint-disable-next-line."
+      }
+    ],
+    "declaration-property-value-allowed-list": [
+      {
+        "/^(border|border-(top|bottom)-(left|right)|border-(start|end)-(start|end))-radius$/": [
+          "/^(0|inherit|var\\(.+\\))$/"
+        ],
+        "font-family": ["/^(var\\(.+\\)|inherit)$/"],
+        "font-size": ["/^(var\\(.+\\)|calc\\(.*var\\(.+\\).*\\)|inherit)$/"],
+        "font-weight": ["/^(var\\(.+\\)|inherit)$/"],
+        "font": [
+          "/^(?!(\\d{3}|bold|bolder|lighter)\\s)(?!.*[\\s/][\\d.]+(px|rem|em|pt)\\b)(?!.*[\"']).*$/"
+        ],
+        "/^(border(-(top|right|bottom|left|block|inline)(-(start|end))?)?(-width)?|outline(-width)?)$/": [
+          "/^(?!.*(^|[\\s(])-?[\\d.]+(px|rem|em)\\b).*$/"
+        ]
+      },
+      {
+        "message": "Tipografía, bordes y radios salen de variables: --font-*, --font-size-*, --font-weight-*, --border-w*, --radius-* (apps/web/src/index.css); font-family, font-size y font-weight no admiten valores sueltos, ni los bordes un ancho en px. Un caso fuera de eso se justifica con un comentario stylelint-disable-next-line."
+      }
+    ],
+    "color-no-hex": [
+      true,
+      {
+        "message": "Un color no se escribe en un componente: usa una variable (--fg, --bg, --line, --danger…); un color nuevo se define en apps/web/src/index.css."
+      }
+    ],
+    "color-named": [
+      "never",
+      {
+        "message": "Un color no se escribe en un componente: usa una variable (ver apps/web/src/index.css)."
+      }
+    ],
+    "function-disallowed-list": [
+      ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch"],
+      {
+        "message": "Un color no se escribe en un componente: usa una variable (ver apps/web/src/index.css). color-mix() con variables sí vale."
+      }
+    ],
+    "declaration-property-unit-disallowed-list": [
+      {
+        "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": ["rem"]
       },
       {
         "message": "El espaciado sale de la escala: var(--space-1…7) (apps/web/src/index.css). Un valor fuera de ella se justifica con un comentario stylelint-disable-next-line."
@@ -51,11 +101,9 @@
         "packages/review-ui/src/ThreadSheet/**/*.module.css"
       ],
       "rules": {
-        "declaration-property-value-disallowed-list": [
+        "declaration-property-unit-disallowed-list": [
           {
-            "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": [
-              "/[\\d.]+rem/"
-            ]
+            "/^(padding|margin|gap|row-gap|column-gap)(-.+)?$/": ["rem"]
           },
           {
             "severity": "warning",

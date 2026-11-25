@@ -5,14 +5,14 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 3px;
   padding: 3px;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   background: var(--surface);
 }
 .cell {
   all: unset;
   box-sizing: border-box;
   height: 1.8rem;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   background: var(--surface);
   cursor: pointer;
 }

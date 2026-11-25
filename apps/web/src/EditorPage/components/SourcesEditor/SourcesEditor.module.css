@@ -10,10 +10,10 @@
   padding-bottom: var(--space-3);
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.15;
   letter-spacing: -0.025em;
-  border-bottom: 1px dashed var(--line);
+  border-bottom: var(--border-w) dashed var(--line);
 }
 
 .hint {
@@ -35,11 +35,11 @@
   gap: var(--space-4);
   align-items: center;
   padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .number {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
 
@@ -57,7 +57,7 @@
 
 .url {
   overflow-wrap: anywhere;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
 

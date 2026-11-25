@@ -5,7 +5,7 @@
 
 .label {
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .list {
@@ -17,7 +17,7 @@
 }
 
 .number {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .link {

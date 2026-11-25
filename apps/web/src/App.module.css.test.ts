@@ -13,8 +13,8 @@ describe('App.module.css (transición de página)', () => {
     new RegExp(`${selector}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? '';
 
   it('el contenedor anima la opacidad y el transform con las variables de duración y curva', () => {
-    expect(css).toMatch(/--page-duration:\s*\d+m?s/);
-    expect(css).toMatch(/--page-ease:\s*cubic-bezier\(/);
+    expect(css).toMatch(/--page-duration:\s*var\(--duration-page\)/);
+    expect(css).toMatch(/--page-ease:\s*var\(--ease-smooth\)/);
     expect(css).toMatch(/--page-shift:/);
     const base = rule('\\.page');
     expect(base).toMatch(/transition:[^;]*opacity[^;]*var\(--page-duration\)/s);

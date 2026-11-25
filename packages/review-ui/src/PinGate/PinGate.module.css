@@ -11,11 +11,11 @@
   width: min(420px, 100%);
   padding: var(--space-5);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .kicker {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -24,7 +24,7 @@
 .title {
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.1;
   letter-spacing: -0.03em;
 }
@@ -38,17 +38,17 @@
 .input {
   width: 100%;
   padding: var(--space-3) 0.875rem;
-  font: 500 var(--font-size-lg) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-lg) var(--font-mono);
   letter-spacing: 0.12em;
   text-align: center;
   text-transform: uppercase;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .input:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 

@@ -15,7 +15,7 @@
 .row {
   display: flex;
   align-items: stretch;
-  border: 1px solid transparent;
+  border: var(--border-w) solid transparent;
 }
 .row:hover {
   border-color: var(--line);
@@ -72,6 +72,6 @@
   opacity: 1;
 }
 .add {
-  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- ajuste fino de alineación */
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- ajuste fino de alineación */
   padding: 0 0.1rem;
 }

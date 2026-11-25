@@ -16,7 +16,7 @@ describe('HomeTabs.module.css', () => {
 describe('la línea de los tabs', () => {
   it('va de lado a lado: la barra a ancho completo lleva el trazo; los tabs, el ancho y los márgenes de la página', () => {
     expect(css).toMatch(
-      /\.bar \{[^}]*border-bottom:\s*1px solid var\(--line\)/,
+      /\.bar \{[^}]*border-bottom:\s*var\(--border-w\) solid var\(--line\)/,
     );
     expect(css).not.toMatch(/\.bar \{[^}]*max-width/);
     expect(css).toMatch(/\.tabs \{[^}]*max-width:\s*var\(--page-max\)/);

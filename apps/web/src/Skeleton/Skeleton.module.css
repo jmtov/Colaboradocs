@@ -9,7 +9,7 @@
     color-mix(in srgb, var(--fg) 7%, var(--bg)) 70%
   );
   background-size: 300% 100%;
-  animation: shimmer 1.4s linear infinite;
+  animation: shimmer var(--duration-shimmer) var(--ease-linear) infinite;
 }
 
 @keyframes shimmer {

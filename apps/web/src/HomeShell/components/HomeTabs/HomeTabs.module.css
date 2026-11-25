@@ -3,12 +3,12 @@
    los tabs alinean con el contenido de la página. */
 .bar {
   margin-bottom: var(--list-gap);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .tabs {
-  --tab-duration: 260ms;
-  --tab-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --tab-duration: var(--duration-slow);
+  --tab-ease: var(--ease-smooth);
 
   position: relative;
   display: flex;
@@ -27,7 +27,7 @@
   align-items: baseline;
   padding: var(--space-3) var(--space-4);
   font-size: var(--font-size-md);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--muted);
   text-decoration: none;
   white-space: nowrap;
@@ -49,7 +49,7 @@
   left: 0;
   width: var(--tab-w, 0);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   border-bottom: 0;
   transform: translateX(var(--tab-x, 0));
 }
@@ -69,7 +69,7 @@
 }
 
 .tab:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: -4px;
 }
 

@@ -2,11 +2,11 @@
   display: grid;
   gap: 0.125rem;
   padding: var(--space-2) 0.625rem var(--space-3);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .kicker {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -14,7 +14,7 @@
 
 .name {
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .municipality {
@@ -24,7 +24,7 @@
 
 .group {
   padding: var(--space-1) 0 var(--space-2);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .group:last-child {
@@ -36,5 +36,5 @@
   display: grid;
   gap: var(--space-2);
   padding: var(--space-3) 0.625rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }

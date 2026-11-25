@@ -48,7 +48,7 @@ describe('grillas de celdas con bordes colapsados', () => {
 
   for (const { name, css, grid, cell, box } of grids) {
     it(`${name}: cada celda tiene su borde completo y se monta 1px sobre la vecina`, () => {
-      expect(rule(css, box)).toMatch(/border:\s*1px solid/);
+      expect(rule(css, box)).toMatch(/border:\s*var\(--border-w\) solid/);
       expect(rule(css, cell)).toMatch(/margin:\s*0 -1px -1px 0/);
     });
 

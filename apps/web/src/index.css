@@ -47,10 +47,57 @@
   --font-size-lg: 1.3125rem;
   --font-size-xl: 1.75rem;
   --font-size-display: clamp(2.25rem, 5.2vw, 3.9rem);
+  /* Tamaño relativo al texto que lo rodea (versos, notas al lado de una palabra). */
+  --font-scale-sm: 0.75em;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  /* Bordes: el ancho. El color es --line (u otro del tema); el radio, --radius-*. */
+  --border-w: 1px;
+  --border-w-strong: 2px;
+  --border-w-heavy: 3px;
 
   --z-raised: 5;
   --z-sticky: 10;
   --z-fixed: 100;
+
+  /* Colores que no cambian con el tema (un componente no escribe un color: usa uno de estos o del tema). */
+  --paper: #fff; /* el lienzo blanco de la vista previa de una presentación */
+  --on-danger: #fff; /* texto sobre un fondo --danger */
+  --warn-mark: #e0a100; /* la marca ámbar de un aviso */
+  --shadow-color: #000;
+  --scrim: color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  --scrim-strong: color-mix(in srgb, var(--shadow-color) 55%, transparent);
+
+  /* Sombras con difuminado (las del efecto levantado de los botones no usan estas). */
+  --shadow-knob: 0 1px 2px
+    color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  --shadow-bar: 0 -4px 16px
+    color-mix(in srgb, var(--shadow-color) 8%, transparent);
+  --shadow-float: 0 4px 16px
+    color-mix(in srgb, var(--shadow-color) 14%, transparent);
+  --shadow-menu: 0 8px 28px
+    color-mix(in srgb, var(--shadow-color) 22%, transparent);
+  --shadow-sheet: 0 -10px 40px
+    color-mix(in srgb, var(--shadow-color) 25%, transparent);
+
+  /* Transiciones: duraciones y curvas. 0s (sin transición, «reducir movimiento») se escribe tal cual. */
+  --duration-fast: 100ms;
+  --duration-base: 150ms;
+  --duration-medium: 200ms;
+  --duration-slow: 260ms;
+  --duration-page: 300ms;
+  --duration-sheet: 500ms;
+  --duration-shimmer: 1400ms;
+  --ease: ease;
+  --ease-out: ease-out;
+  --ease-linear: linear;
+  --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Radios: la app es de esquinas rectas (0); estos son las excepciones (un círculo, una píldora). */
+  --radius-circle: 50%;
+  --radius-pill: 1rem;
 }
 
 :root[data-theme="dark"] {

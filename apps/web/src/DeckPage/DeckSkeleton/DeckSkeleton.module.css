@@ -11,7 +11,7 @@
   justify-content: space-between;
   padding-block: var(--space-2);
   padding-inline: var(--gutter);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .stage {
@@ -28,5 +28,5 @@
   aspect-ratio: 16 / 9;
   max-height: 100%;
   padding: 8%;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }

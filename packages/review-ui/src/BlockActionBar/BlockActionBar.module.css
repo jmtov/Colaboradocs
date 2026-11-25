@@ -10,8 +10,8 @@
   max-width: 100%;
   padding: var(--space-2);
   background: var(--bg);
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 16px rgb(0 0 0 / 14%);
+  border: var(--border-w) solid var(--line);
+  box-shadow: var(--shadow-float);
 }
 
 /* Cerrar es un botón más (mismo tamaño y borde); solo se va al extremo. */

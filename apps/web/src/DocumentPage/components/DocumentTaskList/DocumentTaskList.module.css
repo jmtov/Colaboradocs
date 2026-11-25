@@ -11,10 +11,10 @@
   padding-bottom: var(--space-3);
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.15;
   letter-spacing: -0.025em;
-  border-bottom: 1px dashed var(--line);
+  border-bottom: var(--border-w) dashed var(--line);
 }
 
 .hint {
@@ -30,7 +30,7 @@
 
 .groupTitle {
   margin: var(--space-2) 0 0;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -51,14 +51,14 @@
 }
 
 .groupToggle:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 
 .chevron {
   width: 1em;
   height: 1em;
-  transition: transform 0.15s;
+  transition: transform var(--duration-base);
 }
 
 .chevronClosed {
@@ -66,7 +66,7 @@
 }
 
 .count {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--fg);
 }
 

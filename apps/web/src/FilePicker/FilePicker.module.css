@@ -13,7 +13,7 @@
   text-align: center;
   cursor: pointer;
   background: var(--bg);
-  border: 1px dashed var(--line);
+  border: var(--border-w) dashed var(--line);
   --icon-color: var(--muted);
 }
 
@@ -26,7 +26,7 @@
 }
 
 .zone:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 
@@ -44,7 +44,7 @@
 
 .title {
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .sub {
@@ -63,7 +63,7 @@
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-3) 0.875rem;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .chipIcon {
@@ -79,11 +79,11 @@
   gap: 0.125rem;
   min-width: 0;
   font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   overflow-wrap: anywhere;
 }
 
 .size {
-  font: 400 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-regular) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }

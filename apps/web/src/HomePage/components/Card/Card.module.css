@@ -22,7 +22,7 @@
   padding: var(--space-5);
   color: var(--fg);
   text-decoration: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .card:hover {
@@ -30,18 +30,18 @@
 }
 
 .card:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: -2px;
 }
 
 .meta {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
 
 .title {
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -77,6 +77,6 @@
 
 .withMenu .title,
 .withMenu .meta {
-  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- reserva sitio para el botón del menú (2.5rem) */
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- reserva sitio para el botón del menú (2.5rem) */
   padding-right: 2.5rem;
 }

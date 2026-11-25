@@ -20,7 +20,7 @@
   margin: 0;
   overflow: auto;
   list-style: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .option {
@@ -37,7 +37,7 @@
   cursor: pointer;
   background: var(--bg);
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .option:hover {
@@ -56,7 +56,7 @@
 .title {
   flex: 1;
   min-width: 0;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .count {

@@ -1,5 +1,5 @@
 .bar {
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .barInner {

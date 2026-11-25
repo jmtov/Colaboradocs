@@ -22,14 +22,14 @@
   gap: var(--space-2);
   align-items: baseline;
   cursor: pointer;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .count {
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--fg);
 }
 
@@ -56,6 +56,6 @@
 }
 
 .meta {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }

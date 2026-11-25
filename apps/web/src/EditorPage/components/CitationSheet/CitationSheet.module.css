@@ -16,7 +16,7 @@
   margin: 0;
   overflow: auto;
   list-style: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .item {
@@ -27,7 +27,7 @@
   padding: 0.625rem 0.875rem;
   font-size: var(--font-size-md);
   cursor: pointer;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .list li:last-child .item {
@@ -45,7 +45,7 @@
 
 .number {
   flex: none;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
 }
 

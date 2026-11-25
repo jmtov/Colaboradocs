@@ -22,7 +22,7 @@
   resize: vertical;
   min-height: 2.4rem;
   field-sizing: content;
-  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- ajuste fino de alineación */
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- ajuste fino de alineación */
   padding-top: 0.1rem;
   line-height: 1.4;
 }
@@ -32,11 +32,11 @@
   width: 2.5rem;
   height: 1.5rem;
   margin: 0;
-  border-radius: 1rem;
+  border-radius: var(--radius-pill);
   background: var(--line);
   background: color-mix(in srgb, var(--fg) 18%, var(--surface));
   cursor: pointer;
-  transition: background 200ms ease;
+  transition: background var(--duration-medium) var(--ease);
 }
 .switch::after {
   content: "";
@@ -45,10 +45,10 @@
   left: 0.125rem;
   width: 1.25rem;
   height: 1.25rem;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition: transform 200ms ease;
+  box-shadow: var(--shadow-knob);
+  transition: transform var(--duration-medium) var(--ease);
 }
 .switch:checked {
   background: var(--fg);
@@ -57,6 +57,6 @@
   transform: translateX(1rem);
 }
 .switch:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }

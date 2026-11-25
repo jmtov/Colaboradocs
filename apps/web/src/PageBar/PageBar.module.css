@@ -3,7 +3,7 @@
   top: env(safe-area-inset-top, 0px);
   z-index: var(--z-sticky);
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .inner {
@@ -27,7 +27,7 @@
 
 .name {
   min-width: 0;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--muted);
   text-overflow: ellipsis;
   white-space: nowrap;

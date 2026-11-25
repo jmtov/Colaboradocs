@@ -8,7 +8,7 @@
   gap: var(--space-3);
   align-items: center;
   padding-block: var(--space-3);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .text {

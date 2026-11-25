@@ -8,14 +8,14 @@
 }
 .toolbar {
   grid-area: toolbar;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
   background: var(--surface);
 }
 .list {
   grid-area: list;
   overflow: auto;
   overscroll-behavior: contain;
-  border-right: 1px solid var(--line);
+  border-right: var(--border-w) solid var(--line);
   background: var(--surface);
 }
 .preview {
@@ -30,7 +30,7 @@
   grid-area: panel;
   overflow: auto;
   overscroll-behavior: contain;
-  border-left: 1px solid var(--line);
+  border-left: var(--border-w) solid var(--line);
   background: var(--surface);
 }
 

@@ -7,7 +7,7 @@
 .eyebrow {
   display: block;
   margin-bottom: 0.625rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -37,7 +37,7 @@
 }
 
 .current {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--fg);
   background: var(--tint);
 }

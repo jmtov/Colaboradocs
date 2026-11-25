@@ -9,12 +9,12 @@
 .mention {
   padding: 0;
   font: inherit;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: var(--fg);
   background: var(--tint);
   background: color-mix(in srgb, var(--fg) 8%, var(--bg));
   border: 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
   cursor: pointer;
 }
 

@@ -11,7 +11,7 @@
   --edge: var(--line);
   --lift-color: var(--edge);
   background: var(--bg);
-  border: 1px solid var(--edge);
+  border: var(--border-w) solid var(--edge);
 }
 
 /* Declarar `transition` aquí reemplaza la de index.css (que solo anima --t, el despegue y la
@@ -19,8 +19,8 @@
 @media (prefers-reduced-motion: no-preference) {
   .button {
     transition:
-      --t 150ms ease-out,
-      background-color 150ms ease-out;
+      --t var(--duration-base) var(--ease-out),
+      background-color var(--duration-base) var(--ease-out);
   }
 }
 
@@ -35,7 +35,7 @@
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 
@@ -49,14 +49,14 @@
   min-height: 2.75rem;
   padding: var(--space-2) var(--space-4);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Con texto o solo con ícono, el mismo alto: dos botones en una línea no se descuadran. */
 .sm {
   min-height: 2.125rem;
   padding: 0.375rem 0.625rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
 }
 
 .sm.iconOnly {
@@ -77,7 +77,7 @@
 .xs {
   gap: var(--space-1);
   padding: 0.0625rem var(--space-2);
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   line-height: 1.6;
   white-space: nowrap;
 }

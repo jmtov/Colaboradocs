@@ -8,7 +8,7 @@
   padding: var(--space-3) 0.875rem;
   font-size: var(--font-size-sm);
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: var(--border-w) solid var(--danger);
 }
 
 .row {

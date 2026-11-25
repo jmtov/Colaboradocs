@@ -8,8 +8,8 @@
  * contexto de apilamiento ni un bloque contenedor para lo fijo o pegajoso.
  */
 .page {
-  --page-duration: 300ms;
-  --page-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --page-duration: var(--duration-page);
+  --page-ease: var(--ease-smooth);
   --page-shift: -2rem;
 
   transition:

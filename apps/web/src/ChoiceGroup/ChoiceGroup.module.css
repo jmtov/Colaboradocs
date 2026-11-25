@@ -5,7 +5,7 @@
 
 .label {
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Bordes colapsados, como el selector de tema: cada opción con su borde, montadas 1px. */
@@ -27,7 +27,7 @@
   text-align: left;
   cursor: pointer;
   background: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   margin: 0 -1px -1px 0;
 }
 

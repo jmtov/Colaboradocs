@@ -1,7 +1,7 @@
 /* El contenido del tab: sale y entra deslizándose hacia donde queda su tab. */
 .content {
-  --tab-duration: 220ms;
-  --tab-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --tab-duration: var(--duration-medium);
+  --tab-ease: var(--ease-smooth);
   --tab-shift: 1.5rem;
 
   transition:

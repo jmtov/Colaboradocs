@@ -17,13 +17,13 @@
 .titles {
   display: flex;
   flex-direction: column;
-  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- ajuste fino de alineación */
+  /* stylelint-disable-next-line declaration-property-unit-disallowed-list -- ajuste fino de alineación */
   gap: 0.15rem;
   min-width: 0;
 }
 .title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: var(--font-size-lg);
   letter-spacing: -0.01em;
 }
 .kind {
@@ -41,7 +41,7 @@
 .issues {
   margin: 0;
   padding: var(--space-2) var(--space-3) var(--space-2) var(--space-5);
-  border: 1px solid var(--danger);
+  border: var(--border-w) solid var(--danger);
   color: var(--danger);
   font-size: var(--font-size-sm);
 }

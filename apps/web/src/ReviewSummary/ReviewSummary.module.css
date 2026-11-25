@@ -14,7 +14,7 @@
   color: inherit;
   text-align: left;
   background: none;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   margin: 0 -1px -1px 0;
 }
 
@@ -27,7 +27,7 @@
 .label {
   display: block;
   margin: 0;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -36,7 +36,7 @@
 .value {
   display: block;
   margin: var(--space-1) 0 0;
-  font: 500 var(--font-size-sm) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-sm) var(--font-mono);
   overflow-wrap: anywhere;
 }
 

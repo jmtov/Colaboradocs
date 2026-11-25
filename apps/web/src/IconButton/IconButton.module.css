@@ -9,7 +9,7 @@
   left: 50%;
   z-index: 2;
   padding: var(--space-1) var(--space-2);
-  font: 500 var(--font-size-xs) var(--font-sans);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-sans);
   pointer-events: none;
   white-space: nowrap;
   color: var(--bg);
@@ -17,7 +17,7 @@
   background: var(--fg);
   opacity: 0;
   transform: translateX(-50%);
-  transition: opacity 0.1s;
+  transition: opacity var(--duration-fast);
 }
 
 @media (hover: none) {

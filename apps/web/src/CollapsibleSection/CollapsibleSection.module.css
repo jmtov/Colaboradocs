@@ -1,7 +1,7 @@
 .heading {
   margin: 0 0 var(--space-4);
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
@@ -22,7 +22,7 @@
 }
 
 .toggle:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 
@@ -30,7 +30,7 @@
   width: 1em;
   height: 1em;
   color: var(--muted);
-  transition: transform 0.15s;
+  transition: transform var(--duration-base);
 }
 
 .closed {
@@ -39,7 +39,7 @@
 
 /* Lo que cuenta la sección plegada: más discreto que el título. */
 .note {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--muted);
 }
 

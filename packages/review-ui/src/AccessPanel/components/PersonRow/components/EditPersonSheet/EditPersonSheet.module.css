@@ -7,7 +7,7 @@
   display: grid;
   gap: 0.375rem;
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .field {
@@ -16,7 +16,7 @@
   font-size: var(--font-size-md);
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .row {

@@ -13,7 +13,7 @@
 }
 
 .eyebrow {
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
@@ -22,7 +22,7 @@
 .title {
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: 1.1;
   letter-spacing: -0.03em;
 }
@@ -69,7 +69,7 @@
   top: calc(4rem + env(safe-area-inset-top, 0px));
   z-index: 1;
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 @media (width <= 1000px) {
@@ -127,7 +127,7 @@
 
 .problem {
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: var(--border-w) solid var(--danger);
 }
 
 .problem ul {

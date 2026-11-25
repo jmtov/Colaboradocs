@@ -5,7 +5,7 @@
   line-height: 1.6;
   overflow-wrap: anywhere;
   color: var(--muted);
-  border-left: 2px solid var(--line);
+  border-left: var(--border-w-strong) solid var(--line);
 }
 
 .list {
@@ -23,12 +23,12 @@
   align-items: baseline;
   justify-content: space-between;
   padding: 0.625rem 0.875rem;
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .who {
   font-size: var(--font-size-md);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   overflow-wrap: anywhere;
 }
 
@@ -41,5 +41,5 @@
   padding: var(--space-4);
   font-size: var(--font-size-sm);
   color: var(--muted);
-  border: 1px dashed var(--line);
+  border: var(--border-w) dashed var(--line);
 }

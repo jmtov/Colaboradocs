@@ -117,7 +117,7 @@ describe('Button', () => {
 
   it('lleva borde también en reposo, y la sombra larga es de su color', () => {
     const base = /\.button\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
-    expect(base).toMatch(/border:\s*1px solid var\(--edge\)/);
+    expect(base).toMatch(/border:\s*var\(--border-w\) solid var\(--edge\)/);
     expect(base).toMatch(/--edge:\s*var\(--line\)/);
     expect(base).toMatch(/--lift-color:\s*var\(--edge\)/);
   });
@@ -127,7 +127,7 @@ describe('Button', () => {
       /@media \(prefers-reduced-motion: no-preference\)\s*\{([\s\S]*?)\n\}/.exec(
         css,
       )?.[1] ?? '';
-    expect(media).toMatch(/transition:[^;]*--t \d+ms/);
+    expect(media).toMatch(/transition:[^;]*--t var\(--duration-base\)/);
     expect(media).toMatch(/transition:[^;]*background-color/);
   });
 });

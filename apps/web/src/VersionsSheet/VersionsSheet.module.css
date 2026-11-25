@@ -10,19 +10,19 @@
   display: grid;
   gap: 0.125rem;
   padding: 0.625rem var(--space-2);
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-w) solid var(--line);
 }
 
 .version {
   display: flex;
   gap: var(--space-2);
   align-items: center;
-  font: 500 var(--font-size-md) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-md) var(--font-mono);
 }
 
 .badge {
   padding: 0.0625rem 0.4375rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   color: var(--ok);
   background: var(--ok-bg);
 }

@@ -5,12 +5,12 @@
 
 .pin {
   padding: var(--space-4);
-  font: 600 var(--font-size-xl) var(--font-mono);
+  font: var(--font-weight-semibold) var(--font-size-xl) var(--font-mono);
   letter-spacing: 0.12em;
   text-align: center;
   user-select: all;
   background: var(--tint);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
 }
 
 .warn {

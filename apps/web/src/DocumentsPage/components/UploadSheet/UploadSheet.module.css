@@ -12,7 +12,7 @@
 
 .problem {
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: var(--border-w) solid var(--danger);
 }
 
 .warn {

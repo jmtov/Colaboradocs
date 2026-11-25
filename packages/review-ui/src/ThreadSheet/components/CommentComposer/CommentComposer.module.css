@@ -12,12 +12,12 @@
   line-height: 1.5;
   color: var(--fg);
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   resize: vertical;
 }
 
 .field:focus-visible {
-  outline: 2px solid var(--fg);
+  outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 2px;
 }
 

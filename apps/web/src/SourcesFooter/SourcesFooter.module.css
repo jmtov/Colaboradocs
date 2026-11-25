@@ -5,19 +5,19 @@
   padding: 2.25rem 0 3.5rem;
   font-size: var(--font-size-sm);
   color: var(--muted);
-  border-top: 1px solid var(--line);
+  border-top: var(--border-w) solid var(--line);
 }
 
 .eyebrow {
   display: block;
   margin-bottom: 0.625rem;
-  font: 500 var(--font-size-xs) var(--font-mono);
+  font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .strong {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--fg);
 }
 
@@ -59,7 +59,7 @@
 
 .flash {
   background: var(--tint);
-  outline: 1px dashed var(--line);
+  outline: var(--border-w) dashed var(--line);
   outline-offset: 8px;
 }
 

@@ -2,6 +2,6 @@
   grid-column: 1 / -1;
   padding: var(--space-6) var(--space-5);
   color: var(--muted);
-  border: 1px solid var(--line);
+  border: var(--border-w) solid var(--line);
   margin: 0 -1px -1px 0;
 }
