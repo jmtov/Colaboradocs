@@ -193,6 +193,30 @@ describe('manual UTCP: un agente que lo sigue', () => {
     expect((await update({ done: true })).status).toBe(403);
   });
 
+  it('crea varias tareas de una vez, o ninguna si una falla', async () => {
+    const create = (tasks: object[]) =>
+      call(find(m, 'create_tasks'), { batch: { tasks } }, token);
+    const ok = await create([
+      { title: 'Una', dueDate: '2026-12-01', assigneeId: ana.id },
+      { title: 'Dos', dueDate: '2026-12-02' },
+    ]);
+    expect(ok.status).toBe(201);
+    const created = (await ok.json()) as Task[];
+    expect(created.map((t) => t.title)).toEqual(['Una', 'Dos']);
+    expect(created.map((t) => t.assigneeId)).toEqual([ana.id, agent.id]);
+
+    const bad = await create([
+      { title: 'Buena', dueDate: '2026-12-01' },
+      { title: 'Mala', dueDate: '2026-12-01', documentId: 'no-existe' },
+    ]);
+    expect(bad.status).toBe(400);
+    const all = await call(find(m, 'list_tasks'), { scope: 'all' }, token);
+    expect(((await all.json()) as Task[]).map((t) => t.title).sort()).toEqual([
+      'Dos',
+      'Una',
+    ]);
+  });
+
   it('lee documentos, guarda un borrador, lo publica y cuelga tareas de él', async () => {
     const admin = await createReviewer('Admin', { isAdmin: true });
     const adminToken = await tokenFor(admin);

@@ -1,4 +1,4 @@
-import { MAX_TASK_TITLE_LENGTH } from './review.constants';
+import { MAX_TASK_BATCH, MAX_TASK_TITLE_LENGTH } from './review.constants';
 import type {
   DueState,
   NewTask,
@@ -98,6 +98,38 @@ export function validateNewTask(input: unknown): TaskValidation<NewTask> {
       blockId: blockId ?? null,
     },
   };
+}
+
+/** Valida un lote: `{ tasks: [...] }`. Todo o nada: un error en una tarea rechaza el lote, y cada error dice cuál. */
+export function validateNewTasks(input: unknown): TaskValidation<NewTask[]> {
+  const list =
+    typeof input === 'object' && input !== null
+      ? (input as Record<string, unknown>).tasks
+      : undefined;
+  if (!Array.isArray(list) || list.length === 0) {
+    return {
+      ok: false,
+      errors: ['«tasks» tiene que ser una lista con tareas.'],
+    };
+  }
+  if (list.length > MAX_TASK_BATCH) {
+    return {
+      ok: false,
+      errors: [`Un lote admite hasta ${MAX_TASK_BATCH} tareas.`],
+    };
+  }
+  const errors: string[] = [];
+  const tasks: NewTask[] = [];
+  list.forEach((item, index) => {
+    const checked = validateNewTask(item);
+    if (checked.ok) tasks.push(checked.value);
+    else {
+      for (const error of checked.errors) {
+        errors.push(`Tarea ${index + 1}: ${error}`);
+      }
+    }
+  });
+  return errors.length > 0 ? { ok: false, errors } : { ok: true, value: tasks };
 }
 
 /** Valida y limpia los cambios a una tarea; al menos uno. */

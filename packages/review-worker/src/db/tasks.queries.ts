@@ -86,6 +86,20 @@ export async function findTask(
   return row ? toTask(row) : null;
 }
 
+/** Las tareas con esos ids, en el mismo orden. */
+export async function findTasks(
+  db: D1Database,
+  ids: string[],
+): Promise<Task[]> {
+  if (ids.length === 0) return [];
+  const { results } = await db
+    .prepare(`${TASK_SELECT} WHERE t.id IN (${ids.map(() => '?').join(',')})`)
+    .bind(...ids)
+    .all<TaskRow>();
+  const byId = new Map(results.map((row) => [row.id, toTask(row)]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
+}
+
 /** ¿Existe esa persona y sigue con acceso? Solo a ellas se les asignan tareas. */
 export async function isActiveReviewer(
   db: D1Database,
@@ -113,14 +127,14 @@ export async function documentExists(
   return row !== null;
 }
 
-export async function insertTask(
+function insertStatement(
   db: D1Database,
   task: NewTask & { assigneeId: string },
   createdBy: string,
   id: string,
   nowIso: string,
-): Promise<void> {
-  await db
+): D1PreparedStatement {
+  return db
     .prepare(
       `INSERT INTO tasks (id, title, document_id, block_id, assignee_id, due_date, created_by, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -134,8 +148,33 @@ export async function insertTask(
       task.dueDate,
       createdBy,
       nowIso,
-    )
-    .run();
+    );
+}
+
+export async function insertTask(
+  db: D1Database,
+  task: NewTask & { assigneeId: string },
+  createdBy: string,
+  id: string,
+  nowIso: string,
+): Promise<void> {
+  await insertStatement(db, task, createdBy, id, nowIso).run();
+}
+
+/** Inserta todas las tareas en una sola transacción: o entran todas o ninguna. Devuelve sus ids, en orden. */
+export async function insertTasks(
+  db: D1Database,
+  tasks: (NewTask & { assigneeId: string })[],
+  createdBy: string,
+  nowIso: string,
+): Promise<string[]> {
+  const ids = tasks.map(() => crypto.randomUUID());
+  await db.batch(
+    tasks.map((task, index) =>
+      insertStatement(db, task, createdBy, ids[index] as string, nowIso),
+    ),
+  );
+  return ids;
 }
 
 /** Aplica los cambios que vienen; `done` pone o quita la fecha de cierre. */

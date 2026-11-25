@@ -55,7 +55,7 @@ Un deck es un JSON (una cuadrícula de hasta 4×4 con bloques) que se dibuja con
 
 ### Tareas
 
-Una tarea es un título, una persona y una fecha (`AAAA-MM-DD`), y puede colgar de un documento y de un bloque. Cualquiera se las asigna a sí misma; asignar a otra persona es de admins. `/tareas` muestra las de quien entró; `GET /api/tasks?scope=all` (admins) trae todas.
+Una tarea es un título, una persona y una fecha (`AAAA-MM-DD`), y puede colgar de un documento y de un bloque. Cualquiera se las asigna a sí misma; asignar a otra persona es de admins. `/tareas` muestra las de quien entró; `GET /api/tasks?scope=all` (admins) trae todas. `POST /api/tasks/batch` (`{ tasks: [...] }`, hasta 50) crea varias con las mismas reglas: si una falla no se crea ninguna.
 
 ## Montar tu propia copia
 
@@ -190,7 +190,7 @@ npm run pins -- add "Claude" --agent --municipality="Agente" --remote
 
 ### Manual UTCP para agentes
 
-`GET /api/utcp` (público, sin secretos) devuelve un manual [UTCP](https://www.utcp.io) con lo que el agente puede hacer: `login`, `list_people`, `list_tasks`, `create_task`, `update_task`, `list_documents`, `read_document`, `get_document_draft`, `save_document_draft`, `publish_document` y, para presentaciones, `list_decks`, `read_deck`, `list_themes`, `get_deck_draft` y `save_deck_draft`. Un cliente UTCP lo descubre apuntando a esa URL; llama `login` con el PIN del agente y guarda el token en la variable `COLABORADOCS_TOKEN`, que usan las demás herramientas. Cada herramienta lleva como etiqueta el permiso que exige, y el manual solo anuncia las que tiene el rol agente. Del agente en presentaciones: lee, y guarda el borrador de un deck que **ya existe** (no lo crea, y no publica: el borrador de un deck no registra quién lo guardó ni controla revisiones, así que guardar **reemplaza** el que hubiera). Una tarea puede crearse sin documento y asociarse después con `update_task` (`documentId`, `blockId`). Una prueba (`test/utcp.test.ts`) ejecuta cada herramienta tal como la describe el manual contra el API real, para que no se desincronicen.
+`GET /api/utcp` (público, sin secretos) devuelve un manual [UTCP](https://www.utcp.io) con lo que el agente puede hacer: `login`, `list_people`, `list_tasks`, `create_task`, `create_tasks` (hasta 50 de una vez, todo o nada), `update_task`, `list_documents`, `read_document`, `get_document_draft`, `save_document_draft`, `publish_document` y, para presentaciones, `list_decks`, `read_deck`, `list_themes`, `get_deck_draft` y `save_deck_draft`. Un cliente UTCP lo descubre apuntando a esa URL; llama `login` con el PIN del agente y guarda el token en la variable `COLABORADOCS_TOKEN`, que usan las demás herramientas. Cada herramienta lleva como etiqueta el permiso que exige, y el manual solo anuncia las que tiene el rol agente. Del agente en presentaciones: lee, y guarda el borrador de un deck que **ya existe** (no lo crea, y no publica: el borrador de un deck no registra quién lo guardó ni controla revisiones, así que guardar **reemplaza** el que hubiera). Una tarea puede crearse sin documento y asociarse después con `update_task` (`documentId`, `blockId`). Una prueba (`test/utcp.test.ts`) ejecuta cada herramienta tal como la describe el manual contra el API real, para que no se desincronicen.
 
 Operaciones (con `--remote` actúan sobre producción):
 

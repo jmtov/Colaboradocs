@@ -1,9 +1,9 @@
 import {
   can,
-  type NewTask,
   type Task,
   type TaskPatch,
   validateNewTask,
+  validateNewTasks,
   validateTaskPatch,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
@@ -12,7 +12,9 @@ import {
   deleteTask,
   documentExists,
   findTask,
+  findTasks,
   insertTask,
+  insertTasks,
   isActiveReviewer,
   listAssignablePeople,
   listTasks,
@@ -20,6 +22,7 @@ import {
 } from '@/db/tasks.queries';
 import type { AppEnv } from '@/env.types';
 import { errorResponse, readJsonObject } from '@/http.utils';
+import { newTaskLookups, resolveNewTask } from './tasks.utils';
 
 const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 
@@ -56,32 +59,47 @@ export const tasksRoute = new Hono<AppEnv>()
     const reviewer = c.get('reviewer');
     const checked = validateNewTask(await readJsonObject(c));
     if (!checked.ok) return errorResponse(c, 'invalid_request', checked.errors);
-    const input: NewTask = checked.value;
-    const assigneeId = input.assigneeId ?? reviewer.id;
-    // Cualquiera se asigna a sí misma; asignar a otra persona es de admins y del agente.
-    if (assigneeId !== reviewer.id && !can(reviewer, 'tasks:assign')) {
-      return errorResponse(c, 'forbidden');
-    }
-    if (!(await isActiveReviewer(c.env.DB, assigneeId))) {
-      return errorResponse(c, 'invalid_request', [
-        'Esa persona no existe o ya no tiene acceso.',
-      ]);
-    }
-    if (
-      input.documentId &&
-      !(await documentExists(c.env.DB, input.documentId))
-    ) {
-      return errorResponse(c, 'invalid_request', ['Ese documento no existe.']);
-    }
+    const resolved = await resolveNewTask(c.env.DB, reviewer, checked.value);
+    if (!resolved.ok) return errorResponse(c, resolved.code, resolved.details);
     const id = crypto.randomUUID();
     await insertTask(
       c.env.DB,
-      { ...input, assigneeId },
+      resolved.task,
       reviewer.id,
       id,
       new Date().toISOString(),
     );
     return c.json(await findTask(c.env.DB, id), 201);
+  })
+
+  // Un lote `{ tasks: [...] }`, con las mismas reglas que una sola. Todo o nada: si una falla
+  // no se crea ninguna, y el error dice cuál. Responde con las tareas creadas, en el mismo orden.
+  .post('/tasks/batch', async (c) => {
+    const reviewer = c.get('reviewer');
+    const checked = validateNewTasks(await readJsonObject(c));
+    if (!checked.ok) return errorResponse(c, 'invalid_request', checked.errors);
+    const lookups = newTaskLookups();
+    const tasks = [];
+    const errors: string[] = [];
+    for (const [index, input] of checked.value.entries()) {
+      const resolved = await resolveNewTask(c.env.DB, reviewer, input, lookups);
+      if (resolved.ok) tasks.push(resolved.task);
+      else if (resolved.code === 'forbidden') {
+        return errorResponse(c, 'forbidden');
+      } else {
+        for (const detail of resolved.details ?? []) {
+          errors.push(`Tarea ${index + 1}: ${detail}`);
+        }
+      }
+    }
+    if (errors.length > 0) return errorResponse(c, 'invalid_request', errors);
+    const ids = await insertTasks(
+      c.env.DB,
+      tasks,
+      reviewer.id,
+      new Date().toISOString(),
+    );
+    return c.json(await findTasks(c.env.DB, ids), 201);
   })
 
   // Marcar hecha: quien la tiene o un admin. Título, fecha y documento: quien la creó o un admin.

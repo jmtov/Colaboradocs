@@ -1,4 +1,5 @@
 import {
+  MAX_TASK_BATCH,
   MAX_TASK_TITLE_LENGTH,
   type Permission,
   ROLE_PERMISSIONS,
@@ -159,6 +160,41 @@ export function buildToolEntries(origin: string): ToolEntry[] {
         http_method: 'POST',
         content_type: 'application/json',
         body_field: 'task',
+      },
+    ),
+    tool(
+      'create_tasks',
+      'tasks:own',
+      `Crea varias tareas de una vez (hasta ${MAX_TASK_BATCH}). Todo o nada: si una no es válida no se crea ninguna y el error dice cuál. Devuelve las tareas creadas, en el mismo orden.`,
+      ['tareas'],
+      {
+        inputs: inputs(
+          {
+            batch: {
+              type: 'object',
+              properties: {
+                tasks: {
+                  type: 'array',
+                  description: `Entre 1 y ${MAX_TASK_BATCH} tareas, con los mismos campos que create_task.`,
+                  items: {
+                    type: 'object',
+                    properties: taskFields,
+                    required: ['title', 'dueDate'],
+                  },
+                },
+              },
+              required: ['tasks'],
+            },
+          },
+          ['batch'],
+        ),
+        outputs: { type: 'array', items: OBJECT },
+      },
+      {
+        url: `${api}/tasks/batch`,
+        http_method: 'POST',
+        content_type: 'application/json',
+        body_field: 'batch',
       },
     ),
     tool(

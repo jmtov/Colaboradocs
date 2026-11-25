@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { MAX_TASK_BATCH } from './review.constants';
 import type { Task } from './tasks.types';
 import {
   compareTasks,
@@ -7,6 +8,7 @@ import {
   isIsoDate,
   todayIso,
   validateNewTask,
+  validateNewTasks,
   validateTaskPatch,
 } from './tasks.utils';
 
@@ -208,5 +210,36 @@ describe('groupTasks', () => {
       1,
     );
     expect(groupTasks([], today)).toEqual([]);
+  });
+});
+
+describe('validateNewTasks', () => {
+  const ok = { title: 'Una', dueDate: '2026-12-01' };
+
+  it('acepta una lista y limpia cada tarea', () => {
+    const checked = validateNewTasks({
+      tasks: [ok, { ...ok, title: ' Dos ' }],
+    });
+    expect(checked.ok && checked.value.map((t) => t.title)).toEqual([
+      'Una',
+      'Dos',
+    ]);
+  });
+
+  it('rechaza lo que no es una lista con tareas o pasa del máximo', () => {
+    for (const input of [null, {}, { tasks: 'x' }, { tasks: [] }]) {
+      expect(validateNewTasks(input).ok).toBe(false);
+    }
+    const many = {
+      tasks: Array.from({ length: MAX_TASK_BATCH + 1 }, () => ok),
+    };
+    expect(validateNewTasks(many).ok).toBe(false);
+  });
+
+  it('dice qué tarea falló', () => {
+    const checked = validateNewTasks({ tasks: [ok, { title: '' }] });
+    expect(
+      !checked.ok && checked.errors.every((e) => e.startsWith('Tarea 2:')),
+    ).toBe(true);
   });
 });

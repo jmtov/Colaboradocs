@@ -66,6 +66,76 @@ async function putDocument(id: string) {
   });
 }
 
+function createBatch(token: string, tasks: unknown) {
+  return authed(token, '/tasks/batch', {
+    method: 'POST',
+    body: JSON.stringify({ tasks }),
+  });
+}
+
+describe('crear un lote de tareas', () => {
+  it('crea todas, en orden, con las mismas reglas que una sola', async () => {
+    const response = await createBatch(adminToken, [
+      { title: 'Una', dueDate: FUTURE },
+      { title: 'Dos', dueDate: FUTURE, assigneeId: ana.id },
+      { title: 'Tres', dueDate: FUTURE, assigneeId: ana.id },
+    ]);
+    expect(response.status).toBe(201);
+    const created = (await response.json()) as Task[];
+    expect(created.map((t) => t.title)).toEqual(['Una', 'Dos', 'Tres']);
+    expect(created.map((t) => t.assigneeId)).toEqual([
+      admin.id,
+      ana.id,
+      ana.id,
+    ]);
+    expect((await list(anaToken)).tasks).toHaveLength(2);
+  });
+
+  it('todo o nada: un error rechaza el lote y dice qué tarea es', async () => {
+    const response = await createBatch(adminToken, [
+      { title: 'Buena', dueDate: FUTURE },
+      { title: '', dueDate: FUTURE },
+      { title: 'Mala', dueDate: FUTURE, assigneeId: 'nadie' },
+    ]);
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as { details: string[] };
+    expect(body.details.join(' ')).toContain('Tarea 2');
+    const none = await createBatch(adminToken, [
+      { title: 'Buena', dueDate: FUTURE },
+      { title: 'Mala', dueDate: FUTURE, assigneeId: 'nadie' },
+    ]);
+    expect(none.status).toBe(400);
+    expect((await list(adminToken, '?scope=all')).tasks).toHaveLength(0);
+  });
+
+  it('asignar a otra persona sigue siendo de admins: sin permiso, no entra ninguna', async () => {
+    const response = await createBatch(anaToken, [
+      { title: 'Mía', dueDate: FUTURE },
+      { title: 'De Luis', dueDate: FUTURE, assigneeId: luis.id },
+    ]);
+    expect(response.status).toBe(403);
+    expect((await list(anaToken)).tasks).toHaveLength(0);
+  });
+
+  it('rechaza lotes vacíos, que no son lista o pasan del máximo', async () => {
+    expect((await createBatch(anaToken, [])).status).toBe(400);
+    expect((await createBatch(anaToken, 'x')).status).toBe(400);
+    const many = Array.from({ length: 51 }, () => ({
+      title: 'T',
+      dueDate: FUTURE,
+    }));
+    expect((await createBatch(anaToken, many)).status).toBe(400);
+  });
+
+  it('exige sesión', async () => {
+    const response = await api('/tasks/batch', {
+      method: 'POST',
+      body: JSON.stringify({ tasks: [] }),
+    });
+    expect(response.status).toBe(401);
+  });
+});
+
 describe('crear tareas', () => {
   it('sin asignado, la tarea es de quien la crea, con su nombre y municipio', async () => {
     const response = await createTask(anaToken, {});
