@@ -7,16 +7,6 @@
   padding: 4rem 0 2.75rem;
 }
 
-.hero::before {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
-  background-size: 25% 100%;
-  opacity: 0.55;
-}
-
 .main {
   position: relative;
 }
@@ -63,7 +53,6 @@
     padding: 0 0 1.5rem;
   }
 
-  .hero::before,
   .actions {
     display: none;
   }

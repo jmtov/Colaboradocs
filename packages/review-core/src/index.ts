@@ -3,6 +3,7 @@ export * from './approvals.utils';
 export * from './blocks.utils';
 export * from './document.types';
 export * from './document.utils';
+export * from './document-groups.utils';
 export * from './mentions.utils';
 export * from './permissions.utils';
 export * from './pin.utils';

@@ -242,7 +242,7 @@ export function buildToolEntries(origin: string): ToolEntry[] {
     tool(
       'list_documents',
       'documents:read',
-      'Documentos de revisión (no archivados), con su actividad.',
+      'Documentos de revisión (no archivados), con su actividad y su `tipo` (acta, iniciativa, guia u otro), `responsable` y `participantes`.',
       ['documentos'],
       { inputs: inputs({}), outputs: { type: 'array', items: OBJECT } },
       { url: `${api}/documents`, http_method: 'GET' },
@@ -290,7 +290,7 @@ export function buildToolEntries(origin: string): ToolEntry[] {
                 content: {
                   type: 'object',
                   description:
-                    'El documento completo (id, title, version, updated, sections…). Formato en README.',
+                    'El documento completo (id, title, version, updated, sections…). Opcionales: `tipo` (acta, iniciativa, guia u otro; la home agrupa por él), `responsable` (iniciativas) y `participantes` (actas, nombres separados por coma). Formato en README.',
                 },
                 expectedRevision: {
                   type: 'integer',

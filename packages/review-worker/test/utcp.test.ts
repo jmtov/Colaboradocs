@@ -271,6 +271,35 @@ describe('manual UTCP: un agente que lo sigue', () => {
     );
     expect(published.status).toBe(201);
 
+    // El tipo y los datos de personas viajan en el contenido y salen en la lista.
+    await call(
+      find(m, 'save_document_draft'),
+      {
+        documentId: 'acta-1',
+        draft: {
+          content: {
+            ...sampleDocument('acta-1'),
+            tipo: 'acta',
+            participantes: 'Ana, Luis',
+          },
+          expectedRevision: 0,
+        },
+      },
+      token,
+    );
+    await call(
+      find(m, 'publish_document'),
+      { documentId: 'acta-1', publish: { expectedRevision: 1 } },
+      token,
+    );
+    const typed = (await (
+      await call(find(m, 'list_documents'), {}, token)
+    ).json()) as { id: string; tipo: string; participantes: string }[];
+    expect(typed.find((d) => d.id === 'acta-1')).toMatchObject({
+      tipo: 'acta',
+      participantes: 'Ana, Luis',
+    });
+
     // Con el documento publicado, las tareas pueden colgar de él desde el inicio...
     const created = await call(
       find(m, 'create_task'),

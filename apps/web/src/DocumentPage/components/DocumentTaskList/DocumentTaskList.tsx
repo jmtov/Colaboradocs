@@ -1,10 +1,10 @@
-import { Button } from "@colaboradocs/review-ui";
-import { For, Show } from "solid-js";
-import ChevronDownIcon from "@/icons/ChevronDownIcon";
-import PlusIcon from "@/icons/PlusIcon";
-import TaskRow from "@/TaskRow/TaskRow";
-import { useDocumentTaskList } from "./DocumentTaskList.hooks";
-import styles from "./DocumentTaskList.module.css";
+import { Button } from '@colaboradocs/review-ui';
+import { For, Show } from 'solid-js';
+import ChevronDownIcon from '@/icons/ChevronDownIcon';
+import PlusIcon from '@/icons/PlusIcon';
+import TaskRow from '@/TaskRow/TaskRow';
+import { useDocumentTaskList } from './DocumentTaskList.hooks';
+import styles from './DocumentTaskList.module.css';
 
 type Props = {
   documentId: string;
@@ -33,7 +33,7 @@ export default function DocumentTaskList(props: Props) {
                   onClick={() => list.toggleGroup(group.id)}
                 >
                   <ChevronDownIcon
-                    class={`${styles.chevron} ${list.isCollapsed(group.id) ? styles.chevronClosed : ""}`}
+                    class={`${styles.chevron} ${list.isCollapsed(group.id) ? styles.chevronClosed : ''}`}
                   />
                   {list.isMe(group.id) ? `${group.name} (tú)` : group.name}
                   <span class={styles.count}>{group.tasks.length}</span>

@@ -6,6 +6,7 @@ import {
 } from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import UploadSheet from '@/DocumentsPage/components/UploadSheet/UploadSheet';
+import { editPath, navigate } from '@/router/router';
 
 /**
  * Estado y acciones del menú de un documento. `id` llega como accessor porque
@@ -26,6 +27,10 @@ export function useDocumentMenu(id: () => string) {
   function onToggle(event: ToggleEvent) {
     setOpen(event.newState === 'open');
     if (event.newState === 'closed') setConfirming(false);
+  }
+
+  function edit() {
+    openAfterMenuCloses(refs.menu, () => navigate(editPath(id())));
   }
 
   function replace() {
@@ -58,6 +63,7 @@ export function useDocumentMenu(id: () => string) {
     busy,
     toggle,
     onToggle,
+    edit,
     replace,
     askArchive,
     cancelArchive,

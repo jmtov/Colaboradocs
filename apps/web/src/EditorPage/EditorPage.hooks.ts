@@ -30,8 +30,9 @@ import {
   renumberedSections,
 } from './affected.utils';
 import CitationSheet from './components/CitationSheet/CitationSheet';
-import DetailsSheet from './components/DetailsSheet/DetailsSheet';
+import type { DocumentDetails } from './components/EditorDetails/EditorDetails.types';
 import LinkSheet from './components/LinkSheet/LinkSheet';
+import PeopleSheet from './components/PeopleSheet/PeopleSheet';
 import PersonSheet from './components/PersonSheet/PersonSheet';
 import PublishSheet from './components/PublishSheet/PublishSheet';
 import SectionSheet from './components/SectionSheet/SectionSheet';
@@ -93,7 +94,13 @@ export function useEditorPage(id: () => string) {
   // La bibliografía (`sources`), también como copia de trabajo.
   const [sources, setSources] = createSignal<DocumentSource[]>([]);
   // El título y la descripción, también como copia de trabajo.
-  const [details, setDetails] = createSignal({ title: '', description: '' });
+  const [details, setDetails] = createSignal<DocumentDetails>({
+    title: '',
+    description: '',
+    tipo: 'otro',
+    responsable: '',
+    participantes: '',
+  });
   const [revision, setRevision] = createSignal(0);
   const [stale, setStale] = createSignal(false);
   const [saving, setSaving] = createSignal(false);
@@ -114,12 +121,22 @@ export function useEditorPage(id: () => string) {
     // Sin enlaces y sin que los hubiera, el campo no existe (no se agrega un `{}` de la nada).
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
     const keepPeople = current.peopleTerms !== undefined || hasKeys(people());
-    const { title, description } = details();
-    const { description: _old, ...rest } = current;
+    const { title, description, tipo, responsable, participantes } = details();
+    const {
+      description: _description,
+      tipo: _tipo,
+      responsable: _responsable,
+      participantes: _participantes,
+      ...rest
+    } = current;
     return {
       ...rest,
       title,
       ...(description ? { description } : {}),
+      // «otro» es lo de siempre: no se escribe si no estaba.
+      ...(tipo !== 'otro' ? { tipo } : {}),
+      ...(responsable ? { responsable } : {}),
+      ...(participantes ? { participantes } : {}),
       sections: saved(),
       sources: sources(),
       ...(keep ? { glossaryTerms: written } : {}),
@@ -133,6 +150,9 @@ export function useEditorPage(id: () => string) {
     return (
       details().title !== last.title ||
       details().description !== (last.description ?? '') ||
+      details().tipo !== (last.tipo ?? 'otro') ||
+      details().responsable !== (last.responsable ?? '') ||
+      details().participantes !== (last.participantes ?? '') ||
       !sameSections(last.sections, saved()) ||
       !sameSources(last.sources, sources()) ||
       !sameLinks(last.glossaryTerms ?? {}, links()) ||
@@ -184,6 +204,9 @@ export function useEditorPage(id: () => string) {
     setDetails({
       title: base()?.title ?? '',
       description: base()?.description ?? '',
+      tipo: base()?.tipo ?? 'otro',
+      responsable: base()?.responsable ?? '',
+      participantes: base()?.participantes ?? '',
     });
     setRevision(draft.value ? draft.value.revision : 0);
     setStale(draft.value ? draft.value.stale : false);
@@ -297,12 +320,6 @@ export function useEditorPage(id: () => string) {
     if (numbers) replaceCitation(instance, pos, numbers);
   }
 
-  /** Abre la hoja del título y la descripción del documento. */
-  async function editDetails() {
-    const result = await overlay.sheet(DetailsSheet, details());
-    if (result) setDetails(result);
-  }
-
   /** Abre la hoja de una fuente (sin posición, una nueva al final) y aplica lo que se decida. */
   async function editSource(index?: number) {
     const current = sources();
@@ -365,6 +382,28 @@ export function useEditorPage(id: () => string) {
     if (!result) return;
     if ('remove' in result) removeLink(instance);
     else applyLink(instance, result.url, result.text);
+  }
+
+  /**
+   * Elegir entre las personas del espacio: quién responde por una iniciativa (una) o quiénes
+   * estuvieron en un acta (varias; parten elegidas las que el texto menciona).
+   */
+  async function pickPeople(field: 'responsable' | 'participantes') {
+    const single = field === 'responsable';
+    const result = await overlay.sheet(PeopleSheet, {
+      kicker: single ? 'Iniciativa' : 'Acta',
+      title: single ? 'Responsable' : 'Participantes',
+      hint: single
+        ? 'Elige a quien responde por esta iniciativa.'
+        : 'Marca a quienes estuvieron en la reunión; las personas de las que habla el documento parten elegidas.',
+      single,
+      people: Object.values(review.snapshot()?.reviewers ?? {}),
+      current: details()[field],
+      mentioned: single ? [] : [...new Set(Object.values(people()))],
+    });
+    if (result !== undefined) {
+      setDetails((current) => ({ ...current, [field]: result }));
+    }
   }
 
   /** Elegir a una persona del espacio y escribir su nombre en el cursor; al tocarlo se ve su tarjeta. */
@@ -610,7 +649,8 @@ export function useEditorPage(id: () => string) {
     sources,
     editSource,
     details,
-    editDetails,
+    setDetails,
+    pickPeople,
     editCitation,
     goToSources,
     goToGlossary,

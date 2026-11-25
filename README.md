@@ -12,7 +12,7 @@ Un espacio de trabajo para que un equipo **revise documentos y presentaciones** 
 | **Tareas** | Algo que una persona hace para una fecha; puede colgar de un documento o bloque. «Mis tareas» y sección Tareas en el editor. | `/tareas` |
 | **Accesos** | Una persona = un PIN (máx. 2 dispositivos). Los admins crean, reemisan, revocan y resetean desde la app. Hay tres niveles: persona, **agente** y admin. | `/accesos` (admin) |
 | **Espacio** | Nombre y descripción de la home y cómo se llama el rol de cada persona. | home |
-| **Home** | Una tarjeta por documento o presentación, con su actividad. | `/` |
+| **Home** | Una tarjeta por documento o presentación, con su actividad. Los documentos se agrupan por tipo (iniciativas, actas, guías, otros) y los admins ven al final los archivados. | `/` |
 
 ![Arquitectura: navegador, Worker con assets, auth y API Hono, D1 y CLI](diagramas/arquitectura.svg)
 
@@ -106,6 +106,7 @@ Campos del JSON:
 
 - `id` (obligatorio): va en la URL (`/d/<id>`) y es la clave de sus comentarios. **Cambiarlo empieza de cero** (sin comentarios ni OK) y rompe los enlaces. Solo minúsculas, números y guiones.
 - `title`, `version`, `updated`: obligatorios. `description` (tarjeta de la home), `shortName`, `eyebrow` (`{version}` se reemplaza) y `lead`: opcionales.
+- `tipo` (`acta`, `iniciativa`, `guia` u `otro`; sin él, `otro`): la home agrupa por tipo, con las iniciativas arriba (por título), las actas debajo (la más reciente primero, por `updated`, que hace de fecha de la reunión), luego guías y otros. Si todos son del mismo tipo no hay encabezados. El tipo sale como texto sobre el título. `responsable` (una iniciativa) y `participantes` (un acta, nombres separados por coma) son texto libre: salen en la tarjeta de la home y como bloques bajo el título, donde cada persona abre su tarjeta. Se editan en el editor, antes del contenido (el responsable y los participantes se eligen entre las personas del espacio). Los archivados los lista `GET /api/documents?archived=1` (solo admins) y no se abren: se recuperan volviendo a subir el documento.
 - `highlightSection`: segundo botón del inicio que salta a una sección (opcional).
 - `sources`: lista del pie. `url` vacío = solo texto; si no, tiene que empezar con `https://`, `http://` o `/`.
 - `sections[]`: `id`, `num` («1», «2»… o «A» para anexos), `title`, `status` (`listo | borrador | pendiente`), `description` y `html`.

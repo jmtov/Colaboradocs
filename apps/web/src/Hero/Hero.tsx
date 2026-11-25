@@ -1,3 +1,4 @@
+import { type DocumentKind, KIND_GROUPS } from '@colaboradocs/review-core';
 import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArrowDownIcon from '@/icons/ArrowDownIcon';
@@ -8,6 +9,8 @@ type Props = {
   title: string;
   version: string;
   firstSectionId: string;
+  /** Clase de documento; «otro» no se rotula. */
+  tipo?: DocumentKind;
   eyebrow?: string;
   lead?: string;
   highlight?: { id: string; label: string };
@@ -15,10 +18,17 @@ type Props = {
 };
 
 export default function Hero(props: Props) {
+  /** El tipo como texto, antes de la línea de arriba; «otro» no se rotula. */
+  const kind = () =>
+    props.tipo && props.tipo !== 'otro'
+      ? KIND_GROUPS.find((group) => group.kind === props.tipo)?.singular
+      : undefined;
+
   return (
     <section class={styles.hero}>
       <div class={styles.main}>
         <span class={styles.eyebrow}>
+          <Show when={kind()}>{kind()} · </Show>
           {(props.eyebrow ?? 'Borrador · versión {version}').replace(
             '{version}',
             props.version,

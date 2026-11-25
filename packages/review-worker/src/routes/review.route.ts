@@ -30,9 +30,14 @@ const BLOCK_ID_PATTERN = /^[a-z0-9-]{1,100}$/;
 
 export const reviewRoute = new Hono<AppEnv>()
   // La home: los documentos y su actividad (no cuelga de uno solo).
-  .get('/documents', requireReviewer, async (c) =>
-    c.json(await listDocuments(c.env.DB)),
-  )
+  // `?archived=1` trae los archivados y es de admins.
+  .get('/documents', requireReviewer, async (c) => {
+    if (c.req.query('archived') === '1') {
+      if (!c.get('reviewer').isAdmin) return errorResponse(c, 'forbidden');
+      return c.json(await listDocuments(c.env.DB, { archived: true }));
+    }
+    return c.json(await listDocuments(c.env.DB));
+  })
   .use('/documents/:documentId/*', requireReviewer)
   .use('/documents/:documentId/*', async (c, next) => {
     if (!DOCUMENT_ID_PATTERN.test(c.req.param('documentId') ?? '')) {

@@ -1,9 +1,11 @@
-import type {
-  DocumentContent,
-  DocumentSection,
-  RoleField,
-  SectionStatus,
-  SpaceInfo,
+import {
+  DOCUMENT_KINDS,
+  type DocumentContent,
+  type DocumentKind,
+  type DocumentSection,
+  type RoleField,
+  type SectionStatus,
+  type SpaceInfo,
 } from './document.types';
 import {
   MAX_DOCUMENT_BYTES,
@@ -148,9 +150,19 @@ export function validateDocument(
     ['shortName', 80],
     ['eyebrow', 200],
     ['lead', 600],
+    ['responsable', 200],
+    ['participantes', 500],
   ] as const) {
     const value = text(raw[field], field, max, errors);
     if (value !== undefined) document[field] = value;
+  }
+
+  if (raw.tipo !== undefined && raw.tipo !== null && raw.tipo !== '') {
+    if (DOCUMENT_KINDS.includes(raw.tipo as DocumentKind)) {
+      document.tipo = raw.tipo as DocumentKind;
+    } else {
+      errors.push(`«tipo» tiene que ser ${DOCUMENT_KINDS.join(', ')}.`);
+    }
   }
 
   // Fuentes

@@ -15,6 +15,9 @@ const item = (
   description: `Descripción de ${id}`,
   version: '0.2',
   updated: '2026-11-09',
+  tipo: 'otro',
+  responsable: null,
+  participantes: null,
   openThreads: 0,
   comments: 0,
   approvals: 0,
@@ -37,7 +40,13 @@ function signIn(isAdmin = false) {
 function mount(documents: DocumentListItem[], decks: DeckListItem[] = []) {
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () => new Response(JSON.stringify(documents), { status: 200 })),
+    vi.fn(
+      async (url: string) =>
+        new Response(
+          JSON.stringify(String(url).includes('archived=1') ? [] : documents),
+          { status: 200 },
+        ),
+    ),
   );
   const host = document.createElement('div');
   document.body.appendChild(host);
@@ -113,6 +122,24 @@ describe('HomePage', () => {
     expect(cards[1]?.textContent).toContain('Sin actividad');
   });
 
+  it('agrupa por tipo: iniciativas arriba, actas por fecha, y muestra responsable', async () => {
+    signIn();
+    const host = mount([
+      item('acta-vieja', { tipo: 'acta', updated: '2026-10-01' }),
+      item('acta-nueva', { tipo: 'acta', updated: '2026-11-20' }),
+      item('ini', { tipo: 'iniciativa', responsable: 'Ana' }),
+    ]);
+    await wait();
+    const titles = [...host.querySelectorAll('h2')].map((h) =>
+      h.textContent?.replace(/\d+$/, ''),
+    );
+    expect(titles).toEqual(['Iniciativas', 'Actas']);
+    expect(
+      [...host.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+    ).toEqual(['/d/ini', '/d/acta-nueva', '/d/acta-vieja']);
+    expect(host.textContent).toContain('Responsable: Ana');
+  });
+
   it('solo los admins ven el menú de cada documento y el bloque para subir', async () => {
     signIn(false);
     const member = mount([item('a'), item('b')]);
@@ -160,11 +187,12 @@ describe('HomePage', () => {
     expect(host.querySelector('a button')).toBeNull();
   });
 
-  it('el menú ofrece reemplazar y archivar', async () => {
+  it('el menú ofrece editar (lleva al editor), reemplazar y archivar', async () => {
     signIn(true);
     const host = mount([item('a')]);
     await wait();
     const menuText = host.querySelector('li [popover]')?.textContent ?? '';
+    expect(menuText).toContain('Editar');
     expect(menuText).toContain('Reemplazar documento');
     expect(menuText).toContain('Archivar');
   });

@@ -2,14 +2,6 @@
   margin: 2.75rem 0 3.5rem;
 }
 
-.heading {
-  margin: 0 0 1.125rem;
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-
 /* Bordes colapsados: cada tarjeta tiene su borde completo y se monta 1px sobre la
    vecina (margen negativo); el padding compensa la última columna y fila. */
 .cards {

@@ -1,8 +1,9 @@
 import { BlockLayer } from '@colaboradocs/review-ui';
-import { For } from 'solid-js';
+import { For, Show } from 'solid-js';
 import type { DocumentContent } from '@/content/content.types';
 import Hero from '@/Hero/Hero';
 import HowToReview from '@/HowToReview/HowToReview';
+import PeopleCards from '@/PeopleCards/PeopleCards';
 import ReviewNavigation from '@/ReviewNavigation/ReviewNavigation';
 import ReviewSummary from '@/ReviewSummary/ReviewSummary';
 import SectionCards from '@/SectionCards/SectionCards';
@@ -37,11 +38,26 @@ export default function DocumentPage(props: {
           title={props.content.title}
           version={props.content.version}
           firstSectionId={page.firstSectionId}
+          tipo={props.content.tipo}
           eyebrow={props.content.eyebrow}
           lead={props.content.lead}
           highlight={page.highlight}
           onGo={page.goTo}
         />
+        <Show when={page.peopleOf(props.content.responsable).length > 0}>
+          <PeopleCards
+            title="Responsable"
+            people={page.peopleOf(props.content.responsable)}
+            onOpen={page.openPerson}
+          />
+        </Show>
+        <Show when={page.peopleOf(props.content.participantes).length > 0}>
+          <PeopleCards
+            title="Participantes"
+            people={page.peopleOf(props.content.participantes)}
+            onOpen={page.openPerson}
+          />
+        </Show>
         <ReviewSummary
           tiles={[
             {

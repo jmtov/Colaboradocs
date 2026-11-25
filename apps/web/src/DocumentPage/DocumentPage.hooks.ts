@@ -9,6 +9,7 @@ import {
 } from '@/content/content.utils';
 import DocumentSheet from '@/DocumentSheet/DocumentSheet';
 import type { SheetState } from '@/DocumentSheet/sheet.types';
+import type { PersonCard } from '@/PeopleCards/PeopleCards';
 import { useReviewNavigation } from '@/ReviewNavigation/ReviewNavigation.hooks';
 import { printTitle } from './print.utils';
 
@@ -119,6 +120,26 @@ export function useDocumentPage(content: () => DocumentContent) {
     void overlay.sheet(DocumentSheet, { state, content: content(), glossary });
   }
 
+  /** Tocar a una persona de las que salen bajo el título: se abre su tarjeta. */
+  function openPerson(name: string) {
+    openSheet({ kind: 'person', name });
+  }
+
+  /** Las personas de un campo («Ana, Luis»), con su municipio si están registradas. */
+  function peopleOf(field: string | undefined): PersonCard[] {
+    const registered = Object.values(review.snapshot()?.reviewers ?? {});
+    return (field ?? '')
+      .split(',')
+      .map((name) => name.trim())
+      .filter(Boolean)
+      .map((name) => ({
+        name,
+        municipality:
+          registered.find((person) => person.name === name)?.municipality ??
+          null,
+      }));
+  }
+
   function openContents() {
     openSheet({ kind: 'contents' });
   }
@@ -182,6 +203,8 @@ export function useDocumentPage(content: () => DocumentContent) {
     currentHeading,
     goTo,
     onContentClick,
+    openPerson,
+    peopleOf,
     openThreads,
     approvedBlocks,
     navigation,

@@ -1,4 +1,5 @@
 import { For, Show } from 'solid-js';
+import CollapsibleSection from '@/CollapsibleSection/CollapsibleSection';
 import type { DocumentSection } from '@/content/content.types';
 import ArrowRightIcon from '@/icons/ArrowRightIcon';
 import styles from './SectionCards.module.css';
@@ -15,10 +16,13 @@ function pendingLabel(count: number): string {
 
 export default function SectionCards(props: Props) {
   return (
-    <section class={styles.contents} aria-labelledby="contents-title">
-      <h2 id="contents-title" class={styles.heading}>
-        Contenido del documento
-      </h2>
+    <CollapsibleSection
+      id="contents-title"
+      title="Contenido del documento"
+      defaultOpen={false}
+      note={`(${props.sections.length} ${props.sections.length === 1 ? 'sección' : 'secciones'})`}
+      class={styles.contents}
+    >
       <div class={styles.cards}>
         <For each={props.sections}>
           {(section) => (
@@ -46,6 +50,6 @@ export default function SectionCards(props: Props) {
           )}
         </For>
       </div>
-    </section>
+    </CollapsibleSection>
   );
 }

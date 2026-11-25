@@ -90,6 +90,25 @@ describe('validateDocument', () => {
     }
   });
 
+  it('acepta tipo, responsable y participantes, y rechaza un tipo que no existe', () => {
+    const ok = validateDocument({
+      ...valid(),
+      tipo: 'iniciativa',
+      responsable: ' Ana ',
+      participantes: 'Ana, Luis',
+    });
+    expect(ok.ok && ok.value).toMatchObject({
+      tipo: 'iniciativa',
+      responsable: 'Ana',
+      participantes: 'Ana, Luis',
+    });
+    const bad = validateDocument({ ...valid(), tipo: 'memorando' });
+    expect(bad.ok).toBe(false);
+    // Sin tipo (o vacío), el documento queda como estaba: no se inventa uno.
+    const none = validateDocument({ ...valid(), tipo: '' });
+    expect(none.ok && 'tipo' in none.value).toBe(false);
+  });
+
   it('limpia el HTML de las secciones', () => {
     const doc = valid();
     (doc.sections[0] as { html: string }).html =

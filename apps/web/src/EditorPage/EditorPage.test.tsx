@@ -280,7 +280,13 @@ async function openSettings(host: HTMLElement, sectionId: string) {
   await wait(300);
 }
 
-const sheetInputs = (label: string) => inputs(document.body, label);
+// Los campos de una hoja: la página (`main`) tiene los suyos a la vista (título, descripción, tipo).
+const sheetInputs = (label: string) =>
+  inputs(document.body, label).filter((item) => !item.closest('main'));
+const sheetSelect = () =>
+  [...document.body.querySelectorAll('select')].find(
+    (item) => !item.closest('main'),
+  ) as HTMLSelectElement;
 
 beforeEach(() => {
   window.history.replaceState(null, '', '/d/doc/editar');
@@ -409,7 +415,7 @@ describe('EditorPage', () => {
     await editorOf(host);
     await openSettings(host, 'dos');
     expect(document.body.textContent).toContain('Sección 2');
-    const select = document.body.querySelector('select') as HTMLSelectElement;
+    const select = sheetSelect();
     expect(select.value).toBe('borrador');
     select.value = 'listo';
     select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -456,22 +462,123 @@ describe('EditorPage', () => {
     expect(host.textContent).toContain('Sin cambios');
   });
 
-  it('el título y la descripción se editan desde el menú y se guardan', async () => {
-    const calls = fakeApi();
+  it('el título, la descripción y el tipo se editan a la vista, antes del contenido, y se guardan', async () => {
+    const calls = fakeApi({
+      reviewers: {
+        r1: { name: 'Ana', municipality: 'La Ceja' },
+        r2: { name: 'Luis', municipality: null },
+      },
+    });
     const host = mount();
     await editorOf(host);
-    button(host, 'Editar título y descripción').click();
+    expect(host.textContent).not.toContain('Editar detalles');
+    write(inputs(host, 'Título')[0] as HTMLInputElement, 'Otro título');
+    write(inputs(host, 'Descripción')[0] as HTMLInputElement, 'Una línea');
+    const select = host.querySelector(
+      'select[class*="input"]',
+    ) as HTMLSelectElement;
+    select.value = 'iniciativa';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait(100);
+    // El responsable es una sola persona, elegida en una hoja: la segunda reemplaza a la primera.
+    button(host, 'Elegir…').click();
     await wait(300);
-    write(sheetInputs('Título')[0] as HTMLInputElement, 'Otro título');
-    write(sheetInputs('Descripción')[0] as HTMLInputElement, 'Una línea');
+    const person = (name: string) =>
+      [...document.body.querySelectorAll('button')].find(
+        (item) =>
+          item.hasAttribute('aria-pressed') &&
+          item.textContent?.startsWith(name),
+      );
+    person('Luis')?.click();
+    await wait(50);
+    person('Ana')?.click();
+    await wait(50);
     button(document.body, 'Aplicar').click();
     await wait(300);
     expect(host.querySelector('h1')?.textContent).toBe('Otro título');
     expect(host.textContent).toContain('Cambios sin guardar');
     button(host, 'Guardar borrador').click();
     await wait();
-    expect(calls.puts[0]?.content.title).toBe('Otro título');
-    expect(calls.puts[0]?.content.description).toBe('Una línea');
+    expect(calls.puts[0]?.content).toMatchObject({
+      title: 'Otro título',
+      description: 'Una línea',
+      tipo: 'iniciativa',
+      responsable: 'Ana',
+    });
+  });
+
+  it('los participantes de un acta se eligen en una hoja con las personas del espacio', async () => {
+    const calls = fakeApi({
+      reviewers: {
+        r1: { name: 'Ana', municipality: 'La Ceja' },
+        r2: { name: 'Luis', municipality: null },
+      },
+    });
+    const host = mount();
+    await editorOf(host);
+    const select = host.querySelector(
+      'select[class*="input"]',
+    ) as HTMLSelectElement;
+    select.value = 'acta';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait(100);
+    button(host, 'Elegir…').click();
+    await wait(300);
+    const luis = [...document.body.querySelectorAll('button')].find(
+      (item) =>
+        item.hasAttribute('aria-pressed') && item.textContent === 'Luis',
+    );
+    luis?.click();
+    await wait(50);
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    button(host, 'Guardar borrador').click();
+    await wait();
+    const saved = calls.puts[0]?.content;
+    expect(saved?.tipo).toBe('acta');
+    expect(saved?.participantes).toBe('Luis');
+  });
+
+  it('en la hoja de participantes parten elegidas las personas de las que habla el documento', async () => {
+    const calls = fakeApi({
+      published: { ...PUBLISHED, peopleTerms: { ana: 'Ana' } },
+      reviewers: {
+        r1: { name: 'Ana', municipality: 'La Ceja' },
+        r2: { name: 'Luis', municipality: null },
+      },
+    });
+    const host = mount();
+    await editorOf(host);
+    const select = host.querySelector(
+      'select[class*="input"]',
+    ) as HTMLSelectElement;
+    select.value = 'acta';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await wait(100);
+    button(host, 'Elegir…').click();
+    await wait(300);
+    const pressed = [...document.body.querySelectorAll('button')]
+      .filter((item) => item.getAttribute('aria-pressed') === 'true')
+      .map((item) => item.textContent);
+    expect(pressed.join(' ')).toContain('Ana');
+    expect(pressed.join(' ')).not.toContain('Luis');
+    expect(document.body.textContent).toContain('en el documento');
+    button(document.body, 'Aplicar').click();
+    await wait(300);
+    button(host, 'Guardar borrador').click();
+    await wait();
+    expect(calls.puts[0]?.content.participantes).toBe('Ana');
+  });
+
+  it('los detalles quedan antes del contenido del documento', async () => {
+    fakeApi();
+    const host = mount();
+    await editorOf(host);
+    const title = inputs(host, 'Título')[0] as HTMLElement;
+    const text = host.querySelector('[contenteditable]') as HTMLElement;
+    expect(
+      title.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it('la barra y la pestaña llevan el título del documento, y al salir vuelve el del espacio', async () => {

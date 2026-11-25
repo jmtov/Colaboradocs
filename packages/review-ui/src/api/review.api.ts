@@ -128,6 +128,11 @@ export function createReviewApi(options: ApiOptions) {
       const response = await request('', {}, '/documents');
       return (await response.json()) as DocumentListItem[];
     },
+    /** Los archivados: solo admins (403 para el resto). */
+    async fetchArchivedDocuments(): Promise<DocumentListItem[]> {
+      const response = await request('?archived=1', {}, '/documents');
+      return (await response.json()) as DocumentListItem[];
+    },
     async fetchContent(id: string): Promise<DocumentContent> {
       const response = await request(`/${id}/content`, {}, '/documents');
       return (await response.json()) as DocumentContent;

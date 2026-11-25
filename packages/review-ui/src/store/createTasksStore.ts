@@ -31,10 +31,14 @@ export function createTasksStore(api: ReviewApi) {
     }
   }
 
-  /** Las tareas de un documento; mientras haya uno abierto, cada cambio las vuelve a pedir. */
+  /**
+   * Las tareas de un documento; mientras haya uno abierto, cada cambio las vuelve a pedir.
+   * Solo se vacían al cambiar de documento: al recargar el mismo se conservan hasta que
+   * llegan las nuevas. Vaciarlas encoge la página y el navegador mueve el scroll.
+   */
   async function loadForDocument(id: string) {
+    if (documentId !== id) setDocumentTasks(null);
     documentId = id;
-    setDocumentTasks(null);
     try {
       const fetched = await api.fetchDocumentTasks(id);
       if (documentId === id) setDocumentTasks(fetched);

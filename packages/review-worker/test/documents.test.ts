@@ -87,6 +87,9 @@ describe('subir y leer documentos', () => {
         description: 'Para probar',
         version: '0.1',
         updated: '2026-11-10',
+        tipo: 'otro',
+        responsable: null,
+        participantes: null,
         openThreads: 0,
         comments: 0,
         approvals: 0,
@@ -147,6 +150,54 @@ describe('subir y leer documentos', () => {
     expect(
       ((await response.json()) as { details: string[] }).details.join(' '),
     ).toContain('no coincide');
+  });
+});
+
+describe('tipo de documento', () => {
+  it('la lista trae tipo, responsable y participantes; sin tipo, «otro»', async () => {
+    await put(
+      adminToken,
+      sample('ini', { tipo: 'iniciativa', responsable: 'Ana' }),
+    );
+    await put(
+      adminToken,
+      sample('acta', { tipo: 'acta', participantes: 'Ana, Luis' }),
+    );
+    await put(adminToken, sample('libre'));
+    const items = await list(memberToken);
+    const byId = Object.fromEntries(items.map((item) => [item.id, item]));
+    expect(byId.ini).toMatchObject({ tipo: 'iniciativa', responsable: 'Ana' });
+    expect(byId.acta).toMatchObject({
+      tipo: 'acta',
+      participantes: 'Ana, Luis',
+    });
+    expect(byId.libre).toMatchObject({
+      tipo: 'otro',
+      responsable: null,
+      participantes: null,
+    });
+  });
+
+  it('rechaza un tipo que no existe', async () => {
+    const response = await put(adminToken, {
+      ...sample('x'),
+      tipo: 'memorando',
+    });
+    expect(response.status).toBe(400);
+  });
+
+  it('los archivados solo los ven admins, y no salen en la lista normal', async () => {
+    await put(adminToken, sample('vivo'));
+    await put(adminToken, sample('viejo'));
+    await authed(adminToken, '/admin/documents/viejo', { method: 'DELETE' });
+    expect((await list(memberToken)).map((item) => item.id)).toEqual(['vivo']);
+    expect((await authed(memberToken, '/documents?archived=1')).status).toBe(
+      403,
+    );
+    const archived = await authed(adminToken, '/documents?archived=1');
+    expect(
+      ((await archived.json()) as DocumentListItem[]).map((item) => item.id),
+    ).toEqual(['viejo']);
   });
 });
 

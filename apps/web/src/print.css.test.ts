@@ -28,7 +28,7 @@ describe('vista de impresión (PDF)', () => {
   const hidden = [
     ['./TopBar/TopBar.module.css', '.top'],
     ['./SideNav/SideNav.module.css', '.side'],
-    ['./ReviewSummary/ReviewSummary.module.css', '.summary'],
+    ['./ReviewSummary/ReviewSummary.module.css', '.section'],
     ['./SectionCards/SectionCards.module.css', '.contents'],
     [
       './ReviewNavigation/components/NavigationBar/NavigationBar.module.css',

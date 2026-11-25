@@ -1,7 +1,7 @@
-import { compareTasks, type Task } from "@colaboradocs/review-core";
-import { useReview } from "@colaboradocs/review-ui";
-import { createMemo, createSignal, onMount } from "solid-js";
-import { useTaskActions } from "@/NewTaskSheet/TaskActions.hooks";
+import { compareTasks, type Task } from '@colaboradocs/review-core';
+import { useReview } from '@colaboradocs/review-ui';
+import { createMemo, createSignal, onMount } from 'solid-js';
+import { useTaskActions } from '@/NewTaskSheet/TaskActions.hooks';
 
 type TaskGroup = { id: string; name: string; tasks: Task[] };
 
@@ -38,7 +38,7 @@ export function useDocumentTaskList(documentId: () => string) {
     return [...byPerson.values()].sort(
       (a, b) =>
         Number(b.id === meId) - Number(a.id === meId) ||
-        a.name.localeCompare(b.name, "es"),
+        a.name.localeCompare(b.name, 'es'),
     );
   });
 

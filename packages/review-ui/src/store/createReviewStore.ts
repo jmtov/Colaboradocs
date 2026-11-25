@@ -336,6 +336,8 @@ export function createReviewStore(options: ReviewStoreOptions) {
     /** Versiones del documento: la actual y las que se reemplazaron. */
     fetchVersions: (id: string) => api.fetchVersions(id),
     loadDocuments,
+    /** Los documentos archivados (admins). */
+    fetchArchivedDocuments: () => api.fetchArchivedDocuments(),
     publishDocument,
     archiveDocument,
     /** Borrador del documento (admins): null si no hay. */

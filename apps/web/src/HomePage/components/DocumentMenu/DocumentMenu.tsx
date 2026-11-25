@@ -2,6 +2,7 @@ import { Button } from '@colaboradocs/review-ui';
 import { Show } from 'solid-js';
 import ArchiveIcon from '@/icons/ArchiveIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
+import PencilIcon from '@/icons/PencilIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import { useDocumentMenu } from './DocumentMenu.hooks';
 import styles from './DocumentMenu.module.css';
@@ -11,7 +12,7 @@ type Props = {
   title: string;
 };
 
-/** Menú de un documento (solo admins): reemplazar el archivo o archivarlo. */
+/** Menú de un documento (solo admins): editarlo, reemplazar el archivo o archivarlo. */
 export default function DocumentMenu(props: Props) {
   const documentMenu = useDocumentMenu(() => props.id);
 
@@ -35,6 +36,15 @@ export default function DocumentMenu(props: Props) {
           when={documentMenu.confirming()}
           fallback={
             <>
+              <button
+                type="button"
+                class={styles.item}
+                data-flat
+                onClick={documentMenu.edit}
+              >
+                <PencilIcon class={styles.itemIcon} />
+                Editar
+              </button>
               <button
                 type="button"
                 class={styles.item}

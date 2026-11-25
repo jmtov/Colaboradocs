@@ -1,8 +1,10 @@
-import type {
-  DocumentContent,
-  DocumentListItem,
-  DocumentVersionItem,
-  SpaceInfo,
+import {
+  DOCUMENT_KINDS,
+  type DocumentContent,
+  type DocumentKind,
+  type DocumentListItem,
+  type DocumentVersionItem,
+  type SpaceInfo,
 } from '@colaboradocs/review-core';
 
 type ListRow = {
@@ -11,6 +13,9 @@ type ListRow = {
   description: string | null;
   version: string;
   updated: string;
+  tipo: string | null;
+  responsable: string | null;
+  participantes: string | null;
   open_threads: number | null;
   comments: number | null;
   approvals: number | null;
@@ -24,13 +29,26 @@ function later(a: string | null, b: string | null): string | null {
   return a > b ? a : b;
 }
 
-/** Documentos visibles, con la actividad de cada uno: alimenta la home. */
+function kindOf(value: string | null): DocumentKind {
+  return DOCUMENT_KINDS.includes(value as DocumentKind)
+    ? (value as DocumentKind)
+    : 'otro';
+}
+
+/**
+ * Documentos con la actividad de cada uno: alimenta la home. Por defecto los visibles;
+ * con `archived`, los archivados (que solo ven admins y no se pueden abrir).
+ */
 export async function listDocuments(
   db: D1Database,
+  options: { archived?: boolean } = {},
 ): Promise<DocumentListItem[]> {
   const { results } = await db
     .prepare(
       `SELECT d.id, d.title, d.description, d.version, d.updated,
+              json_extract(d.content, '$.tipo') AS tipo,
+              json_extract(d.content, '$.responsable') AS responsable,
+              json_extract(d.content, '$.participantes') AS participantes,
               c.open_threads, c.total AS comments, a.total AS approvals,
               c.last_at AS comment_last, a.last_at AS approval_last
        FROM documents d
@@ -45,7 +63,7 @@ export async function listDocuments(
          SELECT document_id, COUNT(*) AS total, MAX(created_at) AS last_at
          FROM approvals GROUP BY document_id
        ) a ON a.document_id = d.id
-       WHERE d.archived_at IS NULL
+       WHERE d.archived_at IS ${options.archived ? 'NOT NULL' : 'NULL'}
        ORDER BY d.updated DESC, d.title`,
     )
     .all<ListRow>();
@@ -55,6 +73,9 @@ export async function listDocuments(
     description: row.description,
     version: row.version,
     updated: row.updated,
+    tipo: kindOf(row.tipo),
+    responsable: row.responsable,
+    participantes: row.participantes,
     openThreads: row.open_threads ?? 0,
     comments: row.comments ?? 0,
     approvals: row.approvals ?? 0,

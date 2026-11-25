@@ -1,13 +1,13 @@
 import { ActionMenu, Button } from '@colaboradocs/review-ui';
 import { For, Match, Show, Switch } from 'solid-js';
 import DocumentEditor from '@/Editor/DocumentEditor/DocumentEditor';
-import PencilIcon from '@/icons/PencilIcon';
 import RefreshIcon from '@/icons/RefreshIcon';
 import SaveIcon from '@/icons/SaveIcon';
 import TrashIcon from '@/icons/TrashIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import PageBar from '@/PageBar/PageBar';
 import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';
+import EditorDetails from './components/EditorDetails/EditorDetails';
 import EditorOutline from './components/EditorOutline/EditorOutline';
 import EditorToolbar from './components/EditorToolbar/EditorToolbar';
 import GlossaryLinks from './components/GlossaryLinks/GlossaryLinks';
@@ -88,11 +88,6 @@ export default function EditorPage(props: Props) {
                             label="Más opciones del borrador"
                             items={[
                               {
-                                label: 'Editar título y descripción',
-                                icon: PencilIcon,
-                                onSelect: () => void page.editDetails(),
-                              },
-                              {
                                 label: 'Guardar borrador',
                                 icon: SaveIcon,
                                 disabled:
@@ -126,6 +121,12 @@ export default function EditorPage(props: Props) {
                       </aside>
 
                       <div class={styles.content}>
+                        <EditorDetails
+                          details={page.details()}
+                          onChange={page.setDetails}
+                          onPickPeople={(field) => void page.pickPeople(field)}
+                        />
+
                         <Show when={page.stale()}>
                           <p class={styles.warn} role="status">
                             El documento publicado cambió después de que

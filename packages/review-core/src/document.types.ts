@@ -1,5 +1,9 @@
 import type { ReviewerLabel } from './review.types';
 
+/** Qué clase de documento es: la home los agrupa así. Sin `tipo`, «otro». */
+export const DOCUMENT_KINDS = ['acta', 'iniciativa', 'guia', 'otro'] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+
 export type SectionStatus = 'listo' | 'borrador' | 'pendiente';
 
 export type DocumentSection = {
@@ -33,6 +37,12 @@ export type DocumentContent = {
   lead?: string;
   version: string;
   updated: string;
+  /** Clase de documento (`acta`, `iniciativa`, `guia`, `otro`). Por defecto, `otro`. */
+  tipo?: DocumentKind;
+  /** Quién responde por una iniciativa; va en su tarjeta (opcional). */
+  responsable?: string;
+  /** Quiénes estuvieron en un acta, como texto libre (opcional). */
+  participantes?: string;
   /** Segundo botón del inicio, que salta a una sección. Sin esto, no hay botón. */
   highlightSection?: { id: string; label: string };
   /**
@@ -72,6 +82,9 @@ export type DocumentListItem = {
   description: string | null;
   version: string;
   updated: string;
+  tipo: DocumentKind;
+  responsable: string | null;
+  participantes: string | null;
   openThreads: number;
   comments: number;
   approvals: number;

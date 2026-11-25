@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
   ALLOWED_HTML_TAGS,
+  DOCUMENT_KINDS,
   MAX_SECTIONS,
   sanitizeSectionHtml,
   validateDocument,
@@ -32,6 +33,13 @@ describe('buildFormatGuide', () => {
       expect(sanitizeSectionHtml(`${open}x</${tag}>`)).toContain(open);
     }
     expect(sanitizeSectionHtml('<table>x</table>')).toBe('x');
+  });
+
+  it('documenta tipo, responsable y participantes con los tipos reales', () => {
+    for (const word of ['tipo', 'responsable', 'participantes']) {
+      expect(guide).toContain(`\`${word}\``);
+    }
+    for (const kind of DOCUMENT_KINDS) expect(guide).toContain(`\`${kind}\``);
   });
 
   it('usa los límites reales de la validación', () => {
