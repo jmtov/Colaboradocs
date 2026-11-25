@@ -13,7 +13,7 @@
 
 .eyebrow {
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -22,8 +22,8 @@
   margin: 0.875rem 0 1.125rem;
   font-size: var(--font-size-display);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tightest);
   text-wrap: balance;
 }
 

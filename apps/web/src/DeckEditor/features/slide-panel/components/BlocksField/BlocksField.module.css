@@ -18,7 +18,7 @@
 }
 .active {
   background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+  background: var(--tint);
 }
 .label {
   all: unset;
@@ -71,7 +71,7 @@
 }
 .kind:hover:not(:disabled) {
   background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 6%, var(--surface));
+  background: var(--tint);
 }
 .kind:disabled {
   color: var(--muted);

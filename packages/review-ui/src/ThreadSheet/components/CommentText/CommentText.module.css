@@ -1,7 +1,7 @@
 .text {
   margin: 0;
   font-size: var(--font-size-md);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -11,8 +11,7 @@
   font: inherit;
   font-weight: var(--font-weight-semibold);
   color: var(--fg);
-  background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 8%, var(--bg));
+  background: var(--tint-strong);
   border: 0;
   border-bottom: var(--border-w) solid var(--line);
   cursor: pointer;

@@ -2,7 +2,7 @@
   display: block;
   margin-bottom: 0.625rem;
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -61,8 +61,7 @@
 }
 
 .status[data-status="borrador"] {
-  background: var(--line);
-  background: color-mix(in srgb, var(--muted) 40%, var(--bg));
+  background: var(--fill-strong);
 }
 
 .sources {

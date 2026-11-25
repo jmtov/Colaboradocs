@@ -25,15 +25,8 @@ type Props = {
 export default function PaneSheet(props: Props) {
   const [mounted, setMounted] = createSignal(false);
   const [shown, setShown] = createSignal(false);
-  // La capa empieza bajo la barra de herramientas: sus botones no se oscurecen.
-  const [top, setTop] = createSignal(0);
-
   createEffect(() => {
     if (props.open) {
-      setTop(
-        document.querySelector('[data-app-toolbar]')?.getBoundingClientRect()
-          .bottom ?? 0,
-      );
       setMounted(true);
       const frame = requestAnimationFrame(() => setShown(true));
       onCleanup(() => cancelAnimationFrame(frame));
@@ -55,11 +48,7 @@ export default function PaneSheet(props: Props) {
 
   return (
     <Show when={mounted()}>
-      <div
-        class={styles.backdrop}
-        classList={{ [styles.shown]: shown() }}
-        style={{ top: `${top()}px` }}
-      >
+      <div class={styles.backdrop} classList={{ [styles.shown]: shown() }}>
         <section class={styles.sheet} role="dialog" aria-label={props.title}>
           <header class={styles.bar}>
             <h2 class={styles.title}>{props.title}</h2>

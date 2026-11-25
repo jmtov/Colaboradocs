@@ -15,3 +15,9 @@ describe('scroll del editor de presentaciones', () => {
     }
   });
 });
+
+describe('la barra y la hoja del panel', () => {
+  it('la barra va por encima de la hoja (z-chrome), así la hoja no necesita medir dónde empieza', () => {
+    expect(css).toMatch(/\.toolbar \{[^}]*z-index:\s*var\(--z-chrome\)/);
+  });
+});

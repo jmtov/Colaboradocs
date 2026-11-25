@@ -12,8 +12,8 @@
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
   border-bottom: var(--border-w) dashed var(--line);
 }
 
@@ -31,7 +31,7 @@
 .groupTitle {
   margin: var(--space-2) 0 0;
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }

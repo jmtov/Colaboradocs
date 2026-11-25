@@ -26,8 +26,7 @@
 
 /* Encendido: se hunde como al presionar (index.css, aria-pressed) y además va más oscuro. */
 .button[aria-pressed="true"] {
-  background: var(--line);
-  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+  background: var(--fill);
 }
 
 .button:hover {
@@ -78,7 +77,7 @@
   gap: var(--space-1);
   padding: 0.0625rem var(--space-2);
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  line-height: 1.6;
+  line-height: var(--leading-loose);
   white-space: nowrap;
 }
 
@@ -112,13 +111,11 @@
 }
 
 .ok[aria-pressed="true"] {
-  background: var(--line);
-  background: color-mix(in srgb, var(--ok) 22%, var(--ok-bg));
+  background: var(--ok-active);
 }
 
 .ok:hover:not(:disabled) {
-  background: var(--line);
-  background: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
+  background: var(--ok-hover);
 }
 
 .icon {

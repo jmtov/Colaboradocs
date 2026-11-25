@@ -1,12 +1,12 @@
 .bone {
   display: block;
-  width: 100%;
-  height: var(--font-size-md);
+  width: var(--skeleton-w, 100%);
+  height: var(--skeleton-h, var(--font-size-md));
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--fg) 7%, var(--bg)) 30%,
-    color-mix(in srgb, var(--fg) 13%, var(--bg)) 50%,
-    color-mix(in srgb, var(--fg) 7%, var(--bg)) 70%
+    var(--tint-strong) 30%,
+    var(--fill) 50%,
+    var(--tint-strong) 70%
   );
   background-size: 300% 100%;
   animation: shimmer var(--duration-shimmer) var(--ease-linear) infinite;

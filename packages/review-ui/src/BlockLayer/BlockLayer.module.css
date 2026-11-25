@@ -5,19 +5,17 @@
 /* Se añade a cada bloque con data-block-id. */
 .block:hover {
   background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 4%, var(--bg));
+  background: var(--tint);
 }
 
 .block[data-selected] {
-  background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 7%, var(--bg));
+  background: var(--tint-strong);
   outline: var(--border-w) dashed var(--line);
   outline-offset: 4px;
 }
 
 .block[data-nav-current] {
-  background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 7%, var(--bg));
+  background: var(--tint-strong);
   outline: var(--border-w-strong) solid var(--fg);
   outline-offset: 4px;
 }

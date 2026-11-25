@@ -26,10 +26,12 @@
         ],
         "/^(border(-(top|right|bottom|left|block|inline)(-(start|end))?)?(-width)?|outline(-width)?)$/": [
           "/^(?!.*(^|[\\s(])-?[\\d.]+(px|rem|em)\\b).*$/"
-        ]
+        ],
+        "line-height": ["/^(var\\(.+\\)|inherit|normal)$/"],
+        "letter-spacing": ["/^(var\\(.+\\)|inherit|normal|0)$/"]
       },
       {
-        "message": "Tipografía, bordes y radios salen de variables: --font-*, --font-size-*, --font-weight-*, --border-w*, --radius-* (apps/web/src/index.css); font-family, font-size y font-weight no admiten valores sueltos, ni los bordes un ancho en px. Un caso fuera de eso se justifica con un comentario stylelint-disable-next-line."
+        "message": "Tipografía, bordes y radios salen de variables: --font-*, --leading-*, --tracking-*, --border-w*, --radius-* (apps/web/src/index.css). Un caso fuera de eso se justifica con un comentario stylelint-disable-next-line."
       }
     ],
     "color-no-hex": [
@@ -41,13 +43,24 @@
     "color-named": [
       "never",
       {
-        "message": "Un color no se escribe en un componente: usa una variable (ver apps/web/src/index.css)."
+        "message": "Un color no se escribe en un componente: usa una variable con nombre (ver apps/web/src/index.css)."
       }
     ],
     "function-disallowed-list": [
-      ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch"],
+      [
+        "rgb",
+        "rgba",
+        "hsl",
+        "hsla",
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch",
+        "color-mix"
+      ],
       {
-        "message": "Un color no se escribe en un componente: usa una variable (ver apps/web/src/index.css). color-mix() con variables sí vale."
+        "message": "Un color no se escribe en un componente: usa una variable con nombre (--tint, --fill, --line, --danger…); una mezcla nueva se nombra en apps/web/src/index.css."
       }
     ],
     "declaration-property-unit-disallowed-list": [

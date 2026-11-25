@@ -9,7 +9,7 @@
   padding: 0.625rem var(--space-3);
   font: inherit;
   font-size: var(--font-size-md);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   color: var(--fg);
   background: var(--bg);
   border: var(--border-w) solid var(--line);

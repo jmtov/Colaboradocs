@@ -8,6 +8,9 @@
 }
 .toolbar {
   grid-area: toolbar;
+  /* Por encima de la hoja del panel (z-fixed): su fondo cubre la hoja y la barra no se oscurece. */
+  position: relative;
+  z-index: var(--z-chrome);
   border-bottom: var(--border-w) solid var(--line);
   background: var(--surface);
 }
@@ -23,8 +26,7 @@
   min-width: 0;
   min-height: 0;
   position: relative;
-  background: var(--line);
-  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+  background: var(--fill);
 }
 .panel {
   grid-area: panel;

@@ -42,14 +42,14 @@
 .title {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tighter);
   text-wrap: balance;
 }
 
 .description {
   font-size: var(--font-size-sm);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   color: var(--muted);
 }
 

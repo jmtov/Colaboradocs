@@ -34,4 +34,13 @@ describe('tokens de index.css', () => {
       expect(css, token).toMatch(new RegExp(`${token}:`));
     }
   });
+
+  it('Safari viejo (sin color-mix): cada token que lo usa tiene su valor ya calculado', () => {
+    const tokens = [...css.matchAll(/^ {2}(--[\w-]+):[^;]*color-mix/gm)].map(
+      (m) => m[1],
+    );
+    const fallback = css.slice(css.indexOf('@supports not (color: color-mix'));
+    expect(tokens.length).toBeGreaterThan(10);
+    for (const token of tokens) expect(fallback, token).toContain(`${token}:`);
+  });
 });

@@ -1,0 +1,8 @@
+language js
+
+// Un estilo en línea no: la presentación vive en el CSS del componente. Un dato que solo se conoce al
+// ejecutar (un ancho que pasa quien usa el componente) va como variable CSS (`style={{ '--x': valor }}`)
+// y la excepción se justifica con `// biome-ignore lint/plugin: razón`.
+`style={$value}` where {
+  register_diagnostic(span=$value, message="Sin estilos en línea: usa una clase del componente. Un dato de ejecución va como variable CSS, con biome-ignore y su razón.", severity="error")
+}

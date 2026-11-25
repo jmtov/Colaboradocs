@@ -11,7 +11,7 @@
   width: 100%;
   padding: 0.5625rem var(--space-2);
   font-size: var(--font-size-md);
-  line-height: 1.35;
+  line-height: var(--leading-normal);
   color: var(--fg);
   text-align: left;
   background: none;

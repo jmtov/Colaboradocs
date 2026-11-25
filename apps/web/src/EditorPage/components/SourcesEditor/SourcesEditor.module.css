@@ -11,8 +11,8 @@
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
   border-bottom: var(--border-w) dashed var(--line);
 }
 
@@ -51,7 +51,7 @@
 
 .label {
   font-size: var(--font-size-md);
-  line-height: 1.4;
+  line-height: var(--leading-normal);
   overflow-wrap: anywhere;
 }
 

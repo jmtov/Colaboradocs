@@ -14,7 +14,7 @@
 
 .eyebrow {
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -23,8 +23,8 @@
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tightest);
 }
 
 /* Las listas de administración se leen mejor angostas. */

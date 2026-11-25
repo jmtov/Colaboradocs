@@ -1,7 +1,6 @@
 .backdrop {
   position: fixed;
-  right: 0;
-  bottom: 0;
+  inset: 0 0 0 auto;
   z-index: var(--z-fixed);
   display: grid;
   align-items: end;
@@ -23,7 +22,7 @@
   background: var(--surface);
   border-top: var(--border-w-strong) solid var(--fg);
   border-left: var(--border-w) solid var(--line);
-  box-shadow: 0 -8px 24px color-mix(in srgb, var(--fg) 14%, transparent);
+  box-shadow: var(--shadow-pane);
   transform: translateY(100%);
   transition: transform var(--duration-slow) var(--ease-smooth);
 }

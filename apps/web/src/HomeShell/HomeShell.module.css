@@ -53,8 +53,8 @@
   margin: 0;
   font-size: var(--font-size-display);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.04;
-  letter-spacing: -0.035em;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tightest);
   text-wrap: balance;
 }
 

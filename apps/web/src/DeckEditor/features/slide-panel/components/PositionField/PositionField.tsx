@@ -113,12 +113,7 @@ export default function PositionField(props: PositionFieldProps) {
             </Button>
           }
         >
-          <div
-            class={styles.grid}
-            style={{
-              'grid-template-columns': `repeat(${current().columns}, 1fr)`,
-            }}
-          >
+          <div class={styles.grid} data-columns={current().columns}>
             <For each={cellOwners(current())}>
               {(line, r) => (
                 <For each={line}>

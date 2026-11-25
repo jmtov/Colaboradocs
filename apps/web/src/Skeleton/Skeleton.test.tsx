@@ -7,6 +7,7 @@ import DocumentSkeleton from '@/DocumentPage/DocumentSkeleton/DocumentSkeleton';
 import EditorSkeleton from '@/EditorPage/EditorSkeleton/EditorSkeleton';
 import HomeSkeleton from '@/HomePage/components/HomeSkeleton/HomeSkeleton';
 import TasksSkeleton from '@/TasksTab/components/TasksSkeleton/TasksSkeleton';
+import Skeleton from './Skeleton';
 
 const disposers: (() => void)[] = [];
 afterEach(() => {
@@ -36,4 +37,16 @@ describe('cada pantalla tiene su skeleton, no un «Cargando…» genérico', () 
       expect(host.textContent?.trim()).toBe('');
     });
   }
+});
+
+describe('Skeleton: el tamaño llega como variable CSS, no como estilo', () => {
+  it('width y height pasan a --skeleton-w y --skeleton-h', () => {
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    disposers.push(render(() => <Skeleton width="6rem" height="2rem" />, host));
+    const bone = host.querySelector('span') as HTMLElement;
+    expect(bone.style.getPropertyValue('--skeleton-w')).toBe('6rem');
+    expect(bone.style.getPropertyValue('--skeleton-h')).toBe('2rem');
+    expect(bone.style.width).toBe('');
+  });
 });

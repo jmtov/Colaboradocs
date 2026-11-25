@@ -6,7 +6,7 @@
 .pin {
   padding: var(--space-4);
   font: var(--font-weight-semibold) var(--font-size-xl) var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-widest);
   text-align: center;
   user-select: all;
   background: var(--tint);

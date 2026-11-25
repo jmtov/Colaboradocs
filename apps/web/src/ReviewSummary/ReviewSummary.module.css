@@ -28,7 +28,7 @@
   display: block;
   margin: 0;
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }

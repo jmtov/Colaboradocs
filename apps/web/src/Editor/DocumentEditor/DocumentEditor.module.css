@@ -1,7 +1,7 @@
 /* El texto se ve como en el documento publicado (ver Prose.module.css y SectionView.module.css). */
 .editor {
   font-size: var(--font-size-md);
-  line-height: 1.6;
+  line-height: var(--leading-loose);
   color: var(--fg);
 }
 
@@ -23,8 +23,8 @@
   margin: 4rem 0 1.375rem;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.15;
-  letter-spacing: -0.025em;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tighter);
   border-bottom: var(--border-w) dashed var(--line);
 }
 
@@ -138,7 +138,7 @@
 
 .editor :global(.ProseMirror) [data-note] {
   font-size: var(--font-size-sm);
-  line-height: 1.6;
+  line-height: var(--leading-loose);
   color: var(--muted);
 }
 
@@ -146,8 +146,8 @@
   margin: 2.5rem 0 var(--space-4);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.3;
-  letter-spacing: -0.015em;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
 }
 
 .editor :global(.ProseMirror) h4 {
@@ -155,7 +155,7 @@
   margin: var(--space-5) 0 var(--space-2);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.3;
+  line-height: var(--leading-snug);
   border-left: var(--border-w-heavy) solid var(--fg);
 }
 

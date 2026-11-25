@@ -56,5 +56,6 @@
         }
       }
     }
-  ]
+  ],
+  "plugins": ["./.biome/no-inline-style.grit"]
 }

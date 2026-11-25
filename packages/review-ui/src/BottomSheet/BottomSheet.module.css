@@ -92,7 +92,7 @@
 
 .kicker {
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -114,13 +114,13 @@
   margin: 0;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tighter);
 }
 
 .compact {
   font-size: var(--font-size-md);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-tight);
 }
 
 @media print {

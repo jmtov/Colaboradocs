@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0.125rem 0 0.125rem 0.875rem;
   font-size: var(--font-size-sm);
-  line-height: 1.6;
+  line-height: var(--leading-loose);
   overflow-wrap: anywhere;
   color: var(--muted);
   border-left: var(--border-w-strong) solid var(--line);
@@ -21,7 +21,7 @@
 
 .label {
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }

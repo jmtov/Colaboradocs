@@ -24,8 +24,7 @@
 }
 
 .active {
-  background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 8%, var(--bg));
+  background: var(--tint-strong);
 }
 
 .name {

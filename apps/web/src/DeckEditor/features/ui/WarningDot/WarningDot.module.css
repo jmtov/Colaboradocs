@@ -6,5 +6,5 @@
   border-radius: var(--radius-circle);
   background: var(--warn-mark);
   box-shadow: 0 0 0 2px var(--line);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--warn-mark) 28%, transparent);
+  box-shadow: 0 0 0 2px var(--warn-halo);
 }

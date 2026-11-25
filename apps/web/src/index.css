@@ -61,6 +61,7 @@
   --z-raised: 5;
   --z-sticky: 10;
   --z-fixed: 100;
+  --z-chrome: 110; /* la barra del editor: sobre lo fijo, para que ni la hoja del panel la tape */
 
   /* Colores que no cambian con el tema (un componente no escribe un color: usa uno de estos o del tema). */
   --paper: #fff; /* el lienzo blanco de la vista previa de una presentación */
@@ -69,6 +70,15 @@
   --shadow-color: #000;
   --scrim: color-mix(in srgb, var(--shadow-color) 45%, transparent);
   --scrim-strong: color-mix(in srgb, var(--shadow-color) 55%, transparent);
+
+  /* Lavados de la letra sobre el fondo (hover, zonas, rellenos), del más tenue al más fuerte: --tint (5 %),
+     --tint-strong (8 %), --fill (14 %) y --fill-strong (22 %). Siguen al tema porque salen de --fg y --bg. */
+  --tint-strong: color-mix(in srgb, var(--fg) 8%, var(--bg));
+  --fill: color-mix(in srgb, var(--fg) 14%, var(--bg));
+  --fill-strong: color-mix(in srgb, var(--fg) 22%, var(--bg));
+  --ok-hover: color-mix(in srgb, var(--ok) 18%, var(--ok-bg));
+  --ok-active: color-mix(in srgb, var(--ok) 22%, var(--ok-bg));
+  --warn-halo: color-mix(in srgb, var(--warn-mark) 28%, transparent);
 
   /* Sombras con difuminado (las del efecto levantado de los botones no usan estas). */
   --shadow-knob: 0 1px 2px
@@ -81,6 +91,20 @@
     color-mix(in srgb, var(--shadow-color) 22%, transparent);
   --shadow-sheet: 0 -10px 40px
     color-mix(in srgb, var(--shadow-color) 25%, transparent);
+
+  /* Altura de línea y espaciado entre letras. */
+  --leading-display: 1.04;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.6;
+  --tracking-tight: -0.01em;
+  --tracking-tighter: -0.02em;
+  --tracking-tightest: -0.03em;
+  --tracking-wide: 0.06em;
+  --tracking-label: 0.08em; /* las etiquetas en mayúsculas */
+  --tracking-widest: 0.12em;
 
   /* Transiciones: duraciones y curvas. 0s (sin transición, «reducir movimiento») se escribe tal cual. */
   --duration-fast: 100ms;
@@ -132,6 +156,20 @@
     --faint: #8f8f8f;
     --tint: #f3f3f3;
     --line: #e1e1e1;
+    --scrim: rgb(0 0 0 / 45%);
+    --scrim-strong: rgb(0 0 0 / 55%);
+    --warn-halo: rgb(224 161 0 / 28%);
+    --shadow-knob: 0 1px 2px rgb(0 0 0 / 30%);
+    --shadow-bar: 0 -4px 16px rgb(0 0 0 / 8%);
+    --shadow-float: 0 4px 16px rgb(0 0 0 / 14%);
+    --shadow-menu: 0 8px 28px rgb(0 0 0 / 22%);
+    --shadow-sheet: 0 -10px 40px rgb(0 0 0 / 25%);
+    --tint-strong: #ebebeb;
+    --fill: #dcdcdc;
+    --fill-strong: #c8c8c8;
+    --ok-hover: #bed9e2;
+    --ok-active: #b5d4de;
+    --shadow-pane: 0 -8px 24px rgb(7 7 7 / 14%);
   }
 
   :root[data-theme="dark"] {
@@ -139,6 +177,12 @@
     --faint: #727272;
     --tint: #131313;
     --line: #242424;
+    --tint-strong: #1a1a1a;
+    --fill: #282828;
+    --fill-strong: #3b3b3b;
+    --ok-hover: #234451;
+    --ok-active: #284b58;
+    --shadow-pane: 0 -8px 24px rgb(245 245 245 / 14%);
   }
 }
 
@@ -149,6 +193,12 @@
       --faint: #727272;
       --tint: #131313;
       --line: #242424;
+      --tint-strong: #1a1a1a;
+      --fill: #282828;
+      --fill-strong: #3b3b3b;
+      --ok-hover: #234451;
+      --ok-active: #284b58;
+      --shadow-pane: 0 -8px 24px rgb(245 245 245 / 14%);
     }
   }
 }

@@ -10,7 +10,7 @@
 }
 .row:focus-within {
   background: var(--tint);
-  background: color-mix(in srgb, var(--fg) 4%, var(--surface));
+  background: var(--tint);
 }
 .tall {
   align-items: flex-start;

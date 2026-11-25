@@ -16,7 +16,7 @@
 
 .kicker {
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -25,8 +25,8 @@
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tightest);
 }
 
 .hint {
@@ -39,7 +39,7 @@
   width: 100%;
   padding: var(--space-3) 0.875rem;
   font: var(--font-weight-medium) var(--font-size-lg) var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--tracking-widest);
   text-align: center;
   text-transform: uppercase;
   color: var(--fg);

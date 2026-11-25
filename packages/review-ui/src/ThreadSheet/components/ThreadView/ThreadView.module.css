@@ -45,7 +45,7 @@
   justify-self: start;
   padding: 0.125rem var(--space-2);
   font: var(--font-weight-medium) var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--ok);
   background: var(--ok-bg);
@@ -54,7 +54,7 @@
 .text {
   margin: 0;
   font-size: var(--font-size-md);
-  line-height: 1.5;
+  line-height: var(--leading-relaxed);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }

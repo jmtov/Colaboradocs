@@ -2,8 +2,8 @@
   margin: 0 0 var(--space-4);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tighter);
 }
 
 .toggle {

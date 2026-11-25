@@ -14,7 +14,8 @@ export default function Skeleton(props: Props) {
   return (
     <span
       class={`${styles.bone} ${props.class ?? ''}`}
-      style={{ width: props.width, height: props.height }}
+      // biome-ignore lint/plugin: ancho y alto llegan de quien lo usa; el CSS los aplica
+      style={{ '--skeleton-w': props.width, '--skeleton-h': props.height }}
       aria-hidden="true"
     />
   );

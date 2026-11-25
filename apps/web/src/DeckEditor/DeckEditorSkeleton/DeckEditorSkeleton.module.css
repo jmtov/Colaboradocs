@@ -43,7 +43,7 @@
   grid-area: preview;
   place-items: center;
   padding: var(--space-5);
-  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+  background: var(--fill);
 }
 
 .slide {

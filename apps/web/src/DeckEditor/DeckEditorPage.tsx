@@ -38,7 +38,7 @@ export default function DeckEditorPage(props: { id: string }) {
       </Match>
       <Match when={page.opened()}>
         <div class={styles.app} data-deck-editor>
-          <header class={styles.toolbar} data-app-toolbar>
+          <header class={styles.toolbar}>
             <Toolbar actions={page.actions} />
           </header>
           <aside class={styles.list}>
