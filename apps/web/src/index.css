@@ -1,6 +1,19 @@
 /* Solo lo realmente global: tokens, reset y estilos base. */
 :root {
   color-scheme: light;
+  /* Márgenes laterales: el `body` no lleva padding, cada elemento a ancho de página pone los
+     suyos con `padding-inline: var(--gutter)` (así uno a sangre, como una barra o un fondo,
+     puede salirse de ellos). Nunca menos de 1rem, y más si el equipo tiene zona segura (notch). */
+  --gutter-left: max(1rem, env(safe-area-inset-left, 0px));
+  --gutter-right: max(1rem, env(safe-area-inset-right, 0px));
+  --gutter: var(--gutter-left) var(--gutter-right);
+  /* Ancho del contenido de una página, y el máximo de su contenedor con los márgenes dentro. */
+  --page-width: 1200px;
+  --page-max: calc(
+    var(--page-width) +
+    var(--gutter-left) +
+    var(--gutter-right)
+  );
   --bg: #fff;
   --fg: #070707;
   --muted: color-mix(in srgb, var(--fg) 62%, var(--bg));
@@ -228,8 +241,6 @@ html {
 
 body {
   margin: 0;
-  padding-inline: max(1rem, env(safe-area-inset-left, 0px))
-    max(1rem, env(safe-area-inset-right, 0px));
   font: var(--font-size-md) / 1.65 var(--font-sans);
   color: var(--fg);
   background: var(--bg);
@@ -274,6 +285,9 @@ button {
     --warn: #92480a;
     --warn-bg: #fdeedd;
     --danger: #b3261e;
+    /* El papel ya tiene sus márgenes (@page). */
+    --gutter-left: 0px;
+    --gutter-right: 0px;
   }
 
   html {
@@ -281,7 +295,6 @@ button {
   }
 
   body {
-    padding-inline: 0;
     font-size: 11pt;
     line-height: 1.5;
   }

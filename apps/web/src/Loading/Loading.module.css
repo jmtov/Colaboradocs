@@ -1,8 +1,9 @@
 .page {
   display: grid;
   gap: 0.75rem;
-  max-width: 40rem;
-  padding: 5rem 0;
+  max-width: calc(40rem + var(--gutter-left) + var(--gutter-right));
+  padding-block: 5rem;
+  padding-inline: var(--gutter);
   margin: 0 auto;
   color: var(--muted);
 }

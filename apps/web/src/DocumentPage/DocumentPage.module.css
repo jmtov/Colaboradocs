@@ -1,5 +1,6 @@
 .page {
-  max-width: 1200px;
+  max-width: var(--page-max);
+  padding-inline: var(--gutter);
   margin: 0 auto;
 }
 

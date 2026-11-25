@@ -70,4 +70,38 @@ describe('index.css', () => {
   it('todas las esquinas son rectas', () => {
     expect(css).toMatch(/border-radius:\s*0/);
   });
+
+  it('el body no lleva padding lateral: los márgenes son una variable central (--gutter) y la usa cada contenedor', () => {
+    const body = /\nbody\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(body).not.toMatch(/padding/);
+    expect(css).toMatch(
+      /--gutter-left:\s*max\(1rem, env\(safe-area-inset-left/,
+    );
+    expect(css).toMatch(
+      /--gutter-right:\s*max\(1rem, env\(safe-area-inset-right/,
+    );
+    expect(css).toMatch(
+      /--gutter:\s*var\(--gutter-left\) var\(--gutter-right\)/,
+    );
+    // El papel ya tiene sus márgenes: al imprimir no hay gutter.
+    expect(css).toMatch(/--gutter-left:\s*0px/);
+  });
+
+  it('cada contenedor de página pone su propio margen lateral con la variable', () => {
+    const containers = [
+      './TopBar/TopBar.module.css',
+      './PageBar/PageBar.module.css',
+      './HomePage/HomePage.module.css',
+      './DocumentPage/DocumentPage.module.css',
+      './TasksPage/TasksPage.module.css',
+      './EditorPage/EditorPage.module.css',
+      './AdminPage/AdminPage.module.css',
+      './Loading/Loading.module.css',
+    ];
+    for (const file of containers) {
+      const source = readFileSync(new URL(file, import.meta.url), 'utf8');
+      expect(source, file).toMatch(/padding-inline:\s*var\(--gutter\)/);
+      expect(source, file).not.toMatch(/max-width:\s*1200px/);
+    }
+  });
 });
