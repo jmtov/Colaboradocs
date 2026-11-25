@@ -11,6 +11,8 @@ import {
   type Theme,
 } from '@colaboradocs/deck-core';
 import { describe, expect, it } from 'vitest';
+import { ICONS } from './icons.constants';
+import { icon } from './icons.utils';
 import { mergeRegistries, renderDeck, renderSlides } from './index';
 import { BASE_CSS } from './styles/base.constants';
 
@@ -202,6 +204,17 @@ describe('renderDeck', () => {
     });
     expect(html).toContain('<i>2</i>');
     expect(html).toContain('.x{}');
+  });
+
+  it('cada icono del registro se dibuja como un SVG de trazo en 24×24', () => {
+    for (const name of Object.keys(ICONS)) {
+      const svg = icon(name);
+      expect(svg, name).toMatch(/^<svg viewBox="0 0 24 24"[^>]*>.+<\/svg>$/);
+      // Las etiquetas del interior están cerradas: un path mal copiado rompería el SVG.
+      const inner = ICONS[name] ?? '';
+      expect(inner.match(/</g)?.length, name).toBe(inner.match(/>/g)?.length);
+    }
+    expect(Object.keys(ICONS).length).toBeGreaterThanOrEqual(30);
   });
 
   it('un icono desconocido es un error', () => {
