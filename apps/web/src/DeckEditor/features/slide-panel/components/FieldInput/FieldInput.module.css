@@ -2,7 +2,7 @@
 .input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 0.45rem 0;
+  padding: var(--space-2) 0;
   border: 0;
   outline: none;
   background: transparent;
@@ -22,6 +22,7 @@
   resize: vertical;
   min-height: 2.4rem;
   field-sizing: content;
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- ajuste fino de alineación */
   padding-top: 0.1rem;
   line-height: 1.4;
 }

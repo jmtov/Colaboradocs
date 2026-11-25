@@ -5,8 +5,8 @@
 .bar {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.4rem 0.6rem;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-2);
   cursor: pointer;
   list-style: none;
   background: var(--tint);
@@ -23,8 +23,8 @@
 .body {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  padding: 0.7rem;
+  gap: var(--space-4);
+  padding: var(--space-3);
   border-top: 1px solid var(--line);
 }
 

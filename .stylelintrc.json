@@ -14,7 +14,6 @@
       "files": [
         "apps/web/src/AdminPage/**/*.module.css",
         "apps/web/src/ChoiceGroup/**/*.module.css",
-        "apps/web/src/DeckEditor/**/*.module.css",
         "apps/web/src/DocumentPage/**/*.module.css",
         "apps/web/src/DocumentSheet/**/*.module.css",
         "apps/web/src/DocumentsPage/**/*.module.css",

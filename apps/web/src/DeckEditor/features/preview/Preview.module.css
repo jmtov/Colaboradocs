@@ -15,7 +15,7 @@
   right: 12px;
   bottom: 12px;
   margin: 0;
-  padding: 0.6rem 0.8rem;
+  padding: var(--space-2) var(--space-3);
   background: var(--danger);
   color: #fff;
   font-size: var(--font-size-sm);

@@ -22,7 +22,7 @@
   background: color-mix(in srgb, var(--fg) 22%, var(--surface));
 }
 .help {
-  margin: 0.4rem 0 0;
+  margin: var(--space-2) 0 0;
   font-size: var(--font-size-xs);
   color: var(--muted);
 }
