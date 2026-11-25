@@ -1,4 +1,4 @@
-import type { Reviewer } from './review.types';
+import type { Reviewer } from '../review/review.types';
 
 /**
  * Las acciones del sistema. Un nivel de acceso (rol) es un conjunto de ellas.

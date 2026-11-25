@@ -1,4 +1,4 @@
-import type { ReviewerLabel } from './review.types';
+import type { ReviewerLabel } from '../review/review.types';
 
 /** "Ana López (La Ceja)"; sin municipio, solo el nombre. */
 export function formatReviewerLabel(label: ReviewerLabel | undefined): string {

@@ -1,3 +1,9 @@
+import { isIsoDate } from '../shared/date.utils';
+import {
+  MAX_DOCUMENT_BYTES,
+  MAX_SECTION_HTML_LENGTH,
+  MAX_SECTIONS,
+} from './document.constants';
 import {
   DOCUMENT_KINDS,
   type DocumentContent,
@@ -7,12 +13,6 @@ import {
   type SectionStatus,
   type SpaceInfo,
 } from './document.types';
-import {
-  MAX_DOCUMENT_BYTES,
-  MAX_SECTION_HTML_LENGTH,
-  MAX_SECTIONS,
-} from './review.constants';
-import { isIsoDate } from './tasks.utils';
 
 /** Etiquetas que entiende la página; las demás se quitan (queda su texto). */
 export const ALLOWED_HTML_TAGS = [

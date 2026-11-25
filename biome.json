@@ -208,6 +208,121 @@
           }
         }
       }
+    },
+    {
+      "includes": ["packages/review-core/src/review/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["../access/**", "../document/**", "../task/**"],
+                    "message": "review-core: «review» no importa de access, document, task. Lo compartido va en shared/; document, access y task se apoyan en review."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-core/src/access/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["../document/**", "../task/**"],
+                    "message": "review-core: «access» no importa de document, task. Lo compartido va en shared/; document, access y task se apoyan en review."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-core/src/document/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["../access/**", "../task/**"],
+                    "message": "review-core: «document» no importa de access, task. Lo compartido va en shared/; document, access y task se apoyan en review."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-core/src/task/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["../access/**", "../document/**", "../review/**"],
+                    "message": "review-core: «task» no importa de access, document, review. Lo compartido va en shared/; document, access y task se apoyan en review."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-core/src/shared/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "../access/**",
+                      "../document/**",
+                      "../review/**",
+                      "../task/**"
+                    ],
+                    "message": "review-core: «shared» no importa de access, document, review, task. Lo compartido va en shared/; document, access y task se apoyan en review."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/review-core/src/**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
     }
   ],
   "plugins": ["./.biome/no-inline-style.grit"]

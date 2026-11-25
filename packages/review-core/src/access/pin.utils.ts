@@ -1,4 +1,4 @@
-import { PIN_ALPHABET, PIN_LENGTH } from './review.constants';
+import { PIN_ALPHABET, PIN_LENGTH } from './access.constants';
 
 const encoder = new TextEncoder();
 

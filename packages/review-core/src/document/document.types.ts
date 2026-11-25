@@ -1,4 +1,4 @@
-import type { ReviewerLabel } from './review.types';
+import type { ReviewerLabel } from '../review/review.types';
 
 /** Qué clase de documento es: la home los rotula y los filtra así. Sin `type`, `other`. */
 export const DOCUMENT_KINDS = [

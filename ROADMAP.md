@@ -4,7 +4,7 @@ Cómo crece Colaboradocs sin complicarse antes de tiempo. Es del producto, no de
 
 ## Principio
 
-Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo perfil que no encaje. Cada permiso nuevo es una decisión de seguridad que hay que mantener, así que se añaden cuando hay un caso real, no «por si acaso». Las reglas viven en un solo lugar (`packages/review-core/src/permissions.utils.ts`) para que cambiarlas después sea barato.
+Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo perfil que no encaje. Cada permiso nuevo es una decisión de seguridad que hay que mantener, así que se añaden cuando hay un caso real, no «por si acaso». Las reglas viven en un solo lugar (`packages/review-core/src/access/permissions.utils.ts`) para que cambiarlas después sea barato.
 
 ## Hecho
 
@@ -13,7 +13,7 @@ Tres niveles de acceso (persona, agente, admin) alcanzan mientras haya un solo p
 ## Hecho también
 
 - **Manual UTCP** (`GET /api/utcp`, `packages/review-worker/src/utcp/`): tareas, documentos (leer, borrador, publicar) y presentaciones (leer, borrador). Una prueba de contrato lo ejecuta contra el API real.
-- **Permisos con nombre** (`review-core/src/permissions.utils.ts`): `PERMISSIONS`, `ROLE_PERMISSIONS` (persona, agente, admin) y una tabla ruta → permiso para `/admin/*`, con negación por omisión; una prueba exige que ninguna ruta real quede sin listar. El manual solo anuncia las herramientas cuyo permiso tiene el agente. Diferencia con lo planeado: las rutas no piden el permiso una a una (`requirePermission`), sino que un solo middleware consulta la tabla, para que una ruta olvidada sea de admins y no de todos.
+- **Permisos con nombre** (`review-core/src/access/permissions.utils.ts`): `PERMISSIONS`, `ROLE_PERMISSIONS` (persona, agente, admin) y una tabla ruta → permiso para `/admin/*`, con negación por omisión; una prueba exige que ninguna ruta real quede sin listar. El manual solo anuncia las herramientas cuyo permiso tiene el agente. Diferencia con lo planeado: las rutas no piden el permiso una a una (`requirePermission`), sino que un solo middleware consulta la tabla, para que una ruta olvidada sea de admins y no de todos.
 
 ## Riesgo aceptado
 

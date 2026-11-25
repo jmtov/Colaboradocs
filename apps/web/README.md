@@ -16,7 +16,7 @@ La página **no trae documentos**: los pide a la API después de ingresar el PIN
 
 ## Formato del documento
 
-Tipos en `packages/review-core/src/document.types.ts`, validación en `review-core`, ejemplo en `documents/example.json` y descripción campo por campo en el README de la raíz. Convenciones que el código de esta app **sí interpreta**:
+Tipos en `packages/review-core/src/document/document.types.ts`, validación en `review-core`, ejemplo en `documents/example.json` y descripción campo por campo en el README de la raíz. Convenciones que el código de esta app **sí interpreta**:
 
 - Sección con `id: "glosario"`: `<dl><dt><dd>`. Alimenta la hoja de definiciones; en esa sección no se enlazan términos.
 - `glossaryTerms` (cómo aparece en el texto, minúsculas → entrada del glosario): los términos se enlazan **una vez por sección**; gana el más largo; no parte palabras.

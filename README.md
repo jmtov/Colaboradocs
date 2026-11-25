@@ -94,7 +94,7 @@ Con `NODE_DIR` el CLI toma la cuenta de Cloudflare del `wrangler.jsonc` del nodo
 
 ## Documentos
 
-Un documento es un JSON (ver `documents/example.json` y los tipos en `packages/review-core/src/document.types.ts`). Puedes escribirlo a mano o generarlo desde un archivo:
+Un documento es un JSON (ver `documents/example.json` y los tipos en `packages/review-core/src/document/document.types.ts`). Puedes escribirlo a mano o generarlo desde un archivo:
 
 - **Word (.docx):** estilos «Título 1» (título), «Título 2» (secciones) y «Título 3» (grupos). Si no hay «Título 2», cada «Título 1» es una sección. Las tablas pasan a un párrafo por fila y las imágenes se quitan.
 - **Markdown:** `# Título`, un `## Sección` por sección, `### Grupo`, párrafos, listas, **negrita** y *cursiva*.
@@ -183,7 +183,7 @@ Con recarga en caliente: `npm run dev` levanta los dos (Ctrl+C los cierra) → h
 
 ### Rol «agente»
 
-Para un asistente automático (p. ej. Claude). **No es admin**: puede leer todo, crear y editar tareas (asignarlas a cualquiera, verlas todas, asociarlas a un documento), **guardar borradores** de documentos y presentaciones y **publicar documentos**. Publicar tiene condiciones, y las aplica el Worker: solo si el **último guardado del borrador fue suyo** (si un admin lo tocó después, publica un admin) y **nunca con `force`** (si el documento publicado cambió desde que se creó el borrador, falla con `draft_stale` y decide un admin). Puede reemplazar un documento ya publicado: la versión anterior queda en las versiones, pero los comentarios y OK de los párrafos que cambien dejan de aplicar. No puede publicar presentaciones, descartar borradores, archivar, gestionar accesos, ni cambiar el espacio, los temas o los archivos de un deck. Un admin tampoco puede ascenderlo a admin. Las acciones tienen nombre (`documents:draft`, `documents:publish`, `decks:admin`, `tasks:assign`, `access:admin`…) y cada rol es un conjunto de ellas (`ROLE_PERMISSIONS` en `review-core/src/permissions.utils.ts`); una tabla dice qué permiso exige cada ruta `/admin/*` y lo que no está en la tabla es solo de admins. Lo aplica el Worker, no la interfaz.
+Para un asistente automático (p. ej. Claude). **No es admin**: puede leer todo, crear y editar tareas (asignarlas a cualquiera, verlas todas, asociarlas a un documento), **guardar borradores** de documentos y presentaciones y **publicar documentos**. Publicar tiene condiciones, y las aplica el Worker: solo si el **último guardado del borrador fue suyo** (si un admin lo tocó después, publica un admin) y **nunca con `force`** (si el documento publicado cambió desde que se creó el borrador, falla con `draft_stale` y decide un admin). Puede reemplazar un documento ya publicado: la versión anterior queda en las versiones, pero los comentarios y OK de los párrafos que cambien dejan de aplicar. No puede publicar presentaciones, descartar borradores, archivar, gestionar accesos, ni cambiar el espacio, los temas o los archivos de un deck. Un admin tampoco puede ascenderlo a admin. Las acciones tienen nombre (`documents:draft`, `documents:publish`, `decks:admin`, `tasks:assign`, `access:admin`…) y cada rol es un conjunto de ellas (`ROLE_PERMISSIONS` en `review-core/src/access/permissions.utils.ts`); una tabla dice qué permiso exige cada ruta `/admin/*` y lo que no está en la tabla es solo de admins. Lo aplica el Worker, no la interfaz.
 
 Se crea solo por CLI (`--agent` no se combina con `--admin`) y necesita la migración `0009_agent.sql` **antes** del deploy:
 
