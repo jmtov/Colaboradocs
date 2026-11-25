@@ -68,3 +68,16 @@ describe('categoría de la slide', () => {
     );
   });
 });
+
+describe('slide con scroll cuando el contenido no cabe', () => {
+  it('la slide se desplaza, sin recortar el principio: el contenido se centra con margen automático', () => {
+    expect(block('.slide')).toContain('overflow-y: auto');
+    expect(block('.slide')).not.toContain('justify-content: center');
+    expect(block('.slide > .content')).toContain('margin-block: auto');
+  });
+
+  it('el fondo no se va con el scroll y la navegación no tapa la slide', () => {
+    expect(block('.bg')).toContain('position: fixed');
+    expect(block('.nav')).toContain('pointer-events: none');
+  });
+});

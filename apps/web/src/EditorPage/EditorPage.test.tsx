@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ReviewProvider } from '@colaboradocs/review-ui';
@@ -7,6 +8,7 @@ import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentContent } from '@/content/content.types';
 import { buildProse } from '@/Prose/buildProse';
+import { openMenus } from '@/test/openMenus';
 import EditorPage from './EditorPage';
 
 const admin = { id: 'r1', name: 'Ana', isAdmin: true, municipality: null };
@@ -232,15 +234,24 @@ function write(input: HTMLInputElement, value: string) {
 }
 
 /** El último botón con ese texto (o nombre, si es solo ícono) exacto: las hojas se montan después de la página. */
-const button = (root: ParentNode, text: string) => {
+const button = (
+  root: ParentNode,
+  text: string,
+  opened = false,
+): HTMLButtonElement => {
   const found = [...root.querySelectorAll('button')]
     .filter(
       (item) =>
         (item.getAttribute('aria-label') ?? item.textContent)?.trim() === text,
     )
     .at(-1);
-  if (!found) throw new Error(`falta el botón «${text}»`);
-  return found;
+  if (found) return found;
+  // Puede estar en un menú: su contenido se monta al abrirse.
+  if (!opened) {
+    openMenus(root);
+    return button(root, text, true);
+  }
+  throw new Error(`falta el botón «${text}»`);
 };
 
 /** Pone el cursor al final del bloque que tiene ese texto. */

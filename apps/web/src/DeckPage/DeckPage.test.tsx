@@ -1,8 +1,10 @@
 // @vitest-environment happy-dom
+
 import { defaultSlide } from '@colaboradocs/deck-core';
 import { BUILTIN_THEMES } from '@colaboradocs/themes';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { openMenus } from '@/test/openMenus';
 import App from '../App';
 import { deckStore } from '../DeckEditor/features/deck/deck.store';
 
@@ -79,6 +81,19 @@ function reportSlide(frame: HTMLIFrameElement, slide: number) {
 }
 
 describe('DeckPage: ir al editor y volver, en la misma slide', () => {
+  it('«atrás» de una presentación vuelve a la lista de presentaciones, no a los documentos', async () => {
+    fakeApi();
+    go('/p/charla');
+    const host = mount();
+    await wait(200);
+    const back = host.querySelector(
+      'a[aria-label="Volver a las presentaciones"]',
+    );
+    expect(back?.getAttribute('href')).toBe('/presentaciones');
+    (back as HTMLElement).click();
+    expect(window.location.pathname).toBe('/presentaciones');
+  });
+
   it('«Editar» abre el editor en la slide que se está viendo', async () => {
     fakeApi();
     go('/p/charla');
@@ -121,7 +136,7 @@ describe('DeckPage: ir al editor y volver, en la misma slide', () => {
     expect(post).toHaveBeenCalledWith({ deckGo: 2 }, '*');
   });
 
-  it('el editor abre en la slide de ?slide=N, y «Ver presentación» vuelve a ella', async () => {
+  it('el editor abre en la slide de ?slide=N, y «Volver a la presentación» vuelve a ella', async () => {
     fakeApi();
     go('/p/charla/editar?slide=3');
     const host = mount();
@@ -129,7 +144,7 @@ describe('DeckPage: ir al editor y volver, en la misma slide', () => {
     expect(deckStore.slideIndex()).toBe(2);
     deckStore.select(1);
     [...host.querySelectorAll('button')]
-      .find((item) => item.textContent?.includes('Ver presentación'))
+      .find((item) => item.textContent?.includes('Volver a la presentación'))
       ?.click();
     await wait(100);
     expect(window.location.pathname).toBe('/p/charla');
@@ -153,10 +168,12 @@ describe('DeckPage: ir al editor y volver, en la misma slide', () => {
       });
     });
 
-    const buttonsNamed = (host: HTMLElement, text: string) =>
-      [...host.querySelectorAll('button')].filter((item) =>
+    const buttonsNamed = (host: HTMLElement, text: string) => {
+      openMenus(host);
+      return [...host.querySelectorAll('button')].filter((item) =>
         item.textContent?.trim().startsWith(text),
       );
+    };
 
     it('Importar, Exportar, Descartar y Ver celdas viven en el menú «Opciones», no sueltos en la barra', async () => {
       fakeApi();
@@ -179,12 +196,41 @@ describe('DeckPage: ir al editor y volver, en la misma slide', () => {
         'Deshacer',
         'Rehacer',
         'Publicar',
-        'Ver presentación',
+        'Volver a la presentación',
       ]) {
         expect(
           buttonsNamed(host, name)[0]?.closest('[popover]'),
           name,
         ).toBeNull();
+      }
+    });
+
+    it('sin botón «Inicio»: la barra solo vuelve a la presentación', async () => {
+      fakeApi();
+      go('/p/charla/editar');
+      const host = mount();
+      await wait(300);
+      expect(buttonsNamed(host, 'Inicio')).toHaveLength(0);
+      expect(buttonsNamed(host, 'Ver presentación')).toHaveLength(0);
+      expect(buttonsNamed(host, 'Volver a la presentación')).toHaveLength(1);
+    });
+
+    it('todas las opciones de «Opciones» llevan ícono', async () => {
+      fakeApi();
+      go('/p/charla/editar');
+      const host = mount();
+      await wait(300);
+      for (const name of [
+        'Configuración de la presentación',
+        'Ver celdas',
+        'Importar JSON',
+        'Exportar JSON',
+        'Descartar cambios',
+      ]) {
+        const item = buttonsNamed(host, name)[0];
+        expect(item?.firstElementChild?.tagName.toLowerCase(), name).toBe(
+          'svg',
+        );
       }
     });
 

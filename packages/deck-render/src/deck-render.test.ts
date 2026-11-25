@@ -506,7 +506,24 @@ describe('motor', () => {
     );
     expect(html).toContain("history.replaceState(null, '', '#' + (n + 1))");
     expect(html).toContain('window.parent.postMessage({ deckSlide: n + 1 }');
+    // la slide de arranque no se avisa: la página que contiene el deck puede haber pedido otra
+    expect(html).toContain('var first = cur < 0;');
+    expect(html).toContain('if (!first && window.parent !== window)');
     expect(html).toContain('(parseInt(location.hash.slice(1), 10) || 1) - 1');
+  });
+});
+
+describe('clic para pasar de slide', () => {
+  it('lo recoge el motor (la navegación no cubre la slide), salvo en la vista previa y en enlaces o botones', () => {
+    const { html } = renderDeck(
+      deck({ kind: 'content', titleSize: 'xl', title: ['a'] }),
+      theme,
+    );
+    expect(html).toContain("if (!C.preview) document.addEventListener('click'");
+    expect(html).toContain(
+      "closest('a, button, input, textarea, select, kbd')",
+    );
+    expect(html).toContain('e.clientX < innerWidth / 4');
   });
 });
 

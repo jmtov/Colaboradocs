@@ -17,6 +17,7 @@ export const ENGINE_JS = `
   function go(n) {
     n = Math.max(0, Math.min(slides.length - 1, n));
     if (n === cur) return;
+    var first = cur < 0;
     slides.forEach(function (s, i) {
       s.classList.toggle('is-active', i === n);
       s.classList.toggle('is-past', i < n);
@@ -26,8 +27,8 @@ export const ENGINE_JS = `
     bar.style.transform = 'scaleX(' + (n + 1) / slides.length + ')';
     counter.textContent = pad(n + 1) + ' / ' + pad(slides.length);
     history.replaceState(null, '', '#' + (n + 1));
-    // Si el deck está dentro de otra página (la galería), le avisa en qué slide va.
-    if (window.parent !== window) window.parent.postMessage({ deckSlide: n + 1 }, '*');
+    // Si el deck está dentro de otra página (la galería), le avisa en qué slide va. La primera vez no: es la de arranque, y la página puede haber pedido otra (?slide=N) que aún no llega.
+    if (!first && window.parent !== window) window.parent.postMessage({ deckSlide: n + 1 }, '*');
   }
   // La página que contiene el deck puede llevarlo a una slide (el editor, al volver a la presentación).
   addEventListener('message', function (e) {
@@ -141,6 +142,13 @@ export const ENGINE_JS = `
   var prevZone = document.getElementById('prev');
   if (nextZone) nextZone.addEventListener('click', next);
   if (prevZone) prevZone.addEventListener('click', prev);
+  // La navegación no cubre la slide (así se puede desplazar): el clic en la slide avanza, y en su cuarto izquierdo vuelve.
+  // No cuentan los clics en enlaces o botones ni los que terminan una selección de texto.
+  if (!C.preview) document.addEventListener('click', function (e) {
+    if (e.target.closest && e.target.closest('a, button, input, textarea, select, kbd')) return;
+    if (String(window.getSelection())) return;
+    if (e.clientX < innerWidth / 4) prev(); else next();
+  });
 
   var x0 = null;
   addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });

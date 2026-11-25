@@ -1,0 +1,19 @@
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.875rem;
+  align-items: center;
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.text {
+  display: grid;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0;
+}

@@ -2,6 +2,7 @@
 import { ReviewProvider } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { openMenus } from '@/test/openMenus';
 import TopBar from './TopBar';
 
 const disposers: (() => void)[] = [];
@@ -61,6 +62,7 @@ describe('TopBar', () => {
   it('un admin ve «Editar» en el menú y va al editor del documento', async () => {
     const host = mount(true);
     await wait();
+    openMenus(host);
     editItem(host)?.click();
     expect(window.location.pathname).toBe('/d/mi-doc/editar');
   });
@@ -68,6 +70,7 @@ describe('TopBar', () => {
   it('el menú va por secciones: acciones de la página, administración, tema y salir', async () => {
     const host = mount(true);
     await wait();
+    openMenus(host);
     const text = host.querySelector('[popover]')?.textContent ?? '';
     const at = [
       'Imprimir',

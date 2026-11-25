@@ -4,7 +4,7 @@ import { deckStore } from '@/DeckEditor/features/deck/deck.store';
 import { viewStore } from '@/DeckEditor/features/preview/view.store';
 import ArrowDownIcon from '@/icons/ArrowDownIcon';
 import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
-import MonitorIcon from '@/icons/MonitorIcon';
+import GridIcon from '@/icons/GridIcon';
 import RedoIcon from '@/icons/RedoIcon';
 import SlidersIcon from '@/icons/SlidersIcon';
 import TrashIcon from '@/icons/TrashIcon';
@@ -32,18 +32,10 @@ export default function Toolbar(props: Props) {
       <Button
         icon={ArrowLeftIcon}
         size="sm"
-        title="Volver al inicio"
-        onClick={props.actions.back}
-      >
-        Inicio
-      </Button>
-      <Button
-        icon={MonitorIcon}
-        size="sm"
-        title="Salir del editor y ver la presentación, en esta slide"
+        title="Salir del editor y volver a la presentación, en esta slide"
         onClick={props.actions.view}
       >
-        Ver presentación
+        Volver a la presentación
       </Button>
       <strong class={styles.title}>{deckStore.deck.title}</strong>
       <span class={styles.spacer} />
@@ -102,6 +94,7 @@ export default function Toolbar(props: Props) {
                 label: 'Ver celdas',
                 description:
                   'Dibuja columnas, filas y celdas en la vista previa',
+                icon: GridIcon,
                 checked: viewStore.showCells(),
                 onSelect: () => viewStore.toggleCells(),
               },

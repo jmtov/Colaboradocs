@@ -91,6 +91,8 @@ export function useDeckPage(id: () => string) {
     /** Lleva el iframe a una slide (desde 1); sin número, lo deja donde está (la primera). */
     goTo: (target: number | undefined) => {
       if (target === undefined) return;
+      // El motor no avisa la primera slide: se da por buena la pedida.
+      setSlide(target);
       frame?.contentWindow?.postMessage({ deckGo: target }, '*');
     },
   };

@@ -3,6 +3,7 @@ import type { ManagedReviewer } from '@colaboradocs/review-core';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ReviewProvider from '../../../ReviewProvider/ReviewProvider';
+import { openMenus } from '../../../test/openMenus';
 import PersonRow from './PersonRow';
 
 const admin = { id: 'r1', name: 'Ana', isAdmin: true, municipality: null };
@@ -38,14 +39,18 @@ function mount(person: ManagedReviewer, isMe = false) {
   return host;
 }
 
-const menuItems = (host: HTMLElement) =>
-  [...host.querySelectorAll<HTMLElement>('[popover] button')].map((button) =>
-    button.textContent?.trim(),
+const menuItems = (host: HTMLElement) => {
+  openMenus(host);
+  return [...host.querySelectorAll<HTMLElement>('[popover] button')].map(
+    (button) => button.textContent?.trim(),
   );
-const press = (root: ParentNode, text: string) =>
-  [...root.querySelectorAll('button')]
+};
+const press = (root: ParentNode, text: string) => {
+  openMenus(root);
+  return [...root.querySelectorAll('button')]
     .find((button) => button.textContent?.trim() === text)
     ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+};
 const dialog = () => document.querySelector('dialog[open]');
 
 beforeEach(() => {
@@ -83,6 +88,7 @@ describe('PersonRow: menú de acciones', () => {
       'Regenerar PIN',
       'Eliminar',
     ]);
+    openMenus(host);
     const buttons = host.querySelectorAll('[popover] button');
     for (const button of buttons) {
       expect(button.querySelector('svg[aria-hidden="true"]')).not.toBeNull();

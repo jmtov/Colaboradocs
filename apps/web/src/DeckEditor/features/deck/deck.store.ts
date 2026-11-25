@@ -200,10 +200,12 @@ function createDeckStore() {
     /** La slide tal como se dibuja en la vista previa (con el caso de prueba, si hay uno). */
     previewSlides: (): Slide[] => {
       const slides: Slide[] = JSON.parse(JSON.stringify(deck.slides));
+      // Sin caso de prueba no se lee la slide elegida: navegar entre slides no rehace la vista previa.
       const id = testCase();
+      if (!id) return slides;
       const at = slideIndex();
       const current = slides[at];
-      if (id && current) slides[at] = applyTestCase(current, id);
+      if (current) slides[at] = applyTestCase(current, id);
       return slides;
     },
   };

@@ -3,6 +3,7 @@ import { ReviewProvider } from '@colaboradocs/review-ui';
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentContent } from '@/content/content.types';
+import { openMenus } from '@/test/openMenus';
 import DocumentPage from './DocumentPage';
 
 const me = { id: 'r1', name: 'Ana', isAdmin: false, municipality: null };
@@ -69,6 +70,7 @@ describe('imprimir el documento', () => {
     await wait();
     const print = vi.fn();
     vi.stubGlobal('print', print);
+    openMenus(document.body);
     [...document.querySelectorAll('button')]
       .find((item) => item.textContent?.trim() === 'Imprimir')
       ?.click();

@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { openMenus } from '@/test/openMenus';
 import App from '../App';
 
 const me = { id: 'r1', name: 'Ana', isAdmin: false, municipality: null };
@@ -39,10 +40,12 @@ type Calls = { patches: { url: string; body: unknown }[]; deletes: string[] };
 const menus = (host: HTMLElement) =>
   host.querySelectorAll('button[aria-label^="Acciones de la tarea"]');
 
-const menuItem = (host: HTMLElement, label: string) =>
-  [...host.querySelectorAll<HTMLButtonElement>('[popover] button')].find(
+const menuItem = (host: HTMLElement, label: string) => {
+  openMenus(host);
+  return [...host.querySelectorAll<HTMLButtonElement>('[popover] button')].find(
     (item) => item.textContent?.trim().startsWith(label),
   );
+};
 
 function fakeApi(initial: object[]) {
   const calls: Calls = { patches: [], deletes: [] };
@@ -194,6 +197,7 @@ describe('Tareas', () => {
     await wait(50);
     // pide confirmar antes de borrar
     expect(calls.deletes).toEqual([]);
+    openMenus(host);
     const confirm = [
       ...host.querySelectorAll<HTMLButtonElement>('[popover] button'),
     ].find((item) => item.textContent?.trim().startsWith('Eliminar'));

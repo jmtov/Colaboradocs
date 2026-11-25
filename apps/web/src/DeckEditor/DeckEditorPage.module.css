@@ -14,6 +14,7 @@
 .list {
   grid-area: list;
   overflow: auto;
+  overscroll-behavior: contain;
   border-right: 1px solid var(--line);
   background: var(--surface);
 }
@@ -28,6 +29,12 @@
 .panel {
   grid-area: panel;
   overflow: auto;
+  overscroll-behavior: contain;
   border-left: 1px solid var(--line);
   background: var(--surface);
+}
+
+/* Mientras se desplaza el panel, su contenido no recibe el puntero (sin hover ni animaciones de botones). */
+.scrolling > * {
+  pointer-events: none;
 }

@@ -4,6 +4,7 @@ import PlusIcon from '@/icons/PlusIcon';
 import RefreshIcon from '@/icons/RefreshIcon';
 import ListFilter from '@/ListFilter/ListFilter';
 import TaskRow from '@/TaskRow/TaskRow';
+import TasksSkeleton from './components/TasksSkeleton/TasksSkeleton';
 import { useTasksTab } from './TasksTab.hooks';
 import styles from './TasksTab.module.css';
 import { GROUP_TITLES } from './tasks.utils';
@@ -34,7 +35,7 @@ export default function TasksTab() {
       </ListFilter>
       <Switch>
         <Match when={page.status() === 'loading'}>
-          <p class={styles.empty}>Cargando tus tareas…</p>
+          <TasksSkeleton />
         </Match>
         <Match when={page.status() === 'error'}>
           <div class={styles.empty}>

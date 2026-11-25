@@ -2,6 +2,7 @@
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '@/App';
+import { openMenus } from '@/test/openMenus';
 
 const me = { id: 'r1', name: 'Ana', isAdmin: false, municipality: null };
 const content = {
@@ -240,6 +241,7 @@ describe('Tareas al pie del documento', () => {
 });
 
 function item(host: HTMLElement, label: string) {
+  openMenus(host);
   const found = [
     ...host.querySelectorAll<HTMLButtonElement>('#tareas [popover] button'),
   ].find((element) => element.textContent?.trim().startsWith(label));

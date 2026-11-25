@@ -13,16 +13,21 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 
 /* ---------- Deck ---------- */
 .slide {
-  position: fixed; inset: 0; display: flex; flex-direction: column; justify-content: center;
+  position: fixed; inset: 0; display: flex; flex-direction: column;
+  /* Si el contenido no cabe (pantalla chica o baja), la slide se desplaza; la barra no se ve para no estorbar a la entrada animada. */
+  overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none;
   padding: var(--pad-top) var(--pad-x) var(--pad-bottom); background: var(--bg); color: var(--ink);
   opacity: 0; visibility: hidden; transform: translateX(var(--slide-shift));
   transition: transform var(--dur-slide) var(--ease), opacity .5s ease, visibility 0s var(--dur-slide), var(--vary);
 }
 .slide.is-active { opacity: 1; visibility: visible; transform: none; transition: transform var(--dur-slide) var(--ease), opacity .5s ease, visibility 0s, var(--vary); z-index: 2; }
 .slide.is-past { transform: translateX(calc(var(--slide-shift) * -1)); }
+.slide::-webkit-scrollbar { display: none; }
+/* Centrado seguro: con espacio sobra a los dos lados (queda al centro); sin él, empieza arriba y se desplaza. Con justify-content: center se cortaría el principio. */
+.slide > .content { margin-block: auto; }
 
 /* Fondo de la slide: capas detrás de todo el contenido, sin bloquear clics. Cada capa se coloca con variables (% de la slide). */
-.bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .bg-layer {
   position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: calc(var(--w) * 1%); aspect-ratio: var(--ratio);
   transform: translate(calc(var(--ax) * -1%), calc(var(--ay) * -1%)); opacity: var(--o);
@@ -192,7 +197,8 @@ h1, h2, h3, p { margin: 0; }
 .controls { position: fixed; top: var(--controls-top); right: var(--pad-x); z-index: 11; display: flex; gap: 1.4rem; align-items: center; font: 400 var(--text-controls) var(--font-mono); color: var(--muted); opacity: 0; pointer-events: none; transition: opacity .25s ease; }
 .controls kbd { font: inherit; border: 1px solid var(--line-strong); padding: .05em .5em; color: var(--ink); }
 body.top .controls { opacity: 1; pointer-events: auto; }
-.nav { position: fixed; inset: 0; z-index: 5; display: grid; grid-template-columns: 1fr 3fr; }
+/* La navegación no tapa la slide (si no, no se podría desplazar ni seleccionar): el clic lo recoge el motor. Los botones siguen para el teclado y los lectores de pantalla. */
+.nav { position: fixed; inset: 0; z-index: 5; display: grid; grid-template-columns: 1fr 3fr; pointer-events: none; }
 .nav button, .themebtn { all: unset; cursor: pointer; }
 
 @media screen and (max-width: 860px) {
@@ -200,7 +206,7 @@ body.top .controls { opacity: 1; pointer-events: auto; }
   .content { grid-template-columns: minmax(0, 1fr); }
   .content > .cell { grid-column: 1 / -1 !important; grid-row: auto !important; }
   .timeline { grid-auto-flow: row; row-gap: 1.5rem; } .timeline::before { display: none; }
-  .slide { overflow-y: auto; justify-content: flex-start; padding-top: 4.2rem; padding-bottom: 4rem; }
+  .slide { padding-top: 4.2rem; padding-bottom: 4rem; }
   .controls span { display: none; }
 }
 

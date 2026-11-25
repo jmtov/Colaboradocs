@@ -6,6 +6,7 @@ import SaveIcon from '@/icons/SaveIcon';
 import TrashIcon from '@/icons/TrashIcon';
 import UploadIcon from '@/icons/UploadIcon';
 import PageBar from '@/PageBar/PageBar';
+import SkeletonLines from '@/Skeleton/SkeletonLines';
 import ChangeWarnings from './components/ChangeWarnings/ChangeWarnings';
 import EditorDetails from './components/EditorDetails/EditorDetails';
 import EditorOutline from './components/EditorOutline/EditorOutline';
@@ -212,7 +213,7 @@ export default function EditorPage(props: Props) {
             </Match>
             <Match when={page.status() === 'loading'}>
               <section class={styles.intro}>
-                <p class={styles.hint}>Cargando…</p>
+                <SkeletonLines lines={4} />
               </section>
             </Match>
           </Switch>

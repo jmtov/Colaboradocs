@@ -6,6 +6,7 @@ import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentListItem } from '@/content/content.types';
 import { type HomeTab, navigationKind } from '@/router/router';
+import { openMenus } from '@/test/openMenus';
 import HomePage from './HomePage';
 
 const item = (
@@ -413,6 +414,7 @@ describe('HomePage', () => {
     signIn(true);
     const host = mount([item('a')]);
     await wait();
+    openMenus(host);
     const menuText = host.querySelector('li [popover]')?.textContent ?? '';
     expect(menuText).toContain('Editar');
     expect(menuText).toContain('Reemplazar documento');
@@ -439,6 +441,7 @@ describe('HomePage', () => {
     signIn(false);
     const host = mount([item('a')]);
     await wait();
+    openMenus(host);
     const groups = host.querySelectorAll('[role="group"][aria-label="Tema"]');
     expect(groups).toHaveLength(1);
     // dentro del popover del usuario (el primero de la página)
@@ -466,6 +469,7 @@ describe('HomePage', () => {
     const trigger = host.querySelector('button[aria-label^="Acciones de"]');
     expect(trigger?.hasAttribute('data-flat')).toBe(false);
     // …pero los ítems dentro del menú son planos
+    openMenus(host);
     const items = [...host.querySelectorAll('li [popover] button')];
     expect(items.length).toBeGreaterThan(0);
     for (const entry of items)

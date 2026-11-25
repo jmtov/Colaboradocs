@@ -10,7 +10,6 @@ import {
 import {
   ActionMenu,
   type ActionMenuGroup,
-  BottomSheet,
   Button,
 } from '@colaboradocs/review-ui';
 import { createEffect, createSignal, For, on, Show } from 'solid-js';
@@ -20,6 +19,7 @@ import {
   type Path,
 } from '@/DeckEditor/features/deck/deck.utils';
 import { viewStore } from '@/DeckEditor/features/preview/view.store';
+import PaneSheet from '@/DeckEditor/features/ui/PaneSheet/PaneSheet';
 import WarningDot from '@/DeckEditor/features/ui/WarningDot/WarningDot';
 import PencilIcon from '@/icons/PencilIcon';
 import PlusIcon from '@/icons/PlusIcon';
@@ -41,7 +41,7 @@ interface BlocksFieldProps {
 
 /**
  * Los bloques de la slide, uno por línea (editar, eliminar). El lugar de cada uno lo dice su
- * posición en la cuadrícula, no el orden de la lista. Editar abre sus campos en una hoja inferior;
+ * posición en la cuadrícula, no el orden de la lista. Editar abre sus campos en una hoja sobre el panel;
  * pulsar una celda en la vista previa (con «Ver celdas») abre la de ese bloque.
  */
 export default function BlocksField(props: BlocksFieldProps) {
@@ -205,11 +205,9 @@ export default function BlocksField(props: BlocksFieldProps) {
         triggerLabel="Agregar bloque"
         groups={addMenu()}
       />
-      <BottomSheet
+      <PaneSheet
         open={adding() !== null}
-        kicker="Bloques"
         title={`Agregar bloque en C${adding()?.col ?? ''}·F${adding()?.row ?? ''}`}
-        compact
         onClose={() => setAdding(null)}
       >
         <ul class={styles.kinds}>
@@ -231,12 +229,10 @@ export default function BlocksField(props: BlocksFieldProps) {
             )}
           </For>
         </ul>
-      </BottomSheet>
-      <BottomSheet
+      </PaneSheet>
+      <PaneSheet
         open={editing() !== null}
-        kicker="Bloque"
         title={current() ? nameOf(current() as Record<string, unknown>) : ''}
-        compact
         onClose={() => setEditing(null)}
       >
         {(() => {
@@ -267,7 +263,7 @@ export default function BlocksField(props: BlocksFieldProps) {
             </>
           );
         })()}
-      </BottomSheet>
+      </PaneSheet>
     </FieldSection>
   );
 }

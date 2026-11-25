@@ -1,0 +1,35 @@
+.bone {
+  display: block;
+  width: 100%;
+  height: var(--font-size-md);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--fg) 7%, var(--bg)) 30%,
+    color-mix(in srgb, var(--fg) 13%, var(--bg)) 50%,
+    color-mix(in srgb, var(--fg) 7%, var(--bg)) 70%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone {
+    animation: none;
+  }
+}
+
+@media print {
+  .bone {
+    display: none;
+  }
+}

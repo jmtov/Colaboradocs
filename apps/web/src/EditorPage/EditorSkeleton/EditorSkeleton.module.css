@@ -1,0 +1,31 @@
+.bar {
+  border-bottom: 1px solid var(--line);
+}
+
+.barInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--page-max);
+  padding-block: 0.5rem;
+  padding-inline: var(--gutter);
+  margin: 0 auto;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.page {
+  display: grid;
+  gap: 1.25rem;
+  max-width: var(--page-max);
+  padding-block: 2.5rem 4.5rem;
+  padding-inline: var(--gutter);
+  margin: 0 auto;
+}
+
+.toolbar {
+  margin-block: 0.5rem;
+}

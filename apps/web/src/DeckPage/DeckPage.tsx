@@ -7,6 +7,7 @@ import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import PageBar from '@/PageBar/PageBar';
 import {
+  DECKS_PATH,
   deckEditPath,
   navigate,
   slideFromSearch,
@@ -14,6 +15,7 @@ import {
 } from '@/router/router';
 import { useBarHidden, useDeckPage } from './DeckPage.hooks';
 import styles from './DeckPage.module.css';
+import DeckSkeleton from './DeckSkeleton/DeckSkeleton';
 
 type Props = { id: string; name: string };
 
@@ -45,7 +47,11 @@ export default function DeckPage(props: Props) {
         {(deck) => (
           <div class={styles.page} classList={{ [styles.full]: bar.hidden() }}>
             <Show when={!bar.hidden()}>
-              <PageBar backLabel="Inicio" backHref="/" name={props.name}>
+              <PageBar
+                backLabel="Volver a las presentaciones"
+                backHref={DECKS_PATH}
+                name={props.name}
+              >
                 <Show when={isAdmin()}>
                   <Button
                     icon={PencilIcon}
@@ -90,7 +96,7 @@ export default function DeckPage(props: Props) {
         )}
       </Match>
       <Match when={page.deck.loading}>
-        <Loading>Cargando…</Loading>
+        <DeckSkeleton />
       </Match>
     </Switch>
   );

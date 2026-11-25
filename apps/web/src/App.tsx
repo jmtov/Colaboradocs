@@ -1,8 +1,12 @@
 import { Button, PinGate, ReviewProvider } from '@colaboradocs/review-ui';
 import { lazy, Match, Show, Suspense, Switch } from 'solid-js';
 import AdminPage from '@/AdminPage/AdminPage';
+import DeckEditorSkeleton from '@/DeckEditor/DeckEditorSkeleton/DeckEditorSkeleton';
 import DeckPage from '@/DeckPage/DeckPage';
 import DocumentPage from '@/DocumentPage/DocumentPage';
+import DocumentSkeleton from '@/DocumentPage/DocumentSkeleton/DocumentSkeleton';
+import EditorSkeleton from '@/EditorPage/EditorSkeleton/EditorSkeleton';
+import HomeSkeleton from '@/HomePage/components/HomeSkeleton/HomeSkeleton';
 import HomePage from '@/HomePage/HomePage';
 import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
@@ -40,7 +44,7 @@ function DocumentRoute(props: { id: string }) {
         )}
       </Match>
       <Match when={route.content.loading}>
-        <Loading>Cargando…</Loading>
+        <DocumentSkeleton />
       </Match>
     </Switch>
   );
@@ -65,7 +69,7 @@ function HomeRoute(props: { name: string; tab: HomeTab }) {
     <Show
       when={home.documents() && home.decks() && !home.single()}
       fallback={
-        <Show when={home.failed()} fallback={<Loading>Cargando…</Loading>}>
+        <Show when={home.failed()} fallback={<HomeSkeleton />}>
           <Loading>
             <h1>No se pudo cargar la lista</h1>
             <p>
@@ -109,14 +113,14 @@ export default function App() {
             <Match when={app.editId()} keyed>
               {/* keyed: al cambiar de documento se vuelve a pedir y armar todo */}
               {(id) => (
-                <Suspense fallback={<Loading>Cargando el editor…</Loading>}>
+                <Suspense fallback={<EditorSkeleton />}>
                   <EditorPage id={id} name={app.name()} />
                 </Suspense>
               )}
             </Match>
             <Match when={app.deckEditId()} keyed>
               {(id) => (
-                <Suspense fallback={<Loading>Cargando el editor…</Loading>}>
+                <Suspense fallback={<DeckEditorSkeleton />}>
                   <DeckEditorPage id={id} />
                 </Suspense>
               )}

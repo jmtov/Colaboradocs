@@ -1,0 +1,53 @@
+.app {
+  display: grid;
+  height: 100vh;
+  height: 100dvh;
+  grid-template-columns: 220px minmax(0, 1fr) 400px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "toolbar toolbar toolbar" "list preview panel";
+}
+
+.toolbar {
+  display: flex;
+  grid-area: toolbar;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.list,
+.panel {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding: 0.75rem;
+}
+
+.list {
+  grid-area: list;
+  border-right: 1px solid var(--line);
+}
+
+.panel {
+  grid-area: panel;
+  border-left: 1px solid var(--line);
+}
+
+.preview {
+  display: grid;
+  grid-area: preview;
+  place-items: center;
+  padding: 1.5rem;
+  background: color-mix(in srgb, var(--fg) 14%, var(--bg));
+}
+
+.slide {
+  width: min(100%, 60rem);
+  aspect-ratio: 16 / 9;
+  background: var(--bg);
+}

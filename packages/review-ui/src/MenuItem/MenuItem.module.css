@@ -1,11 +1,11 @@
 .item {
   display: flex;
   gap: 0.625rem;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
-  min-height: 2.5rem;
-  padding: 0.5rem 0.625rem;
+  padding: 0.625rem;
   font-size: var(--font-size-sm);
+  line-height: 1.4;
   color: var(--fg);
   text-align: left;
   cursor: pointer;
@@ -29,10 +29,10 @@
 
 .icon {
   flex: none;
-  align-self: flex-start;
   width: 1.125em;
   height: 1.125em;
-  margin-top: 0.125em;
+  /* Centrado en la primera línea del texto (la etiqueta), no en todo el bloque. */
+  margin-top: calc((1.4em - 1.125em) / 2);
 }
 
 .text {
@@ -58,4 +58,5 @@
   flex: none;
   width: 1.125em;
   height: 1.125em;
+  margin-top: calc((1.4em - 1.125em) / 2);
 }

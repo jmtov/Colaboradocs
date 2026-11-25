@@ -3,6 +3,7 @@
 // prueba NO termina (las respuestas simuladas son inmediatas y acaparan el hilo).
 import { render } from 'solid-js/web';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { openMenus } from '@/test/openMenus';
 import App from './App';
 
 const admin = { id: 'r1', name: 'Ana', isAdmin: true, municipality: null };
@@ -49,6 +50,7 @@ function openDocumentsFromMenu(host: HTMLElement) {
   host
     .querySelector<HTMLButtonElement>('button[aria-label="Menú de la sesión"]')
     ?.click();
+  openMenus(host);
   [...host.querySelectorAll('button')]
     .find((item) => item.textContent?.includes('Documentos'))
     ?.click();

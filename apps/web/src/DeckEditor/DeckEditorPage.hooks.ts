@@ -30,7 +30,6 @@ export type EditorActions = {
   /** Por qué no se pudo publicar (o guardar), listo para mostrar. */
   error: () => string | undefined;
   publishing: () => boolean;
-  back: () => void;
   /** Sale del editor a la presentación, en la slide que se está editando. */
   view: () => void;
   publish: () => void;
@@ -128,9 +127,6 @@ export function useDeckEditorPage(id: () => string) {
     saveState,
     error,
     publishing,
-    back: () => {
-      void save().then(() => navigate('/'));
-    },
     view: () => {
       // El número se toma ahora: guardar toma un momento y la persona puede seguir tocando.
       const target = withSlide(deckPath(id()), deckStore.slideIndex() + 1);
