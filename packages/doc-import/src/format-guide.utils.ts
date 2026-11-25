@@ -47,7 +47,8 @@ Un objeto JSON con estos campos.
 - \`shortName\`: nombre corto para el encabezado (máx. 80). Por defecto, el título.
 - \`eyebrow\`: línea sobre el título del inicio (máx. 200). \`{version}\` se reemplaza por la versión.
 - \`lead\`: párrafo bajo el título del inicio (máx. 600).
-- \`tipo\`: qué clase de documento es; la home los agrupa así. Uno de \`${DOCUMENT_KINDS.join('`, `')}\` (sin él, \`otro\`). Usa \`acta\` para una reunión (su fecha va en \`updated\`), \`iniciativa\` para un proyecto del que cuelgan tareas y \`guia\` para una guía.
+- \`tipo\`: qué clase de documento es; la home los filtra y rotula así. Uno de \`${DOCUMENT_KINDS.join('`, `')}\` (sin él, \`otro\`). Usa \`acta\` para una reunión (el día en que fue va en \`date\`), \`iniciativa\` para un proyecto del que cuelgan tareas y \`guia\` para una guía.
+- \`date\`: cuándo se elaboró el documento, \`AAAA-MM-DD\` y un día que exista; en un acta, el día de la reunión. Sale en la tarjeta de la home y ordena los documentos (el más reciente primero, salvo las iniciativas, que van por título). Sin ella vale \`updated\`.
 - \`responsable\`: quién responde por una iniciativa; sale en su tarjeta (máx. 200).
 - \`participantes\`: quiénes estuvieron en un acta, en texto libre (máx. 500).
 - \`highlightSection\`: \`{ "id": "<id de una sección>", "label": "Texto del botón" }\`. Segundo botón del inicio que salta a una sección; el id tiene que existir.

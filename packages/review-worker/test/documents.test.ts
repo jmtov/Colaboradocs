@@ -88,6 +88,7 @@ describe('subir y leer documentos', () => {
         version: '0.1',
         updated: '2026-11-10',
         tipo: 'otro',
+        date: null,
         responsable: null,
         participantes: null,
         openThreads: 0,
@@ -176,6 +177,18 @@ describe('tipo de documento', () => {
       responsable: null,
       participantes: null,
     });
+  });
+
+  it('la lista trae la fecha de elaboración; sin ella, null', async () => {
+    await put(adminToken, sample('acta', { tipo: 'acta', date: '2026-11-24' }));
+    await put(adminToken, sample('libre'));
+    const byId = Object.fromEntries(
+      (await list(memberToken)).map((item) => [item.id, item]),
+    );
+    expect(byId.acta?.date).toBe('2026-11-24');
+    expect(byId.libre?.date).toBeNull();
+    const bad = await put(adminToken, { ...sample('x'), date: '2026-02-31' });
+    expect(bad.status).toBe(400);
   });
 
   it('rechaza un tipo que no existe', async () => {

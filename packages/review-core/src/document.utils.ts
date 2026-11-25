@@ -12,6 +12,7 @@ import {
   MAX_SECTION_HTML_LENGTH,
   MAX_SECTIONS,
 } from './review.constants';
+import { isIsoDate } from './tasks.utils';
 
 /** Etiquetas que entiende la página; las demás se quitan (queda su texto). */
 export const ALLOWED_HTML_TAGS = [
@@ -162,6 +163,16 @@ export function validateDocument(
       document.tipo = raw.tipo as DocumentKind;
     } else {
       errors.push(`«tipo» tiene que ser ${DOCUMENT_KINDS.join(', ')}.`);
+    }
+  }
+
+  if (raw.date !== undefined && raw.date !== null && raw.date !== '') {
+    if (isIsoDate(raw.date)) {
+      document.date = raw.date;
+    } else {
+      errors.push(
+        '«date» tiene que ser una fecha real con el formato AAAA-MM-DD.',
+      );
     }
   }
 

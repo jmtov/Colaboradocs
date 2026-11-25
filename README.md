@@ -10,9 +10,9 @@ Un espacio de trabajo para que un equipo **revise documentos y presentaciones** 
 | **Presentaciones** | Decks como datos (JSON + tema), con editor web, vista previa en vivo, borrador y publicación. Se ven como un HTML autocontenido (teclas, táctil, PDF) y se comentan igual que un documento. | `/p/<id>`, `/p/<id>/editar` |
 | **Temas** | Colores claro y oscuro, categorías, tokens y fuentes por organización o evento. Son datos en la base, no código. | (API y CLI) |
 | **Tareas** | Algo que una persona hace para una fecha; puede colgar de un documento o bloque. «Mis tareas» y sección Tareas en el editor. | `/tareas` |
-| **Accesos** | Una persona = un PIN (máx. 2 dispositivos). Los admins crean, reemisan, revocan y resetean desde la app. Hay tres niveles: persona, **agente** y admin. | `/accesos` (admin) |
+| **Accesos** | Una persona = un PIN (máx. 3 dispositivos, configurable por persona). Los admins crean, reemisan, revocan y resetean desde la app. Hay tres niveles: persona, **agente** y admin. | `/accesos` (admin) |
 | **Espacio** | Nombre y descripción de la home y cómo se llama el rol de cada persona. | home |
-| **Home** | Una tarjeta por documento o presentación, con su actividad. Los documentos se agrupan por tipo (iniciativas, actas, guías, otros) y los admins ven al final los archivados. | `/` |
+| **Home** | Una tarjeta por documento o presentación, con su actividad. Los documentos van en una sola lista, con su tipo y fecha, y se filtran por tipo o texto; los admins ven al final los archivados. | `/` |
 
 ![Arquitectura: navegador, Worker con assets, auth y API Hono, D1 y CLI](diagramas/arquitectura.svg)
 
@@ -106,7 +106,7 @@ Campos del JSON:
 
 - `id` (obligatorio): va en la URL (`/d/<id>`) y es la clave de sus comentarios. **Cambiarlo empieza de cero** (sin comentarios ni OK) y rompe los enlaces. Solo minúsculas, números y guiones.
 - `title`, `version`, `updated`: obligatorios. `description` (tarjeta de la home), `shortName`, `eyebrow` (`{version}` se reemplaza) y `lead`: opcionales.
-- `tipo` (`acta`, `iniciativa`, `guia` u `otro`; sin él, `otro`): la home agrupa por tipo, con las iniciativas arriba (por título), las actas debajo (la más reciente primero, por `updated`, que hace de fecha de la reunión), luego guías y otros. Si todos son del mismo tipo no hay encabezados. El tipo sale como texto sobre el título. `responsable` (una iniciativa) y `participantes` (un acta, nombres separados por coma) son texto libre: salen en la tarjeta de la home y como bloques bajo el título, donde cada persona abre su tarjeta. Se editan en el editor, antes del contenido (el responsable y los participantes se eligen entre las personas del espacio). Los archivados los lista `GET /api/documents?archived=1` (solo admins) y no se abren: se recuperan volviendo a subir el documento.
+- `tipo` (`acta`, `iniciativa`, `guia` u `otro`; sin él, `otro`): la home los muestra en una sola lista, con el tipo y la fecha sobre el título de cada tarjeta, y se pueden filtrar por tipo (hoja «Filtros») y buscar por texto. Van las iniciativas primero (por título), luego las actas, guías y otros (el más reciente primero, por `date`). El tipo sale como texto sobre el título. `date` (opcional, `AAAA-MM-DD`): cuándo se elaboró el documento; en un acta, el día de la reunión. Sin ella vale `updated`. `responsable` (una iniciativa) y `participantes` (un acta, nombres separados por coma) son texto libre: salen en la tarjeta de la home y como bloques bajo el título, donde cada persona abre su tarjeta. Se editan en el editor, antes del contenido (el responsable y los participantes se eligen entre las personas del espacio). Los archivados los lista `GET /api/documents?archived=1` (solo admins) y no se abren: se recuperan volviendo a subir el documento.
 - `highlightSection`: segundo botón del inicio que salta a una sección (opcional).
 - `sources`: lista del pie. `url` vacío = solo texto; si no, tiene que empezar con `https://`, `http://` o `/`.
 - `sections[]`: `id`, `num` («1», «2»… o «A» para anexos), `title`, `status` (`listo | borrador | pendiente`), `description` y `html`.
@@ -172,7 +172,7 @@ Con recarga en caliente: `npm run dev` levanta los dos (Ctrl+C los cierra) → h
 
 - Un PIN por persona, 8 caracteres (`K7Q2-M9XP`). En la base se guarda solo un HMAC con `TOKEN_SECRET`.
 - `POST /api/login` canjea PIN + id de dispositivo por un token firmado (30 días). El front lo guarda en localStorage.
-- Cada PIN sirve en un máximo de 2 dispositivos (`--max-devices=N` para cambiarlo). Compartir el PIN con otra persona consume un cupo; el tercer dispositivo recibe `device_limit`.
+- Cada PIN sirve en un máximo de 3 dispositivos (`--max-devices=N` para cambiarlo). Compartir el PIN con otra persona consume un cupo; el cuarto dispositivo recibe `device_limit`.
 - Revocar un PIN o resetear sus dispositivos corta el acceso al instante: cada petición verifica en D1.
 - Máximo 10 PIN fallidos por IP cada 15 minutos.
 - **Barrera suave, no seguridad real.** Alcanza para un documento de revisión interna; no pongas nada sensible.

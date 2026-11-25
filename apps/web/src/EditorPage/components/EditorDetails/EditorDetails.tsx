@@ -15,7 +15,7 @@ export default function EditorDetails(props: EditorDetailsProps) {
   return (
     <FieldGroup
       title="Documento"
-      hint="El título es el del encabezado. La descripción es la línea de la tarjeta en la home; vacía, la tarjeta no lleva descripción. El tipo decide en qué grupo de la home queda. La dirección (/d/…) no cambia."
+      hint="El título es el del encabezado. La descripción es la línea de la tarjeta en la home; vacía, la tarjeta no lleva descripción. El tipo y la fecha salen sobre el título en la home; la fecha es la de elaboración (en un acta, el día de la reunión) y ordena los documentos; vacía, vale la de la última versión. La dirección (/d/…) no cambia."
     >
       <FieldRow label="Título">
         <input
@@ -47,6 +47,14 @@ export default function EditorDetails(props: EditorDetailsProps) {
             {(group) => <option value={group.kind}>{group.title}</option>}
           </For>
         </select>
+      </FieldRow>
+      <FieldRow label="Fecha">
+        <input
+          class={fieldStyles.input}
+          type="date"
+          value={props.details.date}
+          onInput={(event) => set('date', event.currentTarget.value)}
+        />
       </FieldRow>
       <Show when={props.details.tipo === 'iniciativa'}>
         <FieldRow label="Responsable">

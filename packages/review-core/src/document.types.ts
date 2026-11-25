@@ -39,6 +39,8 @@ export type DocumentContent = {
   updated: string;
   /** Clase de documento (`acta`, `iniciativa`, `guia`, `otro`). Por defecto, `otro`. */
   tipo?: DocumentKind;
+  /** Cuándo se elaboró el documento (`AAAA-MM-DD`); en un acta, el día de la reunión. Sin ella, vale `updated`. */
+  date?: string;
   /** Quién responde por una iniciativa; va en su tarjeta (opcional). */
   responsable?: string;
   /** Quiénes estuvieron en un acta, como texto libre (opcional). */
@@ -83,6 +85,7 @@ export type DocumentListItem = {
   version: string;
   updated: string;
   tipo: DocumentKind;
+  date: string | null;
   responsable: string | null;
   participantes: string | null;
   openThreads: number;

@@ -6,6 +6,8 @@ export type DocumentDetails = {
   description: string;
   /** Clase de documento: la home los agrupa así. */
   tipo: DocumentKind;
+  /** Cuándo se elaboró (`AAAA-MM-DD`); en un acta, el día de la reunión. Vacía, vale la de la última versión. */
+  date: string;
   /** Quién responde por una iniciativa; vacío, nadie. */
   responsable: string;
   /** Quiénes estuvieron en un acta; vacío, nadie. */

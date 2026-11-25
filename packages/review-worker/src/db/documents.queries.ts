@@ -14,6 +14,7 @@ type ListRow = {
   version: string;
   updated: string;
   tipo: string | null;
+  date: string | null;
   responsable: string | null;
   participantes: string | null;
   open_threads: number | null;
@@ -47,6 +48,7 @@ export async function listDocuments(
     .prepare(
       `SELECT d.id, d.title, d.description, d.version, d.updated,
               json_extract(d.content, '$.tipo') AS tipo,
+              json_extract(d.content, '$.date') AS date,
               json_extract(d.content, '$.responsable') AS responsable,
               json_extract(d.content, '$.participantes') AS participantes,
               c.open_threads, c.total AS comments, a.total AS approvals,
@@ -74,6 +76,7 @@ export async function listDocuments(
     version: row.version,
     updated: row.updated,
     tipo: kindOf(row.tipo),
+    date: row.date,
     responsable: row.responsable,
     participantes: row.participantes,
     openThreads: row.open_threads ?? 0,

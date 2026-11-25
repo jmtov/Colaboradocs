@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import type { DeckListItem } from '@colaboradocs/deck-core';
 import { ReviewProvider } from '@colaboradocs/review-ui';
+import { createSignal } from 'solid-js';
 import { render } from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DocumentListItem } from '@/content/content.types';
@@ -16,6 +17,7 @@ const item = (
   version: '0.2',
   updated: '2026-11-09',
   tipo: 'otro',
+  date: null,
   responsable: null,
   participantes: null,
   openThreads: 0,
@@ -116,13 +118,16 @@ describe('HomePage', () => {
       '/d/a',
       '/d/b',
     ]);
-    expect(cards[0]?.textContent).toContain('3 hilos abiertos');
-    expect(cards[0]?.textContent).toContain('7 OK');
-    expect(cards[1]?.textContent).toContain('0 hilos abiertos');
+    const label = (card: Element | undefined, text: string) =>
+      card?.querySelector(`[aria-label="${text}"]`);
+    expect(label(cards[0], '3 hilos abiertos')).not.toBeNull();
+    expect(label(cards[0], '7 aprobaciones')).not.toBeNull();
+    expect(label(cards[1], '0 hilos abiertos')).not.toBeNull();
     expect(cards[1]?.textContent).toContain('Sin actividad');
+    expect(host.textContent).not.toContain('hilos abiertos');
   });
 
-  it('agrupa por tipo: iniciativas arriba, actas por fecha, y muestra responsable', async () => {
+  it('una sola lista, sin grupos: iniciativas primero, actas por fecha, con el tipo en cada tarjeta', async () => {
     signIn();
     const host = mount([
       item('acta-vieja', { tipo: 'acta', updated: '2026-10-01' }),
@@ -130,14 +135,154 @@ describe('HomePage', () => {
       item('ini', { tipo: 'iniciativa', responsable: 'Ana' }),
     ]);
     await wait();
-    const titles = [...host.querySelectorAll('h2')].map((h) =>
-      h.textContent?.replace(/\d+$/, ''),
-    );
-    expect(titles).toEqual(['Iniciativas', 'Actas']);
     expect(
-      [...host.querySelectorAll('a')].map((a) => a.getAttribute('href')),
-    ).toEqual(['/d/ini', '/d/acta-nueva', '/d/acta-vieja']);
+      [...host.querySelectorAll('h2')].map((h) => h.textContent?.trim()),
+    ).toEqual(['3 documentos']);
+    const cards = [...host.querySelectorAll('a')];
+    expect(cards.map((a) => a.getAttribute('href'))).toEqual([
+      '/d/ini',
+      '/d/acta-nueva',
+      '/d/acta-vieja',
+    ]);
+    expect(cards[0]?.textContent).toContain('Iniciativa');
+    expect(cards[1]?.textContent).toContain('Acta');
     expect(host.textContent).toContain('Responsable: Ana');
+  });
+
+  it('el título va antes que el contador de documentos', async () => {
+    signIn();
+    const host = mount([item('a')]);
+    await wait();
+    const heading = host.querySelector('h1');
+    const count = host.querySelector('h2');
+    if (!heading || !count) throw new Error('faltan los títulos');
+    expect(
+      heading.compareDocumentPosition(count) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('muestra tres nombres y cuántos más', async () => {
+    signIn();
+    const host = mount([
+      item('a', {
+        tipo: 'acta',
+        participantes: 'Ana, Luis, Eva, Sol, Ivo',
+      }),
+    ]);
+    await wait();
+    expect(host.textContent).toContain('Participantes: Ana, Luis, Eva y 2 más');
+    expect(host.textContent).not.toContain('Sol');
+  });
+
+  it('filtra por texto y por tipo, y se puede quitar el filtro', async () => {
+    signIn();
+    const host = mount([
+      item('a', { title: 'Ejes', tipo: 'iniciativa' }),
+      item('b', { title: 'Reunión', tipo: 'acta' }),
+    ]);
+    await wait();
+    const hrefs = () =>
+      [...host.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(hrefs()).toEqual(['/d/a', '/d/b']);
+
+    const input = host.querySelector<HTMLInputElement>('input[type="search"]');
+    if (!input) throw new Error('falta el buscador');
+    input.value = 'reunion';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await wait();
+    expect(hrefs()).toEqual(['/d/b']);
+    expect(host.querySelector('h2')?.textContent).toContain('1 de 2');
+
+    input.value = 'zzz';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await wait();
+    expect(host.textContent).toContain('Ningún documento coincide');
+    const clear = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent === 'Quitar el filtro',
+    );
+    clear?.click();
+    await wait();
+    expect(hrefs()).toEqual(['/d/a', '/d/b']);
+
+    // El tipo se elige en la hoja de filtros.
+    const filters = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'Filtros',
+    );
+    filters?.click();
+    await wait(80);
+    const actasButton = [...document.querySelectorAll('button')].find(
+      (button) => button.textContent?.startsWith('Actas'),
+    );
+    actasButton?.click();
+    const apply = [...document.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'Aplicar',
+    );
+    apply?.click();
+    await wait(80);
+    expect(hrefs()).toEqual(['/d/b']);
+    // Queda un botón con el tipo aplicado, que lo quita.
+    const clearKind = host.querySelector<HTMLButtonElement>(
+      '[aria-label="Quitar el filtro Actas"]',
+    );
+    clearKind?.click();
+    await wait();
+    expect(hrefs()).toEqual(['/d/a', '/d/b']);
+  });
+
+  it('si desaparece el último documento del tipo filtrado, el filtro se suelta', async () => {
+    signIn();
+    const documents = [
+      item('a', { title: 'Ejes', tipo: 'iniciativa' }),
+      item('b', { title: 'Reunión', tipo: 'acta' }),
+    ];
+    const [list, setList] = createSignal(documents);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('[]', { status: 200 })),
+    );
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    render(
+      () => (
+        <ReviewProvider>
+          <HomePage name="Espacio de prueba" documents={list()} decks={[]} />
+        </ReviewProvider>
+      ),
+      host,
+    );
+    await wait();
+    const filters = [...host.querySelectorAll('button')].find(
+      (button) => button.textContent?.trim() === 'Filtros',
+    );
+    filters?.click();
+    await wait(80);
+    const actas = [...document.querySelectorAll('button')].find((button) =>
+      button.textContent?.startsWith('Actas'),
+    );
+    actas?.click();
+    [...document.querySelectorAll('button')]
+      .find((button) => button.textContent?.trim() === 'Aplicar')
+      ?.click();
+    await wait(80);
+    expect(host.querySelectorAll('a')).toHaveLength(1);
+    setList([documents[0] as DocumentListItem]);
+    await wait();
+    expect(host.textContent).not.toContain('Ningún documento coincide');
+    expect(host.querySelectorAll('a')).toHaveLength(1);
+  });
+
+  it('la tarjeta lleva el tipo y la fecha (la de elaboración, o updated), sin la versión', async () => {
+    signIn();
+    const host = mount([
+      item('a', { tipo: 'acta', date: '2026-11-24', updated: '2026-11-25' }),
+      item('b', { tipo: 'iniciativa', updated: '2026-11-10' }),
+    ]);
+    await wait();
+    const text = (id: string) =>
+      host.querySelector(`a[href="/d/${id}"]`)?.textContent ?? '';
+    expect(text('a')).toContain('Acta · 2026-11-24');
+    expect(text('b')).toContain('Iniciativa · 2026-11-10');
+    expect(host.textContent).not.toContain('Versión');
   });
 
   it('solo los admins ven el menú de cada documento y el bloque para subir', async () => {

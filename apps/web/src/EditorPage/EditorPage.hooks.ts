@@ -98,6 +98,7 @@ export function useEditorPage(id: () => string) {
     title: '',
     description: '',
     tipo: 'otro',
+    date: '',
     responsable: '',
     participantes: '',
   });
@@ -121,10 +122,12 @@ export function useEditorPage(id: () => string) {
     // Sin enlaces y sin que los hubiera, el campo no existe (no se agrega un `{}` de la nada).
     const keep = current.glossaryTerms !== undefined || hasKeys(written);
     const keepPeople = current.peopleTerms !== undefined || hasKeys(people());
-    const { title, description, tipo, responsable, participantes } = details();
+    const { title, description, tipo, date, responsable, participantes } =
+      details();
     const {
       description: _description,
       tipo: _tipo,
+      date: _date,
       responsable: _responsable,
       participantes: _participantes,
       ...rest
@@ -135,6 +138,7 @@ export function useEditorPage(id: () => string) {
       ...(description ? { description } : {}),
       // «otro» es lo de siempre: no se escribe si no estaba.
       ...(tipo !== 'otro' ? { tipo } : {}),
+      ...(date ? { date } : {}),
       ...(responsable ? { responsable } : {}),
       ...(participantes ? { participantes } : {}),
       sections: saved(),
@@ -151,6 +155,7 @@ export function useEditorPage(id: () => string) {
       details().title !== last.title ||
       details().description !== (last.description ?? '') ||
       details().tipo !== (last.tipo ?? 'otro') ||
+      details().date !== (last.date ?? '') ||
       details().responsable !== (last.responsable ?? '') ||
       details().participantes !== (last.participantes ?? '') ||
       !sameSections(last.sections, saved()) ||
@@ -205,6 +210,7 @@ export function useEditorPage(id: () => string) {
       title: base()?.title ?? '',
       description: base()?.description ?? '',
       tipo: base()?.tipo ?? 'otro',
+      date: base()?.date ?? '',
       responsable: base()?.responsable ?? '',
       participantes: base()?.participantes ?? '',
     });

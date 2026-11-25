@@ -1,13 +1,18 @@
 import type { DeckListItem } from '@colaboradocs/deck-core';
-import { groupDocuments } from '@colaboradocs/review-core';
-import { createMemo, For, Show } from 'solid-js';
+import { documentDate, kindLabel } from '@colaboradocs/review-core';
+import { For, Show } from 'solid-js';
 import type { DocumentListItem } from '@/content/content.types';
+import CheckIcon from '@/icons/CheckIcon';
+import MessageSquareIcon from '@/icons/MessageSquareIcon';
 import PlusIcon from '@/icons/PlusIcon';
 import Link from '@/router/Link';
 import { deckPath, documentPath } from '@/router/router';
 import UserMenu from '@/UserMenu/UserMenu';
+import CardStat from './components/CardStat/CardStat';
 import DeckMenu from './components/DeckMenu/DeckMenu';
+import DocumentFilter from './components/DocumentFilter/DocumentFilter';
 import DocumentMenu from './components/DocumentMenu/DocumentMenu';
+import PeopleLine from './components/PeopleLine/PeopleLine';
 import { useHomePage } from './HomePage.hooks';
 import styles from './HomePage.module.css';
 import { timeAgo } from './time.utils';
@@ -23,7 +28,6 @@ type Props = {
 
 export default function HomePage(props: Props) {
   const home = useHomePage(() => props.documents);
-  const grouped = createMemo(() => groupDocuments(props.documents));
 
   return (
     <>
@@ -40,115 +44,115 @@ export default function HomePage(props: Props) {
       </header>
       <main class={styles.page}>
         <section class={styles.intro}>
-          <span class={styles.eyebrow}>
-            {props.documents.length}{' '}
-            {props.documents.length === 1 ? 'documento' : 'documentos'}
-          </span>
           <h1 class={styles.title}>{props.name}</h1>
           <Show when={props.description}>
             <p class={styles.lead}>{props.description}</p>
           </Show>
         </section>
-        <For each={grouped().groups}>
-          {(group, index) => (
-            <section class={styles.group}>
-              <Show when={grouped().titled}>
-                <h2 class={styles.groupTitle}>
-                  {group.title}
-                  <span class={styles.count}>{group.items.length}</span>
-                </h2>
-              </Show>
-              <ul class={styles.grid}>
-                <For each={group.items}>
-                  {(document) => (
-                    <li class={styles.item}>
-                      <Link
-                        lift
-                        href={documentPath(document.id)}
-                        class={
-                          home.isAdmin()
-                            ? `${styles.card} ${styles.withMenu}`
-                            : styles.card
-                        }
-                      >
-                        <span class={styles.meta}>
-                          Versión {document.version} · {document.updated}
-                        </span>
-                        <span class={styles.cardTitle}>{document.title}</span>
-                        <Show when={document.description}>
-                          <span class={styles.description}>
-                            {document.description}
-                          </span>
-                        </Show>
-                        <Show when={document.responsable}>
-                          <span class={styles.people}>
-                            Responsable: {document.responsable}
-                          </span>
-                        </Show>
-                        <Show when={document.participantes}>
-                          <span class={styles.people}>
-                            Participantes: {document.participantes}
-                          </span>
-                        </Show>
-                        <span class={styles.footer}>
-                          <span
-                            classList={{
-                              [styles.open]: document.openThreads > 0,
-                            }}
-                          >
-                            {document.openThreads}{' '}
-                            {document.openThreads === 1
-                              ? 'hilo abierto'
-                              : 'hilos abiertos'}
-                          </span>
-                          <span>{document.approvals} OK</span>
-                          <span class={styles.last}>
-                            {document.lastActivityAt
-                              ? timeAgo(document.lastActivityAt)
-                              : 'Sin actividad'}
-                          </span>
-                        </span>
-                      </Link>
-                      <Show when={home.isAdmin()}>
-                        <div class={styles.menu}>
-                          <DocumentMenu
-                            id={document.id}
-                            title={document.title}
-                          />
-                        </div>
-                      </Show>
-                    </li>
-                  )}
-                </For>
-                <Show
-                  when={
-                    home.isAdmin() && index() === grouped().groups.length - 1
-                  }
-                >
-                  <li class={styles.item}>
-                    <button
-                      type="button"
-                      class={`${styles.card} ${styles.add}`}
-                      onClick={home.openUpload}
-                    >
-                      <PlusIcon class={styles.addIcon} />
-                      <span class={styles.addLabel}>Subir documento</span>
-                      <span class={styles.addHint}>Word, Markdown o JSON</span>
-                    </button>
-                  </li>
-                </Show>
-              </ul>
-            </section>
-          )}
-        </For>
-        <Show when={props.documents.length === 0}>
+        <section class={styles.section}>
+          <div class={styles.toolbar}>
+            <h2 class={styles.eyebrow}>
+              {home.visible().length === props.documents.length
+                ? props.documents.length
+                : `${home.visible().length} de ${props.documents.length}`}{' '}
+              {props.documents.length === 1 ? 'documento' : 'documentos'}
+            </h2>
+            <Show when={props.documents.length > 1}>
+              <DocumentFilter
+                query={home.query()}
+                onQuery={home.setQuery}
+                canFilter={home.kinds().length > 1}
+                onOpenFilters={() => void home.openFilters()}
+                activeKind={home.kindTitle()}
+                onClearKind={() => home.setKind(null)}
+              />
+            </Show>
+          </div>
           <ul class={styles.grid}>
+            <For each={home.visible()}>
+              {(document) => (
+                <li class={styles.item}>
+                  <Link
+                    lift
+                    href={documentPath(document.id)}
+                    class={
+                      home.isAdmin()
+                        ? `${styles.card} ${styles.withMenu}`
+                        : styles.card
+                    }
+                  >
+                    <span class={styles.meta}>
+                      {kindLabel(document)} · {documentDate(document)}
+                    </span>
+                    <span class={styles.cardTitle}>{document.title}</span>
+                    <Show when={document.description}>
+                      <span class={styles.description}>
+                        {document.description}
+                      </span>
+                    </Show>
+                    <Show when={document.responsable}>
+                      {(people) => (
+                        <PeopleLine label="Responsable" people={people()} />
+                      )}
+                    </Show>
+                    <Show when={document.participantes}>
+                      {(people) => (
+                        <PeopleLine label="Participantes" people={people()} />
+                      )}
+                    </Show>
+                    <span class={styles.footer}>
+                      <CardStat
+                        icon={MessageSquareIcon}
+                        count={document.openThreads}
+                        label={
+                          document.openThreads === 1
+                            ? '1 hilo abierto'
+                            : `${document.openThreads} hilos abiertos`
+                        }
+                        highlight={document.openThreads > 0}
+                      />
+                      <CardStat
+                        icon={CheckIcon}
+                        count={document.approvals}
+                        label={
+                          document.approvals === 1
+                            ? '1 aprobación'
+                            : `${document.approvals} aprobaciones`
+                        }
+                      />
+                      <span class={styles.last}>
+                        {document.lastActivityAt
+                          ? timeAgo(document.lastActivityAt)
+                          : 'Sin actividad'}
+                      </span>
+                    </span>
+                  </Link>
+                  <Show when={home.isAdmin()}>
+                    <div class={styles.menu}>
+                      <DocumentMenu id={document.id} title={document.title} />
+                    </div>
+                  </Show>
+                </li>
+              )}
+            </For>
+            <Show when={props.documents.length === 0 && !home.isAdmin()}>
+              <li class={styles.empty}>Todavía no hay documentos.</li>
+            </Show>
             <Show
-              when={home.isAdmin()}
-              fallback={
-                <li class={styles.empty}>Todavía no hay documentos.</li>
-              }
+              when={props.documents.length > 0 && home.visible().length === 0}
             >
+              <li class={styles.empty}>
+                Ningún documento coincide.{' '}
+                <button
+                  type="button"
+                  class={styles.clearFilter}
+                  onClick={home.clearFilter}
+                >
+                  Quitar el filtro
+                </button>
+              </li>
+            </Show>
+            <Show when={home.isAdmin()}>
               <li class={styles.item}>
                 <button
                   type="button"
@@ -162,7 +166,7 @@ export default function HomePage(props: Props) {
               </li>
             </Show>
           </ul>
-        </Show>
+        </section>
         <Show when={props.decks.length > 0 || home.isAdmin()}>
           <section class={styles.section}>
             <span class={styles.eyebrow}>

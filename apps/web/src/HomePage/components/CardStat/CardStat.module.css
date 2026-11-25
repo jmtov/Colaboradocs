@@ -1,0 +1,16 @@
+.stat {
+  display: inline-flex;
+  gap: 0.3125rem;
+  align-items: center;
+}
+
+.icon {
+  flex: none;
+  width: 1.125em;
+  height: 1.125em;
+}
+
+.highlight {
+  font-weight: 600;
+  color: var(--warn);
+}

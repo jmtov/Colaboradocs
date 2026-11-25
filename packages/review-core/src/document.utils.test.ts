@@ -109,6 +109,23 @@ describe('validateDocument', () => {
     expect(none.ok && 'tipo' in none.value).toBe(false);
   });
 
+  it('acepta la fecha AAAA-MM-DD y rechaza una que no existe o con otro formato', () => {
+    const ok = validateDocument({ ...valid(), date: '2026-11-24' });
+    expect(ok.ok && ok.value.date).toBe('2026-11-24');
+    for (const date of [
+      '24-11-2026',
+      '2026-02-31',
+      '2026-13-01',
+      'ayer',
+      20261124,
+    ]) {
+      expect(validateDocument({ ...valid(), date }).ok).toBe(false);
+    }
+    // Vacía (o ausente), no se inventa una.
+    const none = validateDocument({ ...valid(), date: '' });
+    expect(none.ok && 'date' in none.value).toBe(false);
+  });
+
   it('limpia el HTML de las secciones', () => {
     const doc = valid();
     (doc.sections[0] as { html: string }).html =

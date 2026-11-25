@@ -40,7 +40,7 @@
 }
 
 .intro {
-  padding: 3.5rem 0 2.5rem;
+  padding: 3.5rem 0 0;
 }
 
 .eyebrow {
@@ -51,7 +51,7 @@
 }
 
 .title {
-  margin: 0.875rem 0 1rem;
+  margin: 0 0 1rem;
   font-size: var(--font-size-display);
   font-weight: 600;
   line-height: 1.04;
@@ -128,17 +128,12 @@
 .footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.875rem;
+  gap: 0.25rem 1rem;
   align-items: center;
   padding-top: 0.75rem;
   margin-top: auto;
   font: var(--font-size-xs) var(--font-mono);
   color: var(--muted);
-}
-
-.open {
-  font-weight: 600;
-  color: var(--warn);
 }
 
 .last {
@@ -165,7 +160,7 @@
   }
 
   .intro {
-    padding: 2.25rem 0 1.75rem;
+    padding: 2.25rem 0 0;
   }
 }
 
@@ -176,8 +171,31 @@
   right: 0.75rem;
 }
 
-.withMenu .cardTitle {
+.withMenu .cardTitle,
+.withMenu .meta {
   padding-right: 2.5rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbar .eyebrow {
+  margin: 0;
+}
+
+.clearFilter {
+  padding: 0;
+  font: inherit;
+  color: var(--fg);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: 0;
 }
 
 /* Bloque «Subir documento»: una celda más de la grilla. */
@@ -222,31 +240,9 @@
   padding-top: 2.5rem;
 }
 
-.group {
-  display: grid;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.groupTitle {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  margin: 0;
-  font: 500 var(--font-size-xs) var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 .count {
   font-weight: 600;
   color: var(--fg);
-}
-
-.people {
-  font-size: var(--font-size-sm);
-  color: var(--muted);
 }
 
 .archived {
