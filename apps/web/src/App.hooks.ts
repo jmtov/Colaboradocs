@@ -15,22 +15,9 @@ import {
   resolveRoute,
   skipsPageTransition,
 } from '@/router/router';
+import { transitionMs } from './router/transition.utils';
 
 const DEFAULT_SPACE: SpaceInfo = { name: 'Documentos' };
-
-/** Duración de la transición de página según el CSS (0 con «reducir movimiento» o sin elemento). */
-function transitionMs(element: HTMLElement | undefined): number {
-  if (!element) return 0;
-  const first =
-    window
-      .getComputedStyle(element)
-      .transitionDuration?.split(',')[0]
-      ?.trim() ?? '';
-  const seconds = first.endsWith('ms')
-    ? Number.parseFloat(first) / 1000
-    : Number.parseFloat(first);
-  return Number.isFinite(seconds) ? seconds * 1000 : 0;
-}
 
 /** Estado de la ruta de un documento: pide su contenido a la API al abrirlo. */
 export function useDocumentRoute(id: () => string) {
@@ -48,16 +35,22 @@ export function useDocumentRoute(id: () => string) {
 }
 
 /** La home. Con un solo documento no hay nada que elegir: va directo a él. */
-/** La lista de la home. Con un solo documento (y sin presentaciones) la ruta `/` va directo a él; los otros tabs no. */
+/** La lista de la home. Con un solo documento (y sin presentaciones) la ruta `/` va directo a él, salvo para admins; los otros tabs no. */
 export function useHomeRoute(tab: () => HomeTab) {
   const review = useReview();
   // Sin presentaciones que mostrar; si falla la lista (un servidor sin decks), es como no tener.
   const [decks, { refetch: refetchDecks }] = createResource(() =>
     review.fetchDecks().catch(() => []),
   );
+  const isAdmin = () =>
+    (review.snapshot()?.me ?? review.session()?.reviewer)?.isAdmin === true;
   const single = () => {
     const list = review.documents();
-    return tab() === 'documents' && list?.length === 1 && decks()?.length === 0
+    // Quien administra ve la home aunque haya un solo documento: ahí crea y sube lo demás.
+    return !isAdmin() &&
+      tab() === 'documents' &&
+      list?.length === 1 &&
+      decks()?.length === 0
       ? list[0]
       : undefined;
   };

@@ -1,0 +1,35 @@
+/* El contenido del tab: sale y entra deslizándose hacia donde queda su tab. */
+.content {
+  --tab-duration: 220ms;
+  --tab-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --tab-shift: 1.5rem;
+
+  transition:
+    opacity var(--tab-duration) var(--tab-ease),
+    transform var(--tab-duration) var(--tab-ease);
+}
+
+.content[data-dir="back"] {
+  --tab-shift: -1.5rem;
+}
+
+/* Sale: se desvanece y se desliza hacia el lado de donde viene el tab nuevo. */
+.content[data-phase="leaving"] {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(calc(var(--tab-shift) * -1));
+}
+
+/* Entra: parte oculto y corrido hacia el lado contrario, sin transición (es el punto de partida). */
+.content[data-phase="entering"] {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(var(--tab-shift));
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content {
+    transition-duration: 0s;
+  }
+}

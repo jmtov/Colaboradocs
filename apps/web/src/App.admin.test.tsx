@@ -45,14 +45,14 @@ Object.assign(HTMLElement.prototype, {
   hidePopover() {},
 });
 
-/** Pulsa «Documentos» en el menú de la sesión, como lo hace el admin. */
-function openDocumentsFromMenu(host: HTMLElement) {
+/** Pulsa «Accesos» en el menú de la sesión, como lo hace el admin. */
+function openAccessFromMenu(host: HTMLElement) {
   host
     .querySelector<HTMLButtonElement>('button[aria-label="Menú de la sesión"]')
     ?.click();
   openMenus(host);
   [...host.querySelectorAll('button')]
-    .find((item) => item.textContent?.includes('Documentos'))
+    .find((item) => item.textContent?.includes('Accesos'))
     ?.click();
 }
 
@@ -110,24 +110,36 @@ const goTo = (path: string) => {
 };
 
 describe('páginas de administración', () => {
-  it('«Documentos» del menú lleva a su página, no abre una hoja', async () => {
+  it('«Accesos» del menú lleva a su página, no abre una hoja', async () => {
     fakeApi();
     const host = mountApp();
     await wait(120);
 
-    openDocumentsFromMenu(host);
+    openAccessFromMenu(host);
     await wait(500);
 
-    expect(window.location.pathname).toBe('/documentos');
-    expect(host.querySelector('h1')?.textContent).toBe('Documentos');
+    expect(window.location.pathname).toBe('/accesos');
+    expect(host.querySelector('h1')?.textContent).toBe('Accesos');
     // «← Inicio» está en la barra superior, no suelto en el contenido.
     expect(
       host.querySelector('header a[href="/"]')?.getAttribute('aria-label'),
     ).toBe('Inicio');
     expect(host.querySelector('main a[href="/"]')).toBeNull();
     expect(host.querySelector('dialog[open]')).toBeNull();
-    expect(host.textContent).toContain('Subir documento');
-    expect(host.textContent).toContain('Título de uno');
+  });
+
+  it('el menú ya no lleva a «Documentos» ni «Mis tareas» (están en la home) y /documentos no existe', async () => {
+    fakeApi();
+    const host = mountApp();
+    await wait(120);
+    openMenus(host);
+    const menu = host.querySelector('[popover]')?.textContent ?? '';
+    expect(menu).not.toContain('Documentos');
+    expect(menu).not.toContain('Mis tareas');
+    expect(menu).not.toContain('Sesión');
+    goTo('/documentos');
+    await wait(500);
+    expect(host.querySelector('h1')?.textContent).not.toBe('Documentos');
   });
 
   it('entrar directo a /accesos muestra la lista de personas', async () => {
@@ -145,7 +157,7 @@ describe('páginas de administración', () => {
 
   it('no entra en un bucle de recargas ni deja la revisión «cargando»', async () => {
     const calls = fakeApi();
-    goTo('/documentos');
+    goTo('/accesos');
     const host = mountApp();
     await wait(400);
 
@@ -166,11 +178,11 @@ describe('páginas de administración', () => {
         reviewer: { ...admin, isAdmin: false },
       }),
     );
-    goTo('/documentos');
+    goTo('/accesos');
     const host = mountApp();
     await wait(300);
 
     expect(host.textContent).toContain('Solo para administradores');
-    expect(host.textContent).not.toContain('Subir documento');
+    expect(host.textContent).not.toContain('Agregar persona');
   });
 });

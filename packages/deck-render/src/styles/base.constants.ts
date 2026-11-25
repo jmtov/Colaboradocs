@@ -25,6 +25,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 .slide::-webkit-scrollbar { display: none; }
 /* Centrado seguro: con espacio sobra a los dos lados (queda al centro); sin él, empieza arriba y se desplaza. Con justify-content: center se cortaría el principio. */
 .slide > .content { margin-block: auto; }
+/* Degradado al pie, del color de fondo de la slide: avisa que hay más contenido debajo y deja leer el contador. Fijo a la pantalla, sobre el contenido y bajo el eyebrow y el speaker. */
+.slide::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1; height: calc(var(--pad-bottom) + 2rem); background: linear-gradient(to bottom, transparent, var(--bg) 65%); pointer-events: none; }
 
 /* Fondo de la slide: capas detrás de todo el contenido, sin bloquear clics. Cada capa se coloca con variables (% de la slide). */
 .bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
@@ -217,6 +219,7 @@ body.top .controls { opacity: 1; pointer-events: auto; }
   html, body { height: auto !important; overflow: visible !important; }
   main#deck { display: block !important; }
   .progress, .hud, .nav, .controls { display: none !important; }
+  .slide::after { display: none !important; }
   .pg { display: block; position: absolute; left: var(--pad-x); bottom: var(--hud-bottom); z-index: 3; font: 400 var(--text-hud)/1 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
   .countdown { display: none !important; }
   .slide, .slide.is-active, .slide.is-past { position: relative !important; inset: auto !important; width: 13.333in !important; height: 7.5in !important; display: flex !important; opacity: 1 !important; visibility: visible !important; transform: none !important; transition: none !important; break-after: page !important; break-inside: avoid; overflow: hidden; }

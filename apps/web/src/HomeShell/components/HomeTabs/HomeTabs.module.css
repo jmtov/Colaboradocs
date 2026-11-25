@@ -1,5 +1,10 @@
-/* Una raya bajo todos los tabs; el actual la cubre con una más gruesa. */
+/* Pestañas de carpeta: una línea bajo todos los tabs y, tras el activo, una caja que se une a la línea
+   (le tapa el trazo) y se desliza de un tab al siguiente. */
 .tabs {
+  --tab-duration: 260ms;
+  --tab-ease: cubic-bezier(0.32, 0.72, 0, 1);
+
+  position: relative;
   display: flex;
   gap: 0.25rem;
   margin-bottom: 1.5rem;
@@ -7,18 +12,19 @@
 }
 
 .tab {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   flex: none;
   gap: 0.5rem;
   align-items: baseline;
   padding: 0.75rem 1rem;
-  margin-bottom: -1px;
   font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--muted);
   text-decoration: none;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
+  transition: color var(--tab-duration) var(--tab-ease);
 }
 
 .tab:first-child {
@@ -31,12 +37,37 @@
 
 .tab[aria-current="page"] {
   color: var(--fg);
-  border-bottom-color: var(--fg);
+}
+
+.indicator {
+  position: absolute;
+  top: 0;
+  bottom: -1px;
+  left: 0;
+  width: var(--tab-w, 0);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  transform: translateX(var(--tab-x, 0));
+}
+
+/* Sin transición hasta la primera medida: la caja nace en su sitio, no viaja desde la izquierda. */
+.tabs[data-ready] .indicator {
+  transition:
+    transform var(--tab-duration) var(--tab-ease),
+    width var(--tab-duration) var(--tab-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs[data-ready] .indicator,
+  .tab {
+    transition: none;
+  }
 }
 
 .tab:focus-visible {
   outline: 2px solid var(--fg);
-  outline-offset: -2px;
+  outline-offset: -4px;
 }
 
 .count {

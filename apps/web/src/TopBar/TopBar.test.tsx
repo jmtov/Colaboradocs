@@ -72,14 +72,9 @@ describe('TopBar', () => {
     await wait();
     openMenus(host);
     const text = host.querySelector('[popover]')?.textContent ?? '';
-    const at = [
-      'Imprimir',
-      'Editar',
-      'Documentos',
-      'Accesos',
-      'Tema',
-      'Salir',
-    ].map((label) => text.indexOf(label));
+    const at = ['Imprimir', 'Editar', 'Accesos', 'Tema', 'Salir'].map((label) =>
+      text.indexOf(label),
+    );
     expect(at.every((index) => index >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
   });
@@ -90,11 +85,11 @@ describe('TopBar', () => {
     expect(editItem(host)).toBeUndefined();
   });
 
-  it('un admin siempre ve el regreso, y con un solo documento va a Documentos', async () => {
+  it('un admin siempre ve el regreso, y va a la home', async () => {
     const host = mount(true);
     await wait();
     const back = host.querySelector('a[title="Volver a los documentos"]');
-    expect(back?.getAttribute('href')).toBe('/documentos');
+    expect(back?.getAttribute('href')).toBe('/');
   });
 
   it('quien no es admin y tiene un solo documento no ve el regreso', async () => {

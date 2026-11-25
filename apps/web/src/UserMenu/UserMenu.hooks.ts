@@ -6,12 +6,7 @@ import {
 } from '@colaboradocs/review-ui';
 import { createSignal } from 'solid-js';
 import HowToSheet from '@/HowToReview/components/HowToSheet/HowToSheet';
-import {
-  type AdminPageName,
-  adminPath,
-  navigate,
-  TASKS_PATH,
-} from '@/router/router';
+import { type AdminPageName, adminPath, navigate } from '@/router/router';
 
 /** Estado y acciones del menú de la sesión. Las refs las asigna el .tsx. */
 export function useUserMenu() {
@@ -40,11 +35,6 @@ export function useUserMenu() {
     openAfterMenuCloses(refs.menu, action);
   }
 
-  /** Va a «Mis tareas» con el menú ya cerrado. */
-  function goToTasks() {
-    openAfterMenuCloses(refs.menu, () => navigate(TASKS_PATH));
-  }
-
   function openHowTo() {
     openAfterMenuCloses(refs.menu, () => {
       // Sin duplicar: si ya hay una hoja abierta (la guía de la página, por ejemplo), no se abre otra.
@@ -65,7 +55,6 @@ export function useUserMenu() {
     toggle,
     openHowTo,
     goToAdmin,
-    goToTasks,
     run,
     logout,
   };

@@ -66,16 +66,12 @@ describe('resolveRoute', () => {
     });
   });
 
-  it('/documentos y /accesos son las páginas de administración', () => {
-    expect(resolveRoute('/documentos')).toEqual({
-      kind: 'admin',
-      page: 'documents',
-    });
+  it('/accesos es la página de administración; /documentos ya no existe (todo se maneja en la home)', () => {
+    expect(resolveRoute('/documentos')).toEqual({ kind: 'missing' });
     expect(resolveRoute('/accesos/')).toEqual({
       kind: 'admin',
       page: 'access',
     });
-    expect(adminPath('documents')).toBe('/documentos');
     expect(adminPath('access')).toBe('/accesos');
   });
 

@@ -81,3 +81,13 @@ describe('slide con scroll cuando el contenido no cabe', () => {
     expect(block('.nav')).toContain('pointer-events: none');
   });
 });
+
+describe('degradado al pie de la slide', () => {
+  it('es del color de fondo de la slide, no atrapa clics y no sale al imprimir', () => {
+    const fade = block('.slide::after');
+    expect(fade).toContain('position: fixed');
+    expect(fade).toContain('var(--bg)');
+    expect(fade).toContain('pointer-events: none');
+    expect(BASE_CSS).toContain('.slide::after { display: none !important; }');
+  });
+});

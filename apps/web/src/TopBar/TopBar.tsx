@@ -4,7 +4,7 @@ import ArrowLeftIcon from '@/icons/ArrowLeftIcon';
 import ChevronDownIcon from '@/icons/ChevronDownIcon';
 import PencilIcon from '@/icons/PencilIcon';
 import PrinterIcon from '@/icons/PrinterIcon';
-import { adminPath, editPath, navigate } from '@/router/router';
+import { editPath, navigate } from '@/router/router';
 import UserMenu, { type UserMenuAction } from '@/UserMenu/UserMenu';
 import styles from './TopBar.module.css';
 
@@ -43,9 +43,8 @@ export default function TopBar(props: Props) {
       : []),
   ];
 
-  /** Con un solo documento `/` rebota a él: para quien administra, el regreso va a Documentos. */
-  const backHref = () =>
-    props.showBack ? '/' : isAdmin() ? adminPath('documents') : undefined;
+  /** Quien administra siempre vuelve a la home (con un solo documento, los demás no tienen adónde volver). */
+  const backHref = () => (props.showBack || isAdmin() ? '/' : undefined);
 
   const statusText = () => {
     switch (review.status()) {

@@ -1,6 +1,7 @@
 import { For, Show } from 'solid-js';
 import Link from '@/router/Link';
 import { DECKS_PATH, type HomeTab, TASKS_PATH } from '@/router/router';
+import { useTabIndicator } from './HomeTabs.hooks';
 import styles from './HomeTabs.module.css';
 
 type Props = {
@@ -41,8 +42,14 @@ export default function HomeTabs(props: Props) {
     return props.showDecks ? all : all.filter((entry) => entry.tab !== 'decks');
   };
 
+  const indicator = useTabIndicator(() => [
+    props.tab,
+    props.counts,
+    props.showDecks,
+  ]);
+
   return (
-    <nav class={styles.tabs} aria-label="Secciones">
+    <nav class={styles.tabs} aria-label="Secciones" ref={indicator.setNav}>
       <For each={tabs()}>
         {(entry) => (
           <Link
@@ -58,6 +65,7 @@ export default function HomeTabs(props: Props) {
           </Link>
         )}
       </For>
+      <span class={styles.indicator} aria-hidden="true" />
     </nav>
   );
 }

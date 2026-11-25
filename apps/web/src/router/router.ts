@@ -1,10 +1,9 @@
 import { createSignal } from 'solid-js';
 
 /** Páginas de administración (solo admins). */
-export type AdminPageName = 'documents' | 'access';
+export type AdminPageName = 'access';
 
 const ADMIN_PATHS: Record<AdminPageName, string> = {
-  documents: '/documentos',
   access: '/accesos',
 };
 
@@ -28,7 +27,7 @@ export type Route =
   | { kind: 'admin'; page: AdminPageName }
   | { kind: 'missing' };
 
-/** `/` es la home (los documentos), `/presentaciones` y `/tareas` sus otros dos tabs, `/d/<id>` un documento, `/d/<id>/editar` su editor, `/p/<id>` una presentación y `/p/<id>/editar` su editor y `/documentos` y `/accesos` la administración. Lo demás no existe. */
+/** `/` es la home (los documentos), `/presentaciones` y `/tareas` sus otros dos tabs, `/d/<id>` un documento, `/d/<id>/editar` su editor, `/p/<id>` una presentación y `/p/<id>/editar` su editor y `/accesos` la administración. Lo demás no existe. */
 export function resolveRoute(pathname: string): Route {
   const path = pathname.replace(/\/+$/, '') || '/';
   if (path === '/') return { kind: 'home' };

@@ -1,9 +1,7 @@
 import { Button, MenuItem, MenuPanel } from '@colaboradocs/review-ui';
 import { type Component, For, Show } from 'solid-js';
 import { howToAvailable } from '@/HowToReview/howto.state';
-import CalendarCheckIcon from '@/icons/CalendarCheckIcon';
 import EllipsisVerticalIcon from '@/icons/EllipsisVerticalIcon';
-import FileTextIcon from '@/icons/FileTextIcon';
 import ListChecksIcon from '@/icons/ListChecksIcon';
 import LogOutIcon from '@/icons/LogOutIcon';
 import UsersIcon from '@/icons/UsersIcon';
@@ -53,9 +51,9 @@ export default function UserMenu(props: Props) {
         <Show when={userMenu.me()}>
           {(reviewer) => (
             <div class={styles.who}>
-              <span class={styles.kicker}>
-                {reviewer().isAdmin ? 'Sesión · admin' : 'Sesión'}
-              </span>
+              <Show when={reviewer().isAdmin}>
+                <span class={styles.kicker}>Admin</span>
+              </Show>
               <span class={styles.name}>{reviewer().name}</span>
               <Show when={reviewer().municipality}>
                 {(municipality) => (
@@ -65,13 +63,6 @@ export default function UserMenu(props: Props) {
             </div>
           )}
         </Show>
-        <div class={styles.group}>
-          <MenuItem
-            icon={CalendarCheckIcon}
-            label="Mis tareas"
-            onClick={userMenu.goToTasks}
-          />
-        </div>
         <Show when={howToAvailable()}>
           <div class={styles.group}>
             <MenuItem
@@ -97,11 +88,6 @@ export default function UserMenu(props: Props) {
         </Show>
         <Show when={userMenu.me()?.isAdmin}>
           <div class={styles.group}>
-            <MenuItem
-              icon={FileTextIcon}
-              label="Documentos"
-              onClick={() => userMenu.goToAdmin('documents')}
-            />
             <MenuItem
               icon={UsersIcon}
               label="Accesos"
