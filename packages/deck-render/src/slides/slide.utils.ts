@@ -26,13 +26,18 @@ function eyebrowHtml(eyebrow: Eyebrow | undefined, ctx: SlideContext): string {
     ? `<span class="t" title="${esc(ctx.strings.minutesTitle)}">${icon('clock')}${eyebrow.minutes} min</span>`
     : '';
   const index = eyebrow.index ? `<b>${esc(eyebrow.index)}</b>` : '';
-  return `<div class="eyebrow" data-r>${index}${esc(eyebrow.text ?? '')}${mode}${minutes}</div>`;
+  // El texto va en un contenedor que lo desliza si no cabe (ver el motor: `mq`).
+  const text = eyebrow.text
+    ? `<span class="mq"><span class="mq-track"><span class="mq-text">${esc(eyebrow.text)}</span></span></span>`
+    : '';
+  return `<div class="eyebrow" data-r>${index}${text}${mode}${minutes}</div>`;
 }
 
 function speakerHtml(speaker: Person | undefined, ctx: SlideContext): string {
   if (!speaker) return '';
   const text = `<b>${esc(speaker.name)}</b>${speaker.role ? ` · ${esc(speaker.role)}` : ''}`;
-  return `<div class="speaker" data-r title="${esc(ctx.strings.speakerTitle)}">${icon('mic')}${text}</div>`;
+  // Igual que el eyebrow: si no cabe en la línea, el texto se desliza.
+  return `<div class="speaker" data-r title="${esc(ctx.strings.speakerTitle)}">${icon('mic')}<span class="mq"><span class="mq-track"><span class="mq-text">${text}</span></span></span></div>`;
 }
 
 function decorHtml(slide: Slide, ctx: SlideContext): string {

@@ -14,6 +14,62 @@ export const ENGINE_JS = `
   var cur = -1;
   var pad = function (n) { return String(n).padStart(2, '0'); };
 
+  // Texto del eyebrow o del speaker que no cabe en una línea: se desliza en bucle (dos copias, la segunda justo donde empezó la primera).
+  // Una vuelta por vez; entre vueltas, una pausa. Solo se mueve el de la slide activa. Con «reducir movimiento» el texto se parte en líneas.
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var MQ_PX_PER_S = 40, MQ_PAUSE_MS = 1000;
+  function mqStop(mq) {
+    clearTimeout(mq._timer);
+    mq.firstElementChild.classList.remove('run');
+  }
+  function mqRun(mq) {
+    var track = mq.firstElementChild;
+    clearTimeout(mq._timer);
+    track.classList.remove('run');
+    if (!mq._over) return;
+    // un cuadro sin la clase para que la animación arranque de cero
+    mq._timer = setTimeout(function () { track.classList.add('run'); }, MQ_PAUSE_MS);
+  }
+  function mqMeasure(mq) {
+    var track = mq.firstElementChild, text = track.firstElementChild;
+    var copy = track.children[1];
+    mq._over = text.scrollWidth > mq.clientWidth;
+    if (mq._over && !copy) {
+      copy = text.cloneNode(true);
+      copy.classList.add('mq-copy');
+      copy.setAttribute('aria-hidden', 'true');
+      track.appendChild(copy);
+    } else if (!mq._over && copy) {
+      copy.remove();
+    }
+    if (mq._over) {
+      var dist = text.scrollWidth + (parseFloat(getComputedStyle(track).columnGap) || 0);
+      mq.style.setProperty('--mq-dist', dist + 'px');
+      mq.style.setProperty('--mq-dur', dist / MQ_PX_PER_S + 's');
+    }
+    if (mq.closest('.slide').classList.contains('is-active') && !track.classList.contains('run') && mq._timer == null) mqRun(mq);
+    if (!mq._over) mqStop(mq);
+  }
+  function mqSetup(slide) {
+    if (reduce) return;
+    slide.querySelectorAll('.mq').forEach(function (mq) {
+      if (mq._ready) return;
+      mq._ready = true;
+      mq.firstElementChild.addEventListener('animationend', function () { mqRun(mq); });
+      if (window.ResizeObserver) new ResizeObserver(function () { mqMeasure(mq); }).observe(mq);
+      mqMeasure(mq);
+    });
+  }
+  function mqActivate(active) {
+    slides.forEach(function (s) {
+      s.querySelectorAll('.mq').forEach(function (mq) {
+        if (!mq._ready) return;
+        if (s === active) { mq._timer = null; mqMeasure(mq); mqRun(mq); } else { mqStop(mq); mq._timer = null; }
+      });
+    });
+  }
+  slides.forEach(mqSetup);
+
   function go(n) {
     n = Math.max(0, Math.min(slides.length - 1, n));
     if (n === cur) return;
@@ -24,6 +80,7 @@ export const ENGINE_JS = `
       s.setAttribute('aria-hidden', i === n ? 'false' : 'true');
     });
     cur = n;
+    mqActivate(slides[n]);
     bar.style.transform = 'scaleX(' + (n + 1) / slides.length + ')';
     counter.textContent = pad(n + 1) + ' / ' + pad(slides.length);
     history.replaceState(null, '', '#' + (n + 1));
@@ -52,6 +109,8 @@ export const ENGINE_JS = `
       fresh.setAttribute('aria-hidden', old.getAttribute('aria-hidden') || 'true');
       old.replaceWith(fresh);
       slides[r.index] = fresh;
+      mqSetup(fresh);
+      if (fresh.classList.contains('is-active')) mqActivate(fresh);
       timers = Array.prototype.slice.call(document.querySelectorAll('.countdown'));
       tick();
     });

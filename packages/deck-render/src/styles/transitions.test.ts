@@ -88,6 +88,62 @@ describe('degradado al pie de la slide', () => {
     expect(fade).toContain('position: fixed');
     expect(fade).toContain('var(--bg)');
     expect(fade).toContain('pointer-events: none');
-    expect(BASE_CSS).toContain('.slide::after { display: none !important; }');
+    expect(BASE_CSS).toContain(
+      '.slide::before, .slide::after { display: none !important; }',
+    );
+  });
+});
+
+describe('pie de la slide', () => {
+  it('el speaker va fijo a la pantalla (junto al contador) y en papel se ancla a su página', () => {
+    expect(block('.speaker')).toContain('position: fixed');
+    expect(BASE_CSS).toContain(
+      '.speaker, .eyebrow { position: absolute !important; }',
+    );
+  });
+});
+
+describe('cabecera de la slide', () => {
+  it('el eyebrow va fijo arriba y el contenido se desvanece bajo él', () => {
+    expect(block('.eyebrow')).toContain('position: fixed');
+    expect(block('.slide::before')).toContain('var(--bg)');
+    expect(block('.slide::before')).toContain('pointer-events: none');
+  });
+});
+
+describe('eyebrow que no cabe', () => {
+  it('el texto toma el resto de la línea, el tiempo no se parte y pasa a la línea de abajo si falta sitio', () => {
+    expect(block('.eyebrow')).toContain('flex-wrap: wrap');
+    expect(block('.eyebrow')).toContain('right: var(--pad-x)');
+    expect(block('.eyebrow .t')).toContain('white-space: nowrap');
+    expect(block('.mq')).toContain('flex: 1 1 8ch');
+    expect(block('.mq')).toContain('overflow: hidden');
+  });
+
+  it('con «reducir movimiento» y al imprimir, el texto se parte en líneas en vez de deslizarse', () => {
+    expect(BASE_CSS).toMatch(
+      /prefers-reduced-motion: reduce\) \{[^@]*\.mq-text \{ white-space: normal; \}/,
+    );
+    expect(BASE_CSS).toContain(
+      '.mq-copy { display: none; } .mq-text { white-space: normal; }',
+    );
+  });
+});
+
+describe('speaker que no cabe', () => {
+  it('toma el ancho entre el contador y el borde, sin partirse, y su texto se desliza', () => {
+    expect(block('.speaker')).toContain('right: var(--pad-x)');
+    expect(block('.speaker')).toContain('display: flex');
+    expect(block('.speaker svg')).toContain('flex: none');
+    // la misma altura que el contador: con el mismo `bottom`, texto y contador quedan en la misma línea
+    expect(block('.speaker')).toContain('height: 1em');
+    expect(block('.mq')).toContain('padding-block');
+  });
+});
+
+describe('alineación del texto deslizante', () => {
+  it('la pista es flex de bloque: en línea desalinearía el texto respecto a sus vecinos', () => {
+    expect(block('.mq-track')).toContain('display: flex');
+    expect(block('.mq-track')).not.toContain('inline-flex');
   });
 });

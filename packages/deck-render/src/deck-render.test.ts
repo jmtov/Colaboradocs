@@ -171,6 +171,43 @@ describe('renderDeck', () => {
     expect(html).toMatch(/class="countdown"[^>]*hidden/);
   });
 
+  it('el texto del eyebrow va en un contenedor que lo desliza si no cabe, y el tiempo no se parte', () => {
+    const { html } = renderDeck(
+      deck({
+        kind: 'content',
+        eyebrow: { text: 'Espacio para participar', minutes: 15 },
+        body: [],
+      }),
+      theme,
+    );
+    expect(html).toContain(
+      '<span class="mq"><span class="mq-track"><span class="mq-text">Espacio para participar</span></span></span>',
+    );
+    // el motor mide, duplica el texto y lo anima solo en la slide activa
+    expect(html).toContain('function mqMeasure(mq)');
+    expect(html).toContain('mqActivate(slides[n]);');
+    // sin texto no hay contenedor (no ocuparía lugar)
+    const sin = renderDeck(
+      deck({ kind: 'content', eyebrow: { minutes: 5 }, body: [] }),
+      theme,
+    ).html;
+    expect(sin).not.toContain('class="mq"');
+  });
+
+  it('el speaker lleva su texto en un contenedor que lo desliza si no cabe', () => {
+    const { html } = renderDeck(
+      deck({
+        kind: 'content',
+        speaker: { name: 'David Andrés Chalarca', role: 'Abejorral' },
+        body: [],
+      }),
+      theme,
+    );
+    expect(html).toMatch(
+      /<div class="speaker"[^>]*><svg[\s\S]*?<\/svg><span class="mq"><span class="mq-track"><span class="mq-text"><b>David Andrés Chalarca<\/b> · Abejorral<\/span>/,
+    );
+  });
+
   it('el eyebrow lleva el modo y los minutos como datos', () => {
     const { html } = renderDeck(
       deck({

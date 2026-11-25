@@ -26,6 +26,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 /* Centrado seguro: con espacio sobra a los dos lados (queda al centro); sin él, empieza arriba y se desplaza. Con justify-content: center se cortaría el principio. */
 .slide > .content { margin-block: auto; }
 /* Degradado al pie, del color de fondo de la slide: avisa que hay más contenido debajo y deja leer el contador. Fijo a la pantalla, sobre el contenido y bajo el eyebrow y el speaker. */
+/* Lo mismo arriba: el eyebrow queda fijo y el contenido se desvanece bajo él. */
+.slide::before { content: ""; position: fixed; left: 0; right: 0; top: 0; z-index: 1; height: calc(var(--pad-top) + 1rem); background: linear-gradient(to top, transparent, var(--bg) 65%); pointer-events: none; }
 .slide::after { content: ""; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1; height: calc(var(--pad-bottom) + 2rem); background: linear-gradient(to bottom, transparent, var(--bg) 65%); pointer-events: none; }
 
 /* Fondo de la slide: capas detrás de todo el contenido, sin bloquear clics. Cada capa se coloca con variables (% de la slide). */
@@ -67,13 +69,20 @@ h1, h2, h3, p { margin: 0; }
 .title { font-family: var(--font-title); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); line-height: var(--title-leading); text-transform: var(--title-transform); }
 .t-xl { font-size: var(--h1); } .t-lg { font-size: var(--h1-lg); } .t-md { font-size: var(--h1-md); } .t-sm { font-size: var(--h2); }
 .eyebrow {
-  position: absolute; top: var(--eyebrow-top); left: var(--pad-x); z-index: 3; margin: 0; display: flex; align-items: center;
+  position: fixed; top: var(--eyebrow-top); left: var(--pad-x); right: var(--pad-x); z-index: 3; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: .7em 1.3em;
   font: 500 var(--text-eyebrow)/1 var(--eyebrow-font); letter-spacing: var(--eyebrow-tracking); text-transform: var(--eyebrow-transform); color: var(--muted);
 }
-.eyebrow b { color: var(--accent); font-weight: 500; margin-right: .9em; }
-.eyebrow .t { display: inline-flex; align-items: center; gap: .45em; margin-left: 1.4em; color: var(--ink); line-height: 1; }
+.eyebrow b { color: var(--accent); font-weight: 500; }
+.eyebrow .t { display: inline-flex; align-items: center; gap: .45em; color: var(--ink); line-height: 1; white-space: nowrap; }
 .eyebrow .t svg { width: 1.15em; height: 1.15em; }
-.eyebrow .mode { display: var(--eyebrow-mode-display); align-items: center; margin-left: 1.2em; padding: .35em .9em; border: 2px solid var(--ink); border-radius: var(--radius-pill); color: var(--ink); font-weight: 700; }
+.eyebrow .mode { display: var(--eyebrow-mode-display); align-items: center; white-space: nowrap; padding: .35em .9em; border: 2px solid var(--ink); border-radius: var(--radius-pill); color: var(--ink); font-weight: 700; }
+/* El texto de una línea (eyebrow o speaker) ocupa lo que quede (mínimo 8ch); en el eyebrow, si no hay más sitio, el modo y el tiempo pasan a la línea de abajo. Si el texto no cabe, se desliza. */
+.mq { flex: 1 1 8ch; min-width: 0; overflow: hidden; /* aire para que el recorte no corte las letras con cola (g, p, y) */ padding-block: .2em; margin-block: -.2em; }
+/* Flex de bloque, no en línea: en línea, el contenedor sumaría el hueco de debajo de la línea base y el texto quedaría más arriba que sus vecinos. */
+.mq-track { display: flex; gap: 2rem; width: max-content; flex: none; }
+.mq-track.run { animation: mq-scroll var(--mq-dur, 8s) linear 1; }
+.mq-text { white-space: nowrap; }
+@keyframes mq-scroll { to { transform: translateX(calc(-1 * var(--mq-dist, 0px))); } }
 .eyebrow .mode[data-mode="decide"] { background: var(--ink); color: var(--bg); }
 .eyebrow .mode[data-mode="discuss"] { border-style: dashed; }
 .lede { font-size: var(--text-lede); line-height: 1.25; color: var(--muted); max-width: 34ch; }
@@ -187,9 +196,10 @@ h1, h2, h3, p { margin: 0; }
 .chip { font-size: var(--text-chip); font-weight: 600; padding: .5em 1.1em; border-radius: var(--radius-pill); border: 1.5px solid var(--ink); }
 .chip.solid { background: var(--ink); color: var(--bg); } .chip.dashed { border-style: dashed; }
 
-.speaker { position: absolute; left: calc(var(--pad-x) + 10ch); bottom: var(--hud-bottom); z-index: 3; white-space: nowrap; font: 400 var(--text-speaker)/1 var(--font-mono); color: var(--muted); }
+/* Fijo a la pantalla, como el contador: en una slide que se desplaza no se va con el contenido. */
+.speaker { position: fixed; left: calc(var(--pad-x) + 10ch); right: var(--pad-x); bottom: var(--hud-bottom); z-index: 3; display: flex; align-items: center; gap: .5em; height: 1em; font: 400 var(--text-speaker)/1 var(--font-mono); color: var(--muted); }
 .speaker b { font-weight: 500; color: var(--ink); }
-.speaker svg { width: 1.15em; height: 1.15em; vertical-align: -.2em; margin-right: .5em; color: var(--ink); }
+.speaker svg { flex: none; width: 1.15em; height: 1.15em; color: var(--ink); }
 .pg { display: none; }
 
 /* ---------- HUD ---------- */
@@ -219,7 +229,10 @@ body.top .controls { opacity: 1; pointer-events: auto; }
   html, body { height: auto !important; overflow: visible !important; }
   main#deck { display: block !important; }
   .progress, .hud, .nav, .controls { display: none !important; }
-  .slide::after { display: none !important; }
+  .slide::before, .slide::after { display: none !important; }
+  .mq-copy { display: none; } .mq-text { white-space: normal; }
+  /* En papel cada slide es una página: el eyebrow y el speaker se anclan a su página, no a la pantalla. */
+  .speaker, .eyebrow { position: absolute !important; }
   .pg { display: block; position: absolute; left: var(--pad-x); bottom: var(--hud-bottom); z-index: 3; font: 400 var(--text-hud)/1 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
   .countdown { display: none !important; }
   .slide, .slide.is-active, .slide.is-past { position: relative !important; inset: auto !important; width: 13.333in !important; height: 7.5in !important; display: flex !important; opacity: 1 !important; visibility: visible !important; transform: none !important; transition: none !important; break-after: page !important; break-inside: avoid; overflow: hidden; }
@@ -231,6 +244,7 @@ body.top .controls { opacity: 1; pointer-events: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   :root { --vary: color 0s; }
+  .mq-text { white-space: normal; }
   .slide, .slide.is-active, .slide.is-past { transform: none; transition: opacity .3s ease, visibility 0s; }
   [data-r], .is-active [data-r], .mask > span, .is-active .mask > span { transform: none; transition: opacity .3s ease; }
   .rule, .is-active .rule { width: var(--rule-w); transition: none; }
