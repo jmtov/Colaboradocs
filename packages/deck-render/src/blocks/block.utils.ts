@@ -112,7 +112,11 @@ const RENDERERS: Renderers = {
         );
       })
       .join('');
-    return el('ul', { class: cx('list', b.size === 'md' && 'size-md') }, items);
+    return el(
+      'ul',
+      { class: cx('list', b.size === 'md' && 'size-md', b.plain && 'plain') },
+      items,
+    );
   },
   card: (b, ctx) => {
     const hasCategory = b.category !== undefined;
@@ -145,7 +149,7 @@ const RENDERERS: Renderers = {
       : '';
     return el(
       'div',
-      { class: 'person', ...reveal(ctx) },
+      { class: cx('person', b.plain && 'plain'), ...reveal(ctx) },
       `<span class="name">${esc(b.person.name)}</span>${role}`,
     );
   },

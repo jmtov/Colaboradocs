@@ -269,6 +269,7 @@ export const BLOCK_DESCRIPTORS: Record<BlockKind, Descriptor> = {
     label: 'Lista',
     fields: [
       { key: 'ordered', label: 'Numerada', type: 'boolean' },
+      { key: 'plain', label: 'Sin viñetas', type: 'boolean' },
       {
         key: 'size',
         label: 'Tamaño',
@@ -354,6 +355,7 @@ export const BLOCK_DESCRIPTORS: Record<BlockKind, Descriptor> = {
         required: true,
         fields: PERSON_FIELDS,
       },
+      { key: 'plain', label: 'Sin marco', type: 'boolean' },
     ],
   },
   figure: {

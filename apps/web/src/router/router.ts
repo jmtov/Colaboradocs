@@ -57,6 +57,17 @@ export function resolveRoute(pathname: string): Route {
   }
 }
 
+/** La ruta con la slide a la que ir (desde 1): `/p/charla?slide=4`. */
+export function withSlide(path: string, slide: number): string {
+  return `${path}?slide=${slide}`;
+}
+
+/** La slide (desde 1) que pide la URL (`?slide=4`); `undefined` si no hay o no es un número válido. */
+export function slideFromSearch(search: string): number | undefined {
+  const value = Number(new URLSearchParams(search).get('slide'));
+  return Number.isInteger(value) && value >= 1 ? value : undefined;
+}
+
 export function adminPath(page: AdminPageName): string {
   return ADMIN_PATHS[page];
 }

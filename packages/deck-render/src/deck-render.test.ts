@@ -553,6 +553,39 @@ describe('modo de la línea superior', () => {
   });
 });
 
+describe('motor: ir a una slide desde la página que contiene el deck', () => {
+  it('escucha `deckGo` también fuera de la vista previa, y solo del padre', () => {
+    const { html } = renderDeck(deck(), theme);
+    expect(html).toContain('e.data.deckGo');
+    expect(html).toContain('e.source !== window.parent');
+  });
+});
+
+describe('lista y persona sin adornos', () => {
+  const render = (body: Block[]) =>
+    renderDeck(deck({ kind: 'content', body }), theme).html;
+
+  it('una lista `plain` lleva su clase (el CSS quita la viñeta y el número); sin ella, no', () => {
+    const items = [{ text: 'A' }, { text: 'B' }];
+    expect(render([{ kind: 'list', plain: true, items }])).toMatch(
+      /<ul class="list plain"/,
+    );
+    expect(render([{ kind: 'list', items }])).not.toMatch(/list plain/);
+    expect(BASE_CSS).toMatch(/\.list\.plain li::before \{ content: none; \}/);
+  });
+
+  it('una persona `plain` va sin marco; sin ella, con el marco de siempre', () => {
+    const person = { name: 'Ana', role: 'Autora' };
+    expect(render([{ kind: 'person', person, plain: true }])).toMatch(
+      /class="person plain"/,
+    );
+    expect(render([{ kind: 'person', person }])).not.toMatch(/person plain/);
+    expect(BASE_CSS).toMatch(
+      /\.person\.plain[^{]*\{ border: 0; padding: 0; \}/,
+    );
+  });
+});
+
 describe('lista', () => {
   it('un ítem con icono lleva su propia columna y marca la fila', () => {
     const { html } = renderDeck(

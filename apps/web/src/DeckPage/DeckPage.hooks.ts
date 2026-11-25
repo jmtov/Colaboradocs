@@ -1,6 +1,6 @@
 import type { Theme } from '@colaboradocs/deck-core';
 import { ApiRequestError, useReview } from '@colaboradocs/review-ui';
-import { createResource, createSignal } from 'solid-js';
+import { createResource, createSignal, onCleanup, onMount } from 'solid-js';
 import {
   blobToDataUrl,
   buildDeckHtml,
@@ -68,7 +68,32 @@ export function useDeckPage(id: () => string) {
     const error: unknown = html.error;
     return error instanceof ApiRequestError && error.code === 'not_found';
   };
-  return { deck: html, refetch, notFound };
+  // La slide que se está viendo: el iframe avisa cada vez que cambia (`deckSlide`, desde 1), y
+  // sirve para abrir el editor en ella. El iframe es de otro origen, así que no se puede leer directo.
+  const [slide, setSlide] = createSignal(1);
+  let frame: HTMLIFrameElement | undefined;
+  const onMessage = (event: MessageEvent) => {
+    if (event.source !== frame?.contentWindow) return;
+    const reported: unknown = event.data?.deckSlide;
+    if (typeof reported === 'number') setSlide(reported);
+  };
+  onMount(() => window.addEventListener('message', onMessage));
+  onCleanup(() => window.removeEventListener('message', onMessage));
+
+  return {
+    deck: html,
+    refetch,
+    notFound,
+    slide,
+    setFrame: (element: HTMLIFrameElement) => {
+      frame = element;
+    },
+    /** Lleva el iframe a una slide (desde 1); sin número, lo deja donde está (la primera). */
+    goTo: (target: number | undefined) => {
+      if (target === undefined) return;
+      frame?.contentWindow?.postMessage({ deckGo: target }, '*');
+    },
+  };
 }
 
 const BAR_HIDDEN_KEY = 'review:deck-bar-hidden';

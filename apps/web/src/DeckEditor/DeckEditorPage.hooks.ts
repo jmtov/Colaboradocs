@@ -10,7 +10,12 @@ import {
 } from 'solid-js';
 import { unwrap } from 'solid-js/store';
 import { loadDeckFiles } from '@/DeckPage/DeckPage.hooks';
-import { deckPath, navigate } from '@/router/router';
+import {
+  deckPath,
+  navigate,
+  slideFromSearch,
+  withSlide,
+} from '@/router/router';
 import { cloneJson } from './features/deck/clone.utils';
 import { deckStore } from './features/deck/deck.store';
 import { migrateDeck, serializeDeck } from './features/deck/storage.utils';
@@ -26,6 +31,8 @@ export type EditorActions = {
   error: () => string | undefined;
   publishing: () => boolean;
   back: () => void;
+  /** Sale del editor a la presentación, en la slide que se está editando. */
+  view: () => void;
   publish: () => void;
   discard: () => void;
 };
@@ -78,6 +85,9 @@ export function useDeckEditorPage(id: () => string) {
       bundle.files,
     );
     deckStore.open(migrateDeck(draft?.content ?? bundle.deck), themes, files);
+    // Si se llegó desde la presentación (`?slide=N`), el editor abre en esa slide.
+    const start = slideFromSearch(window.location.search);
+    if (start !== undefined) deckStore.select(start - 1);
     baseline = serializeDeck(deckStore.deck);
     setSaveState(draft ? 'saved' : 'idle');
     return deckId;
@@ -121,6 +131,11 @@ export function useDeckEditorPage(id: () => string) {
     back: () => {
       void save().then(() => navigate('/'));
     },
+    view: () => {
+      // El número se toma ahora: guardar toma un momento y la persona puede seguir tocando.
+      const target = withSlide(deckPath(id()), deckStore.slideIndex() + 1);
+      void save().then(() => navigate(target));
+    },
     publish: () => {
       setPublishing(true);
       void (async () => {
@@ -128,7 +143,7 @@ export function useDeckEditorPage(id: () => string) {
         if (saveState() === 'error') return;
         try {
           await review.publishDeckDraft(id());
-          navigate(deckPath(id()));
+          navigate(withSlide(deckPath(id()), deckStore.slideIndex() + 1));
         } catch (failure) {
           setError(`No se puede publicar: ${explain(failure)}`);
         } finally {

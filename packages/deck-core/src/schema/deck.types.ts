@@ -123,6 +123,8 @@ type BlockShape =
   | {
       kind: 'list';
       ordered?: boolean;
+      /** Sin viñetas ni números: solo el texto (y el icono, si lo hay). */
+      plain?: boolean;
       /** `lg` por omisión; `md` para listas de pasos o de apoyo. */
       size?: 'lg' | 'md';
       items: ListItem[];
@@ -140,7 +142,8 @@ type BlockShape =
       sources?: Source[];
       footer?: string;
     }
-  | { kind: 'person'; person: Person }
+  /** `plain` quita el marco: nombre y rol sueltos, como en unos créditos. */
+  | { kind: 'person'; person: Person; plain?: boolean }
   | { kind: 'figure'; value: string; unit?: string; caption?: string }
   | {
       kind: 'image';

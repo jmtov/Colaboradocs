@@ -50,7 +50,7 @@ Los decks guardados con los tipos anteriores (`cover`, `section`, `stack`, `spli
 
 ## Bloques
 
-`heading` (con `icon` opcional: un cuadro con el icono, del color de la categoría, sobre el título), `note`, `list` (numerada o con viñetas, `size` `lg`/`md`, con icono y detalle), `card` (con `category`, `tone`, `people`, `sources`), `person`, `figure`, `image`, `qr`, `countdown` (fecha **con zona horaria**), `notice`, `agenda` (ítems con `time`, `minutes`, `mode`, `speaker`; `type: 'break'` para descansos), `timeline`, `date-box`, `chips`, `custom`.
+`heading` (con `icon` opcional: un cuadro con el icono, del color de la categoría, sobre el título), `note`, `list` (numerada o con viñetas, `size` `lg`/`md`, con icono y detalle; `plain: true` quita las viñetas y los números), `card` (con `category`, `tone`, `people`, `sources`), `person` (`plain: true` lo deja sin marco, como unos créditos), `figure`, `image`, `qr`, `countdown` (fecha **con zona horaria**), `notice`, `agenda` (ítems con `time`, `minutes`, `mode`, `speaker`; `type: 'break'` para descansos), `timeline`, `date-box`, `chips`, `custom`.
 
 ## Lo que decide el tema y no el contenido
 Cómo se ve el modo de una slide (etiqueta Informar/Conversar/Decidir o solo reloj), si los títulos van en mayúsculas, el grosor de las líneas, si las formas son rectas o redondeadas, el estilo de las tarjetas. El contenido solo dice el dato (`mode: 'inform'`, `minutes: 10`).

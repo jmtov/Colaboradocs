@@ -9,6 +9,8 @@ import {
   pathname,
   resolveRoute,
   skipsPageTransition,
+  slideFromSearch,
+  withSlide,
 } from './router';
 
 describe('resolveRoute', () => {
@@ -115,5 +117,23 @@ describe('rutas de los tabs de la home', () => {
     expect(resolveRoute('/presentaciones')).toEqual({ kind: 'decks' });
     expect(resolveRoute('/presentaciones/')).toEqual({ kind: 'decks' });
     expect(resolveRoute('/tareas')).toEqual({ kind: 'tasks' });
+  });
+});
+
+describe('la slide en la URL', () => {
+  it('withSlide la agrega y slideFromSearch la lee (desde 1)', () => {
+    expect(withSlide('/p/charla', 4)).toBe('/p/charla?slide=4');
+    expect(slideFromSearch('?slide=4')).toBe(4);
+    expect(slideFromSearch('')).toBeUndefined();
+    expect(slideFromSearch('?slide=0')).toBeUndefined();
+    expect(slideFromSearch('?slide=abc')).toBeUndefined();
+    expect(slideFromSearch('?slide=2.5')).toBeUndefined();
+  });
+
+  it('navegar a una ruta con ?slide no cambia la ruta que se resuelve', () => {
+    expect(resolveRoute('/p/charla/editar')).toEqual({
+      kind: 'deck-edit',
+      id: 'charla',
+    });
   });
 });

@@ -29,11 +29,13 @@ export const ENGINE_JS = `
     // Si el deck está dentro de otra página (la galería), le avisa en qué slide va.
     if (window.parent !== window) window.parent.postMessage({ deckSlide: n + 1 }, '*');
   }
+  // La página que contiene el deck puede llevarlo a una slide (el editor, al volver a la presentación).
+  addEventListener('message', function (e) {
+    if (e.source !== window.parent) return;
+    if (e.data && typeof e.data.deckGo === 'number') go(e.data.deckGo - 1);
+  });
   // Solo en la galería: la página que contiene el deck cambia las variantes de la slide actual para verlas.
   if (C.preview) {
-    addEventListener('message', function (e) {
-      if (e.data && typeof e.data.deckGo === 'number') go(e.data.deckGo - 1);
-    });
     // El editor cambia el HTML de una slide sin recargar la página (la animación de entrada no se repite).
     addEventListener('message', function (e) {
       var r = e.data && e.data.deckReplace;

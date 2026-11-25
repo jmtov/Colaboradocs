@@ -102,6 +102,7 @@ h1, h2, h3, p { margin: 0; }
 .list li { display: grid; grid-template-columns: 2.4ch 1fr; gap: .3em 1rem; align-items: baseline; font-size: var(--text-list); line-height: 1.2; font-weight: 500; letter-spacing: -.015em; }
 .list li::before { content: attr(data-n); font: 500 var(--text-index) var(--font-mono); color: var(--accent); }
 .list li.has-icon { grid-template-columns: 2.4ch auto 1fr; }
+.list.plain li { grid-template-columns: 1fr; } .list.plain li::before { content: none; } .list.plain li.has-icon { grid-template-columns: auto 1fr; }
 .list li small { display: block; margin-top: .3em; font-size: var(--text-list-detail); line-height: 1.3; color: var(--muted); font-weight: 400; letter-spacing: 0; }
 .list.size-md li { font-size: var(--text-list-md); }
 .list.size-md li small { font-size: var(--text-list-md-detail); }
@@ -129,6 +130,7 @@ h1, h2, h3, p { margin: 0; }
 
 .person { border: var(--line-w) solid var(--line-strong); border-radius: var(--radius-card); padding: clamp(1rem, 1.8vw, 1.6rem); display: grid; gap: .4rem; align-self: start; }
 .has-category .person { border-top: 5px solid var(--c); }
+.person.plain, .has-category .person.plain { border: 0; padding: 0; }
 .person .name { font-size: var(--text-person-name); font-weight: 600; letter-spacing: -.025em; line-height: 1.1; }
 .person .role { font-size: var(--text-person-role); color: var(--muted); }
 

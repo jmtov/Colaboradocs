@@ -6,7 +6,12 @@ import PencilIcon from '@/icons/PencilIcon';
 import RefreshIcon from '@/icons/RefreshIcon';
 import Loading from '@/Loading/Loading';
 import PageBar from '@/PageBar/PageBar';
-import { deckEditPath, navigate } from '@/router/router';
+import {
+  deckEditPath,
+  navigate,
+  slideFromSearch,
+  withSlide,
+} from '@/router/router';
 import { useBarHidden, useDeckPage } from './DeckPage.hooks';
 import styles from './DeckPage.module.css';
 
@@ -45,7 +50,9 @@ export default function DeckPage(props: Props) {
                   <Button
                     icon={PencilIcon}
                     size="sm"
-                    onClick={() => navigate(deckEditPath(props.id))}
+                    onClick={() =>
+                      navigate(withSlide(deckEditPath(props.id), page.slide()))
+                    }
                   >
                     Editar
                   </Button>
@@ -65,6 +72,8 @@ export default function DeckPage(props: Props) {
               sandbox="allow-scripts"
               allow="fullscreen"
               srcdoc={deck.html}
+              ref={page.setFrame}
+              onLoad={() => page.goTo(slideFromSearch(window.location.search))}
             />
             <Show when={bar.hidden()}>
               <div class={styles.reveal}>
