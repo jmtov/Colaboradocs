@@ -14,6 +14,18 @@
     var(--gutter-left) +
     var(--gutter-right)
   );
+  /* Espaciado: una escala de 4 px para márgenes, huecos y paddings. Un número suelto (0.625rem, 1.25rem…)
+     rompe el ritmo: si no hay una medida de la escala, se elige la más cercana. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  /* El hueco de arriba y de abajo de la barra de una lista de la home (buscador y filtros): entre la línea de los tabs
+     y la barra, entre la barra y su resumen, y entre el resumen (o la barra) y la lista. Es el mismo para que respire parejo. */
+  --list-gap: var(--space-4);
   --bg: #fff;
   --fg: #070707;
   --muted: color-mix(in srgb, var(--fg) 62%, var(--bg));

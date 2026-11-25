@@ -11,15 +11,8 @@ export function useTabIndicator(track: () => unknown) {
   function place() {
     const active = nav?.querySelector<HTMLElement>('[aria-current="page"]');
     if (!nav || !active) return;
-    // El primer tab no lleva aire a la izquierda (su texto alinea con la página); la caja sí lo
-    // necesita, así que se le suma el aire de sus vecinos.
-    const neighbour = nav.querySelector<HTMLElement>('a:not(:first-child)');
-    const pad =
-      active === nav.firstElementChild && neighbour
-        ? Number.parseFloat(getComputedStyle(neighbour).paddingLeft) || 0
-        : 0;
-    nav.style.setProperty('--tab-x', `${active.offsetLeft - pad}px`);
-    nav.style.setProperty('--tab-w', `${active.offsetWidth + pad}px`);
+    nav.style.setProperty('--tab-x', `${active.offsetLeft}px`);
+    nav.style.setProperty('--tab-w', `${active.offsetWidth}px`);
   }
 
   createEffect(() => {

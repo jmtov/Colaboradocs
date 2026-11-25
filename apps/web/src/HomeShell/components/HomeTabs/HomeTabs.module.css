@@ -1,14 +1,21 @@
-/* Pestañas de carpeta: una línea bajo todos los tabs y, tras el activo, una caja que se une a la línea
-   (le tapa el trazo) y se desliza de un tab al siguiente. */
+/* Pestañas de carpeta: una línea de lado a lado bajo todos los tabs y, tras el activo, una caja que se une a la
+   línea (le tapa el trazo) y se desliza de un tab al siguiente. La barra va a ancho completo (es la línea);
+   los tabs alinean con el contenido de la página. */
+.bar {
+  margin-bottom: var(--list-gap);
+  border-bottom: 1px solid var(--line);
+}
+
 .tabs {
   --tab-duration: 260ms;
   --tab-ease: cubic-bezier(0.32, 0.72, 0, 1);
 
   position: relative;
   display: flex;
-  gap: 0.25rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--line);
+  gap: var(--space-1);
+  max-width: var(--page-max);
+  padding-inline: var(--gutter);
+  margin: 0 auto;
 }
 
 .tab {
@@ -25,10 +32,6 @@
   text-decoration: none;
   white-space: nowrap;
   transition: color var(--tab-duration) var(--tab-ease);
-}
-
-.tab:first-child {
-  padding-left: 0;
 }
 
 .tab:hover {

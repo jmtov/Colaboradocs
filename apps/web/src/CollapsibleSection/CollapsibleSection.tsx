@@ -29,7 +29,7 @@ export default function CollapsibleSection(props: Props) {
           aria-expanded={open()}
           onClick={() => setOpen(!open())}
         >
-          {props.title}
+          <span class={styles.title}>{props.title}</span>
           <Show when={!open() && props.note}>
             <span class={styles.note}>{props.note}</span>
           </Show>

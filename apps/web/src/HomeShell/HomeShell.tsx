@@ -19,8 +19,8 @@ export default function HomeShell(props: HomeShellProps) {
           </div>
         </div>
       </header>
-      <main class={styles.page}>
-        <section class={styles.intro}>
+      <main>
+        <section class={`${styles.inner} ${styles.intro}`}>
           <h1 class={styles.title}>{props.name}</h1>
         </section>
         <HomeTabs
@@ -32,7 +32,7 @@ export default function HomeShell(props: HomeShellProps) {
             props.tab === 'decks'
           }
         />
-        {props.children}
+        <div class={`${styles.inner} ${styles.content}`}>{props.children}</div>
       </main>
     </>
   );

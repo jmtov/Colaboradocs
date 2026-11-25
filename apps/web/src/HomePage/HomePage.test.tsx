@@ -257,6 +257,8 @@ describe('HomePage', () => {
         a.getAttribute('href'),
       );
     expect(hrefs()).toEqual(['/d/a', '/d/b']);
+    // Sin filtro el resumen está vacío (y no ocupa lugar): al buscar, el texto aparece bajo el campo.
+    expect(host.querySelector('[aria-live="polite"]')?.textContent).toBe('');
 
     const input = host.querySelector<HTMLInputElement>('input[type="search"]');
     if (!input) throw new Error('falta el buscador');
@@ -264,7 +266,13 @@ describe('HomePage', () => {
     input.dispatchEvent(new Event('input', { bubbles: true }));
     await wait();
     expect(hrefs()).toEqual(['/d/b']);
-    expect(host.querySelector('h2')?.textContent).toContain('1 de 2');
+    const summary = host.querySelector('[aria-live="polite"]');
+    expect(summary?.textContent).toContain('1 de 2');
+    // El resumen va debajo del buscador, no antes: al buscar, el campo no se mueve.
+    expect(
+      input.compareDocumentPosition(summary as Node) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     input.value = 'zzz';
     input.dispatchEvent(new Event('input', { bubbles: true }));

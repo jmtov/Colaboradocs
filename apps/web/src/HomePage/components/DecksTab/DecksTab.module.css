@@ -1,6 +1,6 @@
 .section {
   display: grid;
-  gap: 1rem;
+  gap: var(--list-gap);
 }
 
 .clearFilter {

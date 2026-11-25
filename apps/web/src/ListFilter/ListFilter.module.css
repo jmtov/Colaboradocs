@@ -1,9 +1,21 @@
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
+  gap: var(--space-3) var(--space-5);
   align-items: center;
   justify-content: space-between;
+}
+
+/* La barra y, debajo, el resumen: un solo bloque para quien lo coloca en la página. */
+.root {
+  display: grid;
+  gap: var(--list-gap);
+}
+
+/* Debajo de la barra: al buscar, el texto aparece bajo el campo y no lo mueve. Vacío no ocupa lugar ni deja hueco
+   (el elemento sigue en la página para que los lectores de pantalla anuncien el cambio). */
+.summary:empty {
+  display: none;
 }
 
 .summary {
@@ -18,7 +30,7 @@
   display: flex;
   margin-left: auto;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-3);
   /* Misma altura para el campo y los botones, aunque una difiera. */
   align-items: stretch;
 }

@@ -21,56 +21,59 @@ type Props = {
   children?: JSX.Element;
 };
 
-/** La barra de una lista de la home: cuántos hay, un buscador de texto y, si la lista lo pide, el botón de filtros (que abre la hoja). */
+/** La barra de una lista de la home: un buscador de texto y, si la lista lo pide, el botón de filtros (que abre la hoja); debajo, cuántos hay con un filtro puesto. */
 export default function ListFilter(props: Props) {
   return (
-    <div class={styles.toolbar}>
-      <Show when={props.summary}>
-        <h2 class={styles.summary}>{props.summary}</h2>
-      </Show>
-      <div class={styles.filter}>
-        <label class={styles.search}>
-          <input
-            class={styles.input}
-            type="search"
-            placeholder={props.placeholder}
-            aria-label={props.placeholder}
-            autocomplete="off"
-            value={props.query}
-            onInput={(event) => props.onQuery(event.currentTarget.value)}
-          />
-          <SearchIcon class={styles.searchIcon} />
-          <Show when={props.query}>
-            <button
-              type="button"
-              data-flat
-              class={styles.clear}
-              aria-label="Borrar búsqueda"
-              onClick={() => props.onQuery('')}
-            >
-              <CloseIcon class={styles.clearIcon} />
-            </button>
-          </Show>
-        </label>
-        <Show when={props.canFilter}>
-          <Button icon={SlidersIcon} onClick={() => props.onOpenFilters?.()}>
-            Filtros
-          </Button>
-        </Show>
-        <Show when={props.activeLabel}>
-          {(title) => (
-            <Button
-              icon={CloseIcon}
-              variant="primary"
-              aria-label={`Quitar el filtro ${title()}`}
-              onClick={() => props.onClear?.()}
-            >
-              {title()}
+    <div class={styles.root}>
+      <div class={styles.toolbar}>
+        <div class={styles.filter}>
+          <label class={styles.search}>
+            <input
+              class={styles.input}
+              type="search"
+              placeholder={props.placeholder}
+              aria-label={props.placeholder}
+              autocomplete="off"
+              value={props.query}
+              onInput={(event) => props.onQuery(event.currentTarget.value)}
+            />
+            <SearchIcon class={styles.searchIcon} />
+            <Show when={props.query}>
+              <button
+                type="button"
+                data-flat
+                class={styles.clear}
+                aria-label="Borrar búsqueda"
+                onClick={() => props.onQuery('')}
+              >
+                <CloseIcon class={styles.clearIcon} />
+              </button>
+            </Show>
+          </label>
+          <Show when={props.canFilter}>
+            <Button icon={SlidersIcon} onClick={() => props.onOpenFilters?.()}>
+              Filtros
             </Button>
-          )}
-        </Show>
-        {props.children}
+          </Show>
+          <Show when={props.activeLabel}>
+            {(title) => (
+              <Button
+                icon={CloseIcon}
+                variant="primary"
+                aria-label={`Quitar el filtro ${title()}`}
+                onClick={() => props.onClear?.()}
+              >
+                {title()}
+              </Button>
+            )}
+          </Show>
+          {props.children}
+        </div>
       </div>
+      {/* Debajo de la barra: al buscar, el campo no se mueve. Sin texto no ocupa lugar. */}
+      <p class={styles.summary} aria-live="polite">
+        {props.summary}
+      </p>
     </div>
   );
 }

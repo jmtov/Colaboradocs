@@ -34,15 +34,19 @@
   color: var(--muted);
 }
 
-.page {
+/* La página es a ancho completo: la línea de los tabs va de lado a lado, y el título y el contenido ponen cada uno su ancho y sus márgenes. */
+.inner {
   max-width: var(--page-max);
-  padding-bottom: 4.5rem;
   padding-inline: var(--gutter);
   margin: 0 auto;
 }
 
+.content {
+  padding-bottom: calc(var(--space-7) + var(--space-5));
+}
+
 .intro {
-  padding: 3.5rem 0 2rem;
+  padding-block: var(--space-7) var(--space-6);
 }
 
 .title {
@@ -56,6 +60,6 @@
 
 @media (width <= 640px) {
   .intro {
-    padding: 2.25rem 0 1.5rem;
+    padding-block: var(--space-6) var(--space-5);
   }
 }

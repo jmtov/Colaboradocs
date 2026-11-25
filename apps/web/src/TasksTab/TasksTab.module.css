@@ -1,6 +1,6 @@
 .content {
   display: grid;
-  gap: 1.5rem;
+  gap: var(--list-gap);
 }
 
 .group {

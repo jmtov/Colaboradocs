@@ -10,9 +10,11 @@
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
+  max-width: 100%;
   padding: 0;
   font: inherit;
   color: inherit;
+  text-align: left;
   letter-spacing: inherit;
   cursor: pointer;
   background: none;
@@ -39,4 +41,20 @@
 .note {
   font-weight: 500;
   color: var(--muted);
+}
+
+/* En el celular el título puede ocupar dos líneas: el contador baja debajo, y el chevron queda junto al título. */
+@media (width <= 640px) {
+  .toggle {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    row-gap: 0.125rem;
+  }
+
+  .note {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    font-size: var(--font-size-sm);
+  }
 }

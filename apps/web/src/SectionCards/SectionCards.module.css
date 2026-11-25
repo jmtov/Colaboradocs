@@ -72,6 +72,17 @@
   .cards {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  /* En una sola columna la tarjeta mide lo que su contenido: la altura mínima era para la cuadrícula. */
+  .card {
+    gap: 0.25rem;
+    min-height: 0;
+    padding: 0.75rem 1rem;
+  }
+
+  .footer {
+    padding-top: 0.25rem;
+  }
 }
 
 .top {

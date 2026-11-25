@@ -49,23 +49,25 @@ export default function HomeTabs(props: Props) {
   ]);
 
   return (
-    <nav class={styles.tabs} aria-label="Secciones" ref={indicator.setNav}>
-      <For each={tabs()}>
-        {(entry) => (
-          <Link
-            tab
-            href={entry.href}
-            class={styles.tab}
-            aria-current={props.tab === entry.tab ? 'page' : undefined}
-          >
-            {entry.label}
-            <Show when={entry.count !== null}>
-              <span class={styles.count}>{entry.count}</span>
-            </Show>
-          </Link>
-        )}
-      </For>
-      <span class={styles.indicator} aria-hidden="true" />
-    </nav>
+    <div class={styles.bar}>
+      <nav class={styles.tabs} aria-label="Secciones" ref={indicator.setNav}>
+        <For each={tabs()}>
+          {(entry) => (
+            <Link
+              tab
+              href={entry.href}
+              class={styles.tab}
+              aria-current={props.tab === entry.tab ? 'page' : undefined}
+            >
+              {entry.label}
+              <Show when={entry.count !== null}>
+                <span class={styles.count}>{entry.count}</span>
+              </Show>
+            </Link>
+          )}
+        </For>
+        <span class={styles.indicator} aria-hidden="true" />
+      </nav>
+    </div>
   );
 }
