@@ -209,6 +209,30 @@ describe('BottomSheet: al salir deja de ser modal (la página responde mientras 
     expect(document.activeElement).toBe(opener);
   });
 
+  it('REGRESIÓN: si al devolver el foco el navegador mueve la página, se repone la posición', async () => {
+    cssTransition('0.05s');
+    const opener = document.createElement('div');
+    opener.tabIndex = 0;
+    document.body.appendChild(opener);
+    opener.focus();
+    const { setOpen } = mount();
+    setOpen(true);
+    await wait(40);
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    vi.spyOn(window, 'scrollY', 'get').mockReturnValue(3780);
+    // Como WebKit con el editor: salta aunque se pida `preventScroll`.
+    vi.spyOn(opener, 'focus').mockImplementation(() => {
+      vi.spyOn(window, 'scrollY', 'get').mockReturnValue(2184);
+    });
+
+    setOpen(false);
+    expect(scrollTo).toHaveBeenCalledWith({
+      left: 0,
+      top: 3780,
+      behavior: 'instant',
+    });
+  });
+
   it('si se reabre mientras sale, vuelve a ser modal', async () => {
     cssTransition('0.05s');
     const { dialog, setOpen } = mount(true);

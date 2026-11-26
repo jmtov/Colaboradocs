@@ -51,11 +51,18 @@ export function useBottomSheet(options: BottomSheetOptions) {
 
   /** Sigue abierta y saliendo, pero sin bloquear la página: de modal a no modal. */
   function releaseModal() {
+    // `close()` y `focus()` le devuelven el foco a quien abrió y pueden mover la página: WebKit
+    // ignora `preventScroll` con el editor y se pierde el lugar. Se repone la posición.
+    const left = window.scrollX;
+    const top = window.scrollY;
     modal = false;
     dialog.close();
     dialog.show();
     // `show()` enfoca lo primero de la hoja: el foco vuelve a quien abrió.
     if (opener?.isConnected) opener.focus({ preventScroll: true });
+    if (window.scrollX !== left || window.scrollY !== top) {
+      window.scrollTo({ left, top, behavior: 'instant' });
+    }
   }
 
   function finishClose() {
