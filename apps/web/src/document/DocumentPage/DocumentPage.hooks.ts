@@ -39,9 +39,6 @@ export function useDocumentPage(content: () => DocumentContent) {
     sections.map((section) => [section.id, countPending(section)]),
   );
   const totalPending = Object.values(pending).reduce((sum, n) => sum + n, 0);
-  const first = sections[0];
-  const firstSectionId = first?.id ?? '';
-  const highlight = content().highlightSection;
 
   const navigation = useReviewNavigation(() => sections, content().id);
 
@@ -194,8 +191,6 @@ export function useDocumentPage(content: () => DocumentContent) {
     glossary,
     pending,
     totalPending,
-    firstSectionId,
-    highlight,
     openContents,
     print: () => window.print(),
     currentId,

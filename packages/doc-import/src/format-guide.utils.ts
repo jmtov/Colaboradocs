@@ -51,7 +51,7 @@ Un objeto JSON con estos campos.
 - \`date\`: cuándo se elaboró el documento, \`AAAA-MM-DD\` y un día que exista; en un acta, el día de la reunión. Sale en la tarjeta de la home y ordena los documentos (el más reciente primero, salvo las iniciativas, que van por título). Sin ella vale \`updated\`.
 - \`owner\`: quién responde por una iniciativa; sale en su tarjeta (máx. 200).
 - \`attendees\`: quiénes estuvieron en un acta, en texto libre (máx. 500).
-- \`highlightSection\`: \`{ "id": "<id de una sección>", "label": "Texto del botón" }\`. Segundo botón del inicio que salta a una sección; el id tiene que existir.
+- \`highlightSection\`: \`{ "id": "<id de una sección>", "label": "Texto del botón" }\`. Hoy no se muestra (la página ya no lleva botones bajo el título): no lo agregues. Se sigue aceptando; si viene, el id tiene que existir.
 - \`sources\`: lista de fuentes del pie, cada una \`{ "label": "…", "url": "…" }\` (hasta 100; \`label\` máx. 300). Con \`url\` vacío (\`""\`) es solo texto; si no, tiene que empezar con \`https://\`, \`http://\` o \`/\`.
 - \`glossaryTerms\`: objeto \`{ "cómo aparece el término en el texto, en minúsculas": "Término tal como está en el glosario" }\` (hasta 500). Sirve para que esas palabras se enlacen solas con su definición.
 

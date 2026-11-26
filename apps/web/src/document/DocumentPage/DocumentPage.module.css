@@ -4,6 +4,14 @@
   margin: 0 auto;
 }
 
+/* Separa los bloques plegables del documento, de borde a borde: por eso va fuera de `.page`.
+   El aire va aquí, así no depende de qué bloque quede al final. */
+.divider {
+  margin: var(--space-7) 0;
+  border: 0;
+  border-top: var(--border-w) solid var(--line);
+}
+
 .shell {
   display: grid;
   grid-template-columns: 200px minmax(0, 1fr);
@@ -24,6 +32,10 @@
 }
 
 @media print {
+  .divider {
+    display: none;
+  }
+
   .shell {
     display: block;
     padding-bottom: 0;

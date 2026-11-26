@@ -1,20 +1,14 @@
 import { type DocumentKind, KIND_GROUPS } from '@colaboradocs/review-core';
-import { Button } from '@colaboradocs/review-ui';
-import ArrowDownIcon from 'lucide-solid/icons/arrow-down';
-import ListChecksIcon from 'lucide-solid/icons/list-checks';
 import { Show } from 'solid-js';
 import styles from './Hero.module.css';
 
 type Props = {
   title: string;
   version: string;
-  firstSectionId: string;
   /** Clase de documento; «otro» no se rotula. */
   type?: DocumentKind;
   eyebrow?: string;
   lead?: string;
-  highlight?: { id: string; label: string };
-  onGo: (sectionId: string) => void;
 };
 
 export default function Hero(props: Props) {
@@ -38,25 +32,6 @@ export default function Hero(props: Props) {
         <Show when={props.lead}>
           <p class={styles.lead}>{props.lead}</p>
         </Show>
-        <div class={styles.actions}>
-          <Button
-            icon={ArrowDownIcon}
-            variant="primary"
-            onClick={() => props.onGo(props.firstSectionId)}
-          >
-            Leer el documento
-          </Button>
-          <Show when={props.highlight}>
-            {(highlight) => (
-              <Button
-                icon={ListChecksIcon}
-                onClick={() => props.onGo(highlight().id)}
-              >
-                {highlight().label}
-              </Button>
-            )}
-          </Show>
-        </div>
       </div>
     </section>
   );

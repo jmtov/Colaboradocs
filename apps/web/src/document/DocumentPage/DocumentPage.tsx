@@ -37,12 +37,9 @@ export default function DocumentPage(props: {
         <Hero
           title={props.content.title}
           version={props.content.version}
-          firstSectionId={page.firstSectionId}
           type={props.content.type}
           eyebrow={props.content.eyebrow}
           lead={props.content.lead}
-          highlight={page.highlight}
-          onGo={page.goTo}
         />
         <Show when={page.peopleOf(props.content.owner).length > 0}>
           <PeopleCards
@@ -58,6 +55,11 @@ export default function DocumentPage(props: {
             onOpen={page.openPerson}
           />
         </Show>
+        <SectionCards
+          sections={page.sections}
+          pending={page.pending}
+          onGo={page.goTo}
+        />
         <ReviewSummary
           tiles={[
             {
@@ -82,11 +84,9 @@ export default function DocumentPage(props: {
             },
           ]}
         />
-        <SectionCards
-          sections={page.sections}
-          pending={page.pending}
-          onGo={page.goTo}
-        />
+      </div>
+      <hr class={styles.divider} />
+      <div class={styles.page}>
         <div class={styles.shell}>
           <SideNav
             sections={page.sections}

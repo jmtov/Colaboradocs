@@ -29,15 +29,9 @@
 
 .lead {
   max-width: 56ch;
-  margin: 0 0 1.625rem;
+  margin: 0;
   font-size: var(--font-size-lg);
   color: var(--muted);
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
 }
 
 @media (width <= 1000px) {
@@ -51,9 +45,5 @@
 @media print {
   .hero {
     padding: 0 0 var(--space-5);
-  }
-
-  .actions {
-    display: none;
   }
 }

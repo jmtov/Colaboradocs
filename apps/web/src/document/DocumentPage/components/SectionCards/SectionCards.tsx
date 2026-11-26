@@ -38,14 +38,16 @@ export default function SectionCards(props: Props) {
                 <ArrowRightIcon class={styles.icon} />
               </span>
               <span class={styles.title}>{section.title}</span>
-              <span class={styles.description}>{section.description}</span>
-              <span class={styles.footer}>
-                <Show when={props.pending[section.id]}>
-                  {(count) => (
+              <Show when={section.description}>
+                <span class={styles.description}>{section.description}</span>
+              </Show>
+              <Show when={props.pending[section.id]}>
+                {(count) => (
+                  <span class={styles.footer}>
                     <span class={styles.pending}>{pendingLabel(count())}</span>
-                  )}
-                </Show>
-              </span>
+                  </span>
+                )}
+              </Show>
             </button>
           )}
         </For>
