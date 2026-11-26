@@ -7,10 +7,10 @@ API de revisión en un Cloudflare Worker (Hono) con D1. Genérica: todo cuelga d
 | Ruta | Qué hace |
 |---|---|
 | `src/index.ts` | App Hono con `basePath('/api')`; monta `loginRoute` y `reviewRoute`. |
-| `src/index.ts` | Monta las rutas y pone **el guard de todo `/admin/*`** (sesión + `requireAdminAccess`, que niega por omisión). |
+| `src/index.ts` | Monta las rutas y pone los guards: **todo `/admin/*`** (sesión + `requireAdminAccess`, que niega por omisión) y **`/documents/:documentId/*`** (sesión + id válido). |
 | `src/access/` | `POST /api/login`, accesos (`/api/admin/reviewers*`), `requireReviewer` y los guards, tokens firmados (`token.utils.ts`) y constantes (TTL 30 días, 10 fallos/15 min por IP). |
-| `src/document/` | `/api/admin/documents/*`: reemplazar, archivar, borrador y publicación (abajo). |
-| `src/review/` | Rutas de documento: lectura, comentarios y OK (abajo). Todas exigen sesión. |
+| `src/document/` | Lista, contenido y versiones; `/api/admin/documents/*` (reemplazar, archivar, borrador y publicación, abajo). |
+| `src/review/` | Comentarios y OK de un documento (abajo). Todas exigen sesión. |
 | `src/task/`, `src/deck/` | Tareas y presentaciones. |
 | `src/space/` | `GET /api/space` (público) y `PUT /api/admin/space`. |
 | `src/utcp/` | El manual UTCP (`GET /api/utcp`). |
@@ -95,7 +95,7 @@ El PIN no se puede volver a ver: solo se guarda el HMAC. Para entregar uno hay q
 
 ## Cómo extender
 
-- **Ruta nueva:** agrégala en la carpeta de su dominio (`<dominio>.route.ts`), el SQL en `<dominio>.queries.ts`, el tipo de la respuesta en `review-core` y una prueba en `test/`. Las de documento van en `review/review.route.ts` (quedan detrás de `requireReviewer` y de la validación de `documentId`). Las de `/admin/*` quedan protegidas por el guard de `index.ts`; si el agente debe usarla, agrégala a la tabla ruta → permiso de `review-core` (una prueba exige que ninguna quede sin listar).
+- **Ruta nueva:** agrégala en la carpeta de su dominio (`<dominio>.route.ts`), el SQL en `<dominio>.queries.ts`, el tipo de la respuesta en `review-core` y una prueba en `test/`. Lo que cuelgue de `/documents/:documentId/*` queda detrás de la sesión y de la validación del id sin declarar nada. Las de `/admin/*` quedan protegidas por el guard de `index.ts`; si el agente debe usarla, agrégala a la tabla ruta → permiso de `review-core` (una prueba exige que ninguna quede sin listar).
 - **Capas** (las hace cumplir Biome): `index → utcp, deck, task, review, space → document → access → shared`. Las features de arriba no se importan entre sí.
 - **Cambio de esquema:** `migrations/000N_descripcion.sql`; aplicar con `wrangler d1 migrations apply <base> --remote` **antes** de desplegar. Las pruebas aplican las migraciones solas (`test/apply-migrations.ts`).
 - Secretos: `TOKEN_SECRET` (`.dev.vars` local, `.prod.vars` para el CLI contra producción, `wrangler secret put` en el Worker). Nunca al repo.

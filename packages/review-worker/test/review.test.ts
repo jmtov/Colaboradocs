@@ -213,3 +213,19 @@ describe('OK por bloque', () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe('id del documento en la ruta', () => {
+  it('uno con forma inválida da 404 y no deja escribir nada', async () => {
+    const token = await tokenFor(await createReviewer('Marta'));
+    for (const path of ['Mayusculas', 'con_guion_bajo', 'x'.repeat(65)]) {
+      const approval = await authed(
+        token,
+        `/documents/${path}/approvals/quienes-abc`,
+        { method: 'PUT' },
+      );
+      expect(approval.status, path).toBe(404);
+      const review = await authed(token, `/documents/${path}/review`);
+      expect(review.status, path).toBe(404);
+    }
+  });
+});

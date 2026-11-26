@@ -4,6 +4,8 @@ import { loginRoute } from './access/login.route';
 import { reviewersRoute } from './access/reviewers.route';
 import { decksRoute } from './deck/deck.route';
 import { documentAdminRoute } from './document/admin.route';
+import { requireDocumentId } from './document/document.middleware';
+import { documentRoute } from './document/document.route';
 import { reviewRoute } from './review/review.route';
 import type { AppEnv } from './shared/env.types';
 import { spaceRoute } from './space/space.route';
@@ -15,8 +17,11 @@ const app = new Hono<AppEnv>().basePath('/api');
 // El guard de todo `/admin/*` va aquí, antes de montar cualquier ruta: así una ruta nueva en
 // cualquier carpeta queda protegida sin acordarse de declararlo (niega por omisión).
 app.use('/admin/*', requireReviewer, requireAdminAccess);
+// Lo mismo para lo que cuelga de un documento: sesión y un id con forma válida.
+app.use('/documents/:documentId/*', requireReviewer, requireDocumentId);
 
 app.route('/', loginRoute);
+app.route('/', documentRoute);
 app.route('/', reviewRoute);
 app.route('/', reviewersRoute);
 app.route('/', documentAdminRoute);

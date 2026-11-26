@@ -5,13 +5,7 @@ import {
   type ReviewSnapshot,
 } from '@colaboradocs/review-core';
 import { Hono } from 'hono';
-import { requireReviewer } from '@/access/auth.middleware';
 import { listReviewerLabels } from '@/access/reviewers.queries';
-import {
-  findDocument,
-  listDocuments,
-  listDocumentVersions,
-} from '@/document/document.queries';
 import {
   addApproval,
   clearCommentText,
@@ -25,40 +19,10 @@ import {
 import type { AppEnv } from '@/shared/env.types';
 import { errorResponse, readJsonObject } from '@/shared/http.utils';
 
-const DOCUMENT_ID_PATTERN = /^[a-z0-9-]{1,64}$/;
 const BLOCK_ID_PATTERN = /^[a-z0-9-]{1,100}$/;
 
+/** Comentarios y OK de un documento. La sesión y el id del documento los exige `index.ts`. */
 export const reviewRoute = new Hono<AppEnv>()
-  // La home: los documentos y su actividad (no cuelga de uno solo).
-  // `?archived=1` trae los archivados y es de admins.
-  .get('/documents', requireReviewer, async (c) => {
-    if (c.req.query('archived') === '1') {
-      if (!c.get('reviewer').isAdmin) return errorResponse(c, 'forbidden');
-      return c.json(await listDocuments(c.env.DB, { archived: true }));
-    }
-    return c.json(await listDocuments(c.env.DB));
-  })
-  .use('/documents/:documentId/*', requireReviewer)
-  .use('/documents/:documentId/*', async (c, next) => {
-    if (!DOCUMENT_ID_PATTERN.test(c.req.param('documentId') ?? '')) {
-      return errorResponse(c, 'not_found');
-    }
-    await next();
-  })
-
-  .get('/documents/:documentId/content', async (c) => {
-    const document = await findDocument(c.env.DB, c.req.param('documentId'));
-    return document ? c.json(document) : errorResponse(c, 'not_found');
-  })
-
-  .get('/documents/:documentId/versions', async (c) => {
-    const versions = await listDocumentVersions(
-      c.env.DB,
-      c.req.param('documentId'),
-    );
-    return versions ? c.json(versions) : errorResponse(c, 'not_found');
-  })
-
   .get('/documents/:documentId/review', async (c) => {
     const documentId = c.req.param('documentId');
     const snapshot: ReviewSnapshot = {
