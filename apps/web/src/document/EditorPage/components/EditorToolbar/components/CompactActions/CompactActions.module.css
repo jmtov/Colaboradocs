@@ -1,0 +1,25 @@
+.actions {
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+
+/* El de estilo ocupa lo que sobra y recorta su nombre; la flecha va después. Con dos clases,
+   para ganarle al tamaño del botón sin depender del orden de los archivos. */
+.actions .picker {
+  flex: 1;
+  flex-direction: row-reverse;
+  min-width: 0;
+}
+
+.name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions .picker {
+  gap: var(--space-1);
+  padding-inline: var(--space-2);
+}

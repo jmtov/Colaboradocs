@@ -95,22 +95,35 @@ export function inNote(editor: Editor): boolean {
   );
 }
 
-/**
- * Agrega el párrafo «Para qué sirve.» al inicio de la sección donde está el
- * cursor. Si la sección ya tiene nota, no agrega otra: lleva el cursor a ella.
- */
-export function addNote(editor: Editor) {
+/** Dónde va la nota de la sección del cursor, y la que ya tenga. */
+function noteSlot(editor: Editor) {
   const id = sectionAt(editor);
   const target = locateSections(editor.state.doc).find(
     (item) => item.id === id,
   );
   if (!target) return;
   const at = target.pos + target.node.nodeSize;
-  const existing = editor.state.doc.nodeAt(at);
-  if (existing && isNoteNode(existing, target.node)) {
+  const first = editor.state.doc.nodeAt(at);
+  return { at, note: first && isNoteNode(first, target.node) ? first : null };
+}
+
+/** ¿La sección donde está el cursor ya tiene su nota? */
+export function hasNote(editor: Editor): boolean {
+  return Boolean(noteSlot(editor)?.note);
+}
+
+/**
+ * Agrega el párrafo «Para qué sirve.» al inicio de la sección donde está el
+ * cursor. Si la sección ya tiene nota, no agrega otra: lleva el cursor a ella.
+ */
+export function addNote(editor: Editor) {
+  const slot = noteSlot(editor);
+  if (!slot) return;
+  const { at, note } = slot;
+  if (note) {
     editor
       .chain()
-      .focus(at + existing.nodeSize - 1)
+      .focus(at + note.nodeSize - 1)
       .run();
     return;
   }

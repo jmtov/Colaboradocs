@@ -97,12 +97,15 @@ const ITEMS = {
   },
 } satisfies Record<string, ToolbarItem>;
 
+/** El estilo del texto: está a la vista en cualquier ancho. */
+export const MARK_ITEMS: ToolbarItem[] = [ITEMS.bold, ITEMS.italic];
+
 /**
- * Los botones por grupos, en este orden: estilo del texto, estructura, listas y
- * lo que se agrega al texto (la cita va al final de este último, en la barra).
+ * Los demás botones por grupos, en este orden: estructura, listas y lo que se agrega al
+ * texto (el enlace, la mención y la cita van al final de este último, en la barra). En
+ * pantallas angostas se reemplazan por dos hojas (`CompactActions`).
  */
 export const FORMAT_GROUPS: ToolbarItem[][] = [
-  [ITEMS.bold, ITEMS.italic],
   [ITEMS.section, ITEMS.h1, ITEMS.h2, ITEMS.h3],
   [ITEMS.ordered, ITEMS.bullet],
   [ITEMS.note],

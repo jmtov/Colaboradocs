@@ -1,5 +1,6 @@
 import type { ChainedCommands, Editor } from '@tiptap/core';
 import { createEffect, createSignal, onCleanup } from 'solid-js';
+import { type BlockStyle, styleAt } from '@/document/editor/style.commands';
 import type { ToolbarItem } from './EditorToolbar.constants';
 
 /**
@@ -29,6 +30,13 @@ export function useEditorToolbar(editor: () => Editor | undefined) {
     return current ? test(current) : false;
   }
 
+  /** El estilo del renglón donde está el cursor. */
+  function style(): BlockStyle {
+    tick();
+    const current = editor();
+    return current ? styleAt(current) : 'text';
+  }
+
   function can(action: 'undo' | 'redo') {
     tick();
     const current = editor();
@@ -49,5 +57,5 @@ export function useEditorToolbar(editor: () => Editor | undefined) {
     else run(item.run);
   }
 
-  return { isActive, matches, can, run, press };
+  return { isActive, matches, style, can, run, press };
 }

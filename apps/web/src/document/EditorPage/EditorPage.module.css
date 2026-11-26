@@ -61,6 +61,8 @@
 
 .editorBlock {
   display: grid;
+  /* La columna no crece con lo que no se puede partir (la fila de la barra en móvil). */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 

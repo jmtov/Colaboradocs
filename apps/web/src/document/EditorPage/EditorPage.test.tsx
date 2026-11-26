@@ -946,13 +946,20 @@ describe('EditorPage', () => {
     const labels = [...bar.querySelectorAll('button')].map((item) =>
       item.getAttribute('aria-label'),
     );
-    // Solo íconos: sin texto visible y con el nombre en un tooltip.
-    for (const item of bar.querySelectorAll('button')) {
+    // Los dos últimos son los de la barra angosta; el de estilo lleva su nombre a la vista.
+    expect(labels.slice(-2)).toEqual([
+      'Estilo del renglón: Sección',
+      'Insertar',
+    ]);
+    // Los demás son solo íconos: sin texto visible y con el nombre en un tooltip.
+    for (const item of [...bar.querySelectorAll('button')].slice(0, -2)) {
       expect(item.textContent).toBe('');
       expect(item.querySelector('svg')).not.toBeNull();
       expect(item.nextElementSibling?.textContent).toBeTruthy();
     }
-    expect(labels).toEqual([
+    expect(labels.slice(0, -2)).toEqual([
+      'Deshacer',
+      'Rehacer',
       'Negrilla',
       'Cursiva',
       'Sección',
@@ -965,9 +972,94 @@ describe('EditorPage', () => {
       'Enlace',
       'Mencionar',
       'Cita',
-      'Deshacer',
-      'Rehacer',
     ]);
+  });
+
+  /** Las opciones de la hoja abierta: nombre y si es la elegida. */
+  const sheetOptions = () =>
+    [...document.body.querySelectorAll('dialog[open] li button')].map(
+      (item) => ({
+        name: item.querySelector('span')?.textContent,
+        pressed: item.getAttribute('aria-pressed'),
+      }),
+    );
+  const pick = (name: string) => {
+    const found = [
+      ...document.body.querySelectorAll<HTMLButtonElement>(
+        'dialog[open] li button',
+      ),
+    ].find((item) => item.querySelector('span')?.textContent === name);
+    if (!found) throw new Error(`falta la opción «${name}»`);
+    found.click();
+  };
+
+  it('barra angosta: «Estilo» muestra el estilo del cursor y la hoja lo cambia', async () => {
+    fakeApi();
+    const host = mount();
+    const editor = await editorOf(host);
+    cursorAtEndOf(editor, 'Mundo');
+    await wait(20);
+    button(host, 'Estilo del renglón: Texto normal').click();
+    await wait(300);
+    expect(sheetOptions().filter((item) => item.pressed === 'true')).toEqual([
+      { name: 'Texto normal', pressed: 'true' },
+    ]);
+    pick('Subtítulo');
+    await wait(300);
+    expect(editor.getHTML()).toContain('<h4>Mundo</h4>');
+    expect(button(host, 'Estilo del renglón: Subtítulo').textContent).toBe(
+      'Subtítulo',
+    );
+  });
+
+  it('barra angosta: «Insertar» abre la hoja de lo elegido, y nada queda marcado como elegido', async () => {
+    fakeApi();
+    const host = mount();
+    const editor = await editorOf(host);
+    cursorAtEndOf(editor, 'Mundo');
+    await wait(20);
+    button(host, 'Insertar').click();
+    await wait(300);
+    expect(sheetOptions()).toEqual(
+      ['Enlace', 'Mención', 'Cita', 'Nota «Para qué sirve»'].map((name) => ({
+        name,
+        pressed: null,
+      })),
+    );
+    pick('Enlace');
+    await wait(500);
+    expect(sheetInputs('Dirección')).toHaveLength(1);
+  });
+
+  it('barra angosta: las opciones dependen del cursor (editar el enlace, ir a la nota)', async () => {
+    fakeApi({ published: WITH_NOTE_AND_GLOSSARY });
+    const host = mount();
+    const editor = await editorOf(host);
+    cursorAtEndOf(editor, 'Hola');
+    editor
+      .chain()
+      .insertContent({
+        type: 'text',
+        text: ' aquí',
+        marks: [{ type: 'link', attrs: { href: 'https://example.org' } }],
+      })
+      .setTextSelection(editor.state.selection.from + 2)
+      .run();
+    await wait(20);
+    button(host, 'Insertar').click();
+    await wait(300);
+    expect(sheetOptions().map((item) => item.name)).toEqual([
+      'Editar enlace',
+      'Mención',
+      'Cita',
+      'Ir a la nota',
+    ]);
+    pick('Ir a la nota');
+    await wait(300);
+    expect(editor.state.selection.$from.parent.textContent).toContain(
+      'Para qué sirve.',
+    );
+    expect(host.querySelectorAll('[data-note]')).toHaveLength(1);
   });
 
   it('la barra va arriba: antes del editor en la página y pegada arriba, con fondo blanco', async () => {

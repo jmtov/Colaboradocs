@@ -6,12 +6,41 @@
   background: var(--bg);
 }
 
-.gap {
-  flex: 1;
-}
-
 /* Un grupo: botones juntos; entre grupos, el espacio de la barra. */
 .group {
   display: flex;
   gap: var(--space-1);
+}
+
+/* Encendido: relleno, como la opción elegida en el resto de la app. */
+.bar .group [aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--fg);
+  --edge: var(--fg);
+}
+
+.compact {
+  display: none;
+}
+
+/* Angosta: una sola fila; lo que no son negrilla y cursiva pasa a las dos hojas. */
+@media (width <= 640px) {
+  .bar {
+    flex-wrap: nowrap;
+    gap: var(--space-1);
+    padding: var(--space-1);
+  }
+
+  /* Cada par va pegado (los bordes se montan 1px): así la fila cabe en 360px sin achicar los botones. */
+  .group {
+    column-gap: 0;
+  }
+
+  .wide {
+    display: none;
+  }
+
+  .compact {
+    display: flex;
+  }
 }

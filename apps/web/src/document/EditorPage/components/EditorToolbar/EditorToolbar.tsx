@@ -6,7 +6,12 @@ import RedoIcon from 'lucide-solid/icons/redo-2';
 import UndoIcon from 'lucide-solid/icons/undo-2';
 import { For, Show } from 'solid-js';
 import IconButton from '@/shared/ui/IconButton/IconButton';
-import { FORMAT_GROUPS, type ToolbarItem } from './EditorToolbar.constants';
+import CompactActions from './components/CompactActions/CompactActions';
+import {
+  FORMAT_GROUPS,
+  MARK_ITEMS,
+  type ToolbarItem,
+} from './EditorToolbar.constants';
 import { useEditorToolbar } from './EditorToolbar.hooks';
 import styles from './EditorToolbar.module.css';
 
@@ -31,23 +36,40 @@ export default function EditorToolbar(props: Props) {
     return item.name ? toolbar.isActive(item.name, item.attrs) : undefined;
   };
 
+  const itemButton = (item: ToolbarItem) => (
+    <IconButton
+      label={item.label}
+      tooltip={item.title}
+      icon={item.icon}
+      pressed={pressedOf(item)}
+      disabled={!props.editor}
+      onClick={() => toolbar.press(item)}
+    />
+  );
+
   return (
     <div class={styles.bar} role="toolbar" aria-label="Formato">
+      <div class={styles.group}>
+        <IconButton
+          label="Deshacer"
+          icon={UndoIcon}
+          disabled={!toolbar.can('undo')}
+          onClick={() => toolbar.run((chain) => chain.undo())}
+        />
+        <IconButton
+          label="Rehacer"
+          icon={RedoIcon}
+          disabled={!toolbar.can('redo')}
+          onClick={() => toolbar.run((chain) => chain.redo())}
+        />
+      </div>
+      <div class={styles.group}>
+        <For each={MARK_ITEMS}>{itemButton}</For>
+      </div>
       <For each={FORMAT_GROUPS}>
         {(group, index) => (
-          <div class={styles.group}>
-            <For each={group}>
-              {(item) => (
-                <IconButton
-                  label={item.label}
-                  tooltip={item.title}
-                  icon={item.icon}
-                  pressed={pressedOf(item)}
-                  disabled={!props.editor}
-                  onClick={() => toolbar.press(item)}
-                />
-              )}
-            </For>
+          <div class={`${styles.group} ${styles.wide}`}>
+            <For each={group}>{itemButton}</For>
             <Show when={index() === FORMAT_GROUPS.length - 1 && props.onLink}>
               {(link) => (
                 <IconButton
@@ -88,18 +110,13 @@ export default function EditorToolbar(props: Props) {
           </div>
         )}
       </For>
-      <span class={styles.gap} />
-      <IconButton
-        label="Deshacer"
-        icon={UndoIcon}
-        disabled={!toolbar.can('undo')}
-        onClick={() => toolbar.run((chain) => chain.undo())}
-      />
-      <IconButton
-        label="Rehacer"
-        icon={RedoIcon}
-        disabled={!toolbar.can('redo')}
-        onClick={() => toolbar.run((chain) => chain.redo())}
+      <CompactActions
+        class={styles.compact}
+        editor={props.editor}
+        current={toolbar.style()}
+        onLink={props.onLink}
+        onMention={props.onMention}
+        onCite={props.onCite}
       />
     </div>
   );
