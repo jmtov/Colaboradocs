@@ -22,6 +22,9 @@
     var(--gutter-right)
   );
 
+  /* Alto de la barra de página (PageBar), con su borde: lo que se pega debajo parte de aquí. */
+  --page-bar-height: 3.1875rem;
+
   /* Espaciado: una escala de 4 px para márgenes, huecos y paddings.
      Un número suelto (0.625rem, 1.25rem…) rompe el ritmo: si no hay una medida de la escala, se elige la
      más cercana (stylelint lo exige). Con una duda entre dos, el padding sube y el hueco o el margen baja.
@@ -78,7 +81,7 @@
   /* El trazo estándar (12 %): borde de tarjetas, separadores, líneas de tabla. Ante la duda de qué color
      lleva un borde, este.
   */
-  --line: color-mix(in srgb, var(--fg) 12%, var(--bg));
+  --line: color-mix(in srgb, var(--fg) 8%, var(--bg));
   /* Lo aprobado: botón OK y las insignias de «aprobado». Su fondo es --ok-bg. */
   --ok: #0a6a85;
   /* Fondo suave de lo aprobado (insignias y avisos de OK). */

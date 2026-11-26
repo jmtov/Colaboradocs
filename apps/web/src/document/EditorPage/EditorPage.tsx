@@ -122,6 +122,7 @@ export default function EditorPage(props: Props) {
                       </aside>
 
                       <div class={styles.content}>
+                        <h2 class={styles.heading}>Datos</h2>
                         <EditorDetails
                           details={page.details()}
                           onChange={page.setDetails}
@@ -164,6 +165,7 @@ export default function EditorPage(props: Props) {
                           )}
                         </Show>
 
+                        <h2 class={styles.heading}>Contenido</h2>
                         <div class={styles.editing}>
                           <div class={styles.editorBlock}>
                             <div class={styles.toolbar}>

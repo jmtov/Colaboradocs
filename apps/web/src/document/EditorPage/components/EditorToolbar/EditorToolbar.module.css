@@ -28,7 +28,8 @@
   .bar {
     flex-wrap: nowrap;
     gap: var(--space-1);
-    padding: var(--space-1);
+    /* A los lados no: el margen de la página lo pone quien la enmarca. */
+    padding: var(--space-1) 0;
   }
 
   /* Cada par va pegado (los bordes se montan 1px): así la fila cabe en 360px sin achicar los botones. */

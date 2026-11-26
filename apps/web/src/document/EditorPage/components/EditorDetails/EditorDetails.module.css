@@ -1,14 +1,29 @@
-/* Crece en alto con el texto (y se puede estirar); el texto va a la derecha como los demás campos. */
+.details {
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* Va apilada bajo su etiqueta: a todo el ancho y a la izquierda, porque es un párrafo. */
 .description {
   field-sizing: content;
-  flex: 1;
   width: 100%;
   min-height: 1.5rem;
   max-height: 16rem;
-  padding: 0.6875rem 0;
   line-height: var(--leading-normal);
-  text-align: right;
   resize: vertical;
+}
+
+/* Si crece solo con el texto, no hace falta el tirador. */
+@supports (field-sizing: content) {
+  .description {
+    resize: none;
+  }
+}
+
+/* Con dos clases: `.input` alinea a la derecha y su archivo puede cargarse después. */
+.details .description {
+  padding: 0;
+  text-align: left;
 }
 
 /* Un botón con el aspecto de un campo: abre la hoja de personas; el texto va a la derecha como los demás. */

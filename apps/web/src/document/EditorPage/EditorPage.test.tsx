@@ -592,6 +592,73 @@ describe('EditorPage', () => {
     ).toBeTruthy();
   });
 
+  it('los datos van en dos grupos, y la ayuda de la fecha sigue al tipo', async () => {
+    fakeApi();
+    const host = mount();
+    await editorOf(host);
+    /** La caja (con su ayuda) donde está la fila con esa etiqueta. */
+    const group = (label: string) => {
+      const found = [...host.querySelectorAll('label > span:first-child')].find(
+        (item) => item.textContent === label,
+      )?.parentElement?.parentElement?.parentElement;
+      if (!found) throw new Error(`falta la fila «${label}»`);
+      return found;
+    };
+    const labels = (label: string) =>
+      [...group(label).querySelectorAll('label > span:first-child')].map(
+        (item) => item.textContent,
+      );
+    expect(labels('Título')).toEqual(['Título', 'Descripción']);
+    expect(labels('Tipo')).toEqual(['Tipo', 'Fecha']);
+    // Sin rótulo propio: los nombra el título «Datos».
+    expect(group('Título').querySelector('h2')).toBeNull();
+    expect(group('Tipo').querySelector('h2')).toBeNull();
+    // En singular: es el tipo de un solo documento.
+    const select = group('Tipo').querySelector('select') as HTMLSelectElement;
+    expect([...select.options].map((item) => item.textContent)).toEqual([
+      'Iniciativa',
+      'Acta',
+      'Guía',
+      'Otro',
+    ]);
+    for (const [kind, hint] of [
+      ['initiative', 'las iniciativas se ordenan por título'],
+      ['minutes', 'La fecha de la reunión ordena las actas'],
+      ['guide', 'ordena las guías'],
+    ] as const) {
+      select.value = kind;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      await wait(20);
+      expect(group('Tipo').querySelector('p')?.textContent).toContain(hint);
+    }
+    expect(labels('Tipo')).toEqual(['Tipo', 'Fecha']);
+  });
+
+  it('«Datos» encabeza los metadatos y «Contenido», la barra y el texto', async () => {
+    fakeApi();
+    const host = mount();
+    await editorOf(host);
+    const heading = (text: string) => {
+      const found = [...host.querySelectorAll('h2')].find(
+        (item) => item.textContent === text,
+      );
+      if (!found) throw new Error(`falta el título «${text}»`);
+      return found;
+    };
+    const follows = (first: Element, second: Element | null | undefined) =>
+      Boolean(
+        second &&
+          first.compareDocumentPosition(second) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    const title = inputs(host, 'Título')[0];
+    const bar = host.querySelector('[role="toolbar"]');
+    expect(follows(heading('Datos'), title)).toBe(true);
+    expect(follows(title as Element, heading('Contenido'))).toBe(true);
+    expect(follows(heading('Contenido'), bar)).toBe(true);
+    expect(host.querySelector('nav')?.textContent).toMatch(/^Contenido/);
+  });
+
   it('la barra y la pestaña llevan el título del documento, y al salir vuelve el del espacio', async () => {
     document.title = 'Espacio';
     fakeApi();
@@ -1077,7 +1144,14 @@ describe('EditorPage', () => {
     );
     const rule = /\.toolbar\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
     expect(rule).toMatch(/position:\s*sticky/);
-    expect(rule).toMatch(/top:/);
+    // Pegada a la barra de página: las dos salen de la misma altura.
+    expect(rule).toMatch(/top:\s*calc\(\s*var\(--page-bar-height\)/);
+    expect(
+      readFileSync(
+        join(import.meta.dirname, '../../shared/ui/PageBar/PageBar.module.css'),
+        'utf8',
+      ),
+    ).toMatch(/min-height:\s*calc\(var\(--page-bar-height\)/);
     expect(rule).not.toMatch(/bottom:/);
     expect(rule).toMatch(/background:\s*var\(--bg\)/);
   });

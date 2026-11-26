@@ -12,6 +12,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   max-width: var(--page-max);
+  min-height: calc(var(--page-bar-height) - var(--border-w));
   padding-block: var(--space-2);
   padding-inline: var(--gutter);
   margin: 0 auto;

@@ -20,7 +20,7 @@ type Props = {
 export default function EditorOutline(props: Props) {
   return (
     <nav aria-label="Secciones del documento">
-      <span class={styles.eyebrow}>Documento</span>
+      <span class={styles.eyebrow}>Contenido</span>
       <div class={styles.list}>
         <For each={props.sections}>
           {(section) => (

@@ -50,6 +50,21 @@
   min-width: 0;
 }
 
+/* Separa los datos del texto: más que las etiquetas y menos que un título de sección del documento. */
+.heading {
+  margin: 0;
+  padding-bottom: var(--space-2);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-tighter);
+  border-bottom: var(--border-w) solid var(--line);
+}
+
+/* El segundo, con más aire arriba para que se note el cambio. */
+.heading ~ .heading {
+  margin-top: var(--space-5);
+}
+
 .editing {
   display: grid;
   gap: 1.25rem;
@@ -68,10 +83,25 @@
 
 .toolbar {
   position: sticky;
-  top: calc(4rem + env(safe-area-inset-top, 0px));
+  /* Pegada a la barra de página; se montan los bordes, para que se vea una sola línea. */
+  top: calc(
+    var(--page-bar-height) +
+    env(safe-area-inset-top, 0px) -
+    var(--border-w)
+  );
   z-index: 1;
   background: var(--bg);
   border: var(--border-w) solid var(--line);
+}
+
+/* Angosta: la barra va de borde a borde, como la de página, y sus botones quedan alineados
+   con los de arriba. */
+@media (width <= 640px) {
+  .toolbar {
+    margin-inline: calc(-1 * var(--gutter-left)) calc(-1 * var(--gutter-right));
+    padding-inline: var(--gutter);
+    border-inline: 0;
+  }
 }
 
 @media (width <= 1000px) {
@@ -135,9 +165,4 @@
 .problem ul {
   padding-left: 1.125rem;
   margin: 0;
-}
-
-.section {
-  display: grid;
-  gap: var(--space-4);
 }
