@@ -279,8 +279,8 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["../access/**", "../document/**", "../review/**"],
-                    "message": "review-core: «task» no importa de access, document, review. Lo compartido va en shared/; document, access y task se apoyan en review."
+                    "group": ["../access/**", "../document/**"],
+                    "message": "review-core: «task» no importa de access, document. Lo compartido va en shared/; document, access y task se apoyan en review."
                   }
                 ]
               }
