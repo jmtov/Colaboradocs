@@ -1,4 +1,4 @@
-import type { UtcpAuth } from './utcp.types';
+import type { JsonSchema, UtcpAuth } from './utcp.types';
 
 /** Versión del formato UTCP que se emite (la que usan los ejemplos de utcp.io). */
 export const UTCP_VERSION = '1.0.1';
@@ -15,3 +15,9 @@ export const TOKEN_AUTH: UtcpAuth = {
   var_name: 'Authorization',
   location: 'header',
 };
+
+/** El formato de las fechas, como se le explica al agente. */
+export const DATE = 'AAAA-MM-DD, un día sin hora ni zona.';
+
+/** Un objeto sin más detalle (las salidas que no se describen campo por campo). */
+export const OBJECT: JsonSchema = { type: 'object' };

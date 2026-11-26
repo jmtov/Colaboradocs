@@ -1,3 +1,5 @@
+import type { Permission } from '@colaboradocs/review-core';
+
 type JsonType = 'object' | 'string' | 'integer' | 'boolean' | 'array' | 'null';
 
 /** Un esquema JSON mínimo: lo que usan las entradas y salidas de las herramientas. */
@@ -41,3 +43,6 @@ export type UtcpManual = {
   info: { title: string; version: string; description: string };
   tools: UtcpTool[];
 };
+
+/** Una herramienta con el permiso que exige (null: no pide sesión). */
+export type ToolEntry = { permission: Permission | null; tool: UtcpTool };
