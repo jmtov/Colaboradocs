@@ -1215,6 +1215,81 @@ describe('EditorPage', () => {
     expect(saved?.sections[0]?.html).toContain('Ana López');
   });
 
+  /** Selecciona esos textos, abre «Mencionar» y elige a Ana López. */
+  async function mentionSelection(from: string, to = from, extra = 0) {
+    const calls = fakeApi({
+      published: {
+        ...PUBLISHED,
+        sections: PUBLISHED.sections.map((section) => ({
+          ...section,
+          // Formato solo en parte de la frase: reescribirla lo perdería.
+          html: '<p>Habló la <strong>alcaldesa</strong> hoy</p><p>Mundo</p>',
+        })),
+      },
+      reviewers: { r1: { name: 'Ana López', municipality: 'La Ceja' } },
+    });
+    const host = mount();
+    const editor = await editorOf(host);
+    const find = (text: string) => {
+      let at = -1;
+      editor.state.doc.descendants((node, pos) => {
+        const index = node.isText ? (node.text?.indexOf(text) ?? -1) : -1;
+        if (index >= 0 && at < 0) at = pos + index;
+      });
+      if (at < 0) throw new Error(`falta «${text}»`);
+      return at;
+    };
+    editor.commands.setTextSelection({
+      from: find(from),
+      to: find(to) + to.length + extra,
+    });
+    await wait(20);
+    button(host, 'Mencionar').click();
+    await wait(300);
+    const option = [...document.body.querySelectorAll('button')].find((item) =>
+      item.textContent?.startsWith('Ana López'),
+    );
+    if (!option) throw new Error('falta la persona en la lista');
+    option.click();
+    await wait(20);
+    const written = () => inputs(document.body, 'Se escribe')[0];
+    const finish = async () => {
+      button(document.body, 'Insertar').click();
+      await wait(300);
+      button(host, 'Guardar borrador').click();
+      await wait();
+      return calls.puts[0]?.content;
+    };
+    return { written, finish };
+  }
+
+  it('«Mencionar» con texto seleccionado: ese es el texto, y no se reescribe', async () => {
+    // Con el espacio que suele colarse al seleccionar.
+    const { written, finish } = await mentionSelection('la ', 'alcaldesa', 1);
+    expect(written()?.value).toBe('la alcaldesa');
+    const saved = await finish();
+    expect(saved?.peopleTerms).toEqual({ 'la alcaldesa': 'Ana López' });
+    expect(saved?.sections[0]?.html).toBe(
+      '<p>Habló la <strong>alcaldesa</strong> hoy</p><p>Mundo</p>',
+    );
+  });
+
+  it('«Mencionar» con texto seleccionado: si se cambia en la hoja, lo reemplaza', async () => {
+    const { written, finish } = await mentionSelection('la ', 'alcaldesa');
+    write(written() as HTMLInputElement, 'Ana');
+    const saved = await finish();
+    expect(saved?.peopleTerms).toEqual({ ana: 'Ana López' });
+    expect(saved?.sections[0]?.html).toContain('<p>Habló Ana hoy</p>');
+  });
+
+  it('«Mencionar» con una selección de varios renglones no borra nada', async () => {
+    const { written, finish } = await mentionSelection('alcaldesa', 'Mun');
+    expect(written()?.value).toBe('Ana López');
+    const saved = await finish();
+    expect(saved?.sections[0]?.html).toContain('la <strong>alcaldesa');
+    expect(saved?.sections[0]?.html).toContain('<p>MunAna López do</p>');
+  });
+
   it('tocar un nombre mencionado deja cambiar a quién apunta', async () => {
     const published: DocumentContent = {
       ...PUBLISHED,

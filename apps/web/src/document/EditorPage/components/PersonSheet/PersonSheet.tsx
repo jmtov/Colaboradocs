@@ -7,6 +7,7 @@ import CloseIcon from 'lucide-solid/icons/x';
 import { createMemo, createSignal, For, Show } from 'solid-js';
 import { FieldGroup, FieldRow } from '@/shared/ui/FieldGroup/FieldGroup';
 import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
+import { MAX_PERSON_TEXT } from '../../people.constants';
 import styles from './PersonSheet.module.css';
 import type { PersonSheetProps } from './PersonSheet.types';
 
@@ -28,7 +29,7 @@ export default function PersonSheet(props: PersonSheetProps) {
   const [chosen, setChosen] = createSignal<ReviewerLabel | null>(
     everyone().find((person) => person.name === props.current) ?? null,
   );
-  const [text, setText] = createSignal('');
+  const [text, setText] = createSignal(props.selected ?? '');
   const shown = createMemo(() =>
     filterPeople(everyone(), query(), everyone().length),
   );
@@ -36,7 +37,7 @@ export default function PersonSheet(props: PersonSheetProps) {
 
   function choose(person: ReviewerLabel) {
     setChosen(person);
-    setText(person.name);
+    if (!props.selected) setText(person.name);
   }
 
   function apply() {
@@ -104,7 +105,7 @@ export default function PersonSheet(props: PersonSheetProps) {
               <input
                 class={fieldStyles.input}
                 value={text()}
-                maxLength={100}
+                maxLength={MAX_PERSON_TEXT}
                 onInput={(event) => setText(event.currentTarget.value)}
               />
             </FieldRow>

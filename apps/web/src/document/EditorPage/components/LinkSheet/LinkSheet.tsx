@@ -9,12 +9,13 @@ import fieldStyles from '@/shared/ui/FieldGroup/FieldInput.module.css';
 import styles from './LinkSheet.module.css';
 import type { LinkSheetProps } from './LinkSheet.types';
 
-/** Un enlace del texto: a dónde lleva y, si no hay texto elegido, cómo se lee. */
+/** Un enlace del texto: cómo se lee (parte de lo seleccionado) y a dónde lleva. */
 export default function LinkSheet(props: LinkSheetProps) {
   const [url, setUrl] = createSignal(props.state.href);
   const [text, setText] = createSignal(props.state.text);
   const normalized = () => normalizeLinkUrl(url());
-  const askText = () => !props.state.hasSelection;
+  // Una selección de varios renglones se enlaza como está: no tiene un solo texto.
+  const askText = () => !props.state.multiline;
   const valid = () => normalized() !== null && (!askText() || text().trim());
 
   function apply() {

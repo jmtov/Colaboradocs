@@ -9,6 +9,8 @@ export type PersonResult = { name: string; text: string } | { remove: true };
 
 export type PersonSheetProps = SheetLayerProps<PersonResult> & {
   people: ReviewerLabel[];
+  /** El texto seleccionado al mencionar: es como se escribirá, sea quien sea la persona. */
+  selected?: string;
   /** Si se edita una mención que ya está en el texto: a quién apunta ahora. */
   current?: string;
 };

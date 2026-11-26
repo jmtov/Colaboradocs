@@ -1,7 +1,9 @@
 import { useOverlay, useReview } from '@colaboradocs/review-ui';
 import { createEffect } from 'solid-js';
+import { selectedText } from '@/document/editor/selection.utils';
 import PeopleSheet from '../components/PeopleSheet/PeopleSheet';
 import PersonSheet from '../components/PersonSheet/PersonSheet';
+import { MAX_PERSON_TEXT } from '../people.constants';
 import { addPerson, withoutPerson } from '../people.utils';
 import type { EditorDraft } from './draft.hooks';
 import type { EditorInstance } from './instance.hooks';
@@ -36,14 +38,33 @@ export function usePeopleActions({ draft, instance }: Deps) {
     }
   }
 
-  /** Elegir a una persona del espacio y escribir su nombre en el cursor; al tocarlo se ve su tarjeta. */
+  /**
+   * Mencionar a una persona del espacio: al tocar el texto se ve su tarjeta. Con una
+   * selección, ese es el texto; sin ella, su nombre se escribe en el cursor.
+   */
   async function mention() {
     const editor = instance.editor();
     if (!editor) return;
-    const result = await overlay.sheet(PersonSheet, { people: everyone() });
+    const found = selectedText(editor);
+    const selected =
+      found && found.text.length <= MAX_PERSON_TEXT ? found : null;
+    const end = editor.state.selection.to;
+    const result = await overlay.sheet(PersonSheet, {
+      people: everyone(),
+      selected: selected?.text,
+    });
     if (!result || 'remove' in result) return;
     draft.setPeople((current) => addPerson(current, result.text, result.name));
-    editor.chain().focus().insertContent(`${result.text} `).run();
+    const chain = editor.chain().focus();
+    if (!selected) {
+      // Sin un texto que sirva se escribe al final de lo seleccionado: no se borra nada.
+      chain.setTextSelection(end).insertContent(`${result.text} `).run();
+    } else if (result.text === selected.text) {
+      // El texto ya está escrito, con su formato: solo queda registrado a quién apunta.
+      chain.setTextSelection(selected.to).run();
+    } else {
+      chain.insertContentAt(selected, result.text).run();
+    }
   }
 
   /** Tocar un nombre de persona del texto: cambiar a quién apunta o quitar la mención. */
